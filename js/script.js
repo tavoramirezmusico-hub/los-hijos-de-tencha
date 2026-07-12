@@ -1,5 +1,4 @@
 console.log("Sitio Oficial de Los Hijos de Tencha");
-console.log("cerrando menú");
 
 const botonMenu = document.querySelector(".menu-btn");
 const menu = document.querySelector(".menu");
@@ -11,6 +10,8 @@ botonMenu.addEventListener("click", () => {
 
 enlacesMenu.forEach(enlace => {
     enlace.addEventListener("click", () => {
-        menu.classList.remove("activo");
+        setTimeout(() => {
+            menu.classList.remove("activo");
+        }, 200);
     });
 });
