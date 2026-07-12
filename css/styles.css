@@ -47,6 +47,21 @@ nav a:hover{
     background:#ffcc00;
 }
 
+
+/* BOTON HAMBURGUESA */
+
+.menu-btn{
+    display:none;
+    background:none;
+    border:none;
+    color:white;
+    font-size:2rem;
+    cursor:pointer;
+}
+
+
+/* HERO */
+
 .hero{
     height:90vh;
     display:flex;
@@ -54,7 +69,10 @@ nav a:hover{
     justify-content:center;
     align-items:center;
     text-align:center;
-    background:linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.65)), url("https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=1600") center/cover;
+    background:
+    linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.65)),
+    url("https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=1600")
+    center/cover;
 }
 
 .hero h1{
@@ -85,6 +103,7 @@ h2{
     color:#ffcc00;
 }
 
+
 footer{
     background:#000;
     text-align:center;
@@ -96,6 +115,8 @@ footer p{
     color:#ccc;
 }
 
+
+
 /* ======== CELULARES ======== */
 
 @media (max-width:768px){
@@ -106,9 +127,11 @@ footer p{
         padding:15px 20px;
     }
 
+
     .menu-btn{
         display:block;
     }
+
 
     nav ul.menu{
         display:none;
@@ -118,12 +141,30 @@ footer p{
         width:100%;
         background:#111;
         flex-direction:column;
+        align-items:center;
         gap:20px;
         padding:25px 0;
     }
 
+
     nav ul.menu.activo{
         display:flex;
+    }
+
+
+    .hero h1{
+        font-size:2.3rem;
+    }
+
+
+    .hero p{
+        font-size:1rem;
+        padding:0 20px;
+    }
+
+
+    section{
+        padding:60px 25px;
     }
 
 }
