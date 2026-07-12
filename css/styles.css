@@ -51,7 +51,7 @@ nav a:hover{
 }
 
 
-/* ===== BOTON MENU IMAGEN ===== */
+/* ===== BOTON MENU PERSONALIZADO ===== */
 
 .menu-btn{
     display:none;
@@ -62,11 +62,10 @@ nav a:hover{
 }
 
 .menu-btn img{
-    width:45px;
-    height:45px;
+    width:32px;
+    height:32px;
     object-fit:contain;
 }
-
 
 
 /* ===== HERO ===== */
@@ -94,6 +93,7 @@ nav a:hover{
     font-size:1.2rem;
     margin-bottom:30px;
 }
+
 
 .boton{
     background:#ffcc00;
@@ -132,7 +132,7 @@ footer p{
 
 
 
-/* ===== CELULARES ===== */
+/* ===== VERSION CELULAR ===== */
 
 @media (max-width:768px){
 
@@ -145,6 +145,12 @@ footer p{
 
     .menu-btn{
         display:block;
+    }
+
+
+    .menu-btn img{
+        width:35px;
+        height:35px;
     }
 
 
@@ -171,12 +177,6 @@ footer p{
 
     nav ul.menu.activo{
         display:flex;
-    }
-
-
-    .menu-btn img{
-        width:50px;
-        height:50px;
     }
 
 
