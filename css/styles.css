@@ -10,6 +10,9 @@ body{
     color:white;
 }
 
+
+/* ===== NAV ===== */
+
 nav{
     display:flex;
     justify-content:space-between;
@@ -48,19 +51,25 @@ nav a:hover{
 }
 
 
-/* BOTON HAMBURGUESA */
+/* ===== BOTON MENU IMAGEN ===== */
 
 .menu-btn{
     display:none;
     background:none;
     border:none;
-    color:white;
-    font-size:2rem;
     cursor:pointer;
+    padding:0;
+}
+
+.menu-btn img{
+    width:45px;
+    height:45px;
+    object-fit:contain;
 }
 
 
-/* HERO */
+
+/* ===== HERO ===== */
 
 .hero{
     height:90vh;
@@ -69,6 +78,7 @@ nav a:hover{
     justify-content:center;
     align-items:center;
     text-align:center;
+
     background:
     linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.65)),
     url("https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=1600")
@@ -94,6 +104,9 @@ nav a:hover{
     font-weight:bold;
 }
 
+
+/* ===== SECCIONES ===== */
+
 section{
     padding:80px 10%;
 }
@@ -103,6 +116,8 @@ h2{
     color:#ffcc00;
 }
 
+
+/* ===== FOOTER ===== */
 
 footer{
     background:#000;
@@ -117,7 +132,7 @@ footer p{
 
 
 
-/* ======== CELULARES ======== */
+/* ===== CELULARES ===== */
 
 @media (max-width:768px){
 
@@ -134,21 +149,34 @@ footer p{
 
 
     nav ul.menu{
+
         display:none;
+
         position:absolute;
         top:70px;
         left:0;
+
         width:100%;
+
         background:#111;
+
         flex-direction:column;
         align-items:center;
+
         gap:20px;
+
         padding:25px 0;
     }
 
 
     nav ul.menu.activo{
         display:flex;
+    }
+
+
+    .menu-btn img{
+        width:50px;
+        height:50px;
     }
 
 
