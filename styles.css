@@ -95,3 +95,35 @@ footer p{
     margin-top:15px;
     color:#ccc;
 }
+
+/* ======== CELULARES ======== */
+
+@media (max-width: 768px){
+
+    nav{
+        flex-direction:column;
+        gap:20px;
+        padding:20px;
+    }
+
+    nav ul{
+        flex-direction:column;
+        width:100%;
+        align-items:center;
+        gap:15px;
+    }
+
+    .hero h1{
+        font-size:2.3rem;
+    }
+
+    .hero p{
+        font-size:1rem;
+        padding:0 20px;
+    }
+
+    section{
+        padding:60px 25px;
+    }
+
+}
