@@ -26,10 +26,17 @@ nav{
     border-bottom:1px solid rgba(255,255,255,.1);
 }
 
-nav h2{
-    color:#ffcc00;
+
+/* LOGO */
+
+.logo img{
+    width:180px;
+    height:auto;
+    display:block;
 }
 
+
+/* MENU ESCRITORIO */
 
 nav ul{
     display:flex;
@@ -55,7 +62,7 @@ nav a:hover{
 
 
 
-/* ===== BOTON MENU PERSONALIZADO ===== */
+/* BOTON PERSONALIZADO */
 
 .menu-btn{
     display:none;
@@ -63,8 +70,6 @@ nav a:hover{
     border:none;
     cursor:pointer;
     padding:0;
-    width:40px;
-    height:40px;
 }
 
 
@@ -76,7 +81,7 @@ nav a:hover{
 
 
 
-/* ===== HERO ===== */
+/* HERO */
 
 .hero{
     height:90vh;
@@ -105,7 +110,6 @@ nav a:hover{
 }
 
 
-
 .boton{
     background:#ffcc00;
     color:#000;
@@ -117,7 +121,7 @@ nav a:hover{
 
 
 
-/* ===== SECCIONES ===== */
+/* SECCIONES */
 
 section{
     padding:80px 10%;
@@ -131,7 +135,7 @@ h2{
 
 
 
-/* ===== FOOTER ===== */
+/* FOOTER */
 
 footer{
     background:#000;
@@ -158,10 +162,13 @@ footer p{
     }
 
 
+    .logo img{
+        width:130px;
+    }
+
+
     .menu-btn{
         display:block;
-        width:40px;
-        height:40px;
     }
 
 
