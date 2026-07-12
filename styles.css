@@ -98,73 +98,16 @@ footer p{
 
 /* ======== CELULARES ======== */
 
-@media (max-width: 768px){
-
-    nav{
-        flex-direction:column;
-        padding:15px 10px;
-    }
-
-    nav h2{
-        font-size:1.3rem;
-        text-align:center;
-    }
-
-    nav ul{
-        flex-direction:row;
-        flex-wrap:wrap;
-        justify-content:center;
-        gap:8px;
-        width:100%;
-    }
-
-    nav a{
-        font-size:0.85rem;
-        padding:6px 10px;
-    }
-
-    .hero h1{
-        font-size:2.3rem;
-    }
-
-    .hero p{
-        font-size:1rem;
-        padding:0 20px;
-    }
-
-    section{
-        padding:60px 25px;
-    }
-
-}
-    section{
-        padding:60px 25px;
-    }
-
-}
-
-.menu-btn{
-    display:none;
-    background:none;
-    border:none;
-    color:white;
-    font-size:2rem;
-    cursor:pointer;
-}
-
-
-/* MENU CELULAR */
-
 @media (max-width:768px){
-
-    .menu-btn{
-        display:block;
-    }
 
     nav{
         flex-direction:row;
         justify-content:space-between;
-        position:sticky;
+        padding:15px 20px;
+    }
+
+    .menu-btn{
+        display:block;
     }
 
     nav ul.menu{
@@ -175,8 +118,8 @@ footer p{
         width:100%;
         background:#111;
         flex-direction:column;
-        align-items:center;
-        padding:20px 0;
+        gap:20px;
+        padding:25px 0;
     }
 
     nav ul.menu.activo{
