@@ -74,9 +74,10 @@ nav a:hover{
 
 
 .menu-btn img{
-    width:40px;
-    height:40px;
+    width:100px;
+    height:100px;
     object-fit:contain;
+    transform:translateX(-20px);
 }
 
 
@@ -173,8 +174,9 @@ footer p{
 
 
     .menu-btn img{
-        width:40px;
-        height:40px;
+        width:100px;
+        height:100px;
+        transform:translateX(-20px);
     }
 
 
