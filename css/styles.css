@@ -54,7 +54,8 @@ nav a:hover{
 }
 
 
-/* ===== BOTON PERSONALIZADO ===== */
+
+/* ===== BOTON MENU PERSONALIZADO ===== */
 
 .menu-btn{
     display:none;
@@ -62,14 +63,14 @@ nav a:hover{
     border:none;
     cursor:pointer;
     padding:0;
-    width:18px;
-    height:18px;
+    width:40px;
+    height:40px;
 }
 
 
 .menu-btn img{
-    width:18px;
-    height:18px;
+    width:40px;
+    height:40px;
     object-fit:contain;
 }
 
@@ -102,6 +103,7 @@ nav a:hover{
     font-size:1.2rem;
     margin-bottom:30px;
 }
+
 
 
 .boton{
@@ -158,14 +160,14 @@ footer p{
 
     .menu-btn{
         display:block;
-        width:18px;
-        height:18px;
+        width:40px;
+        height:40px;
     }
 
 
     .menu-btn img{
-        width:18px;
-        height:18px;
+        width:40px;
+        height:40px;
     }
 
 
