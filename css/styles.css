@@ -30,11 +30,13 @@ nav h2{
     color:#ffcc00;
 }
 
+
 nav ul{
     display:flex;
     list-style:none;
     gap:25px;
 }
+
 
 nav a{
     color:white;
@@ -45,13 +47,14 @@ nav a{
     border-radius:20px;
 }
 
+
 nav a:hover{
     color:#000;
     background:#ffcc00;
 }
 
 
-/* ===== BOTON MENU PERSONALIZADO ===== */
+/* ===== BOTON PERSONALIZADO ===== */
 
 .menu-btn{
     display:none;
@@ -59,13 +62,17 @@ nav a:hover{
     border:none;
     cursor:pointer;
     padding:0;
+    width:18px;
+    height:18px;
 }
+
 
 .menu-btn img{
     width:18px;
     height:18px;
     object-fit:contain;
 }
+
 
 
 /* ===== HERO ===== */
@@ -84,10 +91,12 @@ nav a:hover{
     center/cover;
 }
 
+
 .hero h1{
     font-size:4rem;
     margin-bottom:20px;
 }
+
 
 .hero p{
     font-size:1.2rem;
@@ -105,16 +114,19 @@ nav a:hover{
 }
 
 
+
 /* ===== SECCIONES ===== */
 
 section{
     padding:80px 10%;
 }
 
+
 h2{
     margin-bottom:20px;
     color:#ffcc00;
 }
+
 
 
 /* ===== FOOTER ===== */
@@ -125,6 +137,7 @@ footer{
     padding:50px 20px;
 }
 
+
 footer p{
     margin-top:15px;
     color:#ccc;
@@ -132,7 +145,7 @@ footer p{
 
 
 
-/* ===== VERSION CELULAR ===== */
+/* ===== CELULAR ===== */
 
 @media (max-width:768px){
 
@@ -145,12 +158,14 @@ footer p{
 
     .menu-btn{
         display:block;
+        width:18px;
+        height:18px;
     }
 
 
     .menu-btn img{
-        width:25px;
-        height:25px;
+        width:18px;
+        height:18px;
     }
 
 
