@@ -97,11 +97,7 @@ nav{
 
     width:100%;
 
-    max-width:1200px;
-
-    margin:auto;
-
-    padding:25px 30px;
+    padding:25px 40px;
 
     display:flex;
 
@@ -219,10 +215,9 @@ nav{
 
     padding:20px;
 
-    margin-top:-50px;
+    margin-top:20px;
 
 }
-
 
 
 .hero-etiqueta{
@@ -914,19 +909,18 @@ footer small{
 
     .hero{
 
-        background-position:center 35%;
+        background-position:center center;
 
     }
 
 }
 
 
-
 @media(max-width:900px){
 
     .hero{
 
-        background-position:center top;
+        background-position:center center;
 
     }
 
