@@ -4,14 +4,24 @@ const botonMenu = document.querySelector(".menu-btn");
 const menu = document.querySelector(".menu");
 const enlacesMenu = document.querySelectorAll(".menu a");
 
-botonMenu.addEventListener("click", () => {
-    menu.classList.toggle("activo");
-});
 
-enlacesMenu.forEach(enlace => {
-    enlace.addEventListener("click", () => {
-        setTimeout(() => {
-            menu.classList.remove("activo");
-        }, 200);
+if (botonMenu && menu) {
+
+    botonMenu.addEventListener("click", () => {
+
+        menu.classList.toggle("activo");
+
     });
-});
+
+
+    enlacesMenu.forEach(enlace => {
+
+        enlace.addEventListener("click", () => {
+
+            menu.classList.remove("activo");
+
+        });
+
+    });
+
+}
