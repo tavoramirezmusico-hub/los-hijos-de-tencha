@@ -44,7 +44,6 @@ nav ul{
     gap:25px;
 }
 
-
 nav a{
     color:white;
     text-decoration:none;
@@ -54,15 +53,13 @@ nav a{
     border-radius:20px;
 }
 
-
 nav a:hover{
     color:#000;
     background:#ffcc00;
 }
 
 
-
-/* BOTON PERSONALIZADO */
+/* BOTÓN PERSONALIZADO */
 
 .menu-btn{
     display:none;
@@ -72,14 +69,12 @@ nav a:hover{
     padding:0;
 }
 
-
 .menu-btn img{
     width:100px;
     height:100px;
     object-fit:contain;
     transform:translateX(-20px);
 }
-
 
 
 /* HERO */
@@ -94,7 +89,7 @@ nav a:hover{
 
     background-image:
         linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)),
-        url("img/hero.jpg");
+        url("../img/hero.jpg");
 
     background-size:cover;
     background-position:center;
@@ -107,12 +102,10 @@ nav a:hover{
     margin-bottom:20px;
 }
 
-
 .hero p{
     font-size:1.2rem;
     margin-bottom:30px;
 }
-
 
 .boton{
     background:#ffcc00;
@@ -124,19 +117,16 @@ nav a:hover{
 }
 
 
-
 /* SECCIONES */
 
 section{
     padding:80px 10%;
 }
 
-
 h2{
     margin-bottom:20px;
     color:#ffcc00;
 }
-
 
 
 /* FOOTER */
@@ -147,12 +137,10 @@ footer{
     padding:50px 20px;
 }
 
-
 footer p{
     margin-top:15px;
     color:#ccc;
 }
-
 
 
 /* ===== CELULAR ===== */
@@ -165,16 +153,13 @@ footer p{
         padding:15px 20px;
     }
 
-
     .logo img{
         width:130px;
     }
 
-
     .menu-btn{
         display:block;
     }
-
 
     .menu-btn img{
         width:100px;
@@ -182,43 +167,31 @@ footer p{
         transform:translateX(-20px);
     }
 
-
     nav ul.menu{
-
         display:none;
-
         position:absolute;
         top:70px;
         left:0;
-
         width:100%;
-
         background:#111;
-
         flex-direction:column;
         align-items:center;
-
         gap:20px;
-
         padding:25px 0;
     }
-
 
     nav ul.menu.activo{
         display:flex;
     }
 
-
     .hero h1{
         font-size:2.3rem;
     }
-
 
     .hero p{
         font-size:1rem;
         padding:0 20px;
     }
-
 
     section{
         padding:60px 25px;
