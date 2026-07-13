@@ -131,6 +131,9 @@ nav a:hover{
     border-radius:40px;
     text-decoration:none;
     font-weight:bold;
+    .evento .boton{
+    margin-top:40px;
+}
 }
 
 
