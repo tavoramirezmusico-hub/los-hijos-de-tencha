@@ -909,7 +909,7 @@ footer small{
 
     .hero{
 
-        background-position:center center;
+        background-size:100% auto;
 
     }
 
@@ -920,11 +920,12 @@ footer small{
 
     .hero{
 
+        background-size:100% auto;
         background-position:center center;
+        background-repeat:no-repeat;
 
     }
 
 }
-
 
 /* FIN DEL ARCHIVO */
