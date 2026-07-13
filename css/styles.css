@@ -80,7 +80,7 @@ nav a:hover{
 /* HERO */
 
 .hero{
-    height:65vh;
+    height:45vh;
     display:flex;
     flex-direction:column;
     justify-content:center;
