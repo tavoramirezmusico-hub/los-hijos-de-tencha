@@ -1197,3 +1197,141 @@ footer small{
 
 }
 
+/* =====================================
+   TIENDA OFICIAL
+===================================== */
+
+.tienda{
+
+    text-align:center;
+    padding:80px 20px;
+
+}
+
+
+.tienda h2{
+
+    font-size:35px;
+    margin-bottom:40px;
+
+}
+
+
+
+.producto-principal img{
+
+    width:320px;
+    max-width:90%;
+    border-radius:15px;
+    cursor:pointer;
+    transition:.3s;
+
+}
+
+
+.producto-principal img:hover{
+
+    transform:scale(1.05);
+
+}
+
+
+.producto-principal h3{
+
+    margin-top:20px;
+    font-size:25px;
+
+}
+
+
+.producto-principal p{
+
+    font-size:24px;
+    font-weight:bold;
+    margin:15px;
+
+}
+
+
+.producto-principal button{
+
+    background:#c1121f;
+    color:white;
+    border:none;
+    padding:12px 25px;
+    border-radius:25px;
+    cursor:pointer;
+    font-size:16px;
+
+}
+
+
+
+.galeria-camisetas{
+
+    display:none;
+
+    margin-top:50px;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:30px;
+
+}
+
+
+.galeria-camisetas.mostrar{
+
+    display:grid;
+
+}
+
+
+
+.camiseta{
+
+    background:#1a1a1a;
+    padding:20px;
+    border-radius:15px;
+
+}
+
+
+.camiseta img{
+
+    width:100%;
+    border-radius:10px;
+
+}
+
+
+.camiseta p{
+
+    font-size:18px;
+    margin:15px 0;
+
+}
+
+
+.camiseta a{
+
+    display:inline-block;
+
+    background:#25d366;
+
+    color:white;
+
+    text-decoration:none;
+
+    padding:10px 20px;
+
+    border-radius:25px;
+
+}
+
+
+.camiseta a:hover{
+
+    opacity:.8;
+
+}
