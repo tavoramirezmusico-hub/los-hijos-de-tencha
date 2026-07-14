@@ -1139,13 +1139,13 @@ footer small{
 
     position:fixed;
 
-    bottom:25px;
+    bottom:20px;
 
-    right:25px;
+    right:20px;
 
-    width:55px;
+    width:42px;
 
-    height:55px;
+    height:42px;
 
     border:none;
 
@@ -1155,7 +1155,7 @@ footer small{
 
     color:#000;
 
-    font-size:1.5rem;
+    font-size:1.1rem;
 
     cursor:pointer;
 
@@ -1179,7 +1179,7 @@ footer small{
 
 #subir.visible{
 
-    opacity:1;
+    opacity:.85;
 
     visibility:visible;
 
@@ -1189,7 +1189,9 @@ footer small{
 
 #subir:hover{
 
-    transform:translateY(-5px);
+    transform:translateY(-4px);
+
+    opacity:1;
 
     background:white;
 
