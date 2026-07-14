@@ -177,3 +177,42 @@ function mostrarCamisetas(){
     galeria.classList.toggle("mostrar");
 
 }
+
+const imagenesCamisetas = document.querySelectorAll(".camiseta img");
+
+const visor = document.getElementById("visor-camiseta");
+
+const imagenAmpliada = document.getElementById("imagen-ampliada");
+
+const cerrar = document.getElementById("cerrar-visor");
+
+
+imagenesCamisetas.forEach(imagen => {
+
+    imagen.addEventListener("click", function(){
+
+        visor.style.display="flex";
+
+        imagenAmpliada.src=this.src;
+
+    });
+
+});
+
+
+cerrar.addEventListener("click", function(){
+
+    visor.style.display="none";
+
+});
+
+
+visor.addEventListener("click", function(e){
+
+    if(e.target === visor){
+
+        visor.style.display="none";
+
+    }
+
+});
