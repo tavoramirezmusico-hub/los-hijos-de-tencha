@@ -1,15 +1,35 @@
-// Abrir siempre la página desde el inicio
+// =====================================
+// LOS HIJOS DE TENCHA
+// SCRIPT.JS
+// =====================================
+
+
+// ABRIR SIEMPRE LA PÁGINA DESDE EL INICIO
 
 if ("scrollRestoration" in history) {
     history.scrollRestoration = "manual";
 }
 
 window.addEventListener("load", () => {
-    window.scrollTo(0, 0);
+
+    setTimeout(() => {
+
+        window.scrollTo(0, 0);
+
+    }, 50);
+
 });
 
 
+
 console.log("Sitio Oficial de Los Hijos de Tencha");
+
+
+
+// =====================================
+// MENU HAMBURGUESA
+// =====================================
+
 
 const botonMenu = document.querySelector(".menu-btn");
 const menu = document.querySelector(".menu");
@@ -18,6 +38,7 @@ const enlacesMenu = document.querySelectorAll(".menu a");
 
 if (botonMenu && menu) {
 
+
     botonMenu.addEventListener("click", () => {
 
         menu.classList.toggle("activo");
@@ -25,7 +46,9 @@ if (botonMenu && menu) {
     });
 
 
+
     enlacesMenu.forEach(enlace => {
+
 
         enlace.addEventListener("click", () => {
 
@@ -33,35 +56,54 @@ if (botonMenu && menu) {
 
         });
 
+
     });
+
 
 }
 
-// AMPLIAR FOTOS DE GALERIA
 
-const fotos = document.querySelectorAll(".foto img");
+
+// =====================================
+// AMPLIAR IMÁGENES
+// GALERÍA + EVENTO STARVIEW
+// =====================================
+
+
+const fotos = document.querySelectorAll(".foto img, .imagen-evento img");
+
 
 fotos.forEach(foto => {
 
+
     foto.addEventListener("click", () => {
+
 
         const ventana = document.createElement("div");
 
+
         ventana.className = "visor";
+
 
         ventana.innerHTML = `
             <img src="${foto.src}">
         `;
 
+
         document.body.appendChild(ventana);
+
 
 
         ventana.addEventListener("click", () => {
 
+
             ventana.remove();
+
 
         });
 
+
     });
+
 
 });
