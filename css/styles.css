@@ -1057,3 +1057,76 @@ footer small{
 
 }
 
+/* =====================================
+   ANIMACIONES
+===================================== */
+
+
+.animar{
+
+    opacity:0;
+
+    transform:translateY(40px);
+
+    transition:all .8s ease;
+
+}
+
+
+.animar.visible{
+
+    opacity:1;
+
+    transform:translateY(0);
+
+}
+
+
+/* Efecto suave para botones */
+
+.boton{
+
+    transition:
+    transform .3s ease,
+    box-shadow .3s ease;
+
+}
+
+
+.boton:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:0 10px 20px rgba(255,204,0,.25);
+
+}
+
+
+/* Efecto para tarjetas */
+
+.card-evento,
+.foto,
+.redes a{
+
+    transition:
+    transform .3s ease,
+    box-shadow .3s ease;
+
+}
+
+
+.card-evento:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 15px 35px rgba(0,0,0,.4);
+
+}
+
+
+.foto:hover{
+
+    transform:translateY(-8px);
+
+}
+
