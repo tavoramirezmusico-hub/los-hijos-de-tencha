@@ -105,3 +105,31 @@ if (galeria && btnIzquierda && btnDerecha) {
     });
 
 }
+
+// Animaciones al hacer scroll
+
+const elementosAnimados = document.querySelectorAll(".animar");
+
+
+const observador = new IntersectionObserver((entradas)=>{
+
+    entradas.forEach(entrada=>{
+
+        if(entrada.isIntersecting){
+
+            entrada.target.classList.add("visible");
+
+        }
+
+    });
+
+},{
+    threshold:0.15
+});
+
+
+elementosAnimados.forEach(elemento=>{
+
+    observador.observe(elemento);
+
+});
