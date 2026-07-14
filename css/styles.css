@@ -975,3 +975,44 @@ footer small{
     border-radius:15px;
 
 }
+
+/* =====================================
+   REPRODUCTOR YOUTUBE
+===================================== */
+
+
+#musica{
+
+    background:#111;
+
+}
+
+
+
+.youtube-player{
+
+    max-width:900px;
+
+    margin:auto;
+
+    aspect-ratio:16/9;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.5);
+
+}
+
+
+
+.youtube-player iframe{
+
+    width:100%;
+
+    height:100%;
+
+    display:block;
+
+}
