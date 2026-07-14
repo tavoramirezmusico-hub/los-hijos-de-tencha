@@ -1335,3 +1335,28 @@ footer small{
     opacity:.8;
 
 }
+
+/* Centrar producto principal de tienda */
+
+.producto-principal{
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+}
+
+
+.producto-principal img{
+
+    width:320px;
+    max-width:90%;
+    height:auto;
+    display:block;
+    margin:0 auto;
+    border-radius:15px;
+    cursor:pointer;
+    transition:.3s;
+
+}
