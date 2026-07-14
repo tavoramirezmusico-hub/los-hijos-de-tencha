@@ -107,3 +107,33 @@ fotos.forEach(foto => {
 
 
 });
+
+// =====================================
+// CARRUSEL GALERÍA
+// =====================================
+
+const galeria = document.querySelector(".galeria-grid");
+const btnIzquierda = document.querySelector(".flecha.izquierda");
+const btnDerecha = document.querySelector(".flecha.derecha");
+
+if (galeria && btnIzquierda && btnDerecha) {
+
+    btnDerecha.addEventListener("click", () => {
+
+        galeria.scrollBy({
+            left: 320,
+            behavior: "smooth"
+        });
+
+    });
+
+    btnIzquierda.addEventListener("click", () => {
+
+        galeria.scrollBy({
+            left: -320,
+            behavior: "smooth"
+        });
+
+    });
+
+}
