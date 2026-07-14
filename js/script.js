@@ -169,3 +169,11 @@ botonSubir.addEventListener("click",()=>{
 
 
 });
+
+function mostrarCamisetas(){
+
+    const galeria = document.getElementById("galeria-camisetas");
+
+    galeria.classList.toggle("mostrar");
+
+}
