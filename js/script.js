@@ -133,3 +133,68 @@ elementosAnimados.forEach(elemento=>{
     observador.observe(elemento);
 
 });
+
+/* =====================================
+   BOTON SUBIR ARRIBA
+===================================== */
+
+
+#subir{
+
+    position:fixed;
+
+    bottom:25px;
+
+    right:25px;
+
+    width:55px;
+
+    height:55px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#ffcc00;
+
+    color:#000;
+
+    font-size:1.5rem;
+
+    cursor:pointer;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transition:.3s;
+
+    z-index:999;
+
+}
+
+
+
+#subir.visible{
+
+    opacity:1;
+
+    visibility:visible;
+
+}
+
+
+
+#subir:hover{
+
+    transform:translateY(-5px);
+
+    background:white;
+
+}
