@@ -988,12 +988,13 @@ footer small{
 }
 
 
-
 .youtube-player{
+
+    width:100%;
 
     max-width:900px;
 
-    margin:auto;
+    margin:0 auto;
 
     aspect-ratio:16/9;
 
@@ -1006,7 +1007,6 @@ footer small{
 }
 
 
-
 .youtube-player iframe{
 
     width:100%;
@@ -1014,5 +1014,12 @@ footer small{
     height:100%;
 
     display:block;
+
+}
+
+
+#musica .contenedor{
+
+    text-align:center;
 
 }
