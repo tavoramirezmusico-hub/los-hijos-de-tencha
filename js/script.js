@@ -1,3 +1,14 @@
+// Abrir siempre la página desde el inicio
+
+if ("scrollRestoration" in history) {
+    history.scrollRestoration = "manual";
+}
+
+window.addEventListener("load", () => {
+    window.scrollTo(0, 0);
+});
+
+
 console.log("Sitio Oficial de Los Hijos de Tencha");
 
 const botonMenu = document.querySelector(".menu-btn");
