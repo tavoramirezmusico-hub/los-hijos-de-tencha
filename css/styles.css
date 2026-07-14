@@ -1039,3 +1039,94 @@ footer small{
 
 
 }
+
+/* =====================================
+   CARRUSEL GALERÍA
+===================================== */
+
+.galeria-wrapper{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+
+.galeria-grid{
+
+    display:flex;
+
+    overflow-x:hidden;
+
+    gap:20px;
+
+    scroll-behavior:smooth;
+
+    flex:1;
+
+}
+
+
+.foto{
+
+    min-width:300px;
+
+    height:250px;
+
+    border-radius:15px;
+
+    overflow:hidden;
+
+    cursor:pointer;
+
+    flex-shrink:0;
+
+}
+
+
+.flecha{
+
+    width:55px;
+
+    height:55px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#ffcc00;
+
+    color:#000;
+
+    font-size:2rem;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+
+.flecha:hover{
+
+    transform:scale(1.1);
+
+    background:#fff;
+
+}
+
+
+@media(max-width:900px){
+
+    .flecha{
+
+        display:none;
+
+    }
+
+}
