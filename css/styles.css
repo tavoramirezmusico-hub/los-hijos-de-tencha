@@ -524,49 +524,6 @@ nav{
 
 
 
-.galeria-grid{
-
-    display:flex;
-
-    overflow-x:auto;
-
-    gap:20px;
-
-    scroll-snap-type:x mandatory;
-
-    padding-bottom:20px;
-
-}
-
-
-.galeria-grid::-webkit-scrollbar{
-
-    height:8px;
-
-}
-
-
-
-.foto{
-
-    min-width:300px;
-
-    height:250px;
-
-    border-radius:15px;
-
-    overflow:hidden;
-
-    background:#222;
-
-    cursor:pointer;
-
-    scroll-snap-align:center;
-
-}
-
-
-
 .foto img{
 
     width:100%;
