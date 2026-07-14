@@ -1360,3 +1360,35 @@ footer small{
     transition:.3s;
 
 }
+
+/* =====================================
+   ANIMACION BOTONES REDES SOCIALES
+===================================== */
+
+
+.redes a{
+
+    transition: all .3s ease;
+
+}
+
+
+.redes a:hover{
+
+    transform: translateY(-8px) scale(1.15);
+
+}
+
+
+.redes a i{
+
+    transition: .3s ease;
+
+}
+
+
+.redes a:hover i{
+
+    filter: drop-shadow(0 0 10px white);
+
+}
