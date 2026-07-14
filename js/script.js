@@ -25,3 +25,32 @@ if (botonMenu && menu) {
     });
 
 }
+
+// AMPLIAR FOTOS DE GALERIA
+
+const fotos = document.querySelectorAll(".foto img");
+
+fotos.forEach(foto => {
+
+    foto.addEventListener("click", () => {
+
+        const ventana = document.createElement("div");
+
+        ventana.className = "visor";
+
+        ventana.innerHTML = `
+            <img src="${foto.src}">
+        `;
+
+        document.body.appendChild(ventana);
+
+
+        ventana.addEventListener("click", () => {
+
+            ventana.remove();
+
+        });
+
+    });
+
+});
