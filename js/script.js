@@ -134,67 +134,38 @@ elementosAnimados.forEach(elemento=>{
 
 });
 
-/* =====================================
-   BOTON SUBIR ARRIBA
-===================================== */
+// Botón subir arriba
+
+const botonSubir = document.getElementById("subir");
 
 
-#subir{
-
-    position:fixed;
-
-    bottom:25px;
-
-    right:25px;
-
-    width:55px;
-
-    height:55px;
-
-    border:none;
-
-    border-radius:50%;
-
-    background:#ffcc00;
-
-    color:#000;
-
-    font-size:1.5rem;
-
-    cursor:pointer;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    opacity:0;
-
-    visibility:hidden;
-
-    transition:.3s;
-
-    z-index:999;
-
-}
+window.addEventListener("scroll",()=>{
 
 
+    if(window.scrollY > 400){
 
-#subir.visible{
+        botonSubir.classList.add("visible");
 
-    opacity:1;
+    }else{
 
-    visibility:visible;
+        botonSubir.classList.remove("visible");
 
-}
+    }
 
 
+});
 
-#subir:hover{
 
-    transform:translateY(-5px);
+botonSubir.addEventListener("click",()=>{
 
-    background:white;
 
-}
+    window.scrollTo({
+
+        top:0,
+
+        behavior:"smooth"
+
+    });
+
+
+});
