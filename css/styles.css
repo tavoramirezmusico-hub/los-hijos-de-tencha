@@ -1398,9 +1398,16 @@ footer small{
 ===================================== */
 
 
+.camiseta{
+
+    overflow:visible;
+
+}
+
+
 .camiseta img{
 
-    transition: transform .3s ease;
+    transition:transform .3s ease;
 
     cursor:pointer;
 
@@ -1408,6 +1415,13 @@ footer small{
 
 
 .camiseta img:hover{
+
+    transform:scale(1.15);
+
+}
+
+
+.camiseta img:active{
 
     transform:scale(1.15);
 
