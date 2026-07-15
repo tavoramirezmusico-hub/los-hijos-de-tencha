@@ -1491,6 +1491,7 @@ footer small{
 
 }
 
+
 .integrantes h2{
 
     font-size:2.5rem;
@@ -1498,6 +1499,7 @@ footer small{
     color:#fff;
 
 }
+
 
 .grid-integrantes{
 
@@ -1507,6 +1509,7 @@ footer small{
 
 }
 
+
 .grid-integrantes img{
 
     width:100%;
@@ -1514,16 +1517,19 @@ footer small{
     object-fit:cover;
     border-radius:20px;
     cursor:pointer;
-    transition:.3s;
+    transition:.6s ease;
     box-shadow:0 10px 25px rgba(0,0,0,.45);
     display:block;
 
 }
 
-}
+
+/* DESTELLO AL PASAR EL MOUSE */
 
 .grid-integrantes img:hover{
 
-    transform:scale(1.05);
+    box-shadow:
+    0 0 15px rgba(255,204,0,.8),
+    0 0 35px rgba(255,204,0,.5);
 
 }
