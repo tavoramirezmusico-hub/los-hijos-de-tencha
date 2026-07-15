@@ -1533,3 +1533,21 @@ footer small{
     0 0 35px rgba(255,204,0,.5);
 
 }
+
+/* =====================================
+   TEXTO DEBAJO DEL MENU DIABLITO
+===================================== */
+
+#menu-btn{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
+
+#menu-btn span{
+    color:white;
+    font-size:14px;
+    margin-top:5px;
+    font-weight:600;
+}
