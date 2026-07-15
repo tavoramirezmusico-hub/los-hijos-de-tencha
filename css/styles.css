@@ -1538,13 +1538,6 @@ footer small{
    TEXTO DEBAJO DEL MENU DIABLITO
 ===================================== */
 
-#menu-btn{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-}
-
 #menu-btn span{
 
     color:#ffcc00;
@@ -1555,4 +1548,17 @@ footer small{
     text-transform:uppercase;
 
 }
+
+
+@media(max-width:900px){
+
+    #menu-btn{
+
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+
+    }
+
 }
