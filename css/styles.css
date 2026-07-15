@@ -97,7 +97,6 @@ section{
    NAV
 ===================================== */
 
-
 nav{
 
     width:100%;
@@ -119,7 +118,7 @@ nav{
 
 .logo img{
 
-    width:220px;
+    width:260px;
 
     height:auto;
 
@@ -135,10 +134,9 @@ nav{
 
     list-style:none;
 
-    gap:25px;
+    gap:18px;
 
 }
-
 
 
 .menu li a{
