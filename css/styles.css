@@ -815,7 +815,10 @@ footer small{
         padding:25px;
 
         background:rgba(17,17,17,.85);
-
+       
+backdrop-filter:blur(8px);
+-webkit-backdrop-filter:blur(8px);
+       
         border-radius:20px;
 
         flex-direction:column;
