@@ -106,10 +106,12 @@ if (galeria && btnIzquierda && btnDerecha) {
 
 }
 
-// Animaciones al hacer scroll
+
+// =====================================
+// ANIMACIONES AL HACER SCROLL
+// =====================================
 
 const elementosAnimados = document.querySelectorAll(".animar");
-
 
 const observador = new IntersectionObserver((entradas)=>{
 
@@ -127,20 +129,20 @@ const observador = new IntersectionObserver((entradas)=>{
     threshold:0.15
 });
 
-
 elementosAnimados.forEach(elemento=>{
 
     observador.observe(elemento);
 
 });
 
-// Botón subir arriba
+
+// =====================================
+// BOTÓN SUBIR ARRIBA
+// =====================================
 
 const botonSubir = document.getElementById("subir");
 
-
 window.addEventListener("scroll",()=>{
-
 
     if(window.scrollY > 400){
 
@@ -152,12 +154,9 @@ window.addEventListener("scroll",()=>{
 
     }
 
-
 });
 
-
 botonSubir.addEventListener("click",()=>{
-
 
     window.scrollTo({
 
@@ -167,8 +166,12 @@ botonSubir.addEventListener("click",()=>{
 
     });
 
-
 });
+
+
+// =====================================
+// MOSTRAR CAMISETAS
+// =====================================
 
 function mostrarCamisetas(){
 
@@ -178,7 +181,13 @@ function mostrarCamisetas(){
 
 }
 
-const imagenesCamisetas = document.querySelectorAll(".camiseta img");
+
+// =====================================
+// VISOR DE IMÁGENES
+// (CAMISETAS + INTEGRANTES)
+// =====================================
+
+const imagenes = document.querySelectorAll(".camiseta img, .zoom-integrante");
 
 const visor = document.getElementById("visor-camiseta");
 
@@ -186,32 +195,29 @@ const imagenAmpliada = document.getElementById("imagen-ampliada");
 
 const cerrar = document.getElementById("cerrar-visor");
 
-
-imagenesCamisetas.forEach(imagen => {
+imagenes.forEach(imagen => {
 
     imagen.addEventListener("click", function(){
 
-        visor.style.display="flex";
+        imagenAmpliada.src = this.src;
 
-        imagenAmpliada.src=this.src;
+        visor.style.display = "flex";
 
     });
 
 });
 
-
 cerrar.addEventListener("click", function(){
 
-    visor.style.display="none";
+    visor.style.display = "none";
 
 });
-
 
 visor.addEventListener("click", function(e){
 
     if(e.target === visor){
 
-        visor.style.display="none";
+        visor.style.display = "none";
 
     }
 
