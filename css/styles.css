@@ -1566,3 +1566,33 @@ backdrop-filter:blur(8px);
     }
 
 }
+
+/* =====================================
+   CREDITO DISEÑADOR
+===================================== */
+
+.credito-web{
+
+    margin-top:15px;
+    font-size:.9rem;
+    color:#999;
+    letter-spacing:.5px;
+    text-align:center;
+
+}
+
+.credito-web a{
+
+    color:#ffcc00;
+    text-decoration:none;
+    font-weight:600;
+    transition:.3s;
+
+}
+
+.credito-web a:hover{
+
+    color:#ffffff;
+    text-shadow:0 0 8px rgba(255,204,0,.7);
+
+}
