@@ -1586,13 +1586,26 @@ backdrop-filter:blur(8px);
     color:#ffcc00;
     text-decoration:none;
     font-weight:600;
-    transition:.3s;
+    display:inline-block;
+    transition:
+        color .3s ease,
+        transform .3s ease,
+        text-shadow .3s ease;
 
 }
 
 .credito-web a:hover{
 
     color:#ffffff;
-    text-shadow:0 0 8px rgba(255,204,0,.7);
+    transform:translateY(-2px) scale(1.08);
+    text-shadow:
+        0 0 8px rgba(255,204,0,.8),
+        0 0 15px rgba(255,204,0,.5);
+
+}
+
+.credito-web a:active{
+
+    transform:scale(.95);
 
 }
