@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/sitemap.xml
