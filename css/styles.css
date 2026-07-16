@@ -282,15 +282,21 @@ nav{
 
 .boton{
 
-    padding:14px 35px;
+    padding:16px 45px;
+
+    min-width:220px;
 
     border-radius:40px;
 
     font-weight:700;
 
+    font-size:1.1rem;
+
     transition:.3s;
 
     display:inline-block;
+
+    text-align:center;
 
 }
 
@@ -1618,5 +1624,17 @@ backdrop-filter:blur(8px);
 .credito-web a:active{
 
     transform:scale(.95);
+
+}
+
+.principal{
+
+    background:#ffcc00;
+
+    color:#000;
+
+    font-size:1.2rem;
+
+    box-shadow:0 8px 20px rgba(255,204,0,.35);
 
 }
