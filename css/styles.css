@@ -932,10 +932,7 @@ backdrop-filter:blur(8px);
 
 
 
-
-
 @media(max-width:480px){
-
 
 
     section{
@@ -945,13 +942,11 @@ backdrop-filter:blur(8px);
     }
 
 
-
     .logo img{
 
         width:130px;
 
     }
-
 
 
     .menu-btn img{
@@ -961,13 +956,28 @@ backdrop-filter:blur(8px);
     }
 
 
+    .redes{
+
+        gap:15px;
+        flex-wrap:wrap;
+
+    }
+
+
+    .redes a{
+
+        width:55px;
+        height:55px;
+        font-size:1.6rem;
+
+    }
+
 
     .hero h1{
 
         font-size:2rem;
 
     }
-
 
 
     .titulo-seccion h2{
@@ -978,6 +988,7 @@ backdrop-filter:blur(8px);
 
 
 }
+
 
 /* =====================================
    GALERIA GRID FINAL
