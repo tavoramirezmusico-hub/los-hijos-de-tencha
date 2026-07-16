@@ -465,15 +465,14 @@ nav{
 
 .fecha{
 
-    width:90px;
-
-    height:90px;
+    width:130px;
+    height:130px;
 
     background:#ffcc00;
 
     color:#000;
 
-    border-radius:15px;
+    border-radius:20px;
 
     display:flex;
 
@@ -483,13 +482,15 @@ nav{
 
     align-items:center;
 
+    flex-shrink:0;
+
 }
 
 
 
 .fecha h3{
 
-    font-size:2.5rem;
+    font-size:4rem;
 
     line-height:1;
 
@@ -500,6 +501,8 @@ nav{
 .fecha span{
 
     font-weight:bold;
+
+    font-size:1.2rem;
 
 }
 
