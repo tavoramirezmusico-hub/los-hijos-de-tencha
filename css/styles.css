@@ -2046,13 +2046,13 @@ backdrop-filter:blur(8px);
 }
 
 /* =====================================
-   REPRODUCTOR SPOTIFY CANCIONES
+   REPRODUCTOR SPOTIFY COMPACTO
 ===================================== */
 
 .spotify{
 
-    max-width:700px;
+    max-width:500px;
 
-    margin:30px auto 0;
+    margin:20px auto 0;
 
 }
