@@ -390,3 +390,29 @@ if(visor && imagenAmpliada){
 
 
 }
+
+// =====================================
+// TRANSICIÓN ENTRE PÁGINAS
+// =====================================
+
+const pantallaTransicion = document.getElementById("transicion");
+
+document.querySelectorAll('a[href="canciones.html"], a[href="index.html"]').forEach(enlace => {
+
+    enlace.addEventListener("click", function(e){
+
+        e.preventDefault();
+
+        const destino = this.getAttribute("href");
+
+        pantallaTransicion.classList.add("activo");
+
+        setTimeout(() => {
+
+            window.location.href = destino;
+
+        }, 1200);
+
+    });
+
+});
