@@ -2182,3 +2182,226 @@ backdrop-filter:blur(8px);
     }
 
 }
+
+/* =====================================
+   CANCIONERO DESPLEGABLE
+===================================== */
+
+
+.lista-canciones{
+
+    display:flex;
+    flex-direction:column;
+    gap:25px;
+
+}
+
+
+
+.cancion{
+
+    background:#1c1c1c;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    box-shadow:0 15px 35px rgba(0,0,0,.4);
+
+}
+
+
+
+.cancion summary{
+
+    list-style:none;
+
+    cursor:pointer;
+
+    padding:25px;
+
+    color:#ffcc00;
+
+    font-size:1.6rem;
+
+    font-weight:700;
+
+    text-align:center;
+
+    transition:.3s;
+
+}
+
+
+
+.cancion summary::-webkit-details-marker{
+
+    display:none;
+
+}
+
+
+
+.cancion summary:hover{
+
+    background:#222;
+
+}
+
+
+
+.cancion summary::after{
+
+    content:" +";
+
+    font-size:1.5rem;
+
+}
+
+
+
+.cancion[open] summary::after{
+
+    content:" −";
+
+}
+
+
+
+.contenido-cancion{
+
+    padding:0 30px 30px;
+
+    animation:abrirCancion .4s ease;
+
+}
+
+
+
+@keyframes abrirCancion{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(-10px);
+
+    }
+
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+
+
+.escuchar-cancion{
+
+    text-align:center;
+
+    color:#ddd;
+
+    margin-bottom:15px;
+
+    font-weight:600;
+
+}
+
+
+
+/* Spotify */
+
+.spotify{
+
+    max-width:500px;
+
+    margin:20px auto 30px;
+
+}
+
+
+
+.spotify iframe{
+
+    width:100%;
+
+    height:152px;
+
+}
+
+
+
+/* Letras */
+
+.letra-cancion{
+
+    background:#111;
+
+    padding:30px;
+
+    border-radius:15px;
+
+}
+
+
+
+.letra-cancion p{
+
+    white-space:pre-line;
+
+    line-height:1.8;
+
+    text-align:center;
+
+    color:#ddd;
+
+}
+
+
+
+
+
+/* CELULAR */
+
+@media(max-width:600px){
+
+
+    .cancion summary{
+
+        font-size:1.2rem;
+
+        padding:20px;
+
+    }
+
+
+    .contenido-cancion{
+
+        padding:0 15px 20px;
+
+    }
+
+
+    .letra-cancion{
+
+        padding:20px;
+
+    }
+
+
+    .letra-cancion p{
+
+        font-size:.95rem;
+
+        line-height:1.6;
+
+    }
+
+
+}
