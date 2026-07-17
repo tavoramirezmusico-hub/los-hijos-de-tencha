@@ -2452,3 +2452,37 @@ footer small{
     transform:translateY(-3px);
 
 }
+
+/* =====================================
+   TRANSICIÓN ENTRE PÁGINAS
+===================================== */
+
+#transicion{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: opacity .4s ease;
+    z-index: 99999;
+}
+
+#transicion.activo{
+    opacity: 1;
+    visibility: visible;
+}
+
+#transicion img{
+    width: 250px;
+    max-width: 70vw;
+    height: auto;
+}
