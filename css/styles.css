@@ -2040,7 +2040,7 @@ backdrop-filter:blur(8px);
 .letra-cancion p{
 
     white-space:pre-wrap;
-
     line-height:1.8;
+    text-align:center;
 
 }
