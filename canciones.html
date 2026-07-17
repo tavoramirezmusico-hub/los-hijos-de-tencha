@@ -631,6 +631,25 @@ canciones.forEach(cancion => {
 
 </script>
 
+<script>
+
+document.querySelectorAll(".volver-cancionero").forEach(boton => {
+
+    boton.addEventListener("click", () => {
+
+        document.querySelectorAll(".cancion").forEach(cancion => {
+
+            cancion.removeAttribute("open");
+
+        });
+
+    });
+
+});
+
+</script>
+
+        
 </body>
 
 
