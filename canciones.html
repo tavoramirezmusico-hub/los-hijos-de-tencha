@@ -603,7 +603,33 @@ Tavo Músico
 
 </footer>
 
+<script>
 
+const canciones = document.querySelectorAll(".cancion");
+
+canciones.forEach(cancion => {
+
+    cancion.addEventListener("toggle", function(){
+
+        if(this.open){
+
+            canciones.forEach(otra =>{
+
+                if(otra !== this){
+
+                    otra.removeAttribute("open");
+
+                }
+
+            });
+
+        }
+
+    });
+
+});
+
+</script>
 
 </body>
 
