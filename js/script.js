@@ -395,23 +395,31 @@ if(visor && imagenAmpliada){
 // TRANSICIÓN ENTRE PÁGINAS
 // =====================================
 
-const pantallaTransicion = document.getElementById("transicion");
+document.addEventListener("DOMContentLoaded", () => {
 
-document.querySelectorAll('a[href="canciones.html"], a[href="index.html"]').forEach(enlace => {
+    const pantallaTransicion = document.getElementById("transicion");
 
-    enlace.addEventListener("click", function(e){
+    if (!pantallaTransicion) return;
 
-        e.preventDefault();
+    const enlaces = document.querySelectorAll('a[href="canciones.html"], a[href="index.html"]');
 
-        const destino = this.getAttribute("href");
+    enlaces.forEach(enlace => {
 
-        pantallaTransicion.classList.add("activo");
+        enlace.addEventListener("click", function(e){
 
-        setTimeout(() => {
+            e.preventDefault();
 
-            window.location.href = destino;
+            const destino = this.href;
 
-        }, 1200);
+            pantallaTransicion.classList.add("activo");
+
+            setTimeout(() => {
+
+                window.location.href = destino;
+
+            }, 1200);
+
+        });
 
     });
 
