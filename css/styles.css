@@ -1840,3 +1840,195 @@ backdrop-filter:blur(8px);
 
 
 }
+
+/* =====================================
+   CANCIONES
+===================================== */
+
+
+.hero-canciones{
+
+    min-height:60vh;
+
+    background:
+
+    linear-gradient(
+        rgba(0,0,0,.65),
+        rgba(0,0,0,.75)
+    ),
+
+    url("../img/hero.webp");
+
+
+    background-size:cover;
+
+    background-position:center;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+
+.titulo-canciones{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+    padding:40px;
+
+}
+
+
+
+.titulo-canciones span{
+
+    color:#ffcc00;
+
+    letter-spacing:3px;
+
+    font-weight:700;
+
+}
+
+
+
+.titulo-canciones h1{
+
+    font-size:4rem;
+
+    margin:15px 0;
+
+}
+
+
+
+.titulo-canciones p{
+
+    font-size:1.2rem;
+
+}
+
+
+
+
+
+.canciones{
+
+    background:#111;
+
+}
+
+
+
+
+
+.lista-canciones{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:40px;
+
+}
+
+
+
+
+
+.tarjeta-cancion{
+
+    background:#1c1c1c;
+
+    padding:40px;
+
+    border-radius:20px;
+
+    box-shadow:0 15px 35px rgba(0,0,0,.4);
+
+}
+
+
+
+
+
+.tarjeta-cancion h3{
+
+    color:#ffcc00;
+
+    font-size:2rem;
+
+    text-align:center;
+
+    margin-bottom:30px;
+
+}
+
+
+
+
+
+.letra-cancion{
+
+    background:#111;
+
+    padding:30px;
+
+    border-radius:15px;
+
+    color:#ddd;
+
+    font-size:1.1rem;
+
+    line-height:1.8;
+
+    margin-bottom:30px;
+
+}
+
+
+
+
+
+.spotify iframe{
+
+    width:100%;
+
+    border-radius:12px;
+
+}
+
+
+
+
+
+@media(max-width:900px){
+
+
+.titulo-canciones h1{
+
+    font-size:2.5rem;
+
+}
+
+
+.tarjeta-cancion{
+
+    padding:25px;
+
+}
+
+
+}
