@@ -2405,3 +2405,36 @@ backdrop-filter:blur(8px);
 
 
 }
+
+/* =====================================
+   BOTÓN VOLVER AL CANCIONERO
+===================================== */
+
+.volver-cancionero{
+
+    display:table;
+
+    margin:35px auto 0;
+
+    padding:12px 28px;
+
+    background:#d72638;
+    color:#fff;
+
+    text-decoration:none;
+    font-weight:600;
+    font-size:.95rem;
+
+    border-radius:40px;
+
+    transition:.3s ease;
+
+}
+
+.volver-cancionero:hover{
+
+    background:#f44336;
+
+    transform:translateY(-3px);
+
+}
