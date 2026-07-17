@@ -2116,3 +2116,69 @@ backdrop-filter:blur(8px);
 
 
 }
+
+/* =====================================
+   AJUSTE FINAL CANCIONERO MOVIL
+===================================== */
+
+@media(max-width:600px){
+
+    .canciones{
+        padding:40px 10px;
+    }
+
+
+    .tarjeta-cancion{
+
+        padding:15px;
+        border-radius:15px;
+
+    }
+
+
+    .letra-cancion{
+
+        padding:15px;
+
+        font-size:.85rem;
+
+        line-height:1.5;
+
+        width:100%;
+
+    }
+
+
+    .letra-cancion p{
+
+        font-size:.85rem;
+
+        line-height:1.5;
+
+        text-align:center;
+
+    }
+
+
+    .spotify{
+
+        width:280px;
+
+        max-width:100%;
+
+        margin:20px auto 0;
+
+    }
+
+
+    .spotify iframe{
+
+        width:280px;
+
+        max-width:100%;
+
+        height:152px;
+
+    }
+
+}
