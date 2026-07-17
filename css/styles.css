@@ -820,43 +820,57 @@ footer small{
     }
 
 
+.menu{
 
-    .menu{
+    position:absolute;
 
-        position:absolute;
+    top:90px;
 
-        top:90px;
+    right:20px;
 
-        right:20px;
+    width:230px;
 
-        width:230px;
+    padding:25px;
 
-        padding:25px;
+    background:rgba(17,17,17,.85);
 
-        background:rgba(17,17,17,.85);
-       
-backdrop-filter:blur(8px);
--webkit-backdrop-filter:blur(8px);
-       
-        border-radius:20px;
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
 
-        flex-direction:column;
+    border-radius:20px;
 
-        gap:15px;
+    flex-direction:column;
 
-        display:none;
+    gap:15px;
 
-        box-shadow:0 10px 30px rgba(0,0,0,.5);
+    display:flex;
 
-    }
+    box-shadow:0 10px 30px rgba(0,0,0,.5);
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transform:translateY(-15px);
+
+    transition:
+    opacity .35s ease,
+    transform .35s ease,
+    visibility .35s ease;
+
+}
 
 
 
-    .menu.activo{
+.menu.activo{
 
-        display:flex;
+    opacity:1;
 
-    }
+    visibility:visible;
+
+    transform:translateY(0);
+
+}
 
 
 
