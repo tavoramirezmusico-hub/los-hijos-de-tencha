@@ -2032,3 +2032,15 @@ backdrop-filter:blur(8px);
 
 
 }
+
+/* =====================================
+   LETRAS CANCIONES
+===================================== */
+
+.letra-cancion p{
+
+    white-space:pre-line;
+
+    line-height:1.8;
+
+}
