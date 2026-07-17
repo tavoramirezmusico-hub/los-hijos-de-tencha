@@ -558,6 +558,8 @@ nav{
 
     justify-content:center;
 
+    align-items:center;
+
     gap:25px;
 
 }
@@ -902,16 +904,6 @@ backdrop-filter:blur(8px);
         flex-direction:column;
 
         align-items:center;
-
-    }
-
-
-
-    
-
-        width:220px;
-
-        text-align:center;
 
     }
 
