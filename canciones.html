@@ -618,13 +618,18 @@ Tavo Músico
 
 <button id="subir">
 
-    <i class="fa-solid fa-arrow-up"></i>
+<i class="fa-solid fa-arrow-up"></i>
 
 </button>
-        
+
+
+<script src="js/script.js"></script>
+
+
 <script>
 
 const canciones = document.querySelectorAll(".cancion");
+
 
 canciones.forEach(cancion => {
 
@@ -632,7 +637,6 @@ canciones.forEach(cancion => {
 
         if(this.open){
 
-            // Cerrar las demás canciones
             canciones.forEach(otra => {
 
                 if(otra !== this){
@@ -644,15 +648,17 @@ canciones.forEach(cancion => {
             });
 
 
-            // Llevar la pantalla al título de la canción
-            setTimeout(() => {
+            setTimeout(()=>{
 
                 this.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
+
+                    behavior:"smooth",
+
+                    block:"start"
+
                 });
 
-            }, 100);
+            },100);
 
         }
 
@@ -660,15 +666,13 @@ canciones.forEach(cancion => {
 
 });
 
-</script>
 
-<script>
 
-document.querySelectorAll(".volver-cancionero").forEach(boton => {
+document.querySelectorAll(".volver-cancionero").forEach(boton=>{
 
-    boton.addEventListener("click", () => {
+    boton.addEventListener("click",()=>{
 
-        document.querySelectorAll(".cancion").forEach(cancion => {
+        document.querySelectorAll(".cancion").forEach(cancion=>{
 
             cancion.removeAttribute("open");
 
@@ -678,11 +682,10 @@ document.querySelectorAll(".volver-cancionero").forEach(boton => {
 
 });
 
+
 </script>
 
-<script src="js/script.js"></script>
-        
+
 </body>
-
-
+        
 </html>
