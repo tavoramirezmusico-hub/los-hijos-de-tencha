@@ -58,9 +58,12 @@
 
 <div class="titulo-canciones">
 
+
 <span>LOS HIJOS DE TENCHA</span>
 
+
 <h1>NUESTRO CANCIONERO</h1>
+
 
 <p>
 Letras oficiales y música de nuestra historia.
@@ -75,7 +78,6 @@ Letras oficiales y música de nuestra historia.
 
 
 
-
 <section class="canciones">
 
 
@@ -84,9 +86,12 @@ Letras oficiales y música de nuestra historia.
 
 <div class="titulo-seccion">
 
+
 <span>Repertorio</span>
 
+
 <h2>Nuestras Canciones</h2>
+
 
 </div>
 
@@ -98,31 +103,23 @@ Letras oficiales y música de nuestra historia.
 
 
 
-<!-- ===============================
-        CANCION 1
-================================ -->
+<!-- =====================================
+     CANCION 1
+===================================== -->
 
 
-<div class="bloque-cancion">
+<article class="tarjeta-cancion">
 
 
-<button class="boton-cancion">
-
-🐝 LA COLMENA
-
-</button>
-
-
-
-<div class="contenido-cancion">
-
+<h3>
+LA COLMENA
+</h3>
 
 
 <p class="escuchar-cancion">
-
 Escuchar canción
-
 </p>
+
 
 
 
@@ -131,14 +128,13 @@ Escuchar canción
 
 <iframe 
 style="border-radius:12px" 
-src="https://open.spotify.com/embed/track/2uS52IfYXQVSuTj3sSJyB6"
-width="100%"
-height="152"
-frameBorder="0"
-allowfullscreen=""
-allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+src="https://open.spotify.com/embed/track/2uS52IfYXQVSuTj3sSJyB6" 
+width="100%" 
+height="152" 
+frameBorder="0" 
+allowfullscreen="" 
+allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
 loading="lazy">
-
 </iframe>
 
 
@@ -183,46 +179,95 @@ Y que se sientan los de Tencha / Los hijos te cantaran
 </div>
 
 
+</article>
+
+
+
+
+
+
+
+<!-- =====================================
+     CANCION 2
+===================================== -->
+
+
+<article class="tarjeta-cancion">
+
+
+<h3>
+QUISIERA VOLVER
+</h3>
+
+
+<p class="escuchar-cancion">
+Escuchar canción
+</p>
+
+
+
+
+<div class="spotify">
+
+
+<iframe 
+style="border-radius:12px" 
+src="https://open.spotify.com/embed/track/6oQfeZsZz1J0y0KQh4G0j4" 
+width="100%" 
+height="152" 
+frameBorder="0" 
+allowfullscreen="" 
+allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+loading="lazy">
+</iframe>
+
 
 </div>
 
 
-</div>
 
 
 
-
-
-<!-- ===============================
-        AQUI SE AGREGAN MAS CANCIONES
-================================ -->
-
-
-<div class="bloque-cancion">
-
-
-<button class="boton-cancion">
-
-🎵 Próxima canción
-
-</button>
-
-
-<div class="contenido-cancion">
+<div class="letra-cancion">
 
 
 <p>
-Aquí agregaremos la siguiente canción.
+
+Esa mirada de niña idiota, esa locura que no se fue
+La situación que un día dejamos sin saberlo bien
+Aquel silencio que me engañaba, aquel murmullo que ya no está
+Esa ilusión que nos deja ciegos quisiera volver, quisiera volver
+
+Quisiera volver a donde fui
+Quisiera volver, pero volverme a venir
+Quisiera entrar a donde entré una vez
+Pero volverme a salir
+
+Esa mirada de gas nocivo, la valentía de un maricón
+Te quiero muerto te quiero vivo y te digo adiós
+Y si al final ya no resucitan aquellas ganas de un mundo mejor
+Me quedo muerto me quedo vivo y te digo adiós y te digo adiós
+
+Quisiera volver a donde fui
+Quisiera volver, pero volverme a venir
+Quisiera entrar a donde entré una vez
+Pero volverme a salir
+
 </p>
 
 
 </div>
 
 
-</div>
+</article>
 
 
 
+
+
+<!-- =====================================
+     AQUI SE AGREGAN MAS CANCIONES
+===================================== -->
 
 
 </div>
@@ -242,6 +287,7 @@ Aquí agregaremos la siguiente canción.
 
 
 <img src="img/logo.webp" alt="Logo Los Hijos de Tencha">
+
 
 
 <p>
@@ -269,35 +315,6 @@ Tavo Músico
 
 
 </footer>
-
-
-
-
-
-<script>
-
-const botones = document.querySelectorAll(".boton-cancion");
-
-
-botones.forEach(boton => {
-
-
-boton.addEventListener("click", ()=>{
-
-
-const contenido = boton.nextElementSibling;
-
-
-contenido.classList.toggle("mostrar");
-
-
-});
-
-
-});
-
-
-</script>
 
 
 
