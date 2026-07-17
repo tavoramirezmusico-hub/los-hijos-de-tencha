@@ -613,7 +613,8 @@ canciones.forEach(cancion => {
 
         if(this.open){
 
-            canciones.forEach(otra =>{
+            // Cerrar las demás canciones
+            canciones.forEach(otra => {
 
                 if(otra !== this){
 
@@ -622,6 +623,17 @@ canciones.forEach(cancion => {
                 }
 
             });
+
+
+            // Llevar la pantalla al título de la canción
+            setTimeout(() => {
+
+                this.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+            }, 100);
 
         }
 
