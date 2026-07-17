@@ -58,12 +58,9 @@
 
 <div class="titulo-canciones">
 
-
 <span>LOS HIJOS DE TENCHA</span>
 
-
 <h1>NUESTRO CANCIONERO</h1>
-
 
 <p>
 Letras oficiales y música de nuestra historia.
@@ -78,6 +75,7 @@ Letras oficiales y música de nuestra historia.
 
 
 
+
 <section class="canciones">
 
 
@@ -86,12 +84,9 @@ Letras oficiales y música de nuestra historia.
 
 <div class="titulo-seccion">
 
-
 <span>Repertorio</span>
 
-
 <h2>Nuestras Canciones</h2>
-
 
 </div>
 
@@ -103,24 +98,31 @@ Letras oficiales y música de nuestra historia.
 
 
 
-<!-- =====================================
-     CANCION 1
-===================================== -->
+<!-- ===============================
+        CANCION 1
+================================ -->
 
 
-<article class="tarjeta-cancion">
+<div class="bloque-cancion">
 
 
-<h3>
-LA COLMENA
-</h3>
+<button class="boton-cancion">
+
+🐝 LA COLMENA
+
+</button>
+
+
+
+<div class="contenido-cancion">
 
 
 
 <p class="escuchar-cancion">
-Escuchar canción
-</p>
 
+Escuchar canción
+
+</p>
 
 
 
@@ -129,13 +131,14 @@ Escuchar canción
 
 <iframe 
 style="border-radius:12px" 
-src="https://open.spotify.com/embed/track/2uS52IfYXQVSuTj3sSJyB6" 
-width="100%" 
-height="152" 
-frameBorder="0" 
-allowfullscreen="" 
-allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+src="https://open.spotify.com/embed/track/2uS52IfYXQVSuTj3sSJyB6"
+width="100%"
+height="152"
+frameBorder="0"
+allowfullscreen=""
+allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
 loading="lazy">
+
 </iframe>
 
 
@@ -181,15 +184,45 @@ Y que se sientan los de Tencha / Los hijos te cantaran
 
 
 
-</article>
+</div>
+
+
+</div>
 
 
 
 
 
-<!-- =====================================
-     AQUI SE AGREGAN MAS CANCIONES
-===================================== -->
+<!-- ===============================
+        AQUI SE AGREGAN MAS CANCIONES
+================================ -->
+
+
+<div class="bloque-cancion">
+
+
+<button class="boton-cancion">
+
+🎵 Próxima canción
+
+</button>
+
+
+<div class="contenido-cancion">
+
+
+<p>
+Aquí agregaremos la siguiente canción.
+</p>
+
+
+</div>
+
+
+</div>
+
+
+
 
 
 </div>
@@ -209,7 +242,6 @@ Y que se sientan los de Tencha / Los hijos te cantaran
 
 
 <img src="img/logo.webp" alt="Logo Los Hijos de Tencha">
-
 
 
 <p>
@@ -237,6 +269,35 @@ Tavo Músico
 
 
 </footer>
+
+
+
+
+
+<script>
+
+const botones = document.querySelectorAll(".boton-cancion");
+
+
+botones.forEach(boton => {
+
+
+boton.addEventListener("click", ()=>{
+
+
+const contenido = boton.nextElementSibling;
+
+
+contenido.classList.toggle("mostrar");
+
+
+});
+
+
+});
+
+
+</script>
 
 
 
