@@ -2044,3 +2044,15 @@ backdrop-filter:blur(8px);
     text-align:center;
 
 }
+
+/* =====================================
+   REPRODUCTOR SPOTIFY CANCIONES
+===================================== */
+
+.spotify{
+
+    max-width:700px;
+
+    margin:30px auto 0;
+
+}
