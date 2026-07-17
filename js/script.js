@@ -62,6 +62,19 @@ if (botonMenu && menu) {
 
 }
 
+
+// CERRAR MENÚ AL HACER SCROLL
+
+window.addEventListener("scroll", () => {
+
+    if(menu && menu.classList.contains("activo")){
+
+        menu.classList.remove("activo");
+
+    }
+
+});
+
 // CERRAR MENÚ AL HACER SCROLL
 
 window.addEventListener("scroll", () => {
