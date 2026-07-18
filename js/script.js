@@ -4,7 +4,9 @@
 // =====================================
 
 
+// =====================================
 // ABRIR SIEMPRE LA PÁGINA DESDE EL INICIO
+// =====================================
 
 if ("scrollRestoration" in history) {
     history.scrollRestoration = "manual";
@@ -26,10 +28,10 @@ console.log("Sitio Oficial de Los Hijos de Tencha");
 
 
 
+
 // =====================================
 // MENÚ HAMBURGUESA
 // =====================================
-
 
 const botonMenu = document.querySelector(".menu-btn");
 const menu = document.querySelector(".menu");
@@ -75,25 +77,14 @@ window.addEventListener("scroll", () => {
 
 });
 
-// CERRAR MENÚ AL HACER SCROLL
 
-window.addEventListener("scroll", () => {
-
-    if(menu && menu.classList.contains("activo")){
-
-        menu.classList.remove("activo");
-
-    }
-
-});
 
 
 
 // =====================================
 // AMPLIAR IMÁGENES
-// (GALERÍA + STARVIEW)
+// GALERÍA + EVENTOS
 // =====================================
-
 
 const fotos = document.querySelectorAll(".foto img, .imagen-evento img");
 
@@ -136,10 +127,10 @@ fotos.forEach(foto => {
 
 
 
+
 // =====================================
 // CARRUSEL GALERÍA
 // =====================================
-
 
 const galeria = document.querySelector(".galeria-grid");
 const btnIzquierda = document.querySelector(".flecha.izquierda");
@@ -185,10 +176,10 @@ if (galeria && btnIzquierda && btnDerecha) {
 
 
 
+
 // =====================================
 // ANIMACIONES AL HACER SCROLL
 // =====================================
-
 
 const elementosAnimados = document.querySelectorAll(".animar");
 
@@ -231,13 +222,13 @@ elementosAnimados.forEach(elemento=>{
 
 
 
+
+
 // =====================================
 // BOTÓN SUBIR ARRIBA
 // =====================================
 
-
 const botonSubir = document.getElementById("subir");
-
 
 
 if(botonSubir){
@@ -294,7 +285,6 @@ if(botonSubir){
 // MOSTRAR CAMISETAS
 // =====================================
 
-
 function mostrarCamisetas(){
 
 
@@ -314,21 +304,15 @@ function mostrarCamisetas(){
 
 
 
-
 // =====================================
-// VISOR DE IMÁGENES
-// (CAMISETAS + INTEGRANTES)
+// VISOR CAMISETAS + INTEGRANTES
 // =====================================
-
 
 const imagenes = document.querySelectorAll(".camiseta img, .zoom-integrante");
 
-
 const visor = document.getElementById("visor-camiseta");
 
-
 const imagenAmpliada = document.getElementById("imagen-ampliada");
-
 
 const cerrar = document.getElementById("cerrar-visor");
 
@@ -391,36 +375,78 @@ if(visor && imagenAmpliada){
 
 }
 
+
+
+
+
+
+
 // =====================================
 // TRANSICIÓN ENTRE PÁGINAS
+// INDEX <-> CANCIONES
 // =====================================
 
 document.addEventListener("DOMContentLoaded", () => {
 
+
     const pantallaTransicion = document.getElementById("transicion");
+
 
     if (!pantallaTransicion) return;
 
-    const enlaces = document.querySelectorAll('a[href="canciones.html"], a[href="index.html"]');
+
+
+    const enlaces = document.querySelectorAll("a");
+
+
 
     enlaces.forEach(enlace => {
 
+
+
         enlace.addEventListener("click", function(e){
 
-            e.preventDefault();
+
 
             const destino = this.href;
 
-            pantallaTransicion.classList.add("activo");
 
-            setTimeout(() => {
 
-                window.location.href = destino;
+            if(
+                destino.includes("index.html") ||
+                destino.includes("canciones.html")
+            ){
 
-            }, 1200);
+
+                e.preventDefault();
+
+
+
+                pantallaTransicion.classList.add("activo");
+
+
+
+                setTimeout(() => {
+
+
+                    window.location.href = destino;
+
+
+
+                },1200);
+
+
+
+            }
+
+
 
         });
 
+
+
     });
+
+
 
 });
