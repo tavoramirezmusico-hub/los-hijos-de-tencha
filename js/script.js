@@ -129,9 +129,10 @@ if(
         fotoActual.textContent = indice + 1;
 
 
-
         visorGaleria.style.display = "flex";
 
+
+        document.body.style.overflow = "hidden";
 
 
         visorGaleria.classList.remove("mostrar");
@@ -144,7 +145,6 @@ if(
 
 
         },10);
-
 
 
     }
@@ -169,10 +169,15 @@ if(
 
 
 
+    // CERRAR CON BOTÓN X
+
     cerrarGaleria.addEventListener("click",()=>{
 
 
         visorGaleria.style.display="none";
+
+
+        document.body.style.overflow = "";
 
 
     });
@@ -181,6 +186,8 @@ if(
 
 
 
+    // CERRAR HACIENDO CLICK FUERA DE LA FOTO
+
     visorGaleria.addEventListener("click",(e)=>{
 
 
@@ -188,6 +195,9 @@ if(
 
 
             visorGaleria.style.display="none";
+
+
+            document.body.style.overflow = "";
 
 
         }
@@ -199,6 +209,8 @@ if(
 
 
 
+
+    // SIGUIENTE FOTO
 
     siguiente.addEventListener("click",(e)=>{
 
@@ -221,7 +233,6 @@ if(
         mostrarFoto(indiceActual);
 
 
-
     });
 
 
@@ -229,6 +240,7 @@ if(
 
 
 
+    // FOTO ANTERIOR
 
     anterior.addEventListener("click",(e)=>{
 
@@ -236,9 +248,7 @@ if(
         e.stopPropagation();
 
 
-
         indiceActual--;
-
 
 
         if(indiceActual < 0){
@@ -250,9 +260,7 @@ if(
         }
 
 
-
         mostrarFoto(indiceActual);
-
 
 
     });
@@ -262,6 +270,7 @@ if(
 
 
 
+    // TECLADO
 
     document.addEventListener("keydown",(e)=>{
 
@@ -274,6 +283,9 @@ if(
 
 
             visorGaleria.style.display="none";
+
+
+            document.body.style.overflow = "";
 
 
         }
@@ -299,14 +311,11 @@ if(
         }
 
 
-
     });
 
 
 
 }
-
-
 
 
 
