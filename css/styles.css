@@ -1138,23 +1138,37 @@ footer small{
 
 }
 
+/* =====================================
+   GALERÍA 2.0 RESPONSIVE
+===================================== */
 
-/* TABLET */
 
 @media(max-width:900px){
 
+
     .galeria-grid{
 
-        grid-template-columns:repeat(2, 1fr);
+        grid-template-columns:repeat(2,1fr);
 
     }
+
+
+    .foto:nth-child(1),
+    .foto:nth-child(2),
+    .foto:nth-child(3),
+    .foto:nth-child(4){
+
+        grid-column:span 1;
+
+    }
+
 
 }
 
 
-/* CELULAR */
 
 @media(max-width:600px){
+
 
     .galeria-grid{
 
@@ -1162,6 +1176,26 @@ footer small{
 
     }
 
+
+
+    .foto{
+
+        height:300px;
+
+    }
+
+
+    .foto:nth-child(1),
+    .foto:nth-child(2),
+    .foto:nth-child(3),
+    .foto:nth-child(4){
+
+        grid-column:span 1;
+
+    }
+
+
+}
 
     .foto{
 
