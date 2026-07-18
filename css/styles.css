@@ -1075,20 +1075,6 @@ footer small{
 
 
 
-.foto img{
-
-    width:100%;
-
-    height:100%;
-
-    object-fit:cover;
-
-    transition:.5s ease;
-
-}
-
-
-
 .foto:hover img{
 
     transform:scale(1.12);
@@ -1189,13 +1175,6 @@ footer small{
 
 }
 
-    .foto{
-
-        height:300px;
-
-    }
-
-}
 
 /* =====================================
    ANIMACIONES
