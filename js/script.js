@@ -65,7 +65,6 @@ if (botonMenu && menu) {
 }
 
 
-// CERRAR MENÚ AL HACER SCROLL
 
 window.addEventListener("scroll", () => {
 
@@ -79,24 +78,33 @@ window.addEventListener("scroll", () => {
 
 
 
+
+
 // =====================================
-// GALERÍA 2.0
+// GALERÍA 2.0 - VISOR PROFESIONAL
 // =====================================
+
 
 const fotos = document.querySelectorAll(".foto img");
 
 const visorGaleria = document.getElementById("visor-galeria");
+
 const imagenGaleria = document.getElementById("imagen-galeria");
 
 const cerrarGaleria = document.getElementById("cerrar-galeria");
 
 const anterior = document.getElementById("foto-anterior");
+
 const siguiente = document.getElementById("foto-siguiente");
 
 const fotoActual = document.getElementById("foto-actual");
+
 const totalFotos = document.getElementById("total-fotos");
 
+
 let indiceActual = 0;
+
+
 
 if(
     visorGaleria &&
@@ -104,145 +112,196 @@ if(
     fotos.length
 ){
 
+
     totalFotos.textContent = fotos.length;
+
+
 
     function mostrarFoto(indice){
 
+
         indiceActual = indice;
+
 
         imagenGaleria.src = fotos[indice].src;
 
+
         fotoActual.textContent = indice + 1;
+
+
 
         visorGaleria.style.display = "flex";
 
+
+
+        visorGaleria.classList.remove("mostrar");
+
+
+        setTimeout(()=>{
+
+
+            visorGaleria.classList.add("mostrar");
+
+
+        },10);
+
+
+
     }
+
+
+
 
     fotos.forEach((foto, indice)=>{
 
+
         foto.addEventListener("click",()=>{
+
 
             mostrarFoto(indice);
 
+
         });
 
+
     });
+
+
+
 
     cerrarGaleria.addEventListener("click",()=>{
 
+
         visorGaleria.style.display="none";
 
+
     });
+
+
+
+
 
     visorGaleria.addEventListener("click",(e)=>{
 
-        if(e.target===visorGaleria){
+
+        if(e.target === visorGaleria){
+
 
             visorGaleria.style.display="none";
 
+
         }
 
+
     });
+
+
+
+
+
 
     siguiente.addEventListener("click",(e)=>{
 
+
         e.stopPropagation();
+
 
         indiceActual++;
 
-        if(indiceActual>=fotos.length){
 
-            indiceActual=0;
+        if(indiceActual >= fotos.length){
+
+
+            indiceActual = 0;
+
 
         }
 
+
         mostrarFoto(indiceActual);
 
+
+
     });
+
+
+
+
+
+
 
     anterior.addEventListener("click",(e)=>{
 
+
         e.stopPropagation();
+
+
 
         indiceActual--;
 
-        if(indiceActual<0){
 
-            indiceActual=fotos.length-1;
+
+        if(indiceActual < 0){
+
+
+            indiceActual = fotos.length - 1;
+
 
         }
+
+
 
         mostrarFoto(indiceActual);
 
+
+
     });
+
+
+
+
+
+
 
     document.addEventListener("keydown",(e)=>{
 
-        if(visorGaleria.style.display!=="flex") return;
 
-        if(e.key==="Escape"){
+        if(visorGaleria.style.display !== "flex") return;
+
+
+
+        if(e.key === "Escape"){
+
 
             visorGaleria.style.display="none";
 
+
         }
 
-        if(e.key==="ArrowRight"){
+
+
+        if(e.key === "ArrowRight"){
+
 
             siguiente.click();
 
+
         }
 
-        if(e.key==="ArrowLeft"){
+
+
+        if(e.key === "ArrowLeft"){
+
 
             anterior.click();
 
+
         }
 
-    });
-
-}
-
-// =====================================
-// CARRUSEL GALERÍA
-// =====================================
-
-const galeria = document.querySelector(".galeria-grid");
-const btnIzquierda = document.querySelector(".flecha.izquierda");
-const btnDerecha = document.querySelector(".flecha.derecha");
-
-
-if (galeria && btnIzquierda && btnDerecha) {
-
-
-    btnDerecha.addEventListener("click", () => {
-
-
-        galeria.scrollBy({
-
-            left:320,
-
-            behavior:"smooth"
-
-        });
 
 
     });
 
-
-
-    btnIzquierda.addEventListener("click", () => {
-
-
-        galeria.scrollBy({
-
-            left:-320,
-
-            behavior:"smooth"
-
-        });
-
-
-    });
 
 
 }
@@ -254,6 +313,7 @@ if (galeria && btnIzquierda && btnDerecha) {
 // =====================================
 // ANIMACIONES AL HACER SCROLL
 // =====================================
+
 
 const elementosAnimados = document.querySelectorAll(".animar");
 
@@ -302,10 +362,12 @@ elementosAnimados.forEach(elemento=>{
 // BOTÓN SUBIR ARRIBA
 // =====================================
 
+
 const botonSubir = document.getElementById("subir");
 
 
 if(botonSubir){
+
 
 
     window.addEventListener("scroll",()=>{
@@ -330,6 +392,7 @@ if(botonSubir){
 
 
 
+
     botonSubir.addEventListener("click",()=>{
 
 
@@ -348,6 +411,7 @@ if(botonSubir){
     });
 
 
+
 }
 
 
@@ -359,20 +423,26 @@ if(botonSubir){
 // MOSTRAR CAMISETAS
 // =====================================
 
+
 function mostrarCamisetas(){
 
 
     const galeria = document.getElementById("galeria-camisetas");
 
 
+
     if(galeria){
 
+
         galeria.classList.toggle("mostrar");
+
 
     }
 
 
+
 }
+
 
 
 
@@ -382,13 +452,18 @@ function mostrarCamisetas(){
 // VISOR CAMISETAS + INTEGRANTES
 // =====================================
 
+
 const imagenes = document.querySelectorAll(".camiseta img, .zoom-integrante");
+
 
 const visor = document.getElementById("visor-camiseta");
 
+
 const imagenAmpliada = document.getElementById("imagen-ampliada");
 
+
 const cerrar = document.getElementById("cerrar-visor");
+
 
 
 
@@ -399,19 +474,25 @@ if(visor && imagenAmpliada){
     imagenes.forEach(imagen => {
 
 
+
         imagen.addEventListener("click", function(){
+
 
 
             imagenAmpliada.src = this.src;
 
 
+
             visor.style.display="flex";
+
 
 
         });
 
 
+
     });
+
 
 
 
@@ -427,7 +508,10 @@ if(visor && imagenAmpliada){
         });
 
 
+
     }
+
+
 
 
 
@@ -443,28 +527,39 @@ if(visor && imagenAmpliada){
         }
 
 
+
     });
 
 
 
 }
 
+
+
+
+
+
 // =====================================
 // TRANSICIÓN ENTRE PÁGINAS
 // INDEX <-> CANCIONES
 // =====================================
 
+
 document.addEventListener("DOMContentLoaded", () => {
 
 
+
     const pantallaTransicion = document.getElementById("transicion");
+
 
 
     if (!pantallaTransicion) return;
 
 
 
+
     const enlaces = document.querySelectorAll("a");
+
 
 
 
@@ -475,16 +570,22 @@ document.addEventListener("DOMContentLoaded", () => {
         enlace.addEventListener("click", function(e){
 
 
+
             const href = this.getAttribute("href");
 
 
-            // Evitar transición en enlaces internos
-            // (#inicio, #banda, #contacto, etc.)
+
+
             if(!href || href.startsWith("#")){
+
 
                 return;
 
+
             }
+
+
+
 
 
 
@@ -492,24 +593,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-            // Solo aplicar transición entre páginas
+
+
+
             if(
                 destino.includes("index.html") ||
                 destino.includes("canciones.html")
             ){
 
 
-                // Si ya estamos en esa misma página,
-                // no hacer transición
+
+
 
                 if(
                     destino === window.location.href ||
                     destino === window.location.href.split("#")[0]
                 ){
 
+
                     return;
 
+
                 }
+
+
 
 
 
@@ -517,11 +624,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+
                 pantallaTransicion.classList.add("activo");
 
 
 
+
                 setTimeout(() => {
+
 
 
                     window.location.href = destino;
@@ -532,7 +642,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+
             }
+
 
 
 
@@ -545,8 +657,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 });
-
-
-
-
-
