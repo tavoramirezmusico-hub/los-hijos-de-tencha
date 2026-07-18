@@ -375,12 +375,6 @@ if(visor && imagenAmpliada){
 
 }
 
-
-
-
-
-
-
 // =====================================
 // TRANSICIÓN ENTRE PÁGINAS
 // INDEX <-> CANCIONES
@@ -407,15 +401,42 @@ document.addEventListener("DOMContentLoaded", () => {
         enlace.addEventListener("click", function(e){
 
 
+            const href = this.getAttribute("href");
+
+
+            // Evitar transición en enlaces internos
+            // (#inicio, #banda, #contacto, etc.)
+            if(!href || href.startsWith("#")){
+
+                return;
+
+            }
+
+
 
             const destino = this.href;
 
 
 
+            // Solo aplicar transición entre páginas
             if(
                 destino.includes("index.html") ||
                 destino.includes("canciones.html")
             ){
+
+
+                // Si ya estamos en esa misma página,
+                // no hacer transición
+
+                if(
+                    destino === window.location.href ||
+                    destino === window.location.href.split("#")[0]
+                ){
+
+                    return;
+
+                }
+
 
 
                 e.preventDefault();
@@ -450,3 +471,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 });
+
+
+
+
+
