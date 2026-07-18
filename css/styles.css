@@ -1030,7 +1030,7 @@ footer small{
 
     display:grid;
 
-    grid-template-columns:repeat(12,1fr);
+    grid-template-columns:repeat(4,1fr);
 
     gap:25px;
 
@@ -1049,52 +1049,10 @@ footer small{
 
     box-shadow:0 15px 35px rgba(0,0,0,.45);
 
-}
-
-
-
-/* Primera foto protagonista */
-
-.foto:nth-child(1){
-
-    grid-column:span 6;
-
-}
-
-
-
-/* Fotos restantes */
-
-.foto:nth-child(2),
-.foto:nth-child(3),
-.foto:nth-child(4){
-
-    grid-column:span 3;
-
-}
-
-
-
-.foto:hover img{
-
-    transform:scale(1.12);
-
-}
-
-
-
-.foto:hover{
-
-    transform:translateY(-8px);
-
-}
-
-
-.foto{
-
     cursor:pointer;
 
 }
+
 
 
 .foto img{
@@ -1110,9 +1068,18 @@ footer small{
 }
 
 
+
 .foto:hover img{
 
     transform:scale(1.08);
+
+}
+
+
+
+.foto:hover{
+
+    transform:translateY(-8px);
 
 }
 
@@ -1123,7 +1090,6 @@ footer small{
 
 @media(max-width:900px){
 
-
     .galeria-grid{
 
         grid-template-columns:repeat(2,1fr);
@@ -1131,22 +1097,17 @@ footer small{
     }
 
 
-    .foto:nth-child(1),
-    .foto:nth-child(2),
-    .foto:nth-child(3),
-    .foto:nth-child(4){
+    .foto{
 
-        grid-column:span 1;
+        height:260px;
 
     }
-
 
 }
 
 
 
 @media(max-width:600px){
-
 
     .galeria-grid{
 
@@ -1155,97 +1116,11 @@ footer small{
     }
 
 
-
     .foto{
 
         height:300px;
 
     }
-
-
-    .foto:nth-child(1),
-    .foto:nth-child(2),
-    .foto:nth-child(3),
-    .foto:nth-child(4){
-
-        grid-column:span 1;
-
-    }
-
-
-}
-
-
-/* =====================================
-   ANIMACIONES
-===================================== */
-
-
-.animar{
-
-    opacity:0;
-
-    transform:translateY(40px);
-
-    transition:all .8s ease;
-
-}
-
-
-.animar.visible{
-
-    opacity:1;
-
-    transform:translateY(0);
-
-}
-
-
-/* Efecto suave para botones */
-
-.boton{
-
-    transition:
-    transform .3s ease,
-    box-shadow .3s ease;
-
-}
-
-
-.boton:hover{
-
-    transform:translateY(-5px);
-
-    box-shadow:0 10px 20px rgba(255,204,0,.25);
-
-}
-
-
-/* Efecto para tarjetas */
-
-.card-evento,
-.foto,
-.redes a{
-
-    transition:
-    transform .3s ease,
-    box-shadow .3s ease;
-
-}
-
-
-.card-evento:hover{
-
-    transform:translateY(-8px);
-
-    box-shadow:0 15px 35px rgba(0,0,0,.4);
-
-}
-
-
-.foto:hover{
-
-    transform:translateY(-8px);
 
 }
 
