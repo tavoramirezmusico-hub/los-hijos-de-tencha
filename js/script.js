@@ -79,54 +79,128 @@ window.addEventListener("scroll", () => {
 
 
 
-
-
 // =====================================
-// AMPLIAR IMÁGENES
-// GALERÍA + EVENTOS
+// GALERÍA 2.0
 // =====================================
 
-const fotos = document.querySelectorAll(".foto img, .imagen-evento img");
+const fotos = document.querySelectorAll(".foto img");
 
+const visorGaleria = document.getElementById("visor-galeria");
+const imagenGaleria = document.getElementById("imagen-galeria");
 
-fotos.forEach(foto => {
+const cerrarGaleria = document.getElementById("cerrar-galeria");
 
+const anterior = document.getElementById("foto-anterior");
+const siguiente = document.getElementById("foto-siguiente");
 
-    foto.addEventListener("click", () => {
+const fotoActual = document.getElementById("foto-actual");
+const totalFotos = document.getElementById("total-fotos");
 
+let indiceActual = 0;
 
-        const visor = document.createElement("div");
+if(
+    visorGaleria &&
+    imagenGaleria &&
+    fotos.length
+){
 
+    totalFotos.textContent = fotos.length;
 
-        visor.className = "visor";
+    function mostrarFoto(indice){
 
+        indiceActual = indice;
 
-        visor.innerHTML = `
+        imagenGaleria.src = fotos[indice].src;
 
-            <img src="${foto.src}" alt="">
+        fotoActual.textContent = indice + 1;
 
-        `;
+        visorGaleria.style.display = "flex";
 
+    }
 
-        document.body.appendChild(visor);
+    fotos.forEach((foto, indice)=>{
 
+        foto.addEventListener("click",()=>{
 
-
-        visor.addEventListener("click", () => {
-
-            visor.remove();
+            mostrarFoto(indice);
 
         });
 
+    });
+
+    cerrarGaleria.addEventListener("click",()=>{
+
+        visorGaleria.style.display="none";
 
     });
 
+    visorGaleria.addEventListener("click",(e)=>{
 
-});
+        if(e.target===visorGaleria){
 
+            visorGaleria.style.display="none";
 
+        }
 
+    });
 
+    siguiente.addEventListener("click",(e)=>{
+
+        e.stopPropagation();
+
+        indiceActual++;
+
+        if(indiceActual>=fotos.length){
+
+            indiceActual=0;
+
+        }
+
+        mostrarFoto(indiceActual);
+
+    });
+
+    anterior.addEventListener("click",(e)=>{
+
+        e.stopPropagation();
+
+        indiceActual--;
+
+        if(indiceActual<0){
+
+            indiceActual=fotos.length-1;
+
+        }
+
+        mostrarFoto(indiceActual);
+
+    });
+
+    document.addEventListener("keydown",(e)=>{
+
+        if(visorGaleria.style.display!=="flex") return;
+
+        if(e.key==="Escape"){
+
+            visorGaleria.style.display="none";
+
+        }
+
+        if(e.key==="ArrowRight"){
+
+            siguiente.click();
+
+        }
+
+        if(e.key==="ArrowLeft"){
+
+            anterior.click();
+
+        }
+
+    });
+
+}
 
 // =====================================
 // CARRUSEL GALERÍA
