@@ -672,7 +672,7 @@ footer small{
 
     background:rgba(0,0,0,.9);
 
-    display:flex;
+   display:none;
 
     justify-content:center;
 
