@@ -2587,6 +2587,8 @@ footer small{
     justify-content:center;
     align-items:center;
 
+    padding:40px;
+
     z-index:99999;
 
     animation:fadeVisor .25s ease;
@@ -2595,8 +2597,13 @@ footer small{
 
 .visor img{
 
-    max-width:85%;
-    max-height:80vh;
+    max-width:90vw;
+    max-height:85vh;
+
+    width:auto;
+    height:auto;
+
+    object-fit:contain;
 
     border-radius:18px;
 
