@@ -2496,3 +2496,185 @@ footer small{
     max-width: 70vw;
     height: auto;
 }
+
+/* =====================================
+   GALERÍA 2.0 - VISOR
+===================================== */
+
+.visor{
+
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,.95);
+
+    backdrop-filter:blur(8px);
+
+    display:none;
+
+    justify-content:center;
+    align-items:center;
+
+    z-index:99999;
+
+    animation:fadeVisor .25s ease;
+
+}
+
+.visor img{
+
+    max-width:85%;
+    max-height:80vh;
+
+    border-radius:18px;
+
+    box-shadow:0 20px 50px rgba(0,0,0,.6);
+
+}
+
+.cerrar-visor{
+
+    position:absolute;
+
+    top:25px;
+    right:30px;
+
+    width:55px;
+    height:55px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.12);
+
+    color:white;
+
+    font-size:2rem;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.cerrar-visor:hover{
+
+    background:#ffcc00;
+
+    color:#000;
+
+}
+
+.flecha{
+
+    position:absolute;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    width:60px;
+    height:60px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.12);
+
+    color:white;
+
+    font-size:2rem;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.flecha:hover{
+
+    background:#ffcc00;
+
+    color:#000;
+
+}
+
+.flecha-izq{
+
+    left:30px;
+
+}
+
+.flecha-der{
+
+    right:30px;
+
+}
+
+.contador-visor{
+
+    position:absolute;
+
+    bottom:30px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    background:rgba(0,0,0,.6);
+
+    padding:10px 18px;
+
+    border-radius:30px;
+
+    color:white;
+
+    font-weight:600;
+
+}
+
+@keyframes fadeVisor{
+
+    from{
+
+        opacity:0;
+
+    }
+
+    to{
+
+        opacity:1;
+
+    }
+
+}
+
+@media(max-width:700px){
+
+    .flecha{
+
+        width:48px;
+        height:48px;
+
+        font-size:1.5rem;
+
+    }
+
+    .cerrar-visor{
+
+        width:48px;
+        height:48px;
+
+        font-size:1.8rem;
+
+    }
+
+    .visor img{
+
+        max-width:92%;
+
+    }
+
+}
