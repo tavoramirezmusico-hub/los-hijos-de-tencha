@@ -2664,3 +2664,35 @@ footer small{
     }
 
 }
+
+/* =====================================
+   GALERIA 2.0 ENTRADA ESCALONADA
+===================================== */
+
+
+.galeria-grid .foto:nth-child(1){
+
+    transition-delay:.1s;
+
+}
+
+
+.galeria-grid .foto:nth-child(2){
+
+    transition-delay:.25s;
+
+}
+
+
+.galeria-grid .foto:nth-child(3){
+
+    transition-delay:.4s;
+
+}
+
+
+.galeria-grid .foto:nth-child(4){
+
+    transition-delay:.55s;
+
+}
