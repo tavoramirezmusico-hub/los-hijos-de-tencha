@@ -2730,30 +2730,6 @@ footer small{
 
 }
 
-.youtube-player{
-
-    position:relative;
-
-    width:100%;
-
-    padding-bottom:56.25%;
-
-}
-
-.youtube-player iframe{
-
-    position:absolute;
-
-    inset:0;
-
-    width:100%;
-
-    height:100%;
-
-    border:none;
-
-}
-
 .video-card h3{
 
     color:#fff;
@@ -2771,5 +2747,102 @@ footer small{
     padding:0 20px 25px;
 
     line-height:1.7;
+
+}
+
+/* =====================================
+   VIDEOTECA
+===================================== */
+
+.hero-videoteca{
+
+    min-height:60vh;
+
+    background:
+
+    linear-gradient(
+        rgba(0,0,0,.65),
+        rgba(0,0,0,.75)
+    ),
+
+    url("../img/hero.webp");
+
+
+    background-size:cover;
+
+    background-position:center;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+
+.titulo-videoteca{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+    padding:40px;
+
+}
+
+
+
+.titulo-videoteca span{
+
+    color:#ffcc00;
+
+    letter-spacing:3px;
+
+    font-weight:700;
+
+    text-transform:uppercase;
+
+}
+
+
+
+.titulo-videoteca h1{
+
+    font-size:4rem;
+
+    margin:15px 0;
+
+}
+
+
+
+.titulo-videoteca p{
+
+    font-size:1.2rem;
+
+    max-width:700px;
+
+}
+
+
+
+/* VIDEOTECA MOVIL */
+
+@media(max-width:900px){
+
+    .titulo-videoteca h1{
+
+        font-size:2.5rem;
+
+    }
+
 
 }
