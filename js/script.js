@@ -4,25 +4,6 @@
 // =====================================
 
 
-// =====================================
-// ABRIR SIEMPRE LA PÁGINA DESDE EL INICIO
-// =====================================
-
-if ("scrollRestoration" in history) {
-    history.scrollRestoration = "manual";
-}
-
-
-window.addEventListener("load", () => {
-
-    setTimeout(() => {
-
-        window.scrollTo(0, 0);
-
-    }, 50);
-
-});
-
 
 console.log("Sitio Oficial de Los Hijos de Tencha");
 
