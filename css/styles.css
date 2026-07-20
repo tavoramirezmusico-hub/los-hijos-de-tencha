@@ -2846,3 +2846,87 @@ footer small{
 
 
 }
+
+/* =====================================
+   TENCHA NOTICIAS DESPLEGABLES
+===================================== */
+
+.noticia{
+    max-width:900px;
+    margin:0 auto 30px;
+    background:#1c1c1c;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 12px 30px rgba(0,0,0,.35);
+}
+
+.noticia summary{
+    list-style:none;
+    cursor:pointer;
+    padding:25px 30px;
+}
+
+.noticia summary::-webkit-details-marker{
+    display:none;
+}
+
+.fecha-noticia{
+    display:inline-block;
+    color:#ffcc00;
+    font-size:.9rem;
+    font-weight:700;
+    margin-bottom:12px;
+    letter-spacing:1px;
+}
+
+.noticia summary h3{
+    font-size:1.8rem;
+    color:#fff;
+}
+
+.contenido-noticia{
+    padding:0 30px 30px;
+}
+
+.contenido-noticia img{
+    width:100%;
+    max-width:650px;
+    margin:25px auto;
+    border-radius:18px;
+    display:block;
+}
+
+.contenido-noticia h4{
+    color:#ffcc00;
+    margin:30px 0 15px;
+}
+
+.contenido-noticia p{
+    color:#ddd;
+    line-height:1.9;
+    font-size:1.05rem;
+}
+
+* =====================================
+   TENCHA NOTICIAS - ESCRITORIO
+===================================== */
+
+@media (min-width:1200px){
+
+    .noticia{
+        max-width:850px;
+    }
+
+    .contenido-noticia{
+        padding:0 50px 40px;
+    }
+
+    .contenido-noticia img{
+        max-width:600px;
+    }
+
+    .contenido-noticia p{
+        font-size:1rem;
+    }
+
+}
