@@ -2946,3 +2946,24 @@ footer small{
     color:#ffffff;
     text-decoration:underline;
 }
+
+/* =====================================
+   TENCHA NOTICIAS
+===================================== */
+
+.spotify-embed{
+
+    display: block;
+
+    width: 100%;
+    max-width: 600px;
+
+    height: 152px;
+
+    margin: 30px auto;
+
+    border: none;
+
+    border-radius: 12px;
+
+}
