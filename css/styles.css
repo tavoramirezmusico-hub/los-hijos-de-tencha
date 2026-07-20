@@ -2930,3 +2930,19 @@ footer small{
     }
 
 }
+
+/* =====================================
+   ENLACE GRATIS - TENCHA NOTICIAS
+===================================== */
+
+.link-gratis{
+    color:#ffcc00;
+    font-weight:700;
+    text-decoration:none;
+    transition:.3s;
+}
+
+.link-gratis:hover{
+    color:#ffffff;
+    text-decoration:underline;
+}
