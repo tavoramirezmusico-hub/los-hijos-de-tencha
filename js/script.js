@@ -382,23 +382,20 @@ if(botonSubir){
 
 
 
+botonSubir.addEventListener("click", () => {
 
-    botonSubir.addEventListener("click",()=>{
-
-
-        window.scrollTo({
-
-
-            top:0,
-
-
-            behavior:"smooth"
-
-
-        });
-
-
+    // Cerrar todas las noticias
+    document.querySelectorAll(".noticia").forEach((noticia) => {
+        noticia.open = false;
     });
+
+    // Subir al inicio
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+});
 
 
 
@@ -677,24 +674,4 @@ noticias.forEach((noticia) => {
 
 });
 
-// =====================================
-// CERRAR NOTICIAS AL VOLVER AL INICIO
-// =====================================
 
-const seccionNoticias = document.querySelector("#noticias");
-
-window.addEventListener("scroll", () => {
-
-    if (!seccionNoticias) return;
-
-    const posicion = seccionNoticias.getBoundingClientRect();
-
-    if (posicion.top >= 0) {
-
-        document.querySelectorAll(".noticia").forEach((noticia) => {
-            noticia.open = false;
-        });
-
-    }
-
-});
