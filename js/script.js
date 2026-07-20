@@ -668,10 +668,18 @@ noticias.forEach((noticia) => {
 
             });
 
+            // Llevar la noticia al inicio de la pantalla
+            setTimeout(() => {
+
+                noticia.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+            }, 50);
+
         }
 
     });
 
 });
-
-
