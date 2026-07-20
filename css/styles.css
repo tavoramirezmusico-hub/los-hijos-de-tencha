@@ -2948,7 +2948,7 @@ footer small{
 }
 
 /* =====================================
-   TENCHA NOTICIAS
+   SPOTIFY EMBED
 ===================================== */
 
 .spotify-embed{
@@ -2956,14 +2956,13 @@ footer small{
     display: block;
 
     width: 100%;
+
     max-width: 600px;
 
     height: 152px;
 
     margin: 30px auto;
 
-    border: none;
-
-    border-radius: 12px;
+    border: 0;
 
 }
