@@ -649,3 +649,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 });
+
+// =====================================
+// TENCHA NOTICIAS
+// SOLO UNA NOTICIA ABIERTA
+// =====================================
+
+const noticias = document.querySelectorAll(".noticia");
+
+noticias.forEach((noticia) => {
+
+    noticia.addEventListener("toggle", () => {
+
+        if (noticia.open) {
+
+            noticias.forEach((otra) => {
+
+                if (otra !== noticia) {
+                    otra.open = false;
+                }
+
+            });
+
+        }
+
+    });
+
+});
