@@ -589,7 +589,8 @@ document.addEventListener("DOMContentLoaded", () => {
            if(
     destino.includes("index.html") ||
     destino.includes("canciones.html") ||
-    destino.includes("videoteca.html")
+    destino.includes("videoteca.html") ||
+    destino.includes("noticias.html")
 ){
 
 
