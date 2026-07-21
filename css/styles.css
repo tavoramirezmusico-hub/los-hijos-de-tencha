@@ -2948,21 +2948,35 @@ footer small{
 }
 
 /* =====================================
-   SPOTIFY EMBED
+   SPOTIFY EMBED TENCHA NOTICIAS
 ===================================== */
 
 .contenido-noticia iframe{
 
-    display: block;
+    display:block;
 
-    width: 100%;
+    width:100%;
 
-    max-width: 650px;
+    max-width:100%;
 
-    height: 152px;
+    height:152px;
 
-    margin: 25px auto;
+    border:none;
 
-    border: none;
+    margin:25px auto;
+
+}
+
+
+.noticia{
+
+    overflow:hidden;
+
+}
+
+
+.contenido-noticia{
+
+    overflow:hidden;
 
 }
