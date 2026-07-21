@@ -2975,17 +2975,11 @@ footer small{
 
 @media(max-width:600px){
 
-    .spotify-embed{
-
-        height:152px;
-
-    }
-
-
-    .spotify-embed iframe{
-
-        height:140px;
-
-    }
+.spotify-embed iframe{
+    transform:scale(.95);
+    transform-origin:center;
+    width:105%;
+    margin-left:-2.5%;
+}
 
 }
