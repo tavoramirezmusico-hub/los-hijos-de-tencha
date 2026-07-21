@@ -2982,24 +2982,18 @@ footer small{
 }
 
 /* =====================================
-   SPOTIFY NOTICIAS MOVIL AJUSTADO
+   AJUSTE FINO SPOTIFY MOVIL
 ===================================== */
 
 @media(max-width:600px){
 
-    .contenido-noticia{
-        padding:0 10px 25px;
-    }
-
-
     .contenido-noticia iframe{
-        width:100% !important;
-        height:145px;
-    }
 
+        width:calc(100% - 8px) !important;
 
-    .noticia{
-        padding:0;
+        margin-left:auto;
+        margin-right:auto;
+
     }
 
 }
