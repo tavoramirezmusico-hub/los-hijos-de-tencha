@@ -2980,3 +2980,33 @@ footer small{
     overflow:hidden;
 
 }
+
+/* =====================================
+   AJUSTE SPOTIFY NOTICIAS MOVIL
+===================================== */
+
+@media(max-width:600px){
+
+    .noticia{
+        width:100%;
+        max-width:100%;
+    }
+
+
+    .contenido-noticia{
+        padding:0 15px 25px;
+        overflow:hidden;
+    }
+
+
+    .contenido-noticia iframe{
+
+        width:100% !important;
+        max-width:100% !important;
+        height:152px;
+
+        display:block;
+
+    }
+
+}
