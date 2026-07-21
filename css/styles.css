@@ -2955,15 +2955,15 @@ footer small{
 
     display:block;
 
-    width:100%;
+    width:100% !important;
 
-    max-width:100%;
+    max-width:100% !important;
 
     height:152px;
 
     border:none;
 
-    margin:25px auto;
+    margin:0 auto;
 
 }
 
@@ -2982,32 +2982,24 @@ footer small{
 }
 
 /* =====================================
-   AJUSTE SPOTIFY NOTICIAS MOVIL
+   SPOTIFY NOTICIAS MOVIL AJUSTADO
 ===================================== */
 
 @media(max-width:600px){
 
-    .noticia{
-        width:100%;
-        max-width:100%;
-    }
-
-
     .contenido-noticia{
-        padding:0 15px 25px;
-        overflow:hidden;
+        padding:0 10px 25px;
     }
 
 
-.contenido-noticia iframe{
+    .contenido-noticia iframe{
+        width:100% !important;
+        height:145px;
+    }
 
-    width:85% !important;
-    max-width:85% !important;
-    height:152px;
 
-    display:block;
-    margin:25px auto;
-
-}
+    .noticia{
+        padding:0;
+    }
 
 }
