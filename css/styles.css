@@ -3000,3 +3000,53 @@ footer small{
         height: 160px !important; /* Un poco más alto para mejor visibilidad */
     }
 }
+
+/* =====================================
+   BOTÓN SPOTIFY - VERSIÓN DEFINITIVA
+===================================== */
+
+.spotify-btn-wrapper {
+    text-align: center;
+    margin: 25px auto;
+    padding: 10px 0;
+}
+
+.btn-spotify {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    
+    background: #1DB954;
+    color: #ffffff;
+    
+    padding: 14px 35px;
+    border-radius: 50px;
+    
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    
+    text-decoration: none;
+    transition: all 0.3s ease;
+    
+    box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);
+    
+    border: none;
+    cursor: pointer;
+}
+
+.btn-spotify i {
+    font-size: 1.8rem;
+    color: #ffffff;
+}
+
+.btn-spotify:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(29, 185, 84, 0.5);
+    background: #1ed760;
+}
+
+.btn-spotify:active {
+    transform: scale(0.95);
+}
