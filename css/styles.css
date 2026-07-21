@@ -2983,3 +2983,24 @@ footer small{
 }
 
 }
+
+/* =====================================
+   CORRECCIÓN SPOTIFY MOVIL
+===================================== */
+
+.spotify-embed{
+    overflow:hidden;
+    position:relative;
+}
+
+
+@media(max-width:600px){
+
+    .spotify-embed iframe{
+
+        width:110% !important;
+        margin-left:-5% !important;
+
+    }
+
+}
