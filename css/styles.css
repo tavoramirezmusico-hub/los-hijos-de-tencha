@@ -2999,14 +2999,15 @@ footer small{
     }
 
 
-    .contenido-noticia iframe{
+.contenido-noticia iframe{
 
-        width:100% !important;
-        max-width:100% !important;
-        height:152px;
+    width:95% !important;
+    max-width:95% !important;
+    height:152px;
 
-        display:block;
+    display:block;
+    margin:25px auto;
 
-    }
+}
 
 }
