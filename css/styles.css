@@ -2948,7 +2948,7 @@ footer small{
 }
 
 /* =====================================
-   SPOTIFY TENCHA NOTICIAS
+   SPOTIFY TENCHA NOTICIAS FINAL
 ===================================== */
 
 .spotify-embed{
@@ -2969,38 +2969,5 @@ footer small{
     height:152px;
     border:0;
     display:block;
-
-}
-
-
-@media(max-width:600px){
-
-.spotify-embed iframe{
-    transform:scale(.95);
-    transform-origin:center;
-    width:105%;
-    margin-left:-2.5%;
-}
-
-}
-
-/* =====================================
-   CORRECCIÓN SPOTIFY MOVIL
-===================================== */
-
-.spotify-embed{
-    overflow:hidden;
-    position:relative;
-}
-
-
-@media(max-width:600px){
-
-    .spotify-embed iframe{
-
-        width:110% !important;
-        margin-left:-5% !important;
-
-    }
 
 }
