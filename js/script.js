@@ -683,3 +683,33 @@ noticias.forEach((noticia) => {
     });
 
 });
+
+// =====================================
+// FIX REPRODUCTOR SPOTIFY EN MÓVIL
+// =====================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Forzar redimensionamiento del iframe de Spotify en móvil
+    function fixSpotifyPlayer() {
+        const spotifyEmbeds = document.querySelectorAll('.spotify-embed iframe');
+        
+        spotifyEmbeds.forEach(function(iframe) {
+            const container = iframe.closest('.spotify-embed');
+            if (container) {
+                const containerWidth = container.offsetWidth;
+                if (containerWidth > 0 && containerWidth < 500) {
+                    // En móvil, asegurar que el iframe ocupe todo el ancho
+                    iframe.style.width = '100%';
+                    iframe.style.minWidth = '100%';
+                }
+            }
+        });
+    }
+
+    // Ejecutar al cargar y al redimensionar
+    fixSpotifyPlayer();
+    window.addEventListener('resize', fixSpotifyPlayer);
+    
+    // También forzar después de 1 segundo (por si carga lento)
+    setTimeout(fixSpotifyPlayer, 1000);
+});
