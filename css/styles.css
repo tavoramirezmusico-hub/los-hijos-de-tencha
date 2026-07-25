@@ -3251,3 +3251,8 @@ footer small{
 
 }
 
+/* Ocultar elementos temporalmente */
+.oculto{
+    display:none;
+}
+
