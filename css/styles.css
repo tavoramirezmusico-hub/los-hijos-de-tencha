@@ -3050,3 +3050,79 @@ footer small{
 .btn-spotify:active {
     transform: scale(0.95);
 }
+
+/* =====================================
+   MOMENTOS TENCHA
+===================================== */
+
+.momentos-tencha{
+
+    padding:90px 0;
+
+    background:#111;
+
+}
+
+.momentos-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+
+    gap:40px;
+
+    margin-top:50px;
+
+}
+
+.momento-card{
+
+    background:#1a1a1a;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    transition:.35s;
+
+}
+
+.momento-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 20px 40px rgba(0,0,0,.35);
+
+}
+
+.momento-card iframe{
+
+    width:100%;
+
+    aspect-ratio:16/9;
+
+    border:none;
+
+    display:block;
+
+}
+
+.momento-card h3{
+
+    padding:20px 20px 8px;
+
+    font-size:1.2rem;
+
+}
+
+.momento-card p{
+
+    padding:0 20px 22px;
+
+    color:#bdbdbd;
+
+    font-size:.95rem;
+
+}
