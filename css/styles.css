@@ -1664,18 +1664,16 @@ footer small {
     width: 100%;
     height: 100%;
     background: #000;
-    display: flex;
+    display: none;
+    /* ← antes era opacity:0; visibility:hidden */
     justify-content: center;
     align-items: center;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity .4s ease;
     z-index: 99999;
 }
 
 #transicion.activo {
-    opacity: 1;
-    visibility: visible;
+    display: flex;
+    /* ← se muestra solo cuando tiene la clase */
 }
 
 #transicion img {

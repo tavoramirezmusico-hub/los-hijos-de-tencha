@@ -5,6 +5,16 @@
 
 console.log("Sitio Oficial de Los Hijos de Tencha");
 
+// =====================================
+// OCULTAR TRANSICIÓN AL CARGAR (FIX)
+// =====================================
+window.addEventListener('load', function () {
+    const transicion = document.getElementById('transicion');
+    if (transicion) {
+        transicion.classList.remove('activo');
+        transicion.style.display = 'none';
+    }
+});
 
 // =====================================
 // MENÚ HAMBURGUESA
@@ -31,7 +41,6 @@ window.addEventListener("scroll", () => {
         menu.classList.remove("activo");
     }
 });
-
 
 // =====================================
 // GALERÍA 2.0 - VISOR PROFESIONAL
@@ -114,7 +123,6 @@ if (visorGaleria && imagenGaleria && fotos.length) {
     });
 }
 
-
 // =====================================
 // ANIMACIONES AL HACER SCROLL
 // =====================================
@@ -133,7 +141,6 @@ const observador = new IntersectionObserver((entradas) => {
 elementosAnimados.forEach(elemento => {
     observador.observe(elemento);
 });
-
 
 // =====================================
 // BOTÓN SUBIR ARRIBA
@@ -161,7 +168,6 @@ if (botonSubir) {
     });
 }
 
-
 // =====================================
 // MOSTRAR CAMISETAS
 // =====================================
@@ -172,7 +178,6 @@ function mostrarCamisetas() {
         galeria.classList.toggle("mostrar");
     }
 }
-
 
 // =====================================
 // VISOR CAMISETAS + INTEGRANTES
@@ -203,7 +208,6 @@ if (visor && imagenAmpliada) {
         }
     });
 }
-
 
 // =====================================
 // TRANSICIÓN ENTRE PÁGINAS
@@ -239,6 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 e.preventDefault();
                 pantallaTransicion.classList.add("activo");
+                pantallaTransicion.style.display = 'flex'; // forzar display
 
                 setTimeout(() => {
                     window.location.href = destino;
@@ -247,7 +252,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
-
 
 // =====================================
 // TENCHA NOTICIAS - SOLO UNA ABIERTA
@@ -273,7 +277,6 @@ noticias.forEach((noticia) => {
     });
 });
 
-
 // =====================================
 // FIX REPRODUCTOR SPOTIFY EN MÓVIL
 // =====================================
@@ -297,7 +300,6 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('resize', fixSpotifyPlayer);
     setTimeout(fixSpotifyPlayer, 1000);
 });
-
 
 // =====================================
 // CONTROL DE VIDEOS - VERSIÓN SIMPLE Y 100% EFECTIVA

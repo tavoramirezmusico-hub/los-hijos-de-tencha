@@ -549,12 +549,22 @@
 
     <script>
 
+        // =============================================
+        // ABRIR NOTICIA DESDE HASH (FIX PANTALLA NEGRA)
+        // =============================================
         const noticia = document.querySelector("#noticia-25-julio");
-
         if (window.location.hash === "#noticia-25-julio" && noticia) {
-
-            noticia.open = true;
-
+            // Esperar a que todo esté cargado (imágenes, fuentes, etc.)
+            window.addEventListener('load', function () {
+                noticia.open = true;
+                // Retraso para que el navegador termine de renderizar el contenido
+                setTimeout(() => {
+                    noticia.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+                }, 300);
+            });
         }
 
     </script>
