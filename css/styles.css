@@ -2097,3 +2097,154 @@ footer small {
 .oculto {
     display: none;
 }
+
+/* =====================================
+   ANIMACIONES DE APARICIÓN MEJORADAS
+===================================== */
+
+.animar {
+    opacity: 0;
+    transform: translateY(50px) scale(0.95);
+    transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.animar.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* Retraso para elementos en galería */
+.galeria-grid .foto {
+    transition-delay: 0.05s;
+}
+
+.galeria-grid .foto:nth-child(1) {
+    transition-delay: 0.05s;
+}
+
+.galeria-grid .foto:nth-child(2) {
+    transition-delay: 0.15s;
+}
+
+.galeria-grid .foto:nth-child(3) {
+    transition-delay: 0.25s;
+}
+
+.galeria-grid .foto:nth-child(4) {
+    transition-delay: 0.35s;
+}
+
+/* Retraso para eventos */
+.card-evento.animar {
+    transition-delay: 0.1s;
+}
+
+/* Retraso para integrantes (efecto cascada) */
+.grid-integrantes img {
+    transition-delay: 0.05s;
+}
+
+.grid-integrantes img:nth-child(1) {
+    transition-delay: 0.05s;
+}
+
+.grid-integrantes img:nth-child(2) {
+    transition-delay: 0.10s;
+}
+
+.grid-integrantes img:nth-child(3) {
+    transition-delay: 0.15s;
+}
+
+.grid-integrantes img:nth-child(4) {
+    transition-delay: 0.20s;
+}
+
+.grid-integrantes img:nth-child(5) {
+    transition-delay: 0.25s;
+}
+
+.grid-integrantes img:nth-child(6) {
+    transition-delay: 0.30s;
+}
+
+/* Retraso para tarjetas de video en videoteca */
+.video-card {
+    transition-delay: 0.05s;
+}
+
+.video-card:nth-child(1) {
+    transition-delay: 0.05s;
+}
+
+.video-card:nth-child(2) {
+    transition-delay: 0.15s;
+}
+
+.video-card:nth-child(3) {
+    transition-delay: 0.25s;
+}
+
+.video-card:nth-child(4) {
+    transition-delay: 0.35s;
+}
+
+.video-card:nth-child(5) {
+    transition-delay: 0.45s;
+}
+
+.video-card:nth-child(6) {
+    transition-delay: 0.55s;
+}
+
+/* Retraso para momentos Tencha */
+.momento-card {
+    transition-delay: 0.05s;
+}
+
+.momento-card:nth-child(1) {
+    transition-delay: 0.05s;
+}
+
+.momento-card:nth-child(2) {
+    transition-delay: 0.15s;
+}
+
+.momento-card:nth-child(3) {
+    transition-delay: 0.25s;
+}
+
+/* Retraso para noticias */
+.noticia {
+    transition-delay: 0.05s;
+}
+
+.noticia:nth-child(1) {
+    transition-delay: 0.05s;
+}
+
+.noticia:nth-child(2) {
+    transition-delay: 0.15s;
+}
+
+.noticia:nth-child(3) {
+    transition-delay: 0.25s;
+}
+
+/* Retraso para productos de tienda */
+.camiseta {
+    transition-delay: 0.05s;
+}
+
+.camiseta:nth-child(1) {
+    transition-delay: 0.05s;
+}
+
+.camiseta:nth-child(2) {
+    transition-delay: 0.15s;
+}
+
+.camiseta:nth-child(3) {
+    transition-delay: 0.25s;
+}
