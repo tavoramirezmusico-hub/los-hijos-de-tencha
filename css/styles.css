@@ -2395,3 +2395,11 @@ footer small {
     position: relative !important;
     cursor: pointer;
 }
+
+/* =====================================
+   FIX ANCLA NOTICIAS
+===================================== */
+
+.noticia {
+    scroll-margin-top: 120px;
+}
