@@ -714,80 +714,45 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // =====================================
-// CONTROL DE VIDEOS COMPLETO - YOUTUBE + CLOUDINARY
+// CONTROL DE VIDEOS - SOLO UNO A LA VEZ (VERSIÓN DEFINITIVA)
 // =====================================
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    // ---------- PARA YOUTUBE ----------
-    var videosYT = document.querySelectorAll('iframe[src*="youtube.com"], iframe[src*="youtu.be"]');
+    // Seleccionar TODOS los contenedores que tienen videos
+    var contenedoresVideo = document.querySelectorAll('.video-card, .momento-card, .lanzamiento-principal, .lanzamiento-secundario, .youtube-player');
 
-    videosYT.forEach(function (video) {
+    contenedoresVideo.forEach(function (contenedor) {
 
-        // Agregar listener para mensajes de YouTube
-        window.addEventListener('message', function (event) {
+        // Buscar el iframe dentro del contenedor
+        var iframe = contenedor.querySelector('iframe');
 
-            // Verificar que el mensaje viene de un iframe de YouTube
-            if (event.source && event.source.frameElement &&
-                (event.source.frameElement.src.includes('youtube.com') ||
-                    event.source.frameElement.src.includes('youtu.be'))) {
+        if (iframe) {
 
-                // Si el video está reproduciéndose
-                if (event.data && typeof event.data === 'string' &&
-                    (event.data.includes('playing') || event.data.includes('buffering') ||
-                        event.data.includes('state=1') || event.data.includes('state=3'))) {
-
-                    // Detener todos los demás videos de YouTube
-                    videosYT.forEach(function (otroVideo) {
-
-                        if (otroVideo !== video) {
-
-                            try {
-                                otroVideo.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-                            } catch (e) { }
-
-                        }
-
-                    });
-
-                }
-
-            }
-
-        });
-
-    });
-
-    // ---------- PARA CLOUDINARY ----------
-    var videosCloud = document.querySelectorAll('iframe[src*="player.cloudinary.com"]');
-
-    videosCloud.forEach(function (video) {
-
-        var contenedor = video.closest('.momento-card, .video-card, .youtube-player');
-
-        if (contenedor) {
-
+            // Cuando el usuario haga clic en el contenedor (o en el iframe)
             contenedor.addEventListener('click', function (e) {
 
-                if (e.target === video || e.target.closest('iframe')) {
+                // Detener TODOS los demás iframes
+                var todosLosIframes = document.querySelectorAll('.video-card iframe, .momento-card iframe, .lanzamiento-principal iframe, .lanzamiento-secundario iframe, .youtube-player iframe');
 
-                    videosCloud.forEach(function (otroVideo) {
+                todosLosIframes.forEach(function (otroIframe) {
 
-                        if (otroVideo !== video) {
+                    if (otroIframe !== iframe) {
 
-                            try {
-                                var src = otroVideo.src;
-                                otroVideo.src = '';
-                                setTimeout(function () {
-                                    otroVideo.src = src;
-                                }, 100);
-                            } catch (e) { }
+                        // Guardar la URL original
+                        var srcOriginal = otroIframe.src;
 
+                        // Si tiene URL, la recargamos para detener el video
+                        if (srcOriginal) {
+                            otroIframe.src = '';
+                            setTimeout(function () {
+                                otroIframe.src = srcOriginal;
+                            }, 50);
                         }
 
-                    });
+                    }
 
-                }
+                });
 
             });
 
