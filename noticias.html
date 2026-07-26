@@ -38,7 +38,6 @@
     <!-- ELIMINAR TRANSICIÓN POR COMPLETO              -->
     <!-- ============================================= -->
     <style>
-        /* Ocultar la transición siempre en esta página */
         #transicion {
             display: none !important;
         }
@@ -255,99 +254,6 @@
     <div id="transicion">
         <img src="img/transicion.gif" alt="Transición">
     </div>
-
-    <!-- ============================================= -->
-    <!-- SCRIPT: ABRIR NOTICIA (MÉTODO DEFINITIVO)    -->
-    <!-- ============================================= -->
-    <script>
-        (function () {
-            // Detectar si venimos del reportaje
-            var urlParams = new URLSearchParams(window.location.search);
-            var abrirNoticia = urlParams.get('abrir');
-
-            if (abrirNoticia === 'noticia-25-julio') {
-
-                // Limpiar URL
-                var nuevaUrl = window.location.pathname + window.location.search.replace(/[?&]abrir=noticia-25-julio/, '');
-                nuevaUrl = nuevaUrl.replace(/[?&]$/, '');
-                history.replaceState(null, null, nuevaUrl);
-
-                // Función para abrir la noticia
-                function abrirNoticiaYScroll() {
-                    var noticia = document.getElementById('noticia-25-julio');
-                    if (noticia) {
-                        // Método 1: Atributo open
-                        noticia.setAttribute('open', '');
-
-                        // Método 2: Propiedad open
-                        noticia.open = true;
-
-                        // Método 3: Simular clic en el summary (el más confiable)
-                        var summary = noticia.querySelector('summary');
-                        if (summary) {
-                            summary.click();
-                        }
-
-                        // Hacer scroll
-                        setTimeout(function () {
-                            noticia.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }, 300);
-
-                        return true;
-                    }
-                    return false;
-                }
-
-                // =============================================
-                // MÚLTIPLES INTENTOS PARA ASEGURAR LA APERTURA
-                // =============================================
-
-                // Intento 1: Inmediato
-                if (document.readyState === 'complete' || document.readyState === 'interactive') {
-                    setTimeout(abrirNoticiaYScroll, 100);
-                } else {
-                    document.addEventListener('DOMContentLoaded', function () {
-                        setTimeout(abrirNoticiaYScroll, 100);
-                    });
-                }
-
-                // Intento 2: A los 500ms
-                setTimeout(function () {
-                    var noticia = document.getElementById('noticia-25-julio');
-                    if (noticia && !noticia.open) {
-                        abrirNoticiaYScroll();
-                    }
-                }, 500);
-
-                // Intento 3: A los 1000ms
-                setTimeout(function () {
-                    var noticia = document.getElementById('noticia-25-julio');
-                    if (noticia && !noticia.open) {
-                        abrirNoticiaYScroll();
-                    }
-                }, 1000);
-
-                // Intento 4: A los 2000ms (último recurso)
-                setTimeout(function () {
-                    var noticia = document.getElementById('noticia-25-julio');
-                    if (noticia) {
-                        noticia.setAttribute('open', 'true');
-                        noticia.open = true;
-                        var summary = noticia.querySelector('summary');
-                        if (summary) {
-                            summary.click();
-                            setTimeout(function () {
-                                summary.click();
-                            }, 50);
-                        }
-                        setTimeout(function () {
-                            noticia.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }, 200);
-                    }
-                }, 2000);
-            }
-        })();
-    </script>
 
     <script src="js/script.js"></script>
     <script src="js/eventos.js"></script>
