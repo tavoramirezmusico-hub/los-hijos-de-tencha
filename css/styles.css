@@ -2248,3 +2248,119 @@ footer small {
 .camiseta:nth-child(3) {
     transition-delay: 0.25s;
 }
+
+/* =====================================
+   FIX VIDEOTECA - RESPONSIVE
+===================================== */
+
+@media (max-width: 768px) {
+    .videos-grid {
+        grid-template-columns: 1fr !important;
+        gap: 25px !important;
+        padding: 0 5px !important;
+    }
+
+    .video-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+    }
+
+    .video-card .youtube-player {
+        width: 100% !important;
+        max-width: 100% !important;
+        border-radius: 12px !important;
+        margin: 0 !important;
+    }
+
+    .video-card .youtube-player iframe {
+        width: 100% !important;
+        height: 100% !important;
+        aspect-ratio: 16/9 !important;
+        display: block !important;
+    }
+
+    .video-card h3 {
+        font-size: 1.1rem !important;
+        padding: 15px 15px 5px !important;
+    }
+
+    .video-card p {
+        font-size: 0.9rem !important;
+        padding: 0 15px 18px !important;
+    }
+
+    /* Momentos Tencha móvil */
+    .momentos-grid {
+        grid-template-columns: 1fr !important;
+        gap: 25px !important;
+        padding: 0 5px !important;
+    }
+
+    .momento-card {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .momento-card .youtube-player {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        border-radius: 12px !important;
+    }
+
+    .momento-card iframe {
+        aspect-ratio: 16/9 !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    .momento-card h3 {
+        font-size: 1rem !important;
+        padding: 15px 15px 5px !important;
+    }
+
+    .momento-card p {
+        font-size: 0.85rem !important;
+        padding: 0 15px 18px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .videos-grid {
+        gap: 20px !important;
+        padding: 0 3px !important;
+    }
+
+    .video-card {
+        border-radius: 14px !important;
+    }
+
+    .video-card .youtube-player {
+        border-radius: 10px !important;
+    }
+
+    .video-card h3 {
+        font-size: 1rem !important;
+    }
+
+    .video-card p {
+        font-size: 0.85rem !important;
+    }
+
+    .momento-card {
+        border-radius: 14px !important;
+    }
+
+    .momento-card .youtube-player {
+        border-radius: 10px !important;
+    }
+
+    .momento-card h3 {
+        font-size: 0.95rem !important;
+    }
+
+    .momento-card p {
+        font-size: 0.8rem !important;
+    }
+}
