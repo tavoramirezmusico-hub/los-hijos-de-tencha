@@ -33,6 +33,27 @@
         gtag('js', new Date());
         gtag('config', 'G-YNRK4G09LN');
     </script>
+
+    <!-- ============================================= -->
+    <!-- OCULTAR TRANSICIÓN INMEDIATAMENTE SI VIENE    -->
+    <!-- DEL BOTÓN "VER REPORTAJE"                     -->
+    <!-- ============================================= -->
+    <script>
+        // Detectar si la URL tiene el parámetro "abrir"
+        if (window.location.search.includes('abrir=noticia-25-julio')) {
+            // Marcar globalmente que venimos del reportaje
+            window._desdeReportaje = true;
+
+            // Ocultar la transición inmediatamente (antes de que se muestre)
+            document.addEventListener('DOMContentLoaded', function () {
+                var transicion = document.getElementById('transicion');
+                if (transicion) {
+                    transicion.style.display = 'none';
+                    transicion.classList.remove('activo');
+                }
+            });
+        }
+    </script>
 </head>
 
 <body>
@@ -240,53 +261,64 @@
     <button id="subir"><i class="fa-solid fa-arrow-up"></i></button>
 
     <!-- ============================================= -->
-    <!-- PANTALLA DE TRANSICIÓN                        -->
+    <!-- PANTALLA DE TRANSICIÓN (se mantiene)          -->
     <!-- ============================================= -->
     <div id="transicion">
         <img src="img/transicion.gif" alt="Transición">
     </div>
 
     <!-- ============================================= -->
-    <!-- SCRIPT: ABRIR NOTICIA (MÉTODO ROBUSTO)       -->
+    <!-- SCRIPT FINAL: ABRIR NOTICIA + OCULTAR         -->
+    <!-- TRANSICIÓN SI ES NECESARIO                    -->
     <!-- ============================================= -->
     <script>
         (function () {
-            // Obtener parámetros de la URL
-            var urlParams = new URLSearchParams(window.location.search);
-            var abrirNoticia = urlParams.get('abrir');
+            // Verificar si venimos del reportaje
+            var desdeReportaje = window._desdeReportaje || window.location.search.includes('abrir=noticia-25-julio');
 
-            // Si el parámetro es "noticia-25-julio", abrir esa noticia
-            if (abrirNoticia === 'noticia-25-julio') {
+            // Si venimos del reportaje, ocultar la transición y abrir la noticia
+            if (desdeReportaje) {
 
-                // Limpiar la URL (quitar el parámetro)
+                // 1. OCULTAR TRANSICIÓN
+                function ocultarTransicion() {
+                    var transicion = document.getElementById('transicion');
+                    if (transicion) {
+                        transicion.style.display = 'none';
+                        transicion.classList.remove('activo');
+                    }
+                }
+
+                // Ocultar inmediatamente
+                ocultarTransicion();
+
+                // Y también al cargar (por si acaso)
+                document.addEventListener('DOMContentLoaded', ocultarTransicion);
+                window.addEventListener('load', ocultarTransicion);
+
+                // 2. LIMPIAR LA URL (quitar el parámetro)
                 var nuevaUrl = window.location.pathname + window.location.search.replace(/[?&]abrir=noticia-25-julio/, '');
                 nuevaUrl = nuevaUrl.replace(/[?&]$/, '');
                 history.replaceState(null, null, nuevaUrl);
 
-                // =============================================
-                // MÉTODO ROBUSTO PARA ABRIR EL DETAILS
-                // =============================================
-
-                // Función principal que abre la noticia y hace scroll
-                function abrirNoticiaYScroll() {
+                // 3. ABRIR LA NOTICIA
+                function abrirNoticia() {
                     var noticia = document.getElementById('noticia-25-julio');
                     if (noticia) {
-                        // MÉTODO 1: Usar el atributo open directamente
+                        // Método 1: atributo open
                         noticia.setAttribute('open', '');
 
-                        // MÉTODO 2: Forzar con la propiedad open (respaldo)
+                        // Método 2: propiedad open
                         noticia.open = true;
 
-                        // MÉTODO 3: Simular clic en el summary (lo más confiable)
+                        // Método 3: clic en el summary
                         var summary = noticia.querySelector('summary');
                         if (summary) {
-                            // Forzar el clic después de un micro-retraso
                             setTimeout(function () {
                                 summary.click();
                             }, 50);
                         }
 
-                        // Hacer scroll después de asegurar que se abrió
+                        // Scroll después de abrir
                         setTimeout(function () {
                             noticia.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         }, 400);
@@ -296,60 +328,28 @@
                     return false;
                 }
 
-                // =============================================
-                // MÚLTIPLES INTENTOS PARA ASEGURAR LA APERTURA
-                // =============================================
-
-                // Intento 1: Inmediato (si el DOM ya está listo)
+                // Intentar abrir inmediatamente
                 if (document.readyState === 'complete' || document.readyState === 'interactive') {
-                    setTimeout(abrirNoticiaYScroll, 100);
+                    setTimeout(abrirNoticia, 100);
                 } else {
-                    // Si no, esperar a que cargue
-                    window.addEventListener('load', function () {
-                        setTimeout(abrirNoticiaYScroll, 200);
+                    document.addEventListener('DOMContentLoaded', function () {
+                        setTimeout(abrirNoticia, 100);
                     });
                 }
 
-                // Intento 2: A los 500ms (por si el primero falló)
-                setTimeout(function () {
+                // Intentos de respaldo
+                var intentos = 0;
+                var maxIntentos = 5;
+                var intervalo = setInterval(function () {
+                    intentos++;
                     var noticia = document.getElementById('noticia-25-julio');
                     if (noticia && !noticia.open) {
-                        abrirNoticiaYScroll();
+                        abrirNoticia();
+                    }
+                    if (intentos >= maxIntentos || (noticia && noticia.open)) {
+                        clearInterval(intervalo);
                     }
                 }, 500);
-
-                // Intento 3: A los 1000ms (último recurso)
-                setTimeout(function () {
-                    var noticia = document.getElementById('noticia-25-julio');
-                    if (noticia && !noticia.open) {
-                        noticia.setAttribute('open', '');
-                        noticia.open = true;
-                        var summary = noticia.querySelector('summary');
-                        if (summary) {
-                            summary.click();
-                        }
-                        setTimeout(function () {
-                            noticia.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }, 200);
-                    }
-                }, 1000);
-
-                // Intento 4: A los 2000ms (por si todo falló, pero la página está lenta)
-                setTimeout(function () {
-                    var noticia = document.getElementById('noticia-25-julio');
-                    if (noticia && !noticia.open) {
-                        // Forzar apertura con todos los métodos posibles
-                        noticia.setAttribute('open', 'true');
-                        noticia.open = true;
-                        var summary = noticia.querySelector('summary');
-                        if (summary) {
-                            summary.click();
-                            setTimeout(function () {
-                                summary.click();
-                            }, 50);
-                        }
-                    }
-                }, 2000);
             }
         })();
     </script>
