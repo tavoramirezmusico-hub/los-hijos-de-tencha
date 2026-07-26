@@ -33,26 +33,6 @@
         gtag('js', new Date());
         gtag('config', 'G-YNRK4G09LN');
     </script>
-
-    <!-- ============================================= -->
-    <!-- SI VIENE CON HASH, OCULTAR TRANSICIÓN RÁPIDO  -->
-    <!-- ============================================= -->
-    <script>
-        // Detectar si la URL tiene el hash de la noticia
-        if (window.location.hash === '#noticia-25-julio') {
-            // Marcar que venimos del botón "Ver reportaje"
-            window._desdeReportaje = true;
-
-            // Ocultar la transición inmediatamente (antes de que se muestre)
-            document.addEventListener('DOMContentLoaded', function () {
-                var transicion = document.getElementById('transicion');
-                if (transicion) {
-                    transicion.style.display = 'none';
-                    transicion.classList.remove('activo');
-                }
-            });
-        }
-    </script>
 </head>
 
 <body>
@@ -260,59 +240,43 @@
     <button id="subir"><i class="fa-solid fa-arrow-up"></i></button>
 
     <!-- ============================================= -->
-    <!-- PANTALLA DE TRANSICIÓN (se mantiene)          -->
+    <!-- PANTALLA DE TRANSICIÓN                        -->
     <!-- ============================================= -->
     <div id="transicion">
         <img src="img/transicion.gif" alt="Transición">
     </div>
 
     <!-- ============================================= -->
-    <!-- SCRIPT PARA ABRIR NOTICIA DESDE HASH          -->
+    <!-- SCRIPT: SI VIENE CON PARÁMETRO, ABRIR NOTICIA -->
     <!-- ============================================= -->
     <script>
         (function () {
-            var hash = window.location.hash;
-            var targetId = hash ? hash.substring(1) : null;
+            // Obtener parámetros de la URL
+            var urlParams = new URLSearchParams(window.location.search);
+            var abrirNoticia = urlParams.get('abrir');
 
-            // Si venimos del reportaje, eliminamos el hash de la URL
-            if (targetId === 'noticia-25-julio') {
-                // Eliminar el hash para que el navegador no haga scroll automático
-                history.replaceState(null, null, window.location.pathname + window.location.search);
+            // Si el parámetro es "noticia-25-julio", abrir esa noticia
+            if (abrirNoticia === 'noticia-25-julio') {
+                // Limpiar la URL (quitar el parámetro)
+                var nuevaUrl = window.location.pathname + window.location.search.replace(/[?&]abrir=noticia-25-julio/, '');
+                nuevaUrl = nuevaUrl.replace(/[?&]$/, ''); // limpiar si queda & o ?
+                history.replaceState(null, null, nuevaUrl);
 
+                // Esperar a que cargue la página
                 window.addEventListener('load', function () {
-                    var noticia = document.getElementById(targetId);
+                    var noticia = document.getElementById('noticia-25-julio');
                     if (noticia) {
-                        // Forzar repaint
-                        noticia.style.display = 'none';
-                        void noticia.offsetHeight;
-                        noticia.style.display = '';
-
-                        // Abrir
+                        // Abrir la noticia
                         noticia.open = true;
 
-                        // Scroll con retraso
+                        // Scroll con retraso para móviles
                         setTimeout(function () {
                             noticia.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }, 400);
+                        }, 350);
                     }
                 });
             }
         })();
-    </script>
-
-    <!-- ============================================= -->
-    <!-- SCRIPT QUE OCULTA TRANSICIÓN SI VENIMOS DEL   -->
-    <!-- BOTÓN "VER REPORTAJE" (ejecutado al final)    -->
-    <!-- ============================================= -->
-    <script>
-        // Si venimos del reportaje, ocultar la transición inmediatamente
-        if (window._desdeReportaje) {
-            var transicion = document.getElementById('transicion');
-            if (transicion) {
-                transicion.style.display = 'none';
-                transicion.classList.remove('activo');
-            }
-        }
     </script>
 
     <script src="js/script.js"></script>
