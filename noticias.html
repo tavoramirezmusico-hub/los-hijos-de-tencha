@@ -33,6 +33,15 @@
         gtag('js', new Date());
         gtag('config', 'G-YNRK4G09LN');
     </script>
+
+    <!-- ============================================= -->
+    <!-- ELIMINAR TRANSICIÓN POR COMPLETO              -->
+    <!-- ============================================= -->
+    <style>
+        #transicion {
+            display: none !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -240,63 +249,42 @@
     <button id="subir"><i class="fa-solid fa-arrow-up"></i></button>
 
     <!-- ============================================= -->
-    <!-- PANTALLA DE TRANSICIÓN                        -->
+    <!-- TRANSICIÓN (oculta por CSS)                   -->
     <!-- ============================================= -->
     <div id="transicion">
         <img src="img/transicion.gif" alt="Transición">
     </div>
 
     <!-- ============================================= -->
-    <!-- SCRIPT: ABRIR NOTICIA (VERSIÓN MEJORADA)     -->
+    <!-- SCRIPT: SCROLL A LA NOTICIA (SIN ABRIR)       -->
     <!-- ============================================= -->
     <script>
         (function () {
-            // Obtener parámetros de la URL
-            var urlParams = new URLSearchParams(window.location.search);
-            var abrirNoticia = urlParams.get('abrir');
+            // Verificar si la URL tiene el hash #noticia-25-julio
+            if (window.location.hash === '#noticia-25-julio') {
 
-            // Si el parámetro es "noticia-25-julio", abrir esa noticia
-            if (abrirNoticia === 'noticia-25-julio') {
-                // Limpiar la URL (quitar el parámetro)
-                var nuevaUrl = window.location.pathname + window.location.search.replace(/[?&]abrir=noticia-25-julio/, '');
-                nuevaUrl = nuevaUrl.replace(/[?&]$/, '');
-                history.replaceState(null, null, nuevaUrl);
+                // Limpiar el hash de la URL
+                history.replaceState(null, null, window.location.pathname + window.location.search);
 
-                // Función para abrir la noticia
-                function abrirNoticiaYScroll() {
+                // Función para hacer scroll a la noticia (sin abrirla)
+                function scrollANoticia() {
                     var noticia = document.getElementById('noticia-25-julio');
                     if (noticia) {
-                        // ABRIR LA NOTICIA
-                        noticia.open = true;
-
-                        // Scroll con retraso
+                        // Solo scroll, NO abrir la noticia
                         setTimeout(function () {
                             noticia.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         }, 300);
                     }
                 }
 
-                // Verificar si la página ya está cargada
-                if (document.readyState === 'complete' || document.readyState === 'interactive') {
-                    // Si ya está cargada, ejecutar inmediatamente
-                    setTimeout(abrirNoticiaYScroll, 100);
+                // Ejecutar cuando la página esté cargada
+                if (document.readyState === 'complete') {
+                    setTimeout(scrollANoticia, 100);
                 } else {
-                    // Si no, esperar a que cargue
                     window.addEventListener('load', function () {
-                        setTimeout(abrirNoticiaYScroll, 200);
+                        setTimeout(scrollANoticia, 100);
                     });
                 }
-
-                // Respaldo: intentar de nuevo después de 1 segundo por si falló
-                setTimeout(function () {
-                    var noticia = document.getElementById('noticia-25-julio');
-                    if (noticia && !noticia.open) {
-                        noticia.open = true;
-                        setTimeout(function () {
-                            noticia.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }, 200);
-                    }
-                }, 1500);
             }
         })();
     </script>
