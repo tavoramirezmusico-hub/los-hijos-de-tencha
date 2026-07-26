@@ -548,15 +548,14 @@
     </div>
 
     <script>
-
         const noticia = document.querySelector("#noticia-25-julio");
-
         if (window.location.hash === "#noticia-25-julio" && noticia) {
-
             noticia.open = true;
-
+            // Espera a que se abra y luego hace scroll con margen
+            setTimeout(() => {
+                noticia.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
         }
-
     </script>
 
     <script src="js/script.js"></script>
