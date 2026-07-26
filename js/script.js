@@ -714,165 +714,130 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // =====================================
-// CONTROL DE VIDEOS - SOLO UNO A LA VEZ (VERSIÓN DEFINITIVA CON YOUTUBE API)
+// CONTROL DE VIDEOS - SOLO UNO A LA VEZ (VERSIÓN FINAL)
 // =====================================
 
-// Array para almacenar todos los reproductores de YouTube
-var reproductores = [];
-var reproductoresCargados = false;
-
-// Función que se ejecuta cuando la API de YouTube está lista
-function onYouTubeIframeAPIReady() {
-    console.log('API de YouTube lista');
-    inicializarReproductoresYouTube();
-}
-
-// Función para inicializar los reproductores de YouTube
-function inicializarReproductoresYouTube() {
-
-    // Buscar TODOS los iframes de YouTube en TODAS las páginas
-    var iframes = document.querySelectorAll('iframe[src*="youtube.com"], iframe[src*="youtu.be"]');
-
-    console.log('Iframes de YouTube encontrados:', iframes.length);
-
-    iframes.forEach(function (iframe, index) {
-
-        // Verificar que el iframe no tenga ya un reproductor asignado
-        if (!iframe.hasAttribute('data-yt-initialized')) {
-
-            // Crear un ID único para cada reproductor
-            var id = 'yt-player-' + Date.now() + '-' + index;
-            iframe.id = id;
-            iframe.setAttribute('data-yt-initialized', 'true');
-
-            try {
-                // Crear el reproductor de YouTube
-                var reproductor = new YT.Player(id, {
-                    events: {
-                        'onStateChange': function (event) {
-                            // Si el video está reproduciéndose (estado = 1)
-                            if (event.data === YT.PlayerState.PLAYING) {
-                                console.log('Video reproduciéndose:', id);
-
-                                // Pausar TODOS los demás reproductores
-                                reproductores.forEach(function (otro) {
-                                    if (otro !== reproductor) {
-                                        try {
-                                            otro.pauseVideo();
-                                            console.log('Pausando otro video');
-                                        } catch (e) {
-                                            console.log('Error al pausar:', e);
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    }
-                });
-
-                // Guardar el reproductor en el array
-                reproductores.push(reproductor);
-                console.log('Reproductor creado:', id);
-
-            } catch (e) {
-                console.log('Error al crear reproductor:', e);
-            }
-        }
-    });
-}
-
-// Cargar la API de YouTube SOLO UNA VEZ
-function cargarAPIYouTube() {
-    if (document.querySelector('script[src*="youtube.com/iframe_api"]')) {
-        console.log('API de YouTube ya está cargada');
-        return;
-    }
-
-    var tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    var firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    console.log('Cargando API de YouTube...');
-}
-
-// Ejecutar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function () {
-    console.log('DOM listo - Iniciando control de videos');
 
-    // Cargar la API de YouTube
-    cargarAPIYouTube();
+    // ================================
+    // 1. SELECCIONAR TODOS LOS CONTENEDORES DE VIDEO
+    // ================================
 
-    // Para Cloudinary: recargar todos los demás iframes al hacer clic
-    var contenedoresCloud = document.querySelectorAll('.momento-card, .video-card');
+    var contenedores = document.querySelectorAll(
+        '.video-card, .momento-card, .lanzamiento-principal, .lanzamiento-secundario, .youtube-player'
+    );
 
-    contenedoresCloud.forEach(function (contenedor) {
-        var iframe = contenedor.querySelector('iframe[src*="player.cloudinary.com"]');
+    console.log('Contenedores de video encontrados:', contenedores.length);
 
-        if (iframe) {
-            // Agregar un overlay transparente para capturar clics
-            var overlay = document.createElement('div');
-            overlay.style.position = 'absolute';
-            overlay.style.top = '0';
-            overlay.style.left = '0';
-            overlay.style.width = '100%';
-            overlay.style.height = '100%';
-            overlay.style.zIndex = '10';
-            overlay.style.cursor = 'pointer';
+    // ================================
+    // 2. AGREGAR OVERLAY A CADA CONTENEDOR
+    // ================================
 
-            // Asegurar que el contenedor tenga position relative
-            contenedor.style.position = 'relative';
-            contenedor.appendChild(overlay);
+    contenedores.forEach(function (contenedor) {
 
-            overlay.addEventListener('click', function (e) {
-                e.stopPropagation();
+        var iframe = contenedor.querySelector('iframe');
 
-                console.log('Clic en Cloudinary');
+        if (!iframe) return;
 
-                // Detener TODOS los demás videos de Cloudinary
-                var todosCloud = document.querySelectorAll('iframe[src*="player.cloudinary.com"]');
-                todosCloud.forEach(function (otroIframe) {
-                    if (otroIframe !== iframe) {
-                        try {
-                            var src = otroIframe.src;
-                            otroIframe.src = '';
-                            setTimeout(function () {
-                                otroIframe.src = src;
-                            }, 50);
-                        } catch (e) { }
-                    }
-                });
+        // Guardar la URL original del iframe
+        var urlOriginal = iframe.src;
+        iframe.dataset.urlOriginal = urlOriginal;
 
-                // También pausar los de YouTube si están sonando
-                reproductores.forEach(function (rep) {
-                    try {
-                        rep.pauseVideo();
-                    } catch (e) { }
-                });
+        // Crear overlay transparente
+        var overlay = document.createElement('div');
+        overlay.style.position = 'absolute';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.zIndex = '100';
+        overlay.style.cursor = 'pointer';
+        overlay.style.background = 'rgba(0,0,0,0.01)'; // Casi transparente pero captura clics
+
+        // Asegurar que el contenedor tenga position relative
+        contenedor.style.position = 'relative';
+        contenedor.appendChild(overlay);
+
+        // ================================
+        // 3. EVENTO DE CLIC EN EL OVERLAY
+        // ================================
+
+        overlay.addEventListener('click', function (e) {
+
+            e.stopPropagation();
+            e.preventDefault();
+
+            console.log('▶️ Clic en video:', contenedor.className);
+
+            // ================================
+            // 4. DETENER TODOS LOS DEMÁS VIDEOS
+            // ================================
+
+            var todosLosIframes = document.querySelectorAll(
+                '.video-card iframe, .momento-card iframe, .lanzamiento-principal iframe, .lanzamiento-secundario iframe, .youtube-player iframe'
+            );
+
+            console.log('Total de iframes encontrados:', todosLosIframes.length);
+
+            var contador = 0;
+
+            todosLosIframes.forEach(function (otroIframe) {
+
+                // NO recargar el iframe que se está reproduciendo
+                if (otroIframe === iframe) {
+                    console.log('  → Saltando video actual (no se recarga)');
+                    return;
+                }
+
+                // Recargar el iframe para detenerlo
+                var src = otroIframe.dataset.urlOriginal || otroIframe.src;
+
+                if (src) {
+                    console.log('  → Deteniendo video:', src.substring(0, 50) + '...');
+
+                    // Recargar el iframe
+                    otroIframe.src = '';
+                    setTimeout(function () {
+                        otroIframe.src = src;
+                    }, 100);
+
+                    contador++;
+                }
             });
-        }
+
+            console.log('✅ Videos detenidos:', contador);
+
+            // ================================
+            // 5. REPRODUCIR EL VIDEO SELECCIONADO
+            // ================================
+
+            // Forzar la reproducción del video clicado (solo para YouTube)
+            try {
+                // Para YouTube: enviar comando de reproducción
+                if (iframe.src.includes('youtube.com') || iframe.src.includes('youtu.be')) {
+                    iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                    console.log('▶️ Intentando reproducir YouTube');
+                }
+
+                // Para Cloudinary: el video se reproduce automáticamente al hacer clic
+                if (iframe.src.includes('player.cloudinary.com')) {
+                    console.log('▶️ Cloudinary se reproduce automáticamente');
+                }
+            } catch (e) {
+                console.log('Error al reproducir:', e);
+            }
+        });
+
+        // ================================
+        // 6. TAMBIÉN CAPTURAR CLICS EN EL IFRAME
+        // ================================
+
+        iframe.addEventListener('click', function (e) {
+            // Simular clic en el overlay
+            overlay.click();
+        });
+
     });
 
-    // También para los lanzamientos en index.html
-    var contenedoresLanzamiento = document.querySelectorAll('.lanzamiento-principal, .lanzamiento-secundario');
-    contenedoresLanzamiento.forEach(function (contenedor) {
-        var iframe = contenedor.querySelector('iframe[src*="youtube.com"]');
-        if (iframe) {
-            // No necesitamos overlay porque la API de YouTube ya los controla
-        }
-    });
-});
-
-// Si la API de YouTube se carga después de que el DOM esté listo,
-// la función onYouTubeIframeAPIReady se llamará automáticamente
-
-// También reinicializar cuando haya cambios en el DOM (para páginas con carga dinámica)
-var observer = new MutationObserver(function () {
-    if (typeof YT !== 'undefined' && YT.Player) {
-        inicializarReproductoresYouTube();
-    }
-});
-
-observer.observe(document.body, {
-    childList: true,
-    subtree: true
+    console.log('✅ Control de videos activado');
 });
