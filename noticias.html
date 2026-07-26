@@ -547,18 +547,72 @@
         <img src="img/transicion.gif" alt="Transición">
     </div>
 
+    <!-- ===================================== -->
+    <!-- SCRIPT MEJORADO PARA ABRIR NOTICIA     -->
+    <!-- ===================================== -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const noticia = document.getElementById('noticia-25-julio');
-            if (window.location.hash === '#noticia-25-julio' && noticia) {
+        (function () {
+            'use strict';
+
+            // Función principal para abrir y hacer scroll a la noticia
+            function abrirNoticia() {
+                var noticia = document.getElementById('noticia-25-julio');
+                if (!noticia) return;
+
+                // Abrir la noticia
                 noticia.open = true;
-                // Espera a que se renderice y luego hace scroll
+
+                // Esperar a que el navegador renderice el cambio
                 setTimeout(function () {
-                    const top = noticia.getBoundingClientRect().top + window.pageYOffset - 80;
-                    window.scrollTo({ top: top, behavior: 'smooth' });
-                }, 300);
+                    // Calcular la posición exacta
+                    var rect = noticia.getBoundingClientRect();
+                    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    var offset = 100; // Margen superior
+
+                    // Posición objetivo
+                    var targetPosition = rect.top + scrollTop - offset;
+
+                    // Hacer scroll suave
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+
+                    // Segundo intento por si el primero falla
+                    setTimeout(function () {
+                        var rect2 = noticia.getBoundingClientRect();
+                        var scrollTop2 = window.pageYOffset || document.documentElement.scrollTop;
+                        var targetPosition2 = rect2.top + scrollTop2 - offset;
+                        window.scrollTo({
+                            top: targetPosition2,
+                            behavior: 'smooth'
+                        });
+                    }, 600);
+
+                }, 350);
             }
-        });
+
+            // Detectar si venimos con ancla
+            if (window.location.hash === '#noticia-25-julio') {
+                // Esperar a que todo esté cargado
+                if (document.readyState === 'complete') {
+                    abrirNoticia();
+                } else {
+                    window.addEventListener('load', abrirNoticia);
+                }
+            }
+
+            // Detectar si venimos con parámetro URL (por si acaso)
+            var params = new URLSearchParams(window.location.search);
+            if (params.get('abrir') === '25-julio') {
+                if (document.readyState === 'complete') {
+                    abrirNoticia();
+                } else {
+                    window.addEventListener('load', abrirNoticia);
+                }
+            }
+
+        })();
     </script>
 
     <script src="js/script.js"></script>
