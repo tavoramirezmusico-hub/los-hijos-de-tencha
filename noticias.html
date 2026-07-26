@@ -542,108 +542,65 @@
 
     </button>
 
-    <!-- Pantalla de transición -->
-    <div id="transicion">
-        <img src="img/transicion.gif" alt="Transición">
-    </div>
+    <!-- Pantalla de transición ELIMINADA -->
 
     <!-- ===================================== -->
-    <!-- SCRIPT ULTRA DEFINITIVO               -->
+    <!-- SCRIPT SIMPLIFICADO PARA ABRIR NOTICIA-->
     <!-- ===================================== -->
     <script>
         (function () {
             'use strict';
 
-            console.log('🚀 Noticias - Iniciando script definitivo');
-
-            // Verificar si debemos abrir la noticia
+            // Detectar si debemos abrir la noticia (por parámetro o hash)
             var params = new URLSearchParams(window.location.search);
-            var debeAbrir = params.get('abrir') === '25-julio';
-            var tieneHash = window.location.hash === '#noticia-25-julio';
+            var debeAbrir = params.get('abrir') === '25-julio' || window.location.hash === '#noticia-25-julio';
 
-            // Si venimos con el parámetro pero no hay hash, forzar recarga
-            if (debeAbrir && !tieneHash) {
-                // Usar sessionStorage para evitar bucle infinito
-                if (!sessionStorage.getItem('noticia_recargada')) {
-                    sessionStorage.setItem('noticia_recargada', 'true');
-                    console.log('🔄 Recargando página para aplicar cambios...');
-                    window.location.reload(true);
-                    return;
-                }
-                sessionStorage.removeItem('noticia_recargada');
-            }
+            if (!debeAbrir) return;
 
-            // Si no hay parámetro ni hash, salir
-            if (!debeAbrir && !tieneHash) {
-                console.log('ℹ️ No hay parámetro para abrir noticia');
-                return;
-            }
+            var noticia = document.getElementById('noticia-25-julio');
+            if (!noticia) return;
 
-            console.log('🎯 Debe abrir noticia por: ' + (debeAbrir ? 'parámetro' : 'hash'));
-
-            // Función principal para abrir la noticia
-            function abrirNoticia() {
-                var noticia = document.getElementById('noticia-25-julio');
-                if (!noticia) {
-                    console.log('❌ Noticia no encontrada');
-                    return;
-                }
-
-                console.log('✅ Noticia encontrada, abriendo...');
-
-                // Abrir la noticia
+            // Función para abrir y hacer scroll
+            function abrirYScroll() {
                 noticia.open = true;
 
                 // Forzar reflow
                 void noticia.offsetHeight;
 
-                // Función de scroll con reintentos
-                var intentos = 0;
-                var maxIntentos = 8;
-
-                function hacerScroll() {
-                    intentos++;
-                    console.log('🔄 Intento de scroll #' + intentos);
-
+                // Hacer scroll después de un breve delay
+                setTimeout(function () {
                     var rect = noticia.getBoundingClientRect();
                     var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                     var offset = 80;
-                    var targetPosition = rect.top + scrollTop - offset;
+                    var target = rect.top + scrollTop - offset;
 
                     window.scrollTo({
-                        top: targetPosition,
+                        top: target,
                         behavior: 'smooth'
                     });
 
-                    // Verificar si el scroll fue exitoso
+                    // Reintentar si no quedó bien
                     setTimeout(function () {
-                        var newRect = noticia.getBoundingClientRect();
-                        // Si la noticia no está visible en la parte superior, reintentar
-                        if (newRect.top < -50 || newRect.top > 200) {
-                            if (intentos < maxIntentos) {
-                                setTimeout(hacerScroll, 400);
-                            } else {
-                                console.log('⚠️ Scroll completado con ' + intentos + ' intentos');
-                            }
-                        } else {
-                            console.log('✅ Scroll exitoso en intento #' + intentos);
+                        var rect2 = noticia.getBoundingClientRect();
+                        if (rect2.top > 150 || rect2.top < -50) {
+                            var scrollTop2 = window.pageYOffset || document.documentElement.scrollTop;
+                            var target2 = rect2.top + scrollTop2 - offset;
+                            window.scrollTo({
+                                top: target2,
+                                behavior: 'smooth'
+                            });
                         }
-                    }, 300);
-                }
+                    }, 500);
 
-                // Iniciar scroll después de un breve delay
-                setTimeout(hacerScroll, 300);
+                }, 300);
             }
 
             // Esperar a que la página cargue completamente
             if (document.readyState === 'complete') {
-                console.log('📄 Página ya cargada');
-                setTimeout(abrirNoticia, 200);
+                setTimeout(abrirYScroll, 200);
             } else {
-                console.log('⏳ Esperando carga completa...');
                 window.addEventListener('load', function () {
-                    console.log('📄 Página cargada');
-                    setTimeout(abrirNoticia, 300);
+                    setTimeout(abrirYScroll, 300);
                 });
             }
 

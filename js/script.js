@@ -206,57 +206,10 @@ if (visor && imagenAmpliada) {
 
 
 // =====================================
-// TRANSICIÓN ENTRE PÁGINAS (MODIFICADO)
+// TRANSICIÓN ENTRE PÁGINAS (ELIMINADA)
 // =====================================
-
-document.addEventListener("DOMContentLoaded", () => {
-    const pantallaTransicion = document.getElementById("transicion");
-    if (!pantallaTransicion) return;
-
-    const enlaces = document.querySelectorAll("a");
-
-    enlaces.forEach(enlace => {
-        enlace.addEventListener("click", function (e) {
-            const href = this.getAttribute("href");
-            if (!href || href.startsWith("#")) {
-                return;
-            }
-
-            const destino = this.href;
-
-            // ⚠️ EXCLUIR enlaces que van a noticias.html con ancla
-            if (destino.includes("noticias.html#")) {
-                return; // No aplicar transición
-            }
-
-            // ⚠️ EXCLUIR enlaces que van a noticias.html con parámetros
-            if (destino.includes("noticias.html?abrir=")) {
-                return; // No aplicar transición
-            }
-
-            if (
-                destino.includes("index.html") ||
-                destino.includes("canciones.html") ||
-                destino.includes("videoteca.html") ||
-                destino.includes("noticias.html")
-            ) {
-                if (
-                    destino === window.location.href ||
-                    destino === window.location.href.split("#")[0]
-                ) {
-                    return;
-                }
-
-                e.preventDefault();
-                pantallaTransicion.classList.add("activo");
-
-                setTimeout(() => {
-                    window.location.href = destino;
-                }, 1200);
-            }
-        });
-    });
-});
+// El bloque de transición fue eliminado por completo
+// para evitar conflictos en dispositivos móviles.
 
 
 // =====================================
@@ -390,62 +343,4 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     console.log('✅ Control de videos activado (modo simple)');
-});
-
-
-// =====================================
-// FIX PARA ANCLA EN NOTICIAS (MÓVIL)
-// =====================================
-
-document.addEventListener('DOMContentLoaded', function () {
-    // Verificar si venimos con ancla
-    if (window.location.hash === '#noticia-25-julio') {
-        const noticia = document.getElementById('noticia-25-julio');
-        if (noticia) {
-            // 1. Abrir la noticia
-            noticia.open = true;
-
-            // 2. Esperar a que se renderice
-            setTimeout(function () {
-                // 3. Forzar scroll con offset para móvil
-                const rect = noticia.getBoundingClientRect();
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                const offset = 80; // Espacio desde arriba
-                const targetPosition = rect.top + scrollTop - offset;
-
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: 'smooth'
-                });
-
-                // 4. Forzar un segundo scroll después de la animación
-                setTimeout(function () {
-                    window.scrollTo({
-                        top: targetPosition,
-                        behavior: 'smooth'
-                    });
-                }, 500);
-
-            }, 300);
-        }
-    }
-
-    // Verificar si venimos con parámetro URL (Plan B)
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('abrir') === '25-julio') {
-        const noticia = document.getElementById('noticia-25-julio');
-        if (noticia) {
-            noticia.open = true;
-            setTimeout(function () {
-                const rect = noticia.getBoundingClientRect();
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                const offset = 80;
-                const targetPosition = rect.top + scrollTop - offset;
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: 'smooth'
-                });
-            }, 300);
-        }
-    }
 });

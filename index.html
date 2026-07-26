@@ -469,9 +469,8 @@
 
 
 
-                <a href="noticias.html?abrir=25-julio"
-                    onclick="event.preventDefault(); window.location.href='noticias.html?abrir=25-julio&t='+Date.now();"
-                    class="boton principal">
+                <a href="noticias.html?abrir=25-julio" target="_blank" class="boton principal"
+                    onclick="gtag('event','ver_reporte');">
                     Ver reportaje
                 </a>
 
@@ -830,10 +829,7 @@
 
     </div>
 
-    <!-- Pantalla de transición -->
-    <div id="transicion">
-        <img src="img/transicion.gif" alt="Transición">
-    </div>
+    <!-- Pantalla de transición ELIMINADA -->
 
     <script src="js/script.js"></script>
     <script src="js/eventos.js"></script>

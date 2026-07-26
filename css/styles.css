@@ -2414,3 +2414,36 @@ footer small {
         scroll-margin-top: 60px;
     }
 }
+
+/* =====================================
+   FIX URGENTE PARA MÓVIL - FORZAR REDIBUJADO
+   ===================================== */
+
+@media (max-width: 768px) {
+    .noticia {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .noticia[open] .contenido-noticia {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .hero-noticias,
+    .titulo-noticias,
+    .noticias,
+    .contenedor {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    /* Forzar que todo sea visible */
+    body * {
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
