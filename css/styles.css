@@ -2364,3 +2364,21 @@ footer small {
         font-size: 0.8rem !important;
     }
 }
+
+/* =====================================
+   BOTÓN CENTRADO PARA NOTICIAS
+===================================== */
+
+.noticia .boton-centrado {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.noticia .boton-centrado .boton {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    min-width: 180px;
+}
