@@ -206,10 +206,47 @@ if (visor && imagenAmpliada) {
 
 
 // =====================================
-// TRANSICIÓN ENTRE PÁGINAS (ELIMINADA)
+// TRANSICIÓN ENTRE PÁGINAS
 // =====================================
-// El bloque de transición fue eliminado por completo
-// para evitar conflictos en dispositivos móviles.
+
+document.addEventListener("DOMContentLoaded", () => {
+    const pantallaTransicion = document.getElementById("transicion");
+    if (!pantallaTransicion) return;
+
+    const enlaces = document.querySelectorAll("a");
+
+    enlaces.forEach(enlace => {
+        enlace.addEventListener("click", function (e) {
+            const href = this.getAttribute("href");
+            if (!href || href.startsWith("#")) {
+                return;
+            }
+
+            const destino = this.href;
+
+            if (
+                destino.includes("index.html") ||
+                destino.includes("canciones.html") ||
+                destino.includes("videoteca.html") ||
+                destino.includes("noticias.html")
+            ) {
+                if (
+                    destino === window.location.href ||
+                    destino === window.location.href.split("#")[0]
+                ) {
+                    return;
+                }
+
+                e.preventDefault();
+                pantallaTransicion.classList.add("activo");
+
+                setTimeout(() => {
+                    window.location.href = destino;
+                }, 1200);
+            }
+        });
+    });
+});
 
 
 // =====================================

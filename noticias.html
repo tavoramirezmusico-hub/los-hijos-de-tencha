@@ -542,69 +542,16 @@
 
     </button>
 
-    <!-- Pantalla de transición ELIMINADA -->
+    <!-- Pantalla de transición -->
+    <div id="transicion">
+        <img src="img/transicion.gif" alt="Transición">
+    </div>
 
-    <!-- ===================================== -->
-    <!-- SCRIPT SIMPLIFICADO PARA ABRIR NOTICIA-->
-    <!-- ===================================== -->
     <script>
-        (function () {
-            'use strict';
-
-            // Detectar si debemos abrir la noticia (por parámetro o hash)
-            var params = new URLSearchParams(window.location.search);
-            var debeAbrir = params.get('abrir') === '25-julio' || window.location.hash === '#noticia-25-julio';
-
-            if (!debeAbrir) return;
-
-            var noticia = document.getElementById('noticia-25-julio');
-            if (!noticia) return;
-
-            // Función para abrir y hacer scroll
-            function abrirYScroll() {
-                noticia.open = true;
-
-                // Forzar reflow
-                void noticia.offsetHeight;
-
-                // Hacer scroll después de un breve delay
-                setTimeout(function () {
-                    var rect = noticia.getBoundingClientRect();
-                    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                    var offset = 80;
-                    var target = rect.top + scrollTop - offset;
-
-                    window.scrollTo({
-                        top: target,
-                        behavior: 'smooth'
-                    });
-
-                    // Reintentar si no quedó bien
-                    setTimeout(function () {
-                        var rect2 = noticia.getBoundingClientRect();
-                        if (rect2.top > 150 || rect2.top < -50) {
-                            var scrollTop2 = window.pageYOffset || document.documentElement.scrollTop;
-                            var target2 = rect2.top + scrollTop2 - offset;
-                            window.scrollTo({
-                                top: target2,
-                                behavior: 'smooth'
-                            });
-                        }
-                    }, 500);
-
-                }, 300);
-            }
-
-            // Esperar a que la página cargue completamente
-            if (document.readyState === 'complete') {
-                setTimeout(abrirYScroll, 200);
-            } else {
-                window.addEventListener('load', function () {
-                    setTimeout(abrirYScroll, 300);
-                });
-            }
-
-        })();
+        const noticia = document.querySelector("#noticia-25-julio");
+        if (window.location.hash === "#noticia-25-julio" && noticia) {
+            noticia.open = true;
+        }
     </script>
 
     <script src="js/script.js"></script>
