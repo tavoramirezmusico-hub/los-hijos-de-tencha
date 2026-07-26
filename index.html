@@ -468,7 +468,7 @@
                 </div>
 
 
-                <a href="noticias.html#noticia-25-julio" class="boton principal">
+                <a href="noticias.html#noticia-25-julio" class="boton principal" id="enlace-reportaje">
                     Ver reportaje
                 </a>
 
@@ -835,7 +835,26 @@
     <script src="js/script.js"></script>
     <script src="js/eventos.js"></script>
 
-</body>
+    <!-- ============================================= -->
+    <!-- DESACTIVAR TRANSICIÓN PARA "VER REPORTAJE"    -->
+    <!-- ============================================= -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var enlaceReportaje = document.getElementById('enlace-reportaje');
+            if (enlaceReportaje) {
+                enlaceReportaje.addEventListener('click', function (e) {
+                    // Prevenir que el script de transición lo capture
+                    e.stopPropagation();
+                    // Guardar el destino
+                    var destino = this.href;
+                    // Navegar directamente
+                    window.location.href = destino;
+                    return false;
+                });
+            }
+        });
+    </script>
 
+</body>
 
 </html>
