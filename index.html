@@ -469,7 +469,9 @@
 
 
 
-                <a href="noticias.html?abrir=25-julio" class="boton principal">
+                <a href="noticias.html?abrir=25-julio"
+                    onclick="event.preventDefault(); window.location.href='noticias.html?abrir=25-julio&t='+Date.now();"
+                    class="boton principal">
                     Ver reportaje
                 </a>
 
