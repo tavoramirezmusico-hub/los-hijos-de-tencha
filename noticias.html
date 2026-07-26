@@ -255,6 +255,44 @@
         <img src="img/transicion.gif" alt="Transición">
     </div>
 
+    <!-- ============================================= -->
+    <!-- SCRIPT: ABRIR NOTICIA SI VIENE CON HASH      -->
+    <!-- ============================================= -->
+    <script>
+        (function () {
+            // Verificar si la URL tiene el hash #noticia-25-julio
+            if (window.location.hash === '#noticia-25-julio') {
+
+                // Limpiar el hash de la URL (para que el navegador no intente scroll automático)
+                history.replaceState(null, null, window.location.pathname + window.location.search);
+
+                // Función para abrir la noticia y hacer scroll
+                function abrirNoticia() {
+                    var noticia = document.getElementById('noticia-25-julio');
+                    if (noticia) {
+                        // Abrir la noticia
+                        noticia.setAttribute('open', '');
+                        noticia.open = true;
+
+                        // Hacer scroll a la noticia
+                        setTimeout(function () {
+                            noticia.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 300);
+                    }
+                }
+
+                // Ejecutar cuando la página esté cargada
+                if (document.readyState === 'complete') {
+                    setTimeout(abrirNoticia, 100);
+                } else {
+                    window.addEventListener('load', function () {
+                        setTimeout(abrirNoticia, 100);
+                    });
+                }
+            }
+        })();
+    </script>
+
     <script src="js/script.js"></script>
     <script src="js/eventos.js"></script>
 
