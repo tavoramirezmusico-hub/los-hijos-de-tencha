@@ -2382,3 +2382,18 @@ footer small {
     width: auto;
     min-width: 180px;
 }
+
+/* =====================================
+   OVERLAY PARA CLOUDINARY
+===================================== */
+
+.momento-card,
+.video-card {
+    position: relative;
+}
+
+.momento-card iframe,
+.video-card iframe {
+    position: relative;
+    z-index: 1;
+}
