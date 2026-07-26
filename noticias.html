@@ -33,15 +33,6 @@
         gtag('js', new Date());
         gtag('config', 'G-YNRK4G09LN');
     </script>
-
-    <!-- ============================================= -->
-    <!-- ELIMINAR TRANSICIÓN POR COMPLETO              -->
-    <!-- ============================================= -->
-    <style>
-        #transicion {
-            display: none !important;
-        }
-    </style>
 </head>
 
 <body>
@@ -249,46 +240,63 @@
     <button id="subir"><i class="fa-solid fa-arrow-up"></i></button>
 
     <!-- ============================================= -->
-    <!-- TRANSICIÓN (oculta por CSS)                   -->
+    <!-- PANTALLA DE TRANSICIÓN                        -->
     <!-- ============================================= -->
     <div id="transicion">
         <img src="img/transicion.gif" alt="Transición">
     </div>
 
     <!-- ============================================= -->
-    <!-- SCRIPT: ABRIR NOTICIA SI VIENE CON HASH      -->
+    <!-- SCRIPT: ABRIR NOTICIA (VERSIÓN MEJORADA)     -->
     <!-- ============================================= -->
     <script>
         (function () {
-            // Verificar si la URL tiene el hash #noticia-25-julio
-            if (window.location.hash === '#noticia-25-julio') {
+            // Obtener parámetros de la URL
+            var urlParams = new URLSearchParams(window.location.search);
+            var abrirNoticia = urlParams.get('abrir');
 
-                // Limpiar el hash de la URL (para que el navegador no intente scroll automático)
-                history.replaceState(null, null, window.location.pathname + window.location.search);
+            // Si el parámetro es "noticia-25-julio", abrir esa noticia
+            if (abrirNoticia === 'noticia-25-julio') {
+                // Limpiar la URL (quitar el parámetro)
+                var nuevaUrl = window.location.pathname + window.location.search.replace(/[?&]abrir=noticia-25-julio/, '');
+                nuevaUrl = nuevaUrl.replace(/[?&]$/, '');
+                history.replaceState(null, null, nuevaUrl);
 
-                // Función para abrir la noticia y hacer scroll
-                function abrirNoticia() {
+                // Función para abrir la noticia
+                function abrirNoticiaYScroll() {
                     var noticia = document.getElementById('noticia-25-julio');
                     if (noticia) {
-                        // Abrir la noticia
-                        noticia.setAttribute('open', '');
+                        // ABRIR LA NOTICIA
                         noticia.open = true;
 
-                        // Hacer scroll a la noticia
+                        // Scroll con retraso
                         setTimeout(function () {
                             noticia.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         }, 300);
                     }
                 }
 
-                // Ejecutar cuando la página esté cargada
-                if (document.readyState === 'complete') {
-                    setTimeout(abrirNoticia, 100);
+                // Verificar si la página ya está cargada
+                if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                    // Si ya está cargada, ejecutar inmediatamente
+                    setTimeout(abrirNoticiaYScroll, 100);
                 } else {
+                    // Si no, esperar a que cargue
                     window.addEventListener('load', function () {
-                        setTimeout(abrirNoticia, 100);
+                        setTimeout(abrirNoticiaYScroll, 200);
                     });
                 }
+
+                // Respaldo: intentar de nuevo después de 1 segundo por si falló
+                setTimeout(function () {
+                    var noticia = document.getElementById('noticia-25-julio');
+                    if (noticia && !noticia.open) {
+                        noticia.open = true;
+                        setTimeout(function () {
+                            noticia.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 200);
+                    }
+                }, 1500);
             }
         })();
     </script>
