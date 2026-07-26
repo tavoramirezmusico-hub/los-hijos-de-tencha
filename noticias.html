@@ -247,7 +247,7 @@
     </div>
 
     <!-- ============================================= -->
-    <!-- SCRIPT: SI VIENE CON PARÁMETRO, ABRIR NOTICIA -->
+    <!-- SCRIPT: ABRIR NOTICIA (VERSIÓN MEJORADA)     -->
     <!-- ============================================= -->
     <script>
         (function () {
@@ -259,22 +259,44 @@
             if (abrirNoticia === 'noticia-25-julio') {
                 // Limpiar la URL (quitar el parámetro)
                 var nuevaUrl = window.location.pathname + window.location.search.replace(/[?&]abrir=noticia-25-julio/, '');
-                nuevaUrl = nuevaUrl.replace(/[?&]$/, ''); // limpiar si queda & o ?
+                nuevaUrl = nuevaUrl.replace(/[?&]$/, '');
                 history.replaceState(null, null, nuevaUrl);
 
-                // Esperar a que cargue la página
-                window.addEventListener('load', function () {
+                // Función para abrir la noticia
+                function abrirNoticiaYScroll() {
                     var noticia = document.getElementById('noticia-25-julio');
                     if (noticia) {
-                        // Abrir la noticia
+                        // ABRIR LA NOTICIA
                         noticia.open = true;
 
-                        // Scroll con retraso para móviles
+                        // Scroll con retraso
                         setTimeout(function () {
                             noticia.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }, 350);
+                        }, 300);
                     }
-                });
+                }
+
+                // Verificar si la página ya está cargada
+                if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                    // Si ya está cargada, ejecutar inmediatamente
+                    setTimeout(abrirNoticiaYScroll, 100);
+                } else {
+                    // Si no, esperar a que cargue
+                    window.addEventListener('load', function () {
+                        setTimeout(abrirNoticiaYScroll, 200);
+                    });
+                }
+
+                // Respaldo: intentar de nuevo después de 1 segundo por si falló
+                setTimeout(function () {
+                    var noticia = document.getElementById('noticia-25-julio');
+                    if (noticia && !noticia.open) {
+                        noticia.open = true;
+                        setTimeout(function () {
+                            noticia.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 200);
+                    }
+                }, 1500);
             }
         })();
     </script>
