@@ -548,14 +548,17 @@
     </div>
 
     <script>
-        const noticia = document.querySelector("#noticia-25-julio");
-        if (window.location.hash === "#noticia-25-julio" && noticia) {
-            noticia.open = true;
-            // Espera a que se abra y luego hace scroll con margen
-            setTimeout(() => {
-                noticia.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
-        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const noticia = document.getElementById('noticia-25-julio');
+            if (window.location.hash === '#noticia-25-julio' && noticia) {
+                noticia.open = true;
+                // Espera a que se renderice y luego hace scroll
+                setTimeout(function () {
+                    const top = noticia.getBoundingClientRect().top + window.pageYOffset - 80;
+                    window.scrollTo({ top: top, behavior: 'smooth' });
+                }, 300);
+            }
+        });
     </script>
 
     <script src="js/script.js"></script>

@@ -2403,3 +2403,14 @@ footer small {
 .noticia {
     scroll-margin-top: 120px;
 }
+
+/* FIX para ancla en móvil */
+.noticia {
+    scroll-margin-top: 100px;
+}
+
+@media (max-width: 768px) {
+    .noticia {
+        scroll-margin-top: 60px;
+    }
+}
