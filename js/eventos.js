@@ -207,3 +207,46 @@ document.addEventListener('DOMContentLoaded', function () {
 
     console.log('✅ Eventos de Analytics configurados correctamente');
 });
+
+// =====================================
+// CONTROL DE VIDEOS - SOLO UNO A LA VEZ
+// =====================================
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    // Seleccionar todos los iframes de video
+    const videos = document.querySelectorAll('iframe[src*="youtube.com"], iframe[src*="youtu.be"], iframe[src*="player.cloudinary.com"]');
+
+    videos.forEach(function (video) {
+
+        // Escuchar cuando el video comienza a reproducirse
+        video.addEventListener('play', function () {
+
+            // Detener todos los demás videos
+            videos.forEach(function (otroVideo) {
+
+                if (otroVideo !== video) {
+
+                    // Para YouTube: enviar comando de pausa
+                    try {
+                        otroVideo.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                    } catch (e) { }
+
+                    // Para otros videos (Cloudinary, Vimeo, etc.)
+                    try {
+                        const src = otroVideo.src;
+                        otroVideo.src = '';
+                        setTimeout(function () {
+                            otroVideo.src = src;
+                        }, 50);
+                    } catch (e) { }
+
+                }
+
+            });
+
+        });
+
+    });
+
+});
