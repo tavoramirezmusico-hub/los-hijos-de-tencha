@@ -105,7 +105,8 @@
                         <p>La velada arrancó con la presentación de <strong>Monte Venus</strong>, quienes fueron los
                             encargados de abrir la noche con su propuesta musical. Posteriormente subió al escenario
                             <strong>La Quilmes</strong>, manteniendo el ambiente encendido y preparando el camino para
-                            una celebración que apenas comenzaba.</p>
+                            una celebración que apenas comenzaba.
+                        </p>
                         <p>Uno de los invitados más esperados fue <strong>El Vampiro Sabanero</strong>, quien viajó
                             desde Guatemala para formar parte de esta fecha especial. Además de intervenir entre cada
                             presentación con su característica selección de cumbia, permaneció después del concierto
@@ -223,7 +224,8 @@
                         <p>¡Gracias por ser parte de esta familia rodante! 🚗💨 No olviden seguirnos en nuestras redes
                             sociales para enterarse de los próximos conciertos, lanzamientos y todas las novedades de
                             <strong>Los Hijos de Tencha</strong>. <strong>¡Nos vemos en la carretera... y ojalá no muy
-                                apretados! 😄</strong></p>
+                                apretados! 😄</strong>
+                        </p>
                         <p style="text-align:right;">— <strong>Los Hijos de Tencha</strong></p>
                         <h4>🎧 Escúchala en Spotify</h4>
                         <div class="spotify-btn-wrapper">
@@ -254,40 +256,6 @@
     <div id="transicion">
         <img src="img/transicion.gif" alt="Transición">
     </div>
-
-    <!-- ============================================= -->
-    <!-- SCRIPT: SCROLL A LA NOTICIA (SIN ABRIR)       -->
-    <!-- ============================================= -->
-    <script>
-        (function () {
-            // Verificar si la URL tiene el hash #noticia-25-julio
-            if (window.location.hash === '#noticia-25-julio') {
-
-                // Limpiar el hash de la URL
-                history.replaceState(null, null, window.location.pathname + window.location.search);
-
-                // Función para hacer scroll a la noticia (sin abrirla)
-                function scrollANoticia() {
-                    var noticia = document.getElementById('noticia-25-julio');
-                    if (noticia) {
-                        // Solo scroll, NO abrir la noticia
-                        setTimeout(function () {
-                            noticia.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }, 300);
-                    }
-                }
-
-                // Ejecutar cuando la página esté cargada
-                if (document.readyState === 'complete') {
-                    setTimeout(scrollANoticia, 100);
-                } else {
-                    window.addEventListener('load', function () {
-                        setTimeout(scrollANoticia, 100);
-                    });
-                }
-            }
-        })();
-    </script>
 
     <script src="js/script.js"></script>
     <script src="js/eventos.js"></script>
