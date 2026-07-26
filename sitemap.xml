@@ -2,9 +2,36 @@
 
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
-<url>
-<loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/</loc>
-<priority>1.0</priority>
-</url>
+    <!-- PÁGINA PRINCIPAL -->
+    <url>
+        <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/</loc>
+        <lastmod>2026-07-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+
+    <!-- CANCIONERO -->
+    <url>
+        <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/canciones.html</loc>
+        <lastmod>2026-07-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <!-- VIDEOTECA -->
+    <url>
+        <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/videoteca.html</loc>
+        <lastmod>2026-07-25</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- TENCHA NOTICIAS -->
+    <url>
+        <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/noticias.html</loc>
+        <lastmod>2026-07-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
 
 </urlset>

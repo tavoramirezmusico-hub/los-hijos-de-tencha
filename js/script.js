@@ -49,7 +49,7 @@ if (botonMenu && menu) {
 
 window.addEventListener("scroll", () => {
 
-    if(menu && menu.classList.contains("activo")){
+    if (menu && menu.classList.contains("activo")) {
 
         menu.classList.remove("activo");
 
@@ -87,18 +87,18 @@ let indiceActual = 0;
 
 
 
-if(
+if (
     visorGaleria &&
     imagenGaleria &&
     fotos.length
-){
+) {
 
 
     totalFotos.textContent = fotos.length;
 
 
 
-    function mostrarFoto(indice){
+    function mostrarFoto(indice) {
 
 
         indiceActual = indice;
@@ -119,13 +119,13 @@ if(
         visorGaleria.classList.remove("mostrar");
 
 
-        setTimeout(()=>{
+        setTimeout(() => {
 
 
             visorGaleria.classList.add("mostrar");
 
 
-        },10);
+        }, 10);
 
 
     }
@@ -133,10 +133,10 @@ if(
 
 
 
-    fotos.forEach((foto, indice)=>{
+    fotos.forEach((foto, indice) => {
 
 
-        foto.addEventListener("click",()=>{
+        foto.addEventListener("click", () => {
 
 
             mostrarFoto(indice);
@@ -152,10 +152,10 @@ if(
 
     // CERRAR CON BOTÓN X
 
-    cerrarGaleria.addEventListener("click",()=>{
+    cerrarGaleria.addEventListener("click", () => {
 
 
-        visorGaleria.style.display="none";
+        visorGaleria.style.display = "none";
 
 
         document.body.style.overflow = "";
@@ -169,13 +169,13 @@ if(
 
     // CERRAR HACIENDO CLICK FUERA DE LA FOTO
 
-    visorGaleria.addEventListener("click",(e)=>{
+    visorGaleria.addEventListener("click", (e) => {
 
 
-        if(e.target === visorGaleria){
+        if (e.target === visorGaleria) {
 
 
-            visorGaleria.style.display="none";
+            visorGaleria.style.display = "none";
 
 
             document.body.style.overflow = "";
@@ -193,7 +193,7 @@ if(
 
     // SIGUIENTE FOTO
 
-    siguiente.addEventListener("click",(e)=>{
+    siguiente.addEventListener("click", (e) => {
 
 
         e.stopPropagation();
@@ -202,7 +202,7 @@ if(
         indiceActual++;
 
 
-        if(indiceActual >= fotos.length){
+        if (indiceActual >= fotos.length) {
 
 
             indiceActual = 0;
@@ -223,7 +223,7 @@ if(
 
     // FOTO ANTERIOR
 
-    anterior.addEventListener("click",(e)=>{
+    anterior.addEventListener("click", (e) => {
 
 
         e.stopPropagation();
@@ -232,7 +232,7 @@ if(
         indiceActual--;
 
 
-        if(indiceActual < 0){
+        if (indiceActual < 0) {
 
 
             indiceActual = fotos.length - 1;
@@ -253,17 +253,17 @@ if(
 
     // TECLADO
 
-    document.addEventListener("keydown",(e)=>{
+    document.addEventListener("keydown", (e) => {
 
 
-        if(visorGaleria.style.display !== "flex") return;
+        if (visorGaleria.style.display !== "flex") return;
 
 
 
-        if(e.key === "Escape"){
+        if (e.key === "Escape") {
 
 
-            visorGaleria.style.display="none";
+            visorGaleria.style.display = "none";
 
 
             document.body.style.overflow = "";
@@ -273,7 +273,7 @@ if(
 
 
 
-        if(e.key === "ArrowRight"){
+        if (e.key === "ArrowRight") {
 
 
             siguiente.click();
@@ -283,7 +283,7 @@ if(
 
 
 
-        if(e.key === "ArrowLeft"){
+        if (e.key === "ArrowLeft") {
 
 
             anterior.click();
@@ -308,17 +308,16 @@ if(
 const elementosAnimados = document.querySelectorAll(".animar");
 
 
-const observador = new IntersectionObserver((entradas)=>{
+const observador = new IntersectionObserver((entradas) => {
 
 
-    entradas.forEach(entrada=>{
+    entradas.forEach(entrada => {
 
 
-        if(entrada.isIntersecting){
+        if (entrada.isIntersecting) {
 
 
             entrada.target.classList.add("visible");
-
 
         }
 
@@ -326,15 +325,15 @@ const observador = new IntersectionObserver((entradas)=>{
     });
 
 
-},{
+}, {
 
-    threshold:0.15
+    threshold: 0.15
 
 });
 
 
 
-elementosAnimados.forEach(elemento=>{
+elementosAnimados.forEach(elemento => {
 
 
     observador.observe(elemento);
@@ -356,20 +355,20 @@ elementosAnimados.forEach(elemento=>{
 const botonSubir = document.getElementById("subir");
 
 
-if(botonSubir){
+if (botonSubir) {
 
 
 
-    window.addEventListener("scroll",()=>{
+    window.addEventListener("scroll", () => {
 
 
-        if(window.scrollY > 400){
+        if (window.scrollY > 400) {
 
 
             botonSubir.classList.add("visible");
 
 
-        }else{
+        } else {
 
 
             botonSubir.classList.remove("visible");
@@ -382,20 +381,20 @@ if(botonSubir){
 
 
 
-botonSubir.addEventListener("click", () => {
+    botonSubir.addEventListener("click", () => {
 
-    // Cerrar todas las noticias
-    document.querySelectorAll(".noticia").forEach((noticia) => {
-        noticia.open = false;
+        // Cerrar todas las noticias
+        document.querySelectorAll(".noticia").forEach((noticia) => {
+            noticia.open = false;
+        });
+
+        // Subir al inicio
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
     });
-
-    // Subir al inicio
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
-
-});
 
 
 
@@ -411,14 +410,14 @@ botonSubir.addEventListener("click", () => {
 // =====================================
 
 
-function mostrarCamisetas(){
+function mostrarCamisetas() {
 
 
     const galeria = document.getElementById("galeria-camisetas");
 
 
 
-    if(galeria){
+    if (galeria) {
 
 
         galeria.classList.toggle("mostrar");
@@ -454,7 +453,7 @@ const cerrar = document.getElementById("cerrar-visor");
 
 
 
-if(visor && imagenAmpliada){
+if (visor && imagenAmpliada) {
 
 
 
@@ -462,7 +461,7 @@ if(visor && imagenAmpliada){
 
 
 
-        imagen.addEventListener("click", function(){
+        imagen.addEventListener("click", function () {
 
 
 
@@ -470,7 +469,7 @@ if(visor && imagenAmpliada){
 
 
 
-            visor.style.display="flex";
+            visor.style.display = "flex";
 
 
 
@@ -483,13 +482,13 @@ if(visor && imagenAmpliada){
 
 
 
-    if(cerrar){
+    if (cerrar) {
 
 
-        cerrar.addEventListener("click",()=>{
+        cerrar.addEventListener("click", () => {
 
 
-            visor.style.display="none";
+            visor.style.display = "none";
 
 
         });
@@ -502,13 +501,13 @@ if(visor && imagenAmpliada){
 
 
 
-    visor.addEventListener("click",(e)=>{
+    visor.addEventListener("click", (e) => {
 
 
-        if(e.target === visor){
+        if (e.target === visor) {
 
 
-            visor.style.display="none";
+            visor.style.display = "none";
 
 
         }
@@ -554,7 +553,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-        enlace.addEventListener("click", function(e){
+        enlace.addEventListener("click", function (e) {
 
 
 
@@ -563,7 +562,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-            if(!href || href.startsWith("#")){
+            if (!href || href.startsWith("#")) {
 
 
                 return;
@@ -583,21 +582,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-           if(
-    destino.includes("index.html") ||
-    destino.includes("canciones.html") ||
-    destino.includes("videoteca.html") ||
-    destino.includes("noticias.html")
-){
+            if (
+                destino.includes("index.html") ||
+                destino.includes("canciones.html") ||
+                destino.includes("videoteca.html") ||
+                destino.includes("noticias.html")
+            ) {
 
 
 
 
 
-                if(
+                if (
                     destino === window.location.href ||
                     destino === window.location.href.split("#")[0]
-                ){
+                ) {
 
 
                     return;
@@ -627,7 +626,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-                },1200);
+                }, 1200);
 
 
 
@@ -688,12 +687,12 @@ noticias.forEach((noticia) => {
 // FIX REPRODUCTOR SPOTIFY EN MÓVIL
 // =====================================
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Forzar redimensionamiento del iframe de Spotify en móvil
     function fixSpotifyPlayer() {
         const spotifyEmbeds = document.querySelectorAll('.spotify-embed iframe');
-        
-        spotifyEmbeds.forEach(function(iframe) {
+
+        spotifyEmbeds.forEach(function (iframe) {
             const container = iframe.closest('.spotify-embed');
             if (container) {
                 const containerWidth = container.offsetWidth;
@@ -709,7 +708,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Ejecutar al cargar y al redimensionar
     fixSpotifyPlayer();
     window.addEventListener('resize', fixSpotifyPlayer);
-    
+
     // También forzar después de 1 segundo (por si carga lento)
     setTimeout(fixSpotifyPlayer, 1000);
 });
