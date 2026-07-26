@@ -206,7 +206,7 @@ if (visor && imagenAmpliada) {
 
 
 // =====================================
-// TRANSICIÓN ENTRE PÁGINAS
+// TRANSICIÓN ENTRE PÁGINAS (MODIFICADO)
 // =====================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -223,6 +223,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const destino = this.href;
+
+            // ⚠️ EXCLUIR enlaces que van a noticias.html con ancla
+            if (destino.includes("noticias.html#")) {
+                return; // No aplicar transición
+            }
 
             if (
                 destino.includes("index.html") ||
