@@ -247,7 +247,7 @@
     </div>
 
     <!-- ============================================= -->
-    <!-- SCRIPT: ABRIR NOTICIA (VERSIÓN MEJORADA)     -->
+    <!-- SCRIPT: ABRIR NOTICIA (MÉTODO ROBUSTO)       -->
     <!-- ============================================= -->
     <script>
         (function () {
@@ -257,28 +257,51 @@
 
             // Si el parámetro es "noticia-25-julio", abrir esa noticia
             if (abrirNoticia === 'noticia-25-julio') {
+
                 // Limpiar la URL (quitar el parámetro)
                 var nuevaUrl = window.location.pathname + window.location.search.replace(/[?&]abrir=noticia-25-julio/, '');
                 nuevaUrl = nuevaUrl.replace(/[?&]$/, '');
                 history.replaceState(null, null, nuevaUrl);
 
-                // Función para abrir la noticia
+                // =============================================
+                // MÉTODO ROBUSTO PARA ABRIR EL DETAILS
+                // =============================================
+
+                // Función principal que abre la noticia y hace scroll
                 function abrirNoticiaYScroll() {
                     var noticia = document.getElementById('noticia-25-julio');
                     if (noticia) {
-                        // ABRIR LA NOTICIA
+                        // MÉTODO 1: Usar el atributo open directamente
+                        noticia.setAttribute('open', '');
+
+                        // MÉTODO 2: Forzar con la propiedad open (respaldo)
                         noticia.open = true;
 
-                        // Scroll con retraso
+                        // MÉTODO 3: Simular clic en el summary (lo más confiable)
+                        var summary = noticia.querySelector('summary');
+                        if (summary) {
+                            // Forzar el clic después de un micro-retraso
+                            setTimeout(function () {
+                                summary.click();
+                            }, 50);
+                        }
+
+                        // Hacer scroll después de asegurar que se abrió
                         setTimeout(function () {
                             noticia.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }, 300);
+                        }, 400);
+
+                        return true;
                     }
+                    return false;
                 }
 
-                // Verificar si la página ya está cargada
+                // =============================================
+                // MÚLTIPLES INTENTOS PARA ASEGURAR LA APERTURA
+                // =============================================
+
+                // Intento 1: Inmediato (si el DOM ya está listo)
                 if (document.readyState === 'complete' || document.readyState === 'interactive') {
-                    // Si ya está cargada, ejecutar inmediatamente
                     setTimeout(abrirNoticiaYScroll, 100);
                 } else {
                     // Si no, esperar a que cargue
@@ -287,16 +310,46 @@
                     });
                 }
 
-                // Respaldo: intentar de nuevo después de 1 segundo por si falló
+                // Intento 2: A los 500ms (por si el primero falló)
                 setTimeout(function () {
                     var noticia = document.getElementById('noticia-25-julio');
                     if (noticia && !noticia.open) {
+                        abrirNoticiaYScroll();
+                    }
+                }, 500);
+
+                // Intento 3: A los 1000ms (último recurso)
+                setTimeout(function () {
+                    var noticia = document.getElementById('noticia-25-julio');
+                    if (noticia && !noticia.open) {
+                        noticia.setAttribute('open', '');
                         noticia.open = true;
+                        var summary = noticia.querySelector('summary');
+                        if (summary) {
+                            summary.click();
+                        }
                         setTimeout(function () {
                             noticia.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         }, 200);
                     }
-                }, 1500);
+                }, 1000);
+
+                // Intento 4: A los 2000ms (por si todo falló, pero la página está lenta)
+                setTimeout(function () {
+                    var noticia = document.getElementById('noticia-25-julio');
+                    if (noticia && !noticia.open) {
+                        // Forzar apertura con todos los métodos posibles
+                        noticia.setAttribute('open', 'true');
+                        noticia.open = true;
+                        var summary = noticia.querySelector('summary');
+                        if (summary) {
+                            summary.click();
+                            setTimeout(function () {
+                                summary.click();
+                            }, 50);
+                        }
+                    }
+                }, 2000);
             }
         })();
     </script>
