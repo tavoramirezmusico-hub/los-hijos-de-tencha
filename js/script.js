@@ -714,45 +714,84 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // =====================================
-// CONTROL DE VIDEOS - SOLO UNO A LA VEZ
+// CONTROL DE VIDEOS COMPLETO - YOUTUBE + CLOUDINARY
 // =====================================
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    // Seleccionar todos los iframes de video
-    const videos = document.querySelectorAll('iframe[src*="youtube.com"], iframe[src*="youtu.be"], iframe[src*="player.cloudinary.com"]');
+    // ---------- PARA YOUTUBE ----------
+    var videosYT = document.querySelectorAll('iframe[src*="youtube.com"], iframe[src*="youtu.be"]');
 
-    videos.forEach(function (video) {
+    videosYT.forEach(function (video) {
 
-        // Escuchar cuando el video comienza a reproducirse
-        video.addEventListener('play', function () {
+        // Agregar listener para mensajes de YouTube
+        window.addEventListener('message', function (event) {
 
-            // Detener todos los demás videos
-            videos.forEach(function (otroVideo) {
+            // Verificar que el mensaje viene de un iframe de YouTube
+            if (event.source && event.source.frameElement &&
+                (event.source.frameElement.src.includes('youtube.com') ||
+                    event.source.frameElement.src.includes('youtu.be'))) {
 
-                if (otroVideo !== video) {
+                // Si el video está reproduciéndose
+                if (event.data && typeof event.data === 'string' &&
+                    (event.data.includes('playing') || event.data.includes('buffering') ||
+                        event.data.includes('state=1') || event.data.includes('state=3'))) {
 
-                    // Para YouTube: enviar comando de pausa
-                    try {
-                        otroVideo.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-                    } catch (e) {
-                        // Si falla, intentar con el método alternativo
-                    }
+                    // Detener todos los demás videos de YouTube
+                    videosYT.forEach(function (otroVideo) {
 
-                    // Alternativa: recargar el iframe para detenerlo
-                    // (solo si el método anterior no funciona)
-                    try {
-                        const src = otroVideo.src;
-                        otroVideo.src = '';
-                        setTimeout(function () {
-                            otroVideo.src = src;
-                        }, 100);
-                    } catch (e) { }
+                        if (otroVideo !== video) {
+
+                            try {
+                                otroVideo.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                            } catch (e) { }
+
+                        }
+
+                    });
+
+                }
+
+            }
+
+        });
+
+    });
+
+    // ---------- PARA CLOUDINARY ----------
+    var videosCloud = document.querySelectorAll('iframe[src*="player.cloudinary.com"]');
+
+    videosCloud.forEach(function (video) {
+
+        var contenedor = video.closest('.momento-card, .video-card, .youtube-player');
+
+        if (contenedor) {
+
+            contenedor.addEventListener('click', function (e) {
+
+                if (e.target === video || e.target.closest('iframe')) {
+
+                    videosCloud.forEach(function (otroVideo) {
+
+                        if (otroVideo !== video) {
+
+                            try {
+                                var src = otroVideo.src;
+                                otroVideo.src = '';
+                                setTimeout(function () {
+                                    otroVideo.src = src;
+                                }, 100);
+                            } catch (e) { }
+
+                        }
+
+                    });
+
                 }
 
             });
 
-        });
+        }
 
     });
 
