@@ -2384,7 +2384,7 @@ footer small {
 }
 
 /* =====================================
-   CONTROL DE VIDEOS
+   CONTROL DE VIDEOS - CONTENEDORES
 ===================================== */
 
 .video-card,
@@ -2393,13 +2393,5 @@ footer small {
 .lanzamiento-secundario,
 .youtube-player {
     position: relative !important;
-}
-
-.video-card iframe,
-.momento-card iframe,
-.lanzamiento-principal iframe,
-.lanzamiento-secundario iframe,
-.youtube-player iframe {
-    position: relative;
-    z-index: 1;
+    cursor: pointer;
 }
