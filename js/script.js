@@ -714,50 +714,165 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // =====================================
-// CONTROL DE VIDEOS - SOLO UNO A LA VEZ (VERSIÓN DEFINITIVA)
+// CONTROL DE VIDEOS - SOLO UNO A LA VEZ (VERSIÓN DEFINITIVA CON YOUTUBE API)
 // =====================================
 
-document.addEventListener('DOMContentLoaded', function () {
+// Array para almacenar todos los reproductores de YouTube
+var reproductores = [];
+var reproductoresCargados = false;
 
-    // Seleccionar TODOS los contenedores que tienen videos
-    var contenedoresVideo = document.querySelectorAll('.video-card, .momento-card, .lanzamiento-principal, .lanzamiento-secundario, .youtube-player');
+// Función que se ejecuta cuando la API de YouTube está lista
+function onYouTubeIframeAPIReady() {
+    console.log('API de YouTube lista');
+    inicializarReproductoresYouTube();
+}
 
-    contenedoresVideo.forEach(function (contenedor) {
+// Función para inicializar los reproductores de YouTube
+function inicializarReproductoresYouTube() {
 
-        // Buscar el iframe dentro del contenedor
-        var iframe = contenedor.querySelector('iframe');
+    // Buscar TODOS los iframes de YouTube en TODAS las páginas
+    var iframes = document.querySelectorAll('iframe[src*="youtube.com"], iframe[src*="youtu.be"]');
 
-        if (iframe) {
+    console.log('Iframes de YouTube encontrados:', iframes.length);
 
-            // Cuando el usuario haga clic en el contenedor (o en el iframe)
-            contenedor.addEventListener('click', function (e) {
+    iframes.forEach(function (iframe, index) {
 
-                // Detener TODOS los demás iframes
-                var todosLosIframes = document.querySelectorAll('.video-card iframe, .momento-card iframe, .lanzamiento-principal iframe, .lanzamiento-secundario iframe, .youtube-player iframe');
+        // Verificar que el iframe no tenga ya un reproductor asignado
+        if (!iframe.hasAttribute('data-yt-initialized')) {
 
-                todosLosIframes.forEach(function (otroIframe) {
+            // Crear un ID único para cada reproductor
+            var id = 'yt-player-' + Date.now() + '-' + index;
+            iframe.id = id;
+            iframe.setAttribute('data-yt-initialized', 'true');
 
-                    if (otroIframe !== iframe) {
+            try {
+                // Crear el reproductor de YouTube
+                var reproductor = new YT.Player(id, {
+                    events: {
+                        'onStateChange': function (event) {
+                            // Si el video está reproduciéndose (estado = 1)
+                            if (event.data === YT.PlayerState.PLAYING) {
+                                console.log('Video reproduciéndose:', id);
 
-                        // Guardar la URL original
-                        var srcOriginal = otroIframe.src;
-
-                        // Si tiene URL, la recargamos para detener el video
-                        if (srcOriginal) {
-                            otroIframe.src = '';
-                            setTimeout(function () {
-                                otroIframe.src = srcOriginal;
-                            }, 50);
+                                // Pausar TODOS los demás reproductores
+                                reproductores.forEach(function (otro) {
+                                    if (otro !== reproductor) {
+                                        try {
+                                            otro.pauseVideo();
+                                            console.log('Pausando otro video');
+                                        } catch (e) {
+                                            console.log('Error al pausar:', e);
+                                        }
+                                    }
+                                });
+                            }
                         }
-
                     }
-
                 });
 
-            });
+                // Guardar el reproductor en el array
+                reproductores.push(reproductor);
+                console.log('Reproductor creado:', id);
 
+            } catch (e) {
+                console.log('Error al crear reproductor:', e);
+            }
         }
+    });
+}
 
+// Cargar la API de YouTube SOLO UNA VEZ
+function cargarAPIYouTube() {
+    if (document.querySelector('script[src*="youtube.com/iframe_api"]')) {
+        console.log('API de YouTube ya está cargada');
+        return;
+    }
+
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    console.log('Cargando API de YouTube...');
+}
+
+// Ejecutar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('DOM listo - Iniciando control de videos');
+
+    // Cargar la API de YouTube
+    cargarAPIYouTube();
+
+    // Para Cloudinary: recargar todos los demás iframes al hacer clic
+    var contenedoresCloud = document.querySelectorAll('.momento-card, .video-card');
+
+    contenedoresCloud.forEach(function (contenedor) {
+        var iframe = contenedor.querySelector('iframe[src*="player.cloudinary.com"]');
+
+        if (iframe) {
+            // Agregar un overlay transparente para capturar clics
+            var overlay = document.createElement('div');
+            overlay.style.position = 'absolute';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.zIndex = '10';
+            overlay.style.cursor = 'pointer';
+
+            // Asegurar que el contenedor tenga position relative
+            contenedor.style.position = 'relative';
+            contenedor.appendChild(overlay);
+
+            overlay.addEventListener('click', function (e) {
+                e.stopPropagation();
+
+                console.log('Clic en Cloudinary');
+
+                // Detener TODOS los demás videos de Cloudinary
+                var todosCloud = document.querySelectorAll('iframe[src*="player.cloudinary.com"]');
+                todosCloud.forEach(function (otroIframe) {
+                    if (otroIframe !== iframe) {
+                        try {
+                            var src = otroIframe.src;
+                            otroIframe.src = '';
+                            setTimeout(function () {
+                                otroIframe.src = src;
+                            }, 50);
+                        } catch (e) { }
+                    }
+                });
+
+                // También pausar los de YouTube si están sonando
+                reproductores.forEach(function (rep) {
+                    try {
+                        rep.pauseVideo();
+                    } catch (e) { }
+                });
+            });
+        }
     });
 
+    // También para los lanzamientos en index.html
+    var contenedoresLanzamiento = document.querySelectorAll('.lanzamiento-principal, .lanzamiento-secundario');
+    contenedoresLanzamiento.forEach(function (contenedor) {
+        var iframe = contenedor.querySelector('iframe[src*="youtube.com"]');
+        if (iframe) {
+            // No necesitamos overlay porque la API de YouTube ya los controla
+        }
+    });
+});
+
+// Si la API de YouTube se carga después de que el DOM esté listo,
+// la función onYouTubeIframeAPIReady se llamará automáticamente
+
+// También reinicializar cuando haya cambios en el DOM (para páginas con carga dinámica)
+var observer = new MutationObserver(function () {
+    if (typeof YT !== 'undefined' && YT.Player) {
+        inicializarReproductoresYouTube();
+    }
+});
+
+observer.observe(document.body, {
+    childList: true,
+    subtree: true
 });
