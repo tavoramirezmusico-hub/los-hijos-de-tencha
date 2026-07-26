@@ -35,45 +35,14 @@
     </script>
 
     <!-- ============================================= -->
-    <!-- FORZAR APERTURA POR CSS + OCULTAR TRANSICIÓN  -->
+    <!-- ELIMINAR TRANSICIÓN POR COMPLETO              -->
     <!-- ============================================= -->
-    <script>
-        // Detectar si venimos del reportaje
-        if (window.location.search.includes('abrir=noticia-25-julio')) {
-
-            // 1. Marcar globalmente
-            window._desdeReportaje = true;
-
-            // 2. Inyectar CSS para forzar la apertura del details
-            var style = document.createElement('style');
-            style.textContent = `
-                #noticia-25-julio {
-                    display: block !important;
-                }
-                #noticia-25-julio[open] {
-                    display: block !important;
-                }
-                /* Forzar que el contenido sea visible */
-                #noticia-25-julio .contenido-noticia {
-                    display: block !important;
-                }
-                /* Ocultar el summary (lo mostraremos después) */
-                #noticia-25-julio summary {
-                    display: block !important;
-                }
-            `;
-            document.head.appendChild(style);
-
-            // 3. Ocultar transición inmediatamente
-            document.addEventListener('DOMContentLoaded', function () {
-                var transicion = document.getElementById('transicion');
-                if (transicion) {
-                    transicion.style.display = 'none';
-                    transicion.classList.remove('activo');
-                }
-            });
+    <style>
+        /* Ocultar la transición siempre en esta página */
+        #transicion {
+            display: none !important;
         }
-    </script>
+    </style>
 </head>
 
 <body>
@@ -137,8 +106,7 @@
                         <p>La velada arrancó con la presentación de <strong>Monte Venus</strong>, quienes fueron los
                             encargados de abrir la noche con su propuesta musical. Posteriormente subió al escenario
                             <strong>La Quilmes</strong>, manteniendo el ambiente encendido y preparando el camino para
-                            una celebración que apenas comenzaba.
-                        </p>
+                            una celebración que apenas comenzaba.</p>
                         <p>Uno de los invitados más esperados fue <strong>El Vampiro Sabanero</strong>, quien viajó
                             desde Guatemala para formar parte de esta fecha especial. Además de intervenir entre cada
                             presentación con su característica selección de cumbia, permaneció después del concierto
@@ -256,8 +224,7 @@
                         <p>¡Gracias por ser parte de esta familia rodante! 🚗💨 No olviden seguirnos en nuestras redes
                             sociales para enterarse de los próximos conciertos, lanzamientos y todas las novedades de
                             <strong>Los Hijos de Tencha</strong>. <strong>¡Nos vemos en la carretera... y ojalá no muy
-                                apretados! 😄</strong>
-                        </p>
+                                apretados! 😄</strong></p>
                         <p style="text-align:right;">— <strong>Los Hijos de Tencha</strong></p>
                         <h4>🎧 Escúchala en Spotify</h4>
                         <div class="spotify-btn-wrapper">
@@ -283,49 +250,45 @@
     <button id="subir"><i class="fa-solid fa-arrow-up"></i></button>
 
     <!-- ============================================= -->
-    <!-- PANTALLA DE TRANSICIÓN                        -->
+    <!-- TRANSICIÓN (oculta por CSS)                   -->
     <!-- ============================================= -->
     <div id="transicion">
         <img src="img/transicion.gif" alt="Transición">
     </div>
 
     <!-- ============================================= -->
-    <!-- SCRIPT: ABRIR Y HACER SCROLL                  -->
+    <!-- SCRIPT: ABRIR NOTICIA (MÉTODO DEFINITIVO)    -->
     <!-- ============================================= -->
     <script>
         (function () {
-            // Verificar si venimos del reportaje
-            var desdeReportaje = window._desdeReportaje || window.location.search.includes('abrir=noticia-25-julio');
+            // Detectar si venimos del reportaje
+            var urlParams = new URLSearchParams(window.location.search);
+            var abrirNoticia = urlParams.get('abrir');
 
-            if (desdeReportaje) {
+            if (abrirNoticia === 'noticia-25-julio') {
 
-                // 1. OCULTAR TRANSICIÓN (por si no se ocultó antes)
-                function ocultarTransicion() {
-                    var transicion = document.getElementById('transicion');
-                    if (transicion) {
-                        transicion.style.display = 'none';
-                        transicion.classList.remove('activo');
-                    }
-                }
-
-                ocultarTransicion();
-                document.addEventListener('DOMContentLoaded', ocultarTransicion);
-                window.addEventListener('load', ocultarTransicion);
-
-                // 2. LIMPIAR LA URL
+                // Limpiar URL
                 var nuevaUrl = window.location.pathname + window.location.search.replace(/[?&]abrir=noticia-25-julio/, '');
                 nuevaUrl = nuevaUrl.replace(/[?&]$/, '');
                 history.replaceState(null, null, nuevaUrl);
 
-                // 3. FORZAR APERTURA Y SCROLL
-                function abrirYScroll() {
+                // Función para abrir la noticia
+                function abrirNoticiaYScroll() {
                     var noticia = document.getElementById('noticia-25-julio');
                     if (noticia) {
-                        // Asegurar que el atributo open esté presente
+                        // Método 1: Atributo open
                         noticia.setAttribute('open', '');
+
+                        // Método 2: Propiedad open
                         noticia.open = true;
 
-                        // Scroll
+                        // Método 3: Simular clic en el summary (el más confiable)
+                        var summary = noticia.querySelector('summary');
+                        if (summary) {
+                            summary.click();
+                        }
+
+                        // Hacer scroll
                         setTimeout(function () {
                             noticia.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         }, 300);
@@ -335,36 +298,53 @@
                     return false;
                 }
 
-                // Intentar inmediatamente
+                // =============================================
+                // MÚLTIPLES INTENTOS PARA ASEGURAR LA APERTURA
+                // =============================================
+
+                // Intento 1: Inmediato
                 if (document.readyState === 'complete' || document.readyState === 'interactive') {
-                    setTimeout(abrirYScroll, 150);
+                    setTimeout(abrirNoticiaYScroll, 100);
                 } else {
                     document.addEventListener('DOMContentLoaded', function () {
-                        setTimeout(abrirYScroll, 150);
-                    });
-                    window.addEventListener('load', function () {
-                        setTimeout(abrirYScroll, 100);
+                        setTimeout(abrirNoticiaYScroll, 100);
                     });
                 }
 
-                // Reintentos por si falla
-                var intentos = 0;
-                var maxIntentos = 8;
-                var intervalo = setInterval(function () {
-                    intentos++;
+                // Intento 2: A los 500ms
+                setTimeout(function () {
                     var noticia = document.getElementById('noticia-25-julio');
-                    // Si no está abierta, forzar
                     if (noticia && !noticia.open) {
-                        noticia.setAttribute('open', '');
+                        abrirNoticiaYScroll();
+                    }
+                }, 500);
+
+                // Intento 3: A los 1000ms
+                setTimeout(function () {
+                    var noticia = document.getElementById('noticia-25-julio');
+                    if (noticia && !noticia.open) {
+                        abrirNoticiaYScroll();
+                    }
+                }, 1000);
+
+                // Intento 4: A los 2000ms (último recurso)
+                setTimeout(function () {
+                    var noticia = document.getElementById('noticia-25-julio');
+                    if (noticia) {
+                        noticia.setAttribute('open', 'true');
                         noticia.open = true;
+                        var summary = noticia.querySelector('summary');
+                        if (summary) {
+                            summary.click();
+                            setTimeout(function () {
+                                summary.click();
+                            }, 50);
+                        }
                         setTimeout(function () {
                             noticia.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         }, 200);
                     }
-                    if (intentos >= maxIntentos || (noticia && noticia.open)) {
-                        clearInterval(intervalo);
-                    }
-                }, 400);
+                }, 2000);
             }
         })();
     </script>
