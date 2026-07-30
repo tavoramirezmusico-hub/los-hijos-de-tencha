@@ -65,136 +65,155 @@
         gtag('config', 'G-YNRK4G09LN');
     </script>
 
-</head>
+    <!-- ============================================= -->
+    <!-- ESTILOS DEL MENÚ UNIFICADO                    -->
+    <!-- ============================================= -->
+    <style>
+        /* =====================================
+           MENÚ CON SCROLL HORIZONTAL - LETRAS MÁS GRANDES
+           ===================================== */
+        .menu {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 8px 0;
+            scrollbar-width: thin;
+            scrollbar-color: #ffcc00 transparent;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
 
+        .menu::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .menu::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .menu::-webkit-scrollbar-thumb {
+            background: #ffcc00;
+            border-radius: 4px;
+        }
+
+        .menu li {
+            flex-shrink: 0;
+        }
+
+        .menu li a,
+        .menu li span {
+            padding: 8px 18px;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            display: block;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .menu li a:hover {
+            background: #ffcc00;
+            color: #000;
+            border-radius: 20px;
+        }
+
+        .menu-activo {
+            color: #ffcc00 !important;
+            font-weight: 600;
+        }
+
+        @media (max-width: 900px) {
+
+            .menu li a,
+            .menu li span {
+                font-size: 0.85rem;
+                padding: 6px 14px;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .menu li a,
+            .menu li span {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+
+</head>
 
 <body>
 
-
-
     <header class="hero-canciones">
 
-
         <nav>
-
             <a href="index.html" class="logo">
-
                 <img src="img/logo.webp" alt="Los Hijos de Tencha">
-
             </a>
 
-
             <button id="menu-btn" class="menu-btn">
-
                 <img src="img/menu-icono.webp" alt="Menú">
-
                 <span>Menú</span>
-
             </button>
 
-
-
             <ul class="menu">
-
                 <li><a href="index.html">Inicio</a></li>
-
                 <li><a href="index.html#banda">La Banda</a></li>
-
                 <li><a href="index.html#eventos">Eventos</a></li>
-
                 <li><a href="index.html#galeria">Galería</a></li>
-
                 <li><a href="index.html#musica">Lanzamientos</a></li>
-
                 <li><span class="menu-activo">Cancionero</span></li>
-
                 <li><a href="videoteca.html">Videos</a></li>
-
                 <li><a href="noticias.html">Tencha Noticias</a></li>
-
                 <li><a href="index.html#integrantes">Integrantes</a></li>
-
                 <li><a href="index.html#tienda">Tienda</a></li>
-
                 <li><a href="index.html#contacto">Contacto</a></li>
-
+                <li><a href="admin/" style="color: #ffcc00; font-weight: 700;">⚙️ Admin</a></li>
             </ul>
-
 
         </nav>
 
         <div class="titulo-canciones">
 
-
             <span>LOS HIJOS DE TENCHA</span>
-
             <h1>Nuestro Cancionero Oficial</h1>
-
             <p>
                 Letras oficiales y música de nuestra historia.
             </p>
 
-
         </div>
-
 
     </header>
 
-
-
-
-
     <section class="canciones animar">
-
 
         <div class="contenedor">
 
-
             <div class="titulo-seccion">
-
                 <span>Repertorio</span>
-
                 <h2>Letras de Nuestras Canciones</h2>
-
             </div>
 
-
-
-
-
             <div class="lista-canciones" id="cancionero">
-
-
 
                 <!-- ==============================
         CANCION 1
 ================================ -->
 
-
                 <details class="cancion">
 
-
                     <summary>
-
                         LA COLMENA
-
                     </summary>
-
-
 
                     <div class="contenido-cancion">
 
-
                         <p class="escuchar-cancion">
-
                             Escuchar canción
-
                         </p>
 
-
-
                         <div class="spotify">
-
 
                             <iframe style="border-radius:12px"
                                 src="https://open.spotify.com/embed/track/2uS52IfYXQVSuTj3sSJyB6" width="100%"
@@ -203,15 +222,9 @@
                                 loading="lazy">
                             </iframe>
 
-
                         </div>
 
-
-
-
-
                         <div class="letra-cancion">
-
 
                             <p>
 
@@ -241,7 +254,6 @@
 
                             </p>
 
-
                         </div>
 
                         <a href="#cancionero" class="volver-cancionero">
@@ -250,44 +262,25 @@
 
                     </div>
 
-
                 </details>
-
-
-
-
-
 
                 <!-- ==============================
         CANCION 2
 ================================ -->
 
-
                 <details class="cancion">
 
-
                     <summary>
-
                         QUISIERA VOLVER
-
                     </summary>
-
-
 
                     <div class="contenido-cancion">
 
-
                         <p class="escuchar-cancion">
-
                             Escuchar canción
-
                         </p>
 
-
-
-
                         <div class="spotify">
-
 
                             <iframe style="border-radius:12px"
                                 src="https://open.spotify.com/embed/track/6oQfeZsZz1J0y0KQh4G0j4" width="100%"
@@ -296,15 +289,9 @@
                                 loading="lazy">
                             </iframe>
 
-
                         </div>
 
-
-
-
-
                         <div class="letra-cancion">
-
 
                             <p>
 
@@ -333,7 +320,6 @@
 
                             </p>
 
-
                         </div>
 
                         <a href="#cancionero" class="volver-cancionero">
@@ -342,40 +328,25 @@
 
                     </div>
 
-
                 </details>
-
 
                 <!-- ==============================
         CANCION 3
 ================================ -->
 
-
                 <details class="cancion">
 
-
                     <summary>
-
                         LAPAS
-
                     </summary>
-
-
 
                     <div class="contenido-cancion">
 
-
                         <p class="escuchar-cancion">
-
                             Escuchar canción
-
                         </p>
 
-
-
-
                         <div class="spotify">
-
 
                             <iframe style="border-radius:12px"
                                 src="https://open.spotify.com/embed/track/42B8kbGcGjYJ6Lmublu9bb" width="100%"
@@ -384,15 +355,9 @@
                                 loading="lazy">
                             </iframe>
 
-
                         </div>
 
-
-
-
-
                         <div class="letra-cancion">
-
 
                             <p>
 
@@ -474,7 +439,6 @@
 
                             </p>
 
-
                         </div>
 
                         <a href="#cancionero" class="volver-cancionero">
@@ -483,39 +447,25 @@
 
                     </div>
 
-
                 </details>
 
                 <!-- ==============================
         CANCION 4
 ================================ -->
 
-
                 <details class="cancion">
 
-
                     <summary>
-
                         LA CUMBIA DEL DIABLO
-
                     </summary>
-
-
 
                     <div class="contenido-cancion">
 
-
                         <p class="escuchar-cancion">
-
                             Escuchar canción
-
                         </p>
 
-
-
-
                         <div class="spotify">
-
 
                             <iframe style="border-radius:12px"
                                 src="https://open.spotify.com/embed/track/7k9m5C75TJPzk24FTtBHUo" width="100%"
@@ -524,15 +474,9 @@
                                 loading="lazy">
                             </iframe>
 
-
                         </div>
 
-
-
-
-
                         <div class="letra-cancion">
-
 
                             <p>
 
@@ -589,7 +533,6 @@
 
                             </p>
 
-
                         </div>
 
                         <a href="#cancionero" class="volver-cancionero">
@@ -598,62 +541,37 @@
 
                     </div>
 
-
                 </details>
 
                 <!-- ==============================
       AQUI VAN MAS CANCIONES
 ================================ -->
 
-
             </div>
-
 
         </div>
 
-
     </section>
-
-
-
-
-
 
     <footer>
 
-
         <img src="img/logo.webp" alt="Logo Los Hijos de Tencha">
 
-
-
         <p>
-
             Los Hijos de Tencha © 2026
-
         </p>
-
-
 
         <p class="credito-web">
-
             Diseñado por
-
             <a href="https://www.instagram.com/tavo_musico" target="_blank" rel="noopener noreferrer">
-
                 Tavo Músico
-
             </a>
-
         </p>
-
-
 
     </footer>
 
     <button id="subir">
-
         <i class="fa-solid fa-arrow-up"></i>
-
     </button>
 
     <!-- Pantalla de transición -->
@@ -664,64 +582,34 @@
     <script src="js/script.js"></script>
     <script src="js/eventos.js"></script>
 
-
     <script>
-
         const canciones = document.querySelectorAll(".cancion");
 
-
         canciones.forEach(cancion => {
-
             cancion.addEventListener("toggle", function () {
-
                 if (this.open) {
-
                     canciones.forEach(otra => {
-
                         if (otra !== this) {
-
                             otra.removeAttribute("open");
-
                         }
-
                     });
-
-
                     setTimeout(() => {
-
                         this.scrollIntoView({
-
                             behavior: "smooth",
-
                             block: "start"
-
                         });
-
                     }, 100);
-
                 }
-
             });
-
         });
-
-
 
         document.querySelectorAll(".volver-cancionero").forEach(boton => {
-
             boton.addEventListener("click", () => {
-
                 document.querySelectorAll(".cancion").forEach(cancion => {
-
                     cancion.removeAttribute("open");
-
                 });
-
             });
-
         });
-
-
     </script>
 
 </body>

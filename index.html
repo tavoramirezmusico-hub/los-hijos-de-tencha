@@ -215,7 +215,6 @@
         .menu li span {
             padding: 8px 18px;
             font-size: 0.95rem;
-            /* ← TAMAÑO MÁS GRANDE */
             white-space: nowrap;
             display: block;
             font-weight: 500;
@@ -523,30 +522,209 @@
         }
 
         /* =====================================
-           BOTÓN COMUNIDAD WHATSAPP
+           BOTÓN COMUNIDAD WHATSAPP - ESTILO MEJORADO
            ===================================== */
         .btn-comunidad {
-            display: inline-block;
-            padding: 16px 40px;
-            background: #25D366;
-            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 18px 45px;
+            background: #ffcc00;
+            color: #000;
             border-radius: 50px;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             text-decoration: none;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            box-shadow: 0 4px 20px rgba(255, 204, 0, 0.35);
+            border: 2px solid #ffcc00;
         }
 
         .btn-comunidad:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
-            background: #20b85a;
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 10px 35px rgba(255, 204, 0, 0.5);
+            background: #fff;
+            border-color: #fff;
+            color: #000;
         }
 
         .btn-comunidad i {
-            margin-right: 10px;
-            font-size: 1.3rem;
+            font-size: 1.5rem;
+            color: #25D366;
+            transition: color 0.3s ease;
+        }
+
+        .btn-comunidad:hover i {
+            color: #25D366;
+        }
+
+        .btn-comunidad .whatsapp-text {
+            font-weight: 700;
+        }
+
+        .btn-comunidad .whatsapp-icon-bg {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: #25D366;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-comunidad:hover .whatsapp-icon-bg {
+            background: #1ebe5a;
+            transform: scale(1.05);
+        }
+
+        /* =====================================
+           SECCIÓN LANZAMIENTOS MEJORADA
+           ===================================== */
+        .lanzamientos-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            align-items: center;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .lanzamiento-principal {
+            width: 100%;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+            border-radius: 25px;
+            background: #000;
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, 0.7),
+                0 0 0 2px rgba(255, 204, 0, 0.3);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .lanzamiento-principal:hover {
+            transform: translateY(-6px);
+            box-shadow:
+                0 30px 70px rgba(0, 0, 0, 0.8),
+                0 0 0 3px rgba(255, 204, 0, 0.5);
+        }
+
+        .lanzamiento-principal iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+        }
+
+        .lanzamiento-principal .badge-lanzamiento {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: #ffcc00;
+            color: #000;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 2;
+        }
+
+        .lanzamiento-secundario {
+            width: 100%;
+            max-width: 750px;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+            border-radius: 20px;
+            background: #000;
+            box-shadow:
+                0 15px 40px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(255, 255, 255, 0.08);
+            transition: all 0.4s ease;
+        }
+
+        .lanzamiento-secundario:hover {
+            transform: translateY(-4px);
+            box-shadow:
+                0 25px 55px rgba(0, 0, 0, 0.7),
+                0 0 0 2px rgba(255, 204, 0, 0.2);
+        }
+
+        .lanzamiento-secundario iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+        }
+
+        .lanzamiento-titulo {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 1rem;
+            color: #aaa;
+            letter-spacing: 0.5px;
+        }
+
+        .lanzamiento-titulo strong {
+            color: #ffcc00;
+            font-weight: 600;
+        }
+
+        @media (max-width: 700px) {
+            .lanzamiento-principal {
+                border-radius: 18px;
+            }
+
+            .lanzamiento-secundario {
+                border-radius: 18px;
+                max-width: 100%;
+            }
+
+            .lanzamiento-principal .badge-lanzamiento {
+                top: 12px;
+                right: 12px;
+                font-size: 0.65rem;
+                padding: 4px 14px;
+            }
+
+            .btn-comunidad {
+                padding: 14px 30px;
+                font-size: 1rem;
+            }
+
+            .btn-comunidad .whatsapp-icon-bg {
+                width: 34px;
+                height: 34px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .btn-comunidad {
+                padding: 12px 24px;
+                font-size: 0.9rem;
+                gap: 8px;
+            }
+
+            .btn-comunidad .whatsapp-icon-bg {
+                width: 30px;
+                height: 30px;
+                font-size: 0.85rem;
+            }
+
+            .lanzamientos-wrapper {
+                gap: 25px;
+            }
+        }
+
+        /* Ocultar elementos temporalmente */
+        .oculto {
+            display: none;
         }
     </style>
 
@@ -926,10 +1104,12 @@
 
     </section>
 
+    <!-- =====================================
+         SECCIÓN LANZAMIENTOS MEJORADA
+    ===================================== -->
     <section id="musica" class="animar">
 
         <div class="contenedor">
-
 
             <div class="titulo-seccion">
 
@@ -939,39 +1119,40 @@
 
             </div>
 
+            <div class="lanzamientos-wrapper">
 
+                <!-- Lanzamiento Principal -->
+                <div class="lanzamiento-principal">
+                    <span class="badge-lanzamiento">🎵 Nuevo Álbum</span>
+                    <iframe
+                        src="https://www.youtube.com/embed/videoseries?list=OLAK5uy_nYf3WKfcoDAn9eH_UkjMJR3nxTpwsAvoA"
+                        title="Los Hijos de Tencha - Cumbia Salvaje" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <p class="lanzamiento-titulo">
+                    <strong>Cumbia Salvaje</strong> — Álbum completo disponible en YouTube
+                </p>
 
-            <div class="lanzamiento-principal">
-
-
-                <iframe src="https://www.youtube.com/embed/videoseries?list=OLAK5uy_nYf3WKfcoDAn9eH_UkjMJR3nxTpwsAvoA"
-                    title="Los Hijos de Tencha - Cumbia Salvaje" frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen>
-                </iframe>
-
+                <!-- Lanzamiento Secundario -->
+                <div class="lanzamiento-secundario">
+                    <iframe src="https://www.youtube.com/embed/Ktf96bekedA"
+                        title="Los Hijos de Tencha - Nuevo lanzamiento" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <p class="lanzamiento-titulo">
+                    <strong>El Vocho</strong> — Nuevo sencillo disponible en todas las plataformas
+                </p>
 
             </div>
-
-
-
-            <div class="lanzamiento-secundario">
-
-
-                <iframe src="https://www.youtube.com/embed/Ktf96bekedA" title="Los Hijos de Tencha - Nuevo lanzamiento"
-                    frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen>
-                </iframe>
-
-
-            </div>
-
-
 
         </div>
 
     </section>
+
     <!-- ==========================
      INTEGRANTES
 =========================== -->
@@ -1121,14 +1302,17 @@
 
             <!-- =====================================
          BOTÓN ÚNETE A NUESTRA COMUNIDAD - WHATSAPP
+         ESTILO MEJORADO
     ===================================== -->
             <div style="text-align: center; margin-top: 30px;">
                 <a href="https://chat.whatsapp.com/H2ry6GFbBDe8Q5UsNMcDdu?s=cl&p=i&ilr=2" target="_blank"
                     onclick="gtag('event','click_comunidad_whatsapp');" class="btn-comunidad">
-                    <i class="fa-brands fa-whatsapp"></i>
-                    Únete a nuestra comunidad
+                    <span class="whatsapp-icon-bg">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </span>
+                    <span class="whatsapp-text">Únete a nuestra comunidad</span>
                 </a>
-                <p style="color: #888; font-size: 0.8rem; margin-top: 8px;">
+                <p style="color: #888; font-size: 0.85rem; margin-top: 10px; letter-spacing: 0.3px;">
                     📱 Conéctate con otros fans en nuestro grupo de WhatsApp
                 </p>
             </div>
@@ -1240,11 +1424,8 @@
             var enlaceReportaje = document.getElementById('enlace-reportaje');
             if (enlaceReportaje) {
                 enlaceReportaje.addEventListener('click', function (e) {
-                    // Prevenir que el script de transición lo capture
                     e.stopPropagation();
-                    // Guardar el destino
                     var destino = this.href;
-                    // Navegar directamente
                     window.location.href = destino;
                     return false;
                 });
