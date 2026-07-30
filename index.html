@@ -233,7 +233,7 @@
         }
 
         /* =====================================
-           GALERÍA MEJORADA
+           GALERÍA MEJORADA - FIX MÓVIL
            ===================================== */
         .galeria-categorias {
             display: flex;
@@ -273,6 +273,7 @@
             gap: 20px;
         }
 
+        /* FIX: contenedor de foto con fondo gris claro */
         .foto {
             height: 280px;
             border-radius: 16px;
@@ -281,6 +282,10 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
             cursor: pointer;
             transition: all 0.4s ease;
+            background: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .foto img {
@@ -288,6 +293,27 @@
             height: 100%;
             object-fit: cover;
             transition: transform 0.5s ease;
+            display: block;
+        }
+
+        /* Ocultar imágenes que no cargan */
+        .foto img.error,
+        .foto img[src=""],
+        .foto img:not([src]) {
+            display: none;
+        }
+
+        /* Placeholder cuando la imagen falla */
+        .foto .foto-placeholder {
+            display: none;
+            color: #666;
+            font-size: 0.8rem;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .foto img.error+.foto-placeholder {
+            display: block;
         }
 
         .foto:hover {
@@ -308,6 +334,7 @@
             background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
             opacity: 0;
             transition: opacity 0.3s ease;
+            pointer-events: none;
         }
 
         .foto:hover .foto-overlay {
@@ -333,7 +360,7 @@
             }
 
             .foto {
-                height: 220px;
+                height: 240px;
             }
 
             .menu li a,
@@ -349,7 +376,8 @@
             }
 
             .foto {
-                height: 280px;
+                height: 300px;
+                min-height: 300px;
             }
 
             .galeria-categorias .cat-btn {

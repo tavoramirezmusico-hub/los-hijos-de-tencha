@@ -140,7 +140,8 @@ function cargarGaleria(categoria) {
         }
         return `
         <div class="foto animar" data-index="${index}">
-            <img src="${foto}" loading="lazy" alt="${titulo}">
+            <img src="${foto}" loading="lazy" alt="${titulo}" onerror="this.classList.add('error'); this.parentElement.querySelector('.foto-placeholder')?.style?.display='block'">
+            <div class="foto-placeholder">📸 ${titulo}</div>
             <div class="foto-overlay">
                 <span>${titulo}</span>
             </div>
@@ -150,10 +151,15 @@ function cargarGaleria(categoria) {
     grid.querySelectorAll('.foto').forEach(el => {
         el.addEventListener('click', function () {
             const index = parseInt(this.dataset.index);
-            abrirVisor(index);
+            // Verificar que la imagen exista antes de abrir el visor
+            const img = this.querySelector('img');
+            if (img && img.src && !img.classList.contains('error')) {
+                abrirVisor(index);
+            }
         });
     });
 
+    // Activar animaciones escalonadas
     document.querySelectorAll('.galeria-grid .foto').forEach(el => {
         setTimeout(() => el.classList.add('visible'), 100);
     });
@@ -174,6 +180,10 @@ const totalFotos = document.getElementById('total-fotos');
 function abrirVisor(index) {
     if (!visorGaleria || !imagenGaleria) return;
     if (fotosActuales.length === 0) return;
+
+    // Verificar que la imagen exista
+    const imgSrc = fotosActuales[index];
+    if (!imgSrc) return;
 
     indiceActualVisor = index;
     mostrarFotoVisor(indiceActualVisor);
