@@ -1,6 +1,6 @@
 // =====================================
 // LOS HIJOS DE TENCHA
-// SCRIPT.JS - COMPLETO CON SISTEMA DE REGISTRO Y GALERÍA MEJORADA
+// SCRIPT.JS - VERSIÓN SIMPLIFICADA PARA MÓVIL
 // =====================================
 
 console.log("Sitio Oficial de Los Hijos de Tencha");
@@ -81,13 +81,6 @@ const galeriaDatos = {
             'img/galeria/lanzamiento/foto3.webp'
         ]
     }
-    // 'eventos': {   // ← COMENTADO
-    //     titulo: 'Eventos',
-    //     fotos: [
-    //         'img/galeria/eventos/foto1.webp',
-    //         'img/galeria/eventos/foto2.webp'
-    //     ]
-    // }
 };
 
 // =====================================
@@ -125,10 +118,8 @@ function cargarGaleria(categoria) {
     }
 
     grid.innerHTML = fotos.map((foto, index) => {
-        // Determinar el título según la categoría
         let titulo = '';
         if (categoria === 'todas') {
-            // Si es "todas", buscar a qué categoría pertenece la foto
             for (let key in galeriaDatos) {
                 if (galeriaDatos[key].fotos.includes(foto)) {
                     titulo = galeriaDatos[key].titulo;
@@ -140,8 +131,7 @@ function cargarGaleria(categoria) {
         }
         return `
         <div class="foto animar" data-index="${index}">
-            <img src="${foto}" loading="lazy" alt="${titulo}" onerror="this.classList.add('error'); this.parentElement.querySelector('.foto-placeholder')?.style?.display='block'">
-            <div class="foto-placeholder">📸 ${titulo}</div>
+            <img src="${foto}" alt="${titulo}">
             <div class="foto-overlay">
                 <span>${titulo}</span>
             </div>
@@ -151,15 +141,10 @@ function cargarGaleria(categoria) {
     grid.querySelectorAll('.foto').forEach(el => {
         el.addEventListener('click', function () {
             const index = parseInt(this.dataset.index);
-            // Verificar que la imagen exista antes de abrir el visor
-            const img = this.querySelector('img');
-            if (img && img.src && !img.classList.contains('error')) {
-                abrirVisor(index);
-            }
+            abrirVisor(index);
         });
     });
 
-    // Activar animaciones escalonadas
     document.querySelectorAll('.galeria-grid .foto').forEach(el => {
         setTimeout(() => el.classList.add('visible'), 100);
     });
@@ -180,10 +165,6 @@ const totalFotos = document.getElementById('total-fotos');
 function abrirVisor(index) {
     if (!visorGaleria || !imagenGaleria) return;
     if (fotosActuales.length === 0) return;
-
-    // Verificar que la imagen exista
-    const imgSrc = fotosActuales[index];
-    if (!imgSrc) return;
 
     indiceActualVisor = index;
     mostrarFotoVisor(indiceActualVisor);
@@ -638,12 +619,10 @@ async function registrarAsistentePublico() {
     mostrarMensajeRegistro('⏳ Registrando...', 'info');
 
     try {
-        // Obtener datos completos del evento
         const eventoDoc = await db.collection('eventos').doc(eventoId).get();
         const eventoData = eventoDoc.exists ? eventoDoc.data() : null;
         const nombreEvento = eventoData ? eventoData.nombre : 'Evento';
 
-        // Formatear fecha y hora para el correo
         let fechaFormateada = 'Fecha por confirmar';
         let horaFormateada = 'Hora por confirmar';
         let lugarFormateado = eventoData?.lugar || '';
@@ -662,7 +641,6 @@ async function registrarAsistentePublico() {
             horaFormateada = eventoData.hora;
         }
 
-        // Crear asistente en Firebase
         const asistente = {
             nombre,
             email,
@@ -677,14 +655,10 @@ async function registrarAsistentePublico() {
 
         const docRef = await db.collection('asistentes').add(asistente);
 
-        // Agregar ID al evento
         await db.collection('eventos').doc(eventoId).update({
             asistentes: firebase.firestore.FieldValue.arrayUnion(docRef.id)
         });
 
-        // =====================================
-        // ENVIAR CORREO CON EMAILJS (con fecha, hora y lugar)
-        // =====================================
         try {
             if (typeof emailjs === 'undefined') {
                 await new Promise((resolve) => {
@@ -746,11 +720,8 @@ async function registrarAsistentePublico() {
             mostrarMensajeRegistro(`✅ Registro exitoso, pero no se pudo enviar el correo. Contacta al organizador.`, 'error');
         }
 
-        // Limpiar formulario
         document.getElementById('nombreRegistro').value = '';
         document.getElementById('emailRegistro').value = '';
-
-        // Recargar eventos para actualizar contador
         cargarEventosRegistro();
 
     } catch (error) {
@@ -830,7 +801,6 @@ async function probarEmailJS() {
 document.addEventListener('DOMContentLoaded', function () {
     console.log('🔄 Inicializando sistema...');
 
-    // Inicializar registro
     if (document.getElementById('selectEventoRegistro')) {
         console.log('✅ Select de eventos encontrado, cargando...');
         setTimeout(cargarEventosRegistro, 500);
@@ -838,7 +808,6 @@ document.addEventListener('DOMContentLoaded', function () {
         console.warn('⚠️ No se encontró el select de eventos en la página');
     }
 
-    // Inicializar galería
     if (document.getElementById('galeriaGrid')) {
         console.log('✅ Galería encontrada, cargando...');
         cargarGaleria('todas');
