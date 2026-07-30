@@ -2,900 +2,1513 @@
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-    <meta name="google-site-verification" content="LW_2PctYNDbNP-0ppeMFzxLuQnbuRoVhwxbvc_y3bjY">
-
-
-    <title>
-        Los Hijos de Tencha | Banda de Cumbia y Música en Vivo en Costa Rica
-    </title>
-
-
-    <meta name="description"
-        content="Los Hijos de Tencha es una banda costarricense de cumbia, rock, reggae y ritmos latinoamericanos. Música en vivo, eventos, contrataciones, canciones, videos y contacto oficial en Costa Rica.">
-
-
-    <meta name="keywords"
-        content="Los Hijos de Tencha, banda Costa Rica, cumbia Costa Rica, música en vivo Costa Rica, agrupación musical costarricense, contrataciones musicales">
-
-
-    <meta name="author" content="Los Hijos de Tencha">
-
-
-    <meta name="robots" content="index, follow">
-
-
-    <meta name="theme-color" content="#000000">
-
-
-    <link rel="canonical" href="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/">
-
-
-
-    <!-- OPEN GRAPH FACEBOOK / WHATSAPP -->
-
-    <meta property="og:title" content="Los Hijos de Tencha | Banda Costarricense">
-
-
-    <meta property="og:description"
-        content="Cumbia, rock, reggae y ritmos latinoamericanos con sabor costarricense. Música en vivo, eventos y contrataciones oficiales.">
-
-
-    <meta property="og:image" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/img/hero.webp">
-
-
-    <meta property="og:image:width" content="1200">
-
-
-    <meta property="og:image:height" content="630">
-
-
-    <meta property="og:url" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/">
-
-
-    <meta property="og:type" content="website">
-
-
-    <meta property="og:locale" content="es_CR">
-
-
-    <meta property="og:site_name" content="Los Hijos de Tencha">
-
-
-
-    <!-- TWITTER / X CARD -->
-
-    <meta name="twitter:card" content="summary_large_image">
-
-
-    <meta name="twitter:title" content="Los Hijos de Tencha | Banda Costarricense">
-
-
-    <meta name="twitter:description"
-        content="Agrupación musical costarricense de cumbia, rock, reggae y ritmos latinoamericanos.">
-
-
-    <meta name="twitter:image" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/img/hero.webp">
-
-
-
-    <!-- FAVICON -->
-
-    <link rel="icon" type="image/webp" href="img/logo.webp">
-
-
-
-    <!-- CSS -->
-
-    <link rel="stylesheet" href="css/styles.css">
-
-
-
-    <!-- GOOGLE FONTS -->
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-
-
-
-    <!-- FONT AWESOME -->
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-
-
-
-
-    <!-- DATOS ESTRUCTURADOS GOOGLE -->
-
-    <script type="application/ld+json">
-
-{
- "@context":"https://schema.org",
- "@type":"MusicGroup",
-
- "name":"Los Hijos de Tencha",
-
- "description":"Agrupación musical costarricense de cumbia, rock, reggae y ritmos latinoamericanos.",
-
- "url":"https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/",
-
- "image":"https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/img/hero.webp",
-
- "genre":[
- "Cumbia",
- "Rock",
- "Reggae",
- "Música latinoamericana"
- ],
-
- "location":{
- "@type":"Place",
- "name":"Costa Rica"
- },
-
-
- "sameAs":[
-
- "https://www.instagram.com/loshijosdetencha/",
-
- "https://www.facebook.com/profile.php?id=100090956211932"
-
- ]
-
-}
-
-</script>
-
-
-
-
-
-    <!-- GOOGLE ANALYTICS -->
-
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YNRK4G09LN"></script>
-
-    <script>
-
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-
-            dataLayer.push(arguments);
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Los Hijos de Tencha - Admin</title>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <!-- QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- SheetJS para exportar a Excel con formato -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+        /* =====================================
+           ESTILOS ADMIN - LOS HIJOS DE TENCHA
+           ===================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        gtag('js', new Date());
+        body {
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            background: #111;
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-        gtag('config', 'G-YNRK4G09LN');
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
 
-    </script>
+        /* ===== LOGIN MODAL ===== */
+        .login-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
 
+        .login-overlay.active {
+            display: flex;
+        }
 
+        .login-box {
+            background: #1c1c1c;
+            padding: 40px 30px;
+            border-radius: 16px;
+            max-width: 380px;
+            width: 95%;
+            text-align: center;
+            border: 2px solid #ffcc00;
+        }
 
+        .login-box .logo-login {
+            height: 80px;
+            width: auto;
+            margin-bottom: 15px;
+            border-radius: 12px;
+        }
+
+        .login-box h2 {
+            color: #ffcc00;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .login-box .subtitle {
+            color: #aaa;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            background: #111;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1.1rem;
+            text-align: center;
+            letter-spacing: 2px;
+            transition: border 0.3s;
+        }
+
+        .login-box input:focus {
+            outline: none;
+            border-color: #ffcc00;
+        }
+
+        .login-box .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .login-box .btn-login:hover {
+            background: #e6b800;
+            transform: scale(1.02);
+        }
+
+        .login-box .error-msg {
+            color: #ff4444;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .login-box .error-msg.show {
+            display: block;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 3px solid #ffcc00;
+            margin-bottom: 20px;
+        }
+
+        .header .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .header .logo-container img {
+            height: 60px;
+            width: auto;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+
+        .header .logo-container h1 {
+            margin: 0;
+            color: #ffcc00;
+            font-size: 1.6rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+
+        .header .logo-container h1 span {
+            color: #fff;
+        }
+
+        .header .header-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+            gap: 10px;
+        }
+
+        .header .header-actions .btn-sm {
+            padding: 6px 14px;
+            font-size: 0.7rem;
+            width: auto;
+            border-radius: 20px;
+        }
+
+        .header p {
+            color: #ccc;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .card {
+            background: #1c1c1c;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffcc00;
+        }
+
+        .card h3 {
+            color: #ffcc00;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            transition: border 0.3s;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #ffcc00;
+        }
+
+        input::placeholder {
+            color: #666;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+        }
+
+        .btn-primary {
+            background: #ffcc00;
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background: #e6b800;
+            transform: scale(1.02);
+        }
+
+        .btn-success {
+            background: #00c853;
+            color: #fff;
+        }
+
+        .btn-success:hover {
+            background: #00b34a;
+        }
+
+        .btn-danger {
+            background: #d32f2f;
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #b71c1c;
+        }
+
+        .btn-secondary {
+            background: #444;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: #555;
+        }
+
+        .btn-download {
+            background: #2196f3;
+            color: #fff;
+        }
+
+        .btn-download:hover {
+            background: #1976d2;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #ffcc00;
+            border: 2px solid #ffcc00;
+        }
+
+        .btn-outline:hover {
+            background: #ffcc00;
+            color: #000;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            width: auto;
+            font-size: 0.8rem;
+        }
+
+        .btn-excel {
+            background: #1a7a3a;
+            color: #fff;
+        }
+
+        .btn-excel:hover {
+            background: #0f5a2a;
+            transform: scale(1.02);
+        }
+
+        .btn-excel-todo {
+            background: #0f5a2a;
+            color: #fff;
+        }
+
+        .btn-excel-todo:hover {
+            background: #0a4a1f;
+            transform: scale(1.02);
+        }
+
+        .event-list {
+            list-style: none;
+        }
+
+        .event-list li {
+            background: #111;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid #ffcc00;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .event-list li:hover {
+            background: #1a1a1a;
+            transform: translateX(5px);
+        }
+
+        .event-list li .event-name {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .event-list li .event-count {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .event-list li .event-status {
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: #333;
+            color: #aaa;
+        }
+
+        .event-list li .event-status.active {
+            background: #ffcc00;
+            color: #000;
+        }
+
+        .assistant-item {
+            background: #111;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid #555;
+        }
+
+        .assistant-item.ingresado {
+            border-left-color: #00c853;
+            opacity: 0.6;
+        }
+
+        .assistant-item .info {
+            flex: 1;
+        }
+
+        .assistant-item .info .nombre {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .assistant-item .info .email {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .assistant-item .info .estado {
+            font-size: 0.7rem;
+            padding: 2px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        .estado-sin-ingresar {
+            background: #d32f2f;
+            color: #fff;
+        }
+
+        .estado-ingresado {
+            background: #00c853;
+            color: #fff;
+        }
+
+        .assistant-item .qr-btn {
+            background: none;
+            border: none;
+            color: #ffcc00;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0 10px;
+        }
+
+        .assistant-item .qr-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .assistant-item .badge-envio {
+            font-size: 0.7rem;
+            padding: 2px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-left: 8px;
+        }
+
+        .assistant-item .badge-envio.enviado {
+            background: #00c853;
+            color: #fff;
+        }
+
+        .assistant-item .badge-envio.pendiente {
+            background: #ff9800;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1c1c1c;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 400px;
+            width: 95%;
+            max-height: 95vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h3 {
+            color: #ffcc00;
+            margin-bottom: 5px;
+        }
+
+        .modal-content .subtitulo {
+            color: #ffcc00;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .modal-content .datos-persona {
+            background: #111;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0 15px 0;
+            text-align: left;
+        }
+
+        .modal-content .datos-persona .label {
+            color: #888;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .modal-content .datos-persona .valor {
+            color: #fff;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 5px;
+            word-break: break-all;
+        }
+
+        .modal-content .datos-persona .banda {
+            color: #ffcc00;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-top: 5px;
+            border-top: 1px solid #333;
+            padding-top: 8px;
+        }
+
+        #qrContainer {
+            display: flex;
+            justify-content: center;
+            background: #fff;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 10px 0;
+        }
+
+        #qrContainer #qrcode {
+            display: flex;
+            justify-content: center;
+        }
+
+        .qr-id {
+            background: #111;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 8px 0 12px 0;
+            font-size: 0.8rem;
+            color: #888;
+            border: 1px dashed #444;
+            text-align: center;
+        }
+
+        .qr-id .id-valor {
+            color: #ffcc00;
+            font-weight: 700;
+            font-family: monospace;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            user-select: all;
+        }
+
+        .qr-id .id-label {
+            display: block;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+            margin-bottom: 2px;
+        }
+
+        .btn-copy-id {
+            background: none;
+            border: none;
+            color: #2196f3;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-left: 8px;
+            text-decoration: underline;
+        }
+
+        .btn-copy-id:hover {
+            color: #64b5f6;
+        }
+
+        .modal-content .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .modal-content .btn-group .btn {
+            flex: 1;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tabs button {
+            flex: 1;
+            padding: 12px;
+            background: #1c1c1c;
+            border: none;
+            border-radius: 8px;
+            color: #aaa;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+        }
+
+        .tabs button.active {
+            background: #ffcc00;
+            color: #000;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stats .stat {
+            background: #111;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stats .stat .number {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #ffcc00;
+        }
+
+        .stats .stat .label {
+            font-size: 0.7rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .btn-group-botones {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-group-botones .btn {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            z-index: 2000;
+            display: none;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .toast.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        .toast.success {
+            background: #00c853;
+        }
+
+        .toast.error {
+            background: #d32f2f;
+        }
+
+        .toast.info {
+            background: #2196f3;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #111;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ffcc00;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 480px) {
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .header .logo-container h1 {
+                font-size: 1.2rem;
+            }
+
+            .header .logo-container img {
+                height: 45px;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+
+            .modal-content .btn-group {
+                flex-direction: column;
+            }
+
+            .login-box {
+                padding: 30px 20px;
+            }
+
+            .btn-group-botones .btn {
+                min-width: 100%;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-
-    <header class="hero" id="inicio">
-
-
-        <nav>
-
-
-            <a href="#inicio" class="logo">
-
-                <img src="img/logo.webp" alt="Los Hijos de Tencha">
-
-            </a>
-
-
-            <button id="menu-btn" class="menu-btn">
-                <img src="img/menu-icono.webp" alt="Menú">
-                <span>Menú</span>
-            </button>
-
-
-            <ul class="menu">
-
-                <li><span class="menu-activo">Inicio</span></li>
-
-                <li><a href="#banda">La Banda</a></li>
-
-                <li><a href="#eventos">Eventos</a></li>
-
-                <li><a href="#galeria">Galería</a></li>
-
-                <li><a href="#musica">Lanzamientos</a></li>
-
-                <li><a href="canciones.html">Cancionero</a></li>
-
-                <li><a href="videoteca.html">Videos</a></li>
-
-                <li><a href="noticias.html">Tencha Noticias</a></li>
-
-                <li><a href="#integrantes">Integrantes</a></li>
-
-                <li><a href="#tienda">Tienda</a></li>
-
-                <li><a href="#contacto">Contacto</a></li>
-
-            </ul>
-
-
-        </nav>
-
-
-
-        <div class="hero-contenido">
-
-
-            <span class="hero-etiqueta">
-
-                Sitio Oficial
-
-            </span>
-
-
-            <h1>
-                ¡La Música se Vive!
-            </h1>
-
-
-            <p>
-                Cumbia, rock, reggae y ritmos latinoamericanos con la energía y el sabor de Costa Rica.
-            </p>
-
-
-
-            <div class="hero-botones">
-
-
-                <a href="#contacto" class="boton principal">
-
-                    Contrataciones
-
-                </a>
-
-
-                <a href="#eventos" class="boton secundario">
-
-                    Agenda
-
-                </a>
-
-
-            </div>
-
-
+    <!-- ===== LOGIN MODAL ===== -->
+    <div class="login-overlay active" id="loginOverlay">
+        <div class="login-box">
+            <img src="../img/logo.webp" alt="Los Hijos de Tencha" class="logo-login">
+            <h2>🔐 ADMINISTRACIÓN</h2>
+            <p class="subtitle">Ingresa la contraseña para continuar</p>
+            <input type="password" id="passwordInput" placeholder="Contraseña" autofocus>
+            <button class="btn-login" onclick="verificarPassword()">▶️ Ingresar</button>
+            <div class="error-msg" id="loginError">❌ Contraseña incorrecta</div>
         </div>
-
-
-    </header>
-
-
-
-
-
-    <section id="banda" class="animar">
-
-
-        <div class="contenedor">
-
-
-            <div class="titulo-seccion">
-
-                <span>Conócenos</span>
-
-                <h2>Los Hijos de Tencha</h2>
-
-            </div>
-
-
-
-            <div class="banda-grid">
-
-
-                <div class="texto-banda">
-
-                    <p>
-                        Nacidos en Costa Rica, Los Hijos de Tencha son una agrupación que ha construido una identidad
-                        única dentro de la música nacional, mezclando la fuerza de la cumbia, el reggae, el folclore
-                        costarricense, el rock y los sonidos latinoamericanos en una propuesta irreverente, festiva y
-                        profundamente tica.
-                    </p>
-
-
-                    <p>
-                        Su música es un homenaje a la calle, a las historias populares y a los personajes que forman
-                        parte del imaginario costarricense. Con un estilo desenfadado y una puesta en escena llena de
-                        humor, energía y autenticidad, la banda convierte cada concierto en una verdadera celebración.
-                    </p>
-
-
-                    <p>
-                        Su repertorio incluye canciones como "La Cumbia del Diablo", "Un Sentimiento", "Bendita",
-                        "Unidos por un Sueño" y "No Estamos Solos", reflejando una evolución musical constante sin
-                        perder la esencia que los caracteriza.
-                    </p>
-
-
-                    <p>
-                        Más que una banda, Los Hijos de Tencha representan una forma de entender la cultura popular
-                        costarricense: con picardía, creatividad y respeto por las raíces. Su propuesta transforma
-                        elementos del folclore en un sonido fresco que conecta con nuevas generaciones.
-                    </p>
-
-
-                    <p>
-                        Su filosofía es sencilla: hacer música honesta, hacer bailar y recordar que las mejores
-                        historias nacen en la calle, entre amigos y con una buena cumbia sonando de fondo.
-                    </p>
-
-
-                </div>
-
-
-            </div>
-
-
-        </div>
-
-
-        </div>
-
-
-    </section>
-
-
-    <section id="eventos" class="animar">
-
-        <div class="contenedor">
-
-            <div class="titulo-seccion">
-
-                <span>Agenda</span>
-
-                <h2>Eventos</h2>
-
-            </div>
-
-
-            <!-- =====================================
-     MACHOTE PRÓXIMO EVENTO
-     OCULTO HASTA TENER FECHA
-===================================== -->
-
-            <div class="card-evento evento-futuro oculto">
-
-
-                <div class="imagen-evento">
-
-                    <img src="img/eventos/evento.webp" alt="Próximo evento Los Hijos de Tencha">
-
-                </div>
-
-
-                <div class="fecha">
-
-                    <h3>00</h3>
-
-                    <span>Mes</span>
-
-                </div>
-
-
-                <div class="info-evento">
-
-                    <h3>Nombre del evento</h3>
-
-                    <p>
-                        📍 Lugar del evento
-                    </p>
-
-                    <p>
-                        🕗 Hora del evento
-                    </p>
-
-                </div>
-
-
-                <a href="#" class="boton principal">
-
-                    Reservar
-
-                </a>
-
-
-            </div>
-
-
-
-            <!-- =====================================
-     ÚLTIMO REPORTAJE
-===================================== -->
-
-
-            <div class="card-evento">
-
-
-                <div class="imagen-evento">
-
-                    <img src="img/noticias/chivo-24-julio.webp" alt="Reportaje lanzamiento Cumbia Salvaje">
-
-                </div>
-
-
-
-                <div class="fecha">
-
-                    <h3>24</h3>
-
-                    <span>Julio</span>
-
-                </div>
-
-
-
-                <div class="info-evento">
-
-
-                    <h3>Último concierto</h3>
-
-
-                    <p>
-                        🎸 Mira el reportaje del lanzamiento de
-                        <strong>Cumbia Salvaje</strong> en Bar Starview.
-                    </p>
-
-
-                    <p>
-                        🔥 Una noche llena de música, invitados y mucha cumbia.
-                    </p>
-
-
-                </div>
-
-
-                <a href="noticias.html#noticia-25-julio" class="boton principal">
-                    Ver reportaje
-                </a>
-
-                <a href="videoteca.html#momentos-tencha" class="boton secundario">
-
-                    Ver videos
-
-                </a>
-
-
-
-            </div>
-
-
-
-        </div>
-
-    </section>
-
-
-
-    <section id="galeria" class="animar">
-
-        <div class="contenedor">
-
-
-            <div class="titulo-seccion">
-
-                <span>Momentos</span>
-
-                <h2>Galería</h2>
-
-            </div>
-
-
-
-            <div class="galeria-grid">
-
-
-                <div class="foto animar">
-
-                    <img src="img/galeria/foto1.webp" loading="lazy" alt="Sesión Vocho">
-
-                </div>
-
-
-
-                <div class="foto animar">
-
-                    <img src="img/galeria/foto2.webp" loading="lazy" alt="Sesión Vocho">
-
-                </div>
-
-
-
-                <div class="foto animar">
-
-                    <img src="img/galeria/foto3.webp" loading="lazy" alt="Sesión Disco Cumbias">
-
-                </div>
-
-
-
-                <div class="foto animar">
-
-                    <img src="img/galeria/foto4.webp" loading="lazy" alt="Sesión Disco Cumbias">
-
-                </div>
-
-
-            </div>
-
-
-        </div>
-
-
-    </section>
-
-    <section id="musica" class="animar">
-
-        <div class="contenedor">
-
-
-            <div class="titulo-seccion">
-
-                <span>Últimos estrenos</span>
-
-                <h2>Nuevos Lanzamientos</h2>
-
-            </div>
-
-
-
-            <div class="lanzamiento-principal">
-
-
-                <iframe src="https://www.youtube.com/embed/videoseries?list=OLAK5uy_nYf3WKfcoDAn9eH_UkjMJR3nxTpwsAvoA"
-                    title="Los Hijos de Tencha - Cumbia Salvaje" frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen>
-                </iframe>
-
-
-            </div>
-
-
-
-            <div class="lanzamiento-secundario">
-
-
-                <iframe src="https://www.youtube.com/embed/Ktf96bekedA" title="Los Hijos de Tencha - Nuevo lanzamiento"
-                    frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen>
-                </iframe>
-
-
-            </div>
-
-
-
-        </div>
-
-    </section>
-    <!-- ==========================
-     INTEGRANTES
-=========================== -->
-
-    <section id="integrantes" class="integrantes animar">
-
-        <h2>Integrantes</h2>
-
-        <div class="grid-integrantes">
-
-            <img src="img/integrantes/integrante1.webp" alt="Integrante 1" class="zoom-integrante">
-
-            <img src="img/integrantes/integrante2.webp" alt="Integrante 2" class="zoom-integrante">
-
-            <img src="img/integrantes/integrante3.webp" alt="Integrante 3" class="zoom-integrante">
-
-            <img src="img/integrantes/integrante4.webp" alt="Integrante 4" class="zoom-integrante">
-
-            <img src="img/integrantes/integrante5.webp" alt="Integrante 5" class="zoom-integrante">
-
-
-        </div>
-
-    </section>
-
-    <section id="tienda" class="tienda animar">
-
-        <h2>Tienda Oficial</h2>
-
-        <div class="producto-principal">
-
-            <img src="img/tienda/camisetas.webp" alt="Camisetas Los Hijos de Tencha" id="abrir-tienda"
-                onclick="mostrarCamisetas()">
-
-            <h3>Camisetas oficiales</h3>
-
-            <p>₡12.000</p>
-
-            <button onclick="mostrarCamisetas(); gtag('event','ver_disenos_camisetas');">
-                Ver diseños
-            </button>
-
-        </div>
-
-
-        <div id="galeria-camisetas" class="galeria-camisetas">
-
-
-            <div class="camiseta">
-
-                <img src="img/tienda/camiseta1.webp">
-
-                <p>Camiseta diseño 1</p>
-
-                <a href="https://wa.me/50688636047?text=Hola,%20me%20gustaría%20adquirir%20una%20camiseta%20oficial%20de%20Los%20Hijos%20de%20Tencha.%20Me%20interesa%20el%20diseño%201"
-                    target="_blank" onclick="gtag('event','comprar_camiseta_1');">
-
-                    Comprar por WhatsApp
-
-                </a>
-
-            </div>
-
-
-
-            <div class="camiseta">
-
-                <img src="img/tienda/camiseta2.webp">
-
-                <p>Camiseta diseño 2</p>
-
-                <a href="https://wa.me/50688636047?text=Hola,%20me%20gustaría%20adquirir%20una%20camiseta%20oficial%20de%20Los%20Hijos%20de%20Tencha.%20Me%20interesa%20el%20diseño%202"
-                    target="_blank" onclick="gtag('event','comprar_camiseta_2');">
-
-                    Comprar por WhatsApp
-
-                </a>
-
-            </div>
-
-
-
-            <div class="camiseta">
-
-                <img src="img/tienda/camiseta3.webp">
-
-                <p>Camiseta diseño 3</p>
-
-
-                <a href="https://wa.me/50688636047?text=Hola,%20me%20gustaría%20adquirir%20una%20camiseta%20oficial%20de%20Los%20Hijos%20de%20Tencha.%20Me%20interesa%20el%20diseño%203"
-                    target="_blank" onclick="gtag('event','comprar_camiseta_3');">
-
-                    Comprar por WhatsApp
-
-                </a>
-
-
-            </div>
-
-
-        </div>
-
-    </section>
-
-    <section id="contacto">
-
-        <div class="contenedor">
-
-            <div class="titulo-seccion">
-
-                <span>Contáctanos</span>
-
-                <h2>Redes Sociales</h2>
-
-            </div>
-
-            <div class="redes">
-
-                <a href="https://wa.me/50688636047" target="_blank" onclick="gtag('event','click_whatsapp');">
-
-                    <i class="fa-brands fa-whatsapp"></i>
-
-                </a>
-
-                <a href="https://www.facebook.com/profile.php?id=100090956211932" target="_blank"
-                    onclick="gtag('event','click_facebook');">
-
-                    <i class="fa-brands fa-facebook-f"></i>
-
-                </a>
-
-                <a href="https://www.instagram.com/loshijosdetencha/" target="_blank"
-                    onclick="gtag('event','click_instagram');">
-
-                    <i class="fa-brands fa-instagram"></i>
-
-                </a>
-
-                <a href="mailto:loshijosdetencha@gmail.com" target="_blank" rel="noopener noreferrer"
-                    onclick="gtag('event','click_email');">
-
-                    <i class="fa-solid fa-envelope"></i>
-
-                </a>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================
-         REGISTRO PARA EVENTOS - SISTEMA DE ENTRADAS
-    ===================================== -->
-    <section id="registro-eventos" class="animar" style="background: #111; padding: 80px 20px;">
-        <div class="contenedor">
-            <div class="titulo-seccion">
-                <span>Inscríbete</span>
-                <h2>Regístrate para el próximo evento</h2>
-                <p style="color: #aaa; max-width: 600px; margin: 10px auto 0;">
-                    Completa el formulario y recibirás tu entrada digital con código QR.
-                </p>
-            </div>
-
-            <div style="max-width: 500px; margin: 0 auto;">
-                <select id="selectEventoRegistro"
-                    style="width:100%; padding:14px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#fff; font-size:1rem; margin-bottom:12px; font-family:'Poppins',sans-serif;">
-                    <option value="">Cargando eventos...</option>
-                </select>
-
-                <input type="text" id="nombreRegistro" placeholder="Tu nombre completo"
-                    style="width:100%; padding:14px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#fff; font-size:1rem; margin-bottom:12px; font-family:'Poppins',sans-serif;">
-
-                <input type="email" id="emailRegistro" placeholder="Tu correo electrónico"
-                    style="width:100%; padding:14px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#fff; font-size:1rem; margin-bottom:12px; font-family:'Poppins',sans-serif;">
-
-                <button onclick="registrarAsistentePublico()"
-                    style="width:100%; padding:16px; background:#ffcc00; color:#000; border:none; border-radius:8px; font-size:1.1rem; font-weight:700; cursor:pointer; transition:.3s; font-family:'Poppins',sans-serif;">
-                    ✅ Registrarme
-                </button>
-
-                <div id="mensajeRegistro"
-                    style="margin-top:15px; text-align:center; display:none; font-family:'Poppins',sans-serif;"></div>
-            </div>
-        </div>
-
-    </section>
-
-
-    <footer>
-
-
-        <img src="img/logo.webp" alt="Los Hijos de Tencha">
-
-
-
-        <p>
-
-            Música, energía y sabor costarricense para compartir con todos.
-
-        </p>
-
-
-
-        <small>
-            © 2026 Los Hijos de Tencha. Todos los derechos reservados.
-        </small>
-
-        <p class="credito-web">
-            Diseñado por
-            <a href="https://www.instagram.com/tavo_musico" target="_blank" rel="noopener noreferrer"
-                onclick="gtag('event','click_tavo_musico');">
-                Tavo Músico
-            </a>
-        </p>
-
-
-
-    </footer>
-
-
-
-    <button id="subir">
-
-        <i class="fa-solid fa-arrow-up"></i>
-
-    </button>
-
-    <div id="visor-camiseta" class="visor-camiseta">
-
-        <span id="cerrar-visor">&times;</span>
-
-        <img id="imagen-ampliada" src="" alt="Camiseta ampliada">
-
     </div>
 
+    <!-- ===== CONTENIDO PRINCIPAL ===== -->
+    <div id="mainContent" style="display:none;">
+        <div class="container">
+            <!-- HEADER -->
+            <div class="header">
+                <div class="logo-container">
+                    <img src="../img/logo.webp" alt="Los Hijos de Tencha">
+                    <h1>LOS HIJOS DE <span>TENCHA</span></h1>
+                </div>
+                <div class="header-actions">
+                    <a href="validador.html" class="btn btn-outline btn-sm">📷 Ir a Validador</a>
+                    <a href="../index.html" class="btn btn-secondary btn-sm">🏠 Web</a>
+                    <button class="btn btn-danger btn-sm" onclick="cerrarSesion()">🚪 Salir</button>
+                </div>
+                <p>🎸 Sistema de Validación de Entradas</p>
+            </div>
 
-    <!-- ==========================
-     GALERÍA 2.0
-========================== -->
+            <div id="adminPanel">
+                <div class="tabs">
+                    <button class="active" onclick="switchTab('eventos')">📋 Eventos</button>
+                    <button onclick="switchTab('asistentes')">👤 Asistentes</button>
+                    <button onclick="switchTab('crear')">➕ Crear</button>
+                </div>
 
-    <div id="visor-galeria" class="visor">
+                <div id="tab-eventos" class="tab-content active">
+                    <div class="card">
+                        <h3>📋 Eventos Creados</h3>
+                        <ul class="event-list" id="eventList">
+                            <li style="text-align:center;color:#666;padding:20px;">Cargando eventos...</li>
+                        </ul>
+                    </div>
+                </div>
 
-        <button id="cerrar-galeria" class="cerrar-visor">
-            &times;
-        </button>
+                <div id="tab-asistentes" class="tab-content">
+                    <div class="card">
+                        <h3>👤 Asistentes por Evento</h3>
+                        <select id="selectEventoAsistentes" onchange="cargarAsistentes()">
+                            <option value="">Selecciona un evento</option>
+                        </select>
 
-        <button id="foto-anterior" class="flecha flecha-izq">
-            &#10094;
-        </button>
+                        <div class="btn-group-botones">
+                            <button class="btn btn-excel" onclick="exportarExcel()">
+                                📊 Exportar a Excel
+                            </button>
+                            <button class="btn btn-excel-todo" onclick="exportarTodosEventos()">
+                                📊 Exportar Todo
+                            </button>
+                        </div>
 
-        <img id="imagen-galeria" src="" alt="Foto ampliada">
+                        <div id="statsContainer" class="stats hidden">
+                            <div class="stat">
+                                <div class="number" id="totalAsistentes">0</div>
+                                <div class="label">Total</div>
+                            </div>
+                            <div class="stat">
+                                <div class="number" id="ingresadosCount">0</div>
+                                <div class="label">Ingresados</div>
+                            </div>
+                            <div class="stat">
+                                <div class="number" id="pendientesCount">0</div>
+                                <div class="label">Pendientes</div>
+                            </div>
+                        </div>
+                        <div id="asistentesList">
+                            <p style="color:#666;text-align:center;padding:20px;">Selecciona un evento para ver los
+                                asistentes</p>
+                        </div>
+                    </div>
+                </div>
 
-        <button id="foto-siguiente" class="flecha flecha-der">
-            &#10095;
-        </button>
+                <div id="tab-crear" class="tab-content">
+                    <div class="card">
+                        <h3>🎯 Crear Nuevo Evento</h3>
+                        <input type="text" id="eventoNombre" placeholder="Nombre del evento" />
+                        <input type="date" id="eventoFecha" />
+                        <input type="text" id="eventoLugar" placeholder="Lugar (opcional)" />
+                        <textarea id="eventoDescripcion" placeholder="Descripción (opcional)" rows="2"></textarea>
+                        <button class="btn btn-primary" onclick="crearEvento()">🎯 Crear Evento</button>
+                    </div>
 
-        <div class="contador-visor">
+                    <div class="card">
+                        <h3>➕ Agregar Asistente</h3>
+                        <select id="selectEventoAgregar">
+                            <option value="">Selecciona un evento</option>
+                        </select>
+                        <input type="text" id="asistenteNombre" placeholder="Nombre completo" />
+                        <input type="email" id="asistenteEmail" placeholder="Correo electrónico" />
+                        <button class="btn btn-success" onclick="agregarAsistente()">✅ Agregar Asistente</button>
+                    </div>
+                </div>
+            </div>
 
-            <span id="foto-actual">1</span>
-            /
-            <span id="total-fotos">4</span>
+            <!-- Modal QR -->
+            <div class="modal" id="qrModal">
+                <div class="modal-content">
+                    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:5px;">
+                        <img src="../img/logo.webp" alt="Logo" style="height:35px;width:auto;">
+                        <h3 style="margin:0;">🎫 ENTRADA</h3>
+                    </div>
+                    <div class="subtitulo">LOS HIJOS DE TENCHA</div>
 
+                    <div id="qrContainer">
+                        <div id="qrcode"></div>
+                    </div>
+
+                    <div class="qr-id">
+                        <span class="id-label">🎯 ID de validación</span>
+                        <span class="id-valor" id="qrIdAsistente">-</span>
+                        <button class="btn-copy-id" onclick="copiarId()">📋 Copiar ID</button>
+                    </div>
+
+                    <div class="datos-persona" id="datosPersona">
+                        <div class="label">Nombre</div>
+                        <div class="valor" id="qrNombreAsistente">-</div>
+                        <div class="label">Correo</div>
+                        <div class="valor" id="qrEmailAsistente">-</div>
+                        <div class="label">Evento</div>
+                        <div class="valor" id="qrEventoAsistente">-</div>
+                        <div class="banda">🎸 Los Hijos de Tencha</div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-download" onclick="descargarQR()">📥 Descargar QR</button>
+                        <button class="btn btn-secondary" onclick="cerrarQR()">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toast" id="toast"></div>
         </div>
-
     </div>
 
-    <!-- Pantalla de transición -->
-    <div id="transicion">
-        <img src="img/transicion.gif" alt="Transición">
-    </div>
-
-    <!-- ============================================= -->
-    <!-- FIREBASE SDKs - SISTEMA DE ENTRADAS           -->
-    <!-- ============================================= -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
-    <!-- EMAILJS -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-
-    <script src="js/script.js"></script>
-    <script src="js/eventos.js"></script>
-
-    <!-- ============================================= -->
-    <!-- DESACTIVAR TRANSICIÓN PARA "VER REPORTAJE"    -->
-    <!-- ============================================= -->
     <script>
+        // ============================================================
+        // CONFIGURACIÓN DE FIREBASE
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDvp_6UFymZZnqxMyL6yobJ3twLMvVkThw",
+            authDomain: "base-entradas-tenchos.firebaseapp.com",
+            projectId: "base-entradas-tenchos",
+            storageBucket: "base-entradas-tenchos.firebasestorage.app",
+            messagingSenderId: "273676503007",
+            appId: "1:273676503007:web:56180c485b648ef076a66a"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // ============================================================
+        // EMAILJS CONFIGURACIÓN
+        // ============================================================
+        const EMAILJS_USER_ID = '7bmV4hpwq7pFObQ8W';
+        const EMAILJS_SERVICE_ID = 'service_49w40s8';
+        const EMAILJS_TEMPLATE_ID = 'template_5ulhotx';
+
+        if (typeof emailjs !== 'undefined') {
+            emailjs.init(EMAILJS_USER_ID);
+            console.log('✅ EmailJS inicializado en admin');
+        }
+
+        // ============================================================
+        // SISTEMA DE LOGIN - SIEMPRE PIDE CONTRASEÑA
+        // ============================================================
+        const PASSWORD = 'tencha2026';
+
+        function verificarPassword() {
+            const input = document.getElementById('passwordInput');
+            const error = document.getElementById('loginError');
+            const pass = input.value.trim();
+
+            if (pass === PASSWORD) {
+                error.classList.remove('show');
+                document.getElementById('loginOverlay').classList.remove('active');
+                document.getElementById('mainContent').style.display = 'block';
+                iniciarApp();
+            } else {
+                error.classList.add('show');
+                input.value = '';
+                input.focus();
+                setTimeout(() => error.classList.remove('show'), 3000);
+            }
+        }
+
+        function cerrarSesion() {
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('loginOverlay').classList.add('active');
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordInput').focus();
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
-            var enlaceReportaje = document.getElementById('enlace-reportaje');
-            if (enlaceReportaje) {
-                enlaceReportaje.addEventListener('click', function (e) {
-                    // Prevenir que el script de transición lo capture
-                    e.stopPropagation();
-                    // Guardar el destino
-                    var destino = this.href;
-                    // Navegar directamente
-                    window.location.href = destino;
-                    return false;
-                });
+            document.getElementById('loginOverlay').classList.add('active');
+            document.getElementById('mainContent').style.display = 'none';
+            setTimeout(() => document.getElementById('passwordInput').focus(), 300);
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && document.getElementById('loginOverlay').classList.contains('active')) {
+                verificarPassword();
             }
         });
+
+        // ============================================================
+        // VARIABLES GLOBALES
+        // ============================================================
+        let eventos = [];
+        let asistentes = [];
+        let eventoSeleccionado = null;
+        let asistenteActual = null;
+
+        // ============================================================
+        // FUNCIONES PRINCIPALES
+        // ============================================================
+
+        function iniciarApp() {
+            cargarEventos();
+            cargarSelects();
+            cargarAsistentes();
+            console.log('🚀 Sistema de entradas Los Hijos de Tencha iniciado');
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tabs button').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            event.target.classList.add('active');
+            if (tab === 'eventos') cargarEventos();
+            if (tab === 'asistentes') cargarSelects();
+        }
+
+        function showToast(mensaje, tipo = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = mensaje;
+            toast.className = 'toast show ' + tipo;
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        // ============================================================
+        // GESTIÓN DE EVENTOS
+        // ============================================================
+
+        async function crearEvento() {
+            const nombre = document.getElementById('eventoNombre').value.trim();
+            const fecha = document.getElementById('eventoFecha').value;
+            const lugar = document.getElementById('eventoLugar').value.trim();
+            const descripcion = document.getElementById('eventoDescripcion').value.trim();
+
+            if (!nombre) {
+                showToast('⚠️ Ingresa el nombre del evento', 'error');
+                return;
+            }
+
+            try {
+                const evento = {
+                    nombre,
+                    fecha,
+                    lugar,
+                    descripcion,
+                    creadoEn: new Date().toISOString(),
+                    asistentes: []
+                };
+
+                const docRef = await db.collection('eventos').add(evento);
+                showToast('✅ Evento "' + nombre + '" creado con éxito');
+
+                document.getElementById('eventoNombre').value = '';
+                document.getElementById('eventoFecha').value = '';
+                document.getElementById('eventoLugar').value = '';
+                document.getElementById('eventoDescripcion').value = '';
+
+                cargarEventos();
+                cargarSelects();
+            } catch (error) {
+                console.error('Error al crear evento:', error);
+                showToast('❌ Error al crear evento: ' + error.message, 'error');
+            }
+        }
+
+        async function cargarEventos() {
+            try {
+                const snapshot = await db.collection('eventos').orderBy('creadoEn', 'desc').get();
+                eventos = [];
+                snapshot.forEach(doc => {
+                    eventos.push({ id: doc.id, ...doc.data() });
+                });
+
+                const list = document.getElementById('eventList');
+                if (eventos.length === 0) {
+                    list.innerHTML = '<li style="text-align:center;color:#666;padding:20px;">No hay eventos creados</li>';
+                    return;
+                }
+
+                list.innerHTML = eventos.map(e => {
+                    const count = e.asistentes ? e.asistentes.length : 0;
+                    return `
+                                <li onclick="seleccionarEvento('${e.id}')">
+                                    <div>
+                                        <div class="event-name">${e.nombre}</div>
+                                        <div class="event-count">${count} asistentes</div>
+                                    </div>
+                                    <span class="event-status ${count > 0 ? 'active' : ''}">
+                                        ${count > 0 ? '🎫 ' + count : '📭 Vacío'}
+                                    </span>
+                                </li>
+                            `;
+                }).join('');
+            } catch (error) {
+                console.error('Error al cargar eventos:', error);
+                showToast('❌ Error al cargar eventos', 'error');
+            }
+        }
+
+        function seleccionarEvento(id) {
+            eventoSeleccionado = id;
+            switchTab('asistentes');
+            document.getElementById('selectEventoAsistentes').value = id;
+            cargarAsistentes();
+        }
+
+        // ============================================================
+        // GESTIÓN DE ASISTENTES
+        // ============================================================
+
+        async function cargarSelects() {
+            try {
+                const snapshot = await db.collection('eventos').orderBy('creadoEn', 'desc').get();
+                const eventosList = [];
+                snapshot.forEach(doc => {
+                    eventosList.push({ id: doc.id, ...doc.data() });
+                });
+
+                const select1 = document.getElementById('selectEventoAsistentes');
+                const select2 = document.getElementById('selectEventoAgregar');
+
+                const options = eventosList.map(e =>
+                    `<option value="${e.id}">${e.nombre}</option>`
+                ).join('');
+
+                select1.innerHTML = '<option value="">Selecciona un evento</option>' + options;
+                select2.innerHTML = '<option value="">Selecciona un evento</option>' + options;
+            } catch (error) {
+                console.error('Error al cargar selects:', error);
+            }
+        }
+
+        async function agregarAsistente() {
+            const eventoId = document.getElementById('selectEventoAgregar').value;
+            const nombre = document.getElementById('asistenteNombre').value.trim();
+            const email = document.getElementById('asistenteEmail').value.trim();
+
+            if (!eventoId) {
+                showToast('⚠️ Selecciona un evento', 'error');
+                return;
+            }
+            if (!nombre) {
+                showToast('⚠️ Ingresa el nombre del asistente', 'error');
+                return;
+            }
+            if (!email) {
+                showToast('⚠️ Ingresa el correo electrónico', 'error');
+                return;
+            }
+
+            try {
+                const eventoDoc = await db.collection('eventos').doc(eventoId).get();
+                const nombreEvento = eventoDoc.exists ? eventoDoc.data().nombre : 'Evento';
+
+                const asistente = {
+                    nombre,
+                    email,
+                    ingresado: false,
+                    fechaIngreso: null,
+                    eventoId: eventoId,
+                    creadoEn: new Date().toISOString(),
+                    banda: 'Los Hijos de Tencha',
+                    emailEnviado: false
+                };
+
+                const docRef = await db.collection('asistentes').add(asistente);
+
+                await db.collection('eventos').doc(eventoId).update({
+                    asistentes: firebase.firestore.FieldValue.arrayUnion(docRef.id)
+                });
+
+                try {
+                    const qrUrl = `https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=${docRef.id}`;
+                    const templateParams = {
+                        to_email: email,
+                        to_name: nombre,
+                        event_name: nombreEvento,
+                        asistente_id: docRef.id,
+                        qr_url: qrUrl
+                    };
+                    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+                    await db.collection('asistentes').doc(docRef.id).update({
+                        emailEnviado: true,
+                        emailEnviadoEn: new Date().toISOString()
+                    });
+                    showToast(`✅ ${nombre} agregado y correo enviado a ${email}`, 'success');
+                } catch (emailError) {
+                    console.error('Error al enviar correo:', emailError);
+                    showToast(`⚠️ ${nombre} agregado pero el correo no pudo enviarse`, 'error');
+                }
+
+                document.getElementById('asistenteNombre').value = '';
+                document.getElementById('asistenteEmail').value = '';
+                cargarAsistentes();
+                cargarEventos();
+            } catch (error) {
+                console.error('Error al agregar asistente:', error);
+                showToast('❌ Error al agregar asistente: ' + error.message, 'error');
+            }
+        }
+
+        async function cargarAsistentes() {
+            const eventoId = document.getElementById('selectEventoAsistentes').value;
+            if (!eventoId) {
+                document.getElementById('asistentesList').innerHTML =
+                    '<p style="color:#666;text-align:center;padding:20px;">Selecciona un evento para ver los asistentes</p>';
+                document.getElementById('statsContainer').classList.add('hidden');
+                return;
+            }
+
+            try {
+                const snapshot = await db.collection('asistentes')
+                    .where('eventoId', '==', eventoId)
+                    .get();
+
+                asistentes = [];
+                snapshot.forEach(doc => {
+                    asistentes.push({ id: doc.id, ...doc.data() });
+                });
+
+                asistentes.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
+
+                const total = asistentes.length;
+                const ingresados = asistentes.filter(a => a.ingresado).length;
+                const pendientes = total - ingresados;
+
+                document.getElementById('totalAsistentes').textContent = total;
+                document.getElementById('ingresadosCount').textContent = ingresados;
+                document.getElementById('pendientesCount').textContent = pendientes;
+                document.getElementById('statsContainer').classList.remove('hidden');
+
+                const list = document.getElementById('asistentesList');
+                if (asistentes.length === 0) {
+                    list.innerHTML = '<p style="color:#666;text-align:center;padding:20px;">No hay asistentes en este evento</p>';
+                    return;
+                }
+
+                const eventoDoc = await db.collection('eventos').doc(eventoId).get();
+                const nombreEvento = eventoDoc.exists ? eventoDoc.data().nombre : 'Evento';
+
+                list.innerHTML = asistentes.map(a => `
+                                <div class="assistant-item ${a.ingresado ? 'ingresado' : ''}">
+                                    <div class="info">
+                                        <div class="nombre">${a.nombre}</div>
+                                        <div class="email">${a.email}</div>
+                                        <span class="estado ${a.ingresado ? 'estado-ingresado' : 'estado-sin-ingresar'}">
+                                            ${a.ingresado ? '✅ Ya ingresó' : '⏳ Sin ingresar'}
+                                        </span>
+                                        ${a.fechaIngreso ? `<span style="font-size:0.6rem;color:#666;margin-left:10px;">${new Date(a.fechaIngreso).toLocaleString()}</span>` : ''}
+                                        <span class="badge-envio ${a.emailEnviado ? 'enviado' : 'pendiente'}">
+                                            ${a.emailEnviado ? '📧 Enviado' : '📧 Pendiente'}
+                                        </span>
+                                    </div>
+                                    <button class="qr-btn" onclick="mostrarQR('${a.id}', '${a.nombre}', '${a.email}', '${nombreEvento}')">📱</button>
+                                </div>
+                            `).join('');
+
+            } catch (error) {
+                console.error('Error al cargar asistentes:', error);
+                showToast('❌ Error al cargar asistentes', 'error');
+            }
+        }
+
+        // ============================================================
+        // QR CODE
+        // ============================================================
+
+        function mostrarQR(asistenteId, nombre, email, eventoNombre) {
+            const modal = document.getElementById('qrModal');
+            const container = document.getElementById('qrcode');
+
+            asistenteActual = { id: asistenteId, nombre, email, evento: eventoNombre };
+
+            document.getElementById('qrIdAsistente').textContent = asistenteId;
+            document.getElementById('qrNombreAsistente').textContent = nombre;
+            document.getElementById('qrEmailAsistente').textContent = email;
+            document.getElementById('qrEventoAsistente').textContent = eventoNombre;
+
+            container.innerHTML = '';
+
+            const url = window.location.origin + '/admin/validador.html?id=' + asistenteId;
+
+            new QRCode(container, {
+                text: url,
+                width: 250,
+                height: 250,
+                colorDark: '#ffcc00',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            modal.classList.add('active');
+        }
+
+        function cerrarQR() {
+            document.getElementById('qrModal').classList.remove('active');
+            asistenteActual = null;
+        }
+
+        function copiarId() {
+            const idText = document.getElementById('qrIdAsistente').textContent;
+            navigator.clipboard.writeText(idText).then(() => {
+                showToast('✅ ID copiado al portapapeles', 'success');
+            }).catch(() => {
+                const input = document.createElement('input');
+                input.value = idText;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToast('✅ ID copiado al portapapeles', 'success');
+            });
+        }
+
+        function descargarQR() {
+            if (!asistenteActual) {
+                showToast('⚠️ No hay QR para descargar', 'error');
+                return;
+            }
+
+            const tempDiv = document.createElement('div');
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '-9999px';
+            tempDiv.style.top = '-9999px';
+            tempDiv.style.background = '#ffffff';
+            tempDiv.style.padding = '30px';
+            tempDiv.style.borderRadius = '16px';
+            tempDiv.style.textAlign = 'center';
+            tempDiv.style.width = '400px';
+            document.body.appendChild(tempDiv);
+
+            tempDiv.innerHTML = `
+                        <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:5px;">
+                            <img src="../img/logo.webp" alt="Logo" style="height:35px;width:auto;">
+                            <h3 style="color:#ffcc00;margin:0;font-size:1.2rem;">🎫 ENTRADA</h3>
+                        </div>
+                        <div style="color:#ffcc00;font-size:0.8rem;letter-spacing:2px;margin-bottom:10px;">LOS HIJOS DE TENCHA</div>
+                        <div id="qrTemp" style="display:flex;justify-content:center;background:#fff;padding:15px;border-radius:12px;margin:10px 0;"></div>
+                        <div style="background:#f5f5f5;padding:8px 12px;border-radius:6px;margin:8px 0 12px 0;font-size:0.8rem;color:#666;border:1px dashed #ddd;text-align:center;">
+                            <span style="display:block;font-size:0.6rem;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:2px;">🎯 ID de validación</span>
+                            <span style="color:#ffcc00;font-weight:700;font-family:monospace;font-size:0.9rem;letter-spacing:0.5px;">${asistenteActual.id}</span>
+                        </div>
+                        <div style="background:#f5f5f5;padding:12px;border-radius:8px;margin:10px 0 15px 0;text-align:left;">
+                            <div style="color:#999;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;">Nombre</div>
+                            <div style="color:#1a1a1a;font-weight:600;font-size:1rem;margin-bottom:5px;">${asistenteActual.nombre}</div>
+                            <div style="color:#999;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;">Correo</div>
+                            <div style="color:#1a1a1a;font-weight:600;font-size:1rem;margin-bottom:5px;">${asistenteActual.email}</div>
+                            <div style="color:#999;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;">Evento</div>
+                            <div style="color:#1a1a1a;font-weight:600;font-size:1rem;margin-bottom:5px;">${asistenteActual.evento}</div>
+                            <div style="color:#ffcc00;font-weight:700;font-size:1.1rem;text-align:center;margin-top:5px;border-top:1px solid #ddd;padding-top:8px;">🎸 Los Hijos de Tencha</div>
+                        </div>
+                    `;
+
+            const qrContainer = tempDiv.querySelector('#qrTemp');
+            const url = window.location.origin + '/admin/validador.html?id=' + asistenteActual.id;
+
+            new QRCode(qrContainer, {
+                text: url,
+                width: 250,
+                height: 250,
+                colorDark: '#ffcc00',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            setTimeout(() => {
+                html2canvas(tempDiv, {
+                    scale: 2,
+                    backgroundColor: '#ffffff',
+                    allowTaint: true,
+                    useCORS: true,
+                    logging: false
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `entrada_${asistenteActual.nombre.replace(/\s/g, '_')}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    document.body.removeChild(tempDiv);
+                    showToast('✅ QR descargado con éxito', 'success');
+                }).catch(error => {
+                    console.error('Error al descargar QR:', error);
+                    document.body.removeChild(tempDiv);
+                    showToast('❌ Error al descargar QR', 'error');
+                });
+            }, 500);
+        }
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') cerrarQR();
+        });
+
+        // ============================================================
+        // EXPORTAR A EXCEL CON FORMATO
+        // ============================================================
+
+        function exportarExcel() {
+            const eventoId = document.getElementById('selectEventoAsistentes').value;
+            if (!eventoId) {
+                showToast('⚠️ Selecciona un evento primero', 'error');
+                return;
+            }
+
+            const evento = eventos.find(e => e.id === eventoId);
+            if (!evento) {
+                showToast('⚠️ Evento no encontrado', 'error');
+                return;
+            }
+
+            const asistentesEvento = asistentes.filter(a => a.eventoId === eventoId);
+
+            if (asistentesEvento.length === 0) {
+                showToast('⚠️ No hay asistentes para exportar', 'error');
+                return;
+            }
+
+            const data = [
+                ['#', 'Nombre', 'Email', 'Estado', 'Fecha de Ingreso', 'ID de Validación']
+            ];
+
+            asistentesEvento.forEach((a, index) => {
+                const estado = a.ingresado ? '✅ Ingresado' : '⏳ Pendiente';
+                const fechaIngreso = a.fechaIngreso ? new Date(a.fechaIngreso).toLocaleString('es-CR') : '-';
+                data.push([
+                    index + 1,
+                    a.nombre,
+                    a.email,
+                    estado,
+                    fechaIngreso,
+                    a.id
+                ]);
+            });
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(data);
+
+            ws['!cols'] = [
+                { wch: 5 },
+                { wch: 30 },
+                { wch: 35 },
+                { wch: 18 },
+                { wch: 25 },
+                { wch: 25 }
+            ];
+
+            XLSX.utils.book_append_sheet(wb, ws, 'Asistentes');
+
+            const nombreArchivo = `Asistentes_${evento.nombre.replace(/\s/g, '_')}_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, nombreArchivo);
+
+            showToast(`✅ ${asistentesEvento.length} asistentes exportados a Excel con formato`, 'success');
+        }
+
+        function exportarTodosEventos() {
+            if (eventos.length === 0) {
+                showToast('⚠️ No hay eventos para exportar', 'error');
+                return;
+            }
+
+            let todosLosAsistentes = [];
+            eventos.forEach(e => {
+                const asistentesEvento = asistentes.filter(a => a.eventoId === e.id);
+                asistentesEvento.forEach(a => {
+                    todosLosAsistentes.push({
+                        evento: e.nombre,
+                        ...a
+                    });
+                });
+            });
+
+            if (todosLosAsistentes.length === 0) {
+                showToast('⚠️ No hay asistentes registrados en ningún evento', 'error');
+                return;
+            }
+
+            const data = [
+                ['#', 'Evento', 'Nombre', 'Email', 'Estado', 'Fecha de Ingreso', 'ID de Validación']
+            ];
+
+            todosLosAsistentes.forEach((a, index) => {
+                const estado = a.ingresado ? '✅ Ingresado' : '⏳ Pendiente';
+                const fechaIngreso = a.fechaIngreso ? new Date(a.fechaIngreso).toLocaleString('es-CR') : '-';
+                data.push([
+                    index + 1,
+                    a.evento,
+                    a.nombre,
+                    a.email,
+                    estado,
+                    fechaIngreso,
+                    a.id
+                ]);
+            });
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(data);
+
+            ws['!cols'] = [
+                { wch: 5 },
+                { wch: 30 },
+                { wch: 30 },
+                { wch: 35 },
+                { wch: 18 },
+                { wch: 25 },
+                { wch: 25 }
+            ];
+
+            XLSX.utils.book_append_sheet(wb, ws, 'Todos los Asistentes');
+
+            const nombreArchivo = `Todos_los_asistentes_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, nombreArchivo);
+
+            showToast(`✅ ${todosLosAsistentes.length} asistentes exportados de ${eventos.length} eventos`, 'success');
+        }
+
+        // ============================================================
+        // INICIALIZACIÓN
+        // ============================================================
     </script>
 
 </body>
