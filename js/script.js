@@ -571,12 +571,37 @@ async function registrarAsistentePublico() {
 
             const qrUrl = `https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=${docRef.id}`;
 
+            // Obtener datos completos del evento
+            const eventoData = eventoDoc.data();
+            const fechaEvento = eventoData.fecha || '';
+            const lugarEvento = eventoData.lugar || '';
+            const descripcionEvento = eventoData.descripcion || '';
+
+            // Formatear fecha (si existe)
+            let fechaFormateada = 'Fecha por confirmar';
+            let horaFormateada = 'Hora por confirmar';
+
+            if (fechaEvento) {
+                try {
+                    const fechaObj = new Date(fechaEvento + 'T00:00:00');
+                    const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                    fechaFormateada = fechaObj.getDate() + ' de ' + meses[fechaObj.getMonth()] + ' ' + fechaObj.getFullYear();
+                    // Si tienes hora en el evento, puedes agregarla aquí
+                    horaFormateada = '8:00 PM'; // Puedes modificar esto si tienes campo de hora
+                } catch (e) {
+                    fechaFormateada = fechaEvento;
+                }
+            }
+
             const templateParams = {
                 to_email: email,
                 to_name: nombre,
                 event_name: nombreEvento,
                 asistente_id: docRef.id,
-                qr_url: qrUrl
+                qr_url: qrUrl,
+                event_date: fechaFormateada,
+                event_time: horaFormateada,
+                event_location: lugarEvento || ''
             };
 
             console.log('📧 Enviando correo a:', email);

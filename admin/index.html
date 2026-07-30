@@ -19,7 +19,7 @@
     <!-- html2canvas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-    <!-- SheetJS para exportar a Excel -->
+    <!-- SheetJS para exportar a Excel con formato -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
@@ -852,6 +852,7 @@
                         <h3>🎯 Crear Nuevo Evento</h3>
                         <input type="text" id="eventoNombre" placeholder="Nombre del evento" />
                         <input type="date" id="eventoFecha" />
+                        <input type="time" id="eventoHora" />
                         <input type="text" id="eventoLugar" placeholder="Lugar (opcional)" />
                         <textarea id="eventoDescripcion" placeholder="Descripción (opcional)" rows="2"></textarea>
                         <button class="btn btn-primary" onclick="crearEvento()">🎯 Crear Evento</button>
@@ -1024,6 +1025,7 @@
         async function crearEvento() {
             const nombre = document.getElementById('eventoNombre').value.trim();
             const fecha = document.getElementById('eventoFecha').value;
+            const hora = document.getElementById('eventoHora').value;
             const lugar = document.getElementById('eventoLugar').value.trim();
             const descripcion = document.getElementById('eventoDescripcion').value.trim();
 
@@ -1036,6 +1038,7 @@
                 const evento = {
                     nombre,
                     fecha,
+                    hora,
                     lugar,
                     descripcion,
                     creadoEn: new Date().toISOString(),
@@ -1047,6 +1050,7 @@
 
                 document.getElementById('eventoNombre').value = '';
                 document.getElementById('eventoFecha').value = '';
+                document.getElementById('eventoHora').value = '';
                 document.getElementById('eventoLugar').value = '';
                 document.getElementById('eventoDescripcion').value = '';
 
@@ -1074,10 +1078,13 @@
 
                 list.innerHTML = eventos.map(e => {
                     const count = e.asistentes ? e.asistentes.length : 0;
+                    const fechaMostrar = e.fecha ? `📅 ${e.fecha}` : '';
+                    const horaMostrar = e.hora ? `🕐 ${e.hora}` : '';
                     return `
                                 <li onclick="seleccionarEvento('${e.id}')">
                                     <div>
                                         <div class="event-name">${e.nombre}</div>
+                                        <div style="font-size:0.75rem;color:#888;">${fechaMostrar} ${horaMostrar}</div>
                                         <div class="event-count">${count} asistentes</div>
                                     </div>
                                     <span class="event-status ${count > 0 ? 'active' : ''}">
@@ -1145,7 +1152,8 @@
 
             try {
                 const eventoDoc = await db.collection('eventos').doc(eventoId).get();
-                const nombreEvento = eventoDoc.exists ? eventoDoc.data().nombre : 'Evento';
+                const eventoData = eventoDoc.exists ? eventoDoc.data() : null;
+                const nombreEvento = eventoData ? eventoData.nombre : 'Evento';
 
                 const asistente = {
                     nombre,
@@ -1165,19 +1173,45 @@
                 });
 
                 try {
+                    // Formatear fecha y hora para el correo
+                    let fechaFormateada = 'Fecha por confirmar';
+                    let horaFormateada = 'Hora por confirmar';
+                    let lugarFormateado = eventoData?.lugar || '';
+
+                    if (eventoData?.fecha) {
+                        try {
+                            const fechaObj = new Date(eventoData.fecha + 'T00:00:00');
+                            const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                            fechaFormateada = fechaObj.getDate() + ' de ' + meses[fechaObj.getMonth()] + ' ' + fechaObj.getFullYear();
+                        } catch (e) {
+                            fechaFormateada = eventoData.fecha;
+                        }
+                    }
+
+                    if (eventoData?.hora) {
+                        horaFormateada = eventoData.hora;
+                    }
+
                     const qrUrl = `https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=${docRef.id}`;
+
                     const templateParams = {
                         to_email: email,
                         to_name: nombre,
                         event_name: nombreEvento,
                         asistente_id: docRef.id,
-                        qr_url: qrUrl
+                        qr_url: qrUrl,
+                        event_date: fechaFormateada,
+                        event_time: horaFormateada,
+                        event_location: lugarFormateado
                     };
+
                     await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+
                     await db.collection('asistentes').doc(docRef.id).update({
                         emailEnviado: true,
                         emailEnviadoEn: new Date().toISOString()
                     });
+
                     showToast(`✅ ${nombre} agregado y correo enviado a ${email}`, 'success');
                 } catch (emailError) {
                     console.error('Error al enviar correo:', emailError);
@@ -1408,14 +1442,10 @@
                 return;
             }
 
-            // Crear datos con formato
             const data = [];
-
-            // Encabezados con formato
             const headerRow = ['#', 'Nombre', 'Email', 'Estado', 'Fecha de Ingreso', 'ID de Validación'];
             data.push(headerRow);
 
-            // Datos
             asistentesEvento.forEach((a, index) => {
                 const estado = a.ingresado ? 'INGRESADO' : 'PENDIENTE';
                 const fechaIngreso = a.fechaIngreso ? new Date(a.fechaIngreso).toLocaleString('es-CR') : '-';
@@ -1429,21 +1459,18 @@
                 ]);
             });
 
-            // Crear libro
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.aoa_to_sheet(data);
 
-            // Establecer ancho de columnas
             ws['!cols'] = [
-                { wch: 6 },   // #
-                { wch: 32 },  // Nombre
-                { wch: 38 },  // Email
-                { wch: 16 },  // Estado
-                { wch: 28 },  // Fecha de Ingreso
-                { wch: 28 }   // ID
+                { wch: 6 },
+                { wch: 32 },
+                { wch: 38 },
+                { wch: 16 },
+                { wch: 28 },
+                { wch: 28 }
             ];
 
-            // Aplicar formato a los encabezados (negrita, centrado)
             const range = XLSX.utils.decode_range(ws['!ref']);
             for (let col = range.s.c; col <= range.e.c; col++) {
                 const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
@@ -1455,18 +1482,15 @@
                 };
             }
 
-            // Aplicar formato a los datos
             for (let row = 1; row < data.length; row++) {
                 for (let col = range.s.c; col <= range.e.c; col++) {
                     const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
                     if (!ws[cellAddress]) continue;
 
-                    // Alinear ID a la izquierda
                     if (col === 5) {
                         ws[cellAddress].s = { alignment: { horizontal: "left" } };
                     }
 
-                    // Color de fondo para estado
                     if (col === 3) {
                         const estado = ws[cellAddress].v;
                         if (estado === 'INGRESADO') {
@@ -1488,7 +1512,6 @@
 
             XLSX.utils.book_append_sheet(wb, ws, 'Asistentes');
 
-            // Descargar
             const nombreArchivo = `Asistentes_${evento.nombre.replace(/\s/g, '_')}_${new Date().toISOString().split('T')[0]}.xlsx`;
             XLSX.writeFile(wb, nombreArchivo);
 
@@ -1517,7 +1540,6 @@
                 return;
             }
 
-            // Crear datos con formato
             const data = [];
             const headerRow = ['#', 'Evento', 'Nombre', 'Email', 'Estado', 'Fecha de Ingreso', 'ID de Validación'];
             data.push(headerRow);
@@ -1549,7 +1571,6 @@
                 { wch: 28 }
             ];
 
-            // Formato a encabezados
             const range = XLSX.utils.decode_range(ws['!ref']);
             for (let col = range.s.c; col <= range.e.c; col++) {
                 const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
@@ -1561,7 +1582,6 @@
                 };
             }
 
-            // Formato a datos
             for (let row = 1; row < data.length; row++) {
                 for (let col = range.s.c; col <= range.e.c; col++) {
                     const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
