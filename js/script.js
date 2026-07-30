@@ -69,13 +69,13 @@ const galeriaDatos = {
             'img/galeria/lanzamiento/foto3.webp'
         ]
     },
-    'eventos': {
-        titulo: 'Eventos',
-        fotos: [
-            'img/galeria/eventos/foto1.webp',
-            'img/galeria/eventos/foto2.webp'
-        ]
-    }
+    // 'eventos': {   // ← COMENTADO
+    //     titulo: 'Eventos',
+    //     fotos: [
+    //         'img/galeria/eventos/foto1.webp',
+    //         'img/galeria/eventos/foto2.webp'
+    //     ]
+    // }
 };
 
 // =====================================
