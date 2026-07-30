@@ -1,6 +1,6 @@
 // =====================================
 // LOS HIJOS DE TENCHA
-// SCRIPT.JS
+// SCRIPT.JS - COMPLETO CON SISTEMA DE REGISTRO
 // =====================================
 
 console.log("Sitio Oficial de Los Hijos de Tencha");
@@ -243,7 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 e.preventDefault();
                 pantallaTransicion.classList.add("activo");
-                pantallaTransicion.style.display = 'flex'; // forzar display
+                pantallaTransicion.style.display = 'flex';
 
                 setTimeout(() => {
                     window.location.href = destino;
@@ -302,19 +302,17 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // =====================================
-// CONTROL DE VIDEOS - VERSIÓN SIMPLE Y 100% EFECTIVA
+// CONTROL DE VIDEOS - VERSIÓN SIMPLE
 // =====================================
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    // 1. Seleccionar todos los contenedores de video
     var contenedores = document.querySelectorAll(
         '.video-card, .momento-card, .lanzamiento-principal, .lanzamiento-secundario, .youtube-player'
     );
 
     console.log('🎬 Contenedores de video encontrados:', contenedores.length);
 
-    // 2. Función para recargar todos los iframes excepto uno
     function recargarTodosLosIframes(excepto) {
         var todos = document.querySelectorAll(
             '.video-card iframe, .momento-card iframe, .lanzamiento-principal iframe, .lanzamiento-secundario iframe, .youtube-player iframe'
@@ -332,41 +330,32 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // 3. Agregar evento a cada contenedor
     contenedores.forEach(function (contenedor) {
         var iframe = contenedor.querySelector('iframe');
         if (!iframe) return;
 
-        // Guardar la URL original del iframe
         var urlOriginal = iframe.src;
         iframe.dataset.urlOriginal = urlOriginal;
 
-        // Cuando el usuario haga clic en el contenedor
         contenedor.addEventListener('click', function (e) {
-            // Si el clic fue en el iframe o en el contenedor
             console.log('▶️ Clic en video:', contenedor.className);
 
-            // Recargar todos los demás iframes (para detenerlos)
             recargarTodosLosIframes(iframe);
 
-            // Ahora, recargar el iframe clicado con autoplay (solo para YouTube)
             var src = iframe.dataset.urlOriginal || iframe.src;
             if (src.includes('youtube.com') || src.includes('youtu.be')) {
-                // Agregar autoplay=1
                 var nuevaSrc = src;
                 if (nuevaSrc.includes('?')) {
                     nuevaSrc += '&autoplay=1';
                 } else {
                     nuevaSrc += '?autoplay=1';
                 }
-                // Quitar posibles autoplay previos
                 nuevaSrc = nuevaSrc.replace(/autoplay=0/g, 'autoplay=1');
                 iframe.src = '';
                 setTimeout(function () {
                     iframe.src = nuevaSrc;
                 }, 100);
             } else {
-                // Para Cloudinary, solo recargar (ya se reproduce automáticamente)
                 iframe.src = '';
                 setTimeout(function () {
                     iframe.src = src;
@@ -374,9 +363,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // También capturar clics directamente en el iframe
         iframe.addEventListener('click', function (e) {
-            // El clic en el iframe no siempre se propaga, pero forzamos
             contenedor.click();
         });
     });
@@ -389,26 +376,32 @@ document.addEventListener('DOMContentLoaded', function () {
 // ============================================================
 
 // ============================================================
-// CONFIGURACIÓN DE FIREBASE (si no está ya inicializado)
+// CONFIGURACIÓN DE FIREBASE
 // ============================================================
-if (typeof firebase === 'undefined') {
-    console.warn('Firebase no está cargado, cargando...');
-    // Firebase ya debería estar cargado desde el HTML
-}
+(function () {
+    if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+        const firebaseConfig = {
+            apiKey: "AIzaSyDvp_6UFymZZnqxMyL6yobJ3twLMvVkThw",
+            authDomain: "base-entradas-tenchos.firebaseapp.com",
+            projectId: "base-entradas-tenchos",
+            storageBucket: "base-entradas-tenchos.firebasestorage.app",
+            messagingSenderId: "273676503007",
+            appId: "1:273676503007:web:56180c485b648ef076a66a"
+        };
+        firebase.initializeApp(firebaseConfig);
+        console.log('✅ Firebase inicializado desde script.js');
+    } else if (typeof firebase === 'undefined') {
+        console.error('❌ Firebase no está cargado. Verifica los scripts en index.html');
+    }
+})();
 
-// Verificar que Firebase esté disponible
-if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-    const firebaseConfig = {
-        apiKey: "AIzaSyDvp_6UFymZZnqxMyL6yobJ3twLMvVkThw",
-        authDomain: "base-entradas-tenchos.firebaseapp.com",
-        projectId: "base-entradas-tenchos",
-        storageBucket: "base-entradas-tenchos.firebasestorage.app",
-        messagingSenderId: "273676503007",
-        appId: "1:273676503007:web:56180c485b648ef076a66a"
-    };
-    firebase.initializeApp(firebaseConfig);
+let db;
+try {
+    db = firebase.firestore();
+    console.log('✅ Firestore disponible');
+} catch (error) {
+    console.error('❌ Error al obtener Firestore:', error);
 }
-const db = firebase.firestore();
 
 // ============================================================
 // EMAILJS CONFIGURACIÓN
@@ -417,17 +410,11 @@ const EMAILJS_USER_ID = '7bmV4hpwq7pFObQ8W';
 const EMAILJS_SERVICE_ID = 'service_49w40s8';
 const EMAILJS_TEMPLATE_ID = 'template_5ulhotx';
 
-// Cargar EmailJS dinámicamente si no está cargado
-if (typeof emailjs === 'undefined') {
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
-    document.head.appendChild(script);
-    script.onload = function () {
-        emailjs.init(EMAILJS_USER_ID);
-        console.log('✅ EmailJS inicializado');
-    };
-} else {
+if (typeof emailjs !== 'undefined') {
     emailjs.init(EMAILJS_USER_ID);
+    console.log('✅ EmailJS inicializado');
+} else {
+    console.warn('⚠️ EmailJS no está cargado');
 }
 
 // ============================================================
@@ -436,20 +423,37 @@ if (typeof emailjs === 'undefined') {
 
 async function cargarEventosRegistro() {
     const select = document.getElementById('selectEventoRegistro');
-    if (!select) return;
+    if (!select) {
+        console.warn('⚠️ No se encontró el select de eventos');
+        return;
+    }
+
+    if (!db) {
+        select.innerHTML = '<option value="">Error: Firebase no disponible</option>';
+        console.error('❌ Firestore no disponible');
+        return;
+    }
 
     try {
+        console.log('🔄 Cargando eventos desde Firebase...');
         const snapshot = await db.collection('eventos').orderBy('creadoEn', 'desc').get();
+
         let options = '<option value="">Selecciona un evento</option>';
 
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            options += `<option value="${doc.id}">${data.nombre}</option>`;
-        });
+        if (snapshot.empty) {
+            options = '<option value="">No hay eventos disponibles</option>';
+            console.log('ℹ️ No hay eventos creados');
+        } else {
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                options += `<option value="${doc.id}">${data.nombre}</option>`;
+            });
+            console.log(`✅ ${snapshot.size} eventos cargados`);
+        }
 
         select.innerHTML = options;
     } catch (error) {
-        console.error('Error al cargar eventos:', error);
+        console.error('❌ Error al cargar eventos:', error);
         select.innerHTML = '<option value="">Error al cargar eventos</option>';
     }
 }
@@ -464,7 +468,6 @@ async function registrarAsistentePublico() {
     const email = document.getElementById('emailRegistro').value.trim();
     const mensaje = document.getElementById('mensajeRegistro');
 
-    // Validar campos
     if (!eventoId) {
         mostrarMensajeRegistro('⚠️ Selecciona un evento', 'error');
         return;
@@ -478,15 +481,12 @@ async function registrarAsistentePublico() {
         return;
     }
 
-    // Mostrar estado de carga
     mostrarMensajeRegistro('⏳ Registrando...', 'info');
 
     try {
-        // Obtener nombre del evento
         const eventoDoc = await db.collection('eventos').doc(eventoId).get();
         const nombreEvento = eventoDoc.exists ? eventoDoc.data().nombre : 'Evento';
 
-        // Crear asistente en Firebase
         const asistente = {
             nombre,
             email,
@@ -501,24 +501,20 @@ async function registrarAsistentePublico() {
 
         const docRef = await db.collection('asistentes').add(asistente);
 
-        // Agregar ID al evento
         await db.collection('eventos').doc(eventoId).update({
             asistentes: firebase.firestore.FieldValue.arrayUnion(docRef.id)
         });
 
-        // =====================================
-        // ENVIAR CORREO CON EMAILJS
-        // =====================================
         try {
-            // Esperar a que EmailJS esté listo
             if (typeof emailjs === 'undefined') {
-                await new Promise(resolve => {
-                    const checkEmailJS = setInterval(() => {
-                        if (typeof emailjs !== 'undefined') {
-                            clearInterval(checkEmailJS);
-                            resolve();
-                        }
-                    }, 100);
+                await new Promise((resolve) => {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+                    script.onload = function () {
+                        emailjs.init(EMAILJS_USER_ID);
+                        resolve();
+                    };
+                    document.head.appendChild(script);
                 });
             }
 
@@ -534,7 +530,6 @@ async function registrarAsistentePublico() {
 
             await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
 
-            // Marcar como enviado
             await db.collection('asistentes').doc(docRef.id).update({
                 emailEnviado: true,
                 emailEnviadoEn: new Date().toISOString()
@@ -543,19 +538,18 @@ async function registrarAsistentePublico() {
             console.log('✅ Correo enviado a', email);
 
         } catch (emailError) {
-            console.error('Error al enviar correo:', emailError);
-            // El asistente ya está registrado aunque falle el correo
+            console.error('❌ Error al enviar correo:', emailError);
         }
 
-        // Mostrar éxito
         mostrarMensajeRegistro(`✅ ¡Registro exitoso! Se ha enviado un correo a ${email} con tu entrada digital.`, 'success');
 
-        // Limpiar formulario
         document.getElementById('nombreRegistro').value = '';
         document.getElementById('emailRegistro').value = '';
 
+        cargarEventosRegistro();
+
     } catch (error) {
-        console.error('Error al registrar:', error);
+        console.error('❌ Error al registrar:', error);
         mostrarMensajeRegistro('❌ Error al registrar: ' + error.message, 'error');
     }
 }
@@ -570,17 +564,12 @@ function mostrarMensajeRegistro(texto, tipo) {
 
     mensaje.style.display = 'block';
     mensaje.textContent = texto;
-
-    const colores = {
-        success: '#00c853',
-        error: '#d32f2f',
-        info: '#ffcc00'
-    };
-    mensaje.style.color = colores[tipo] || '#fff';
+    mensaje.className = 'mensaje-registro ' + tipo;
 
     if (tipo === 'success' || tipo === 'error') {
         setTimeout(() => {
             mensaje.style.display = 'none';
+            mensaje.className = 'mensaje-registro';
         }, 6000);
     }
 }
@@ -590,8 +579,12 @@ function mostrarMensajeRegistro(texto, tipo) {
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Cargar eventos para el registro público
+    console.log('🔄 Inicializando sistema de registro...');
+
     if (document.getElementById('selectEventoRegistro')) {
-        cargarEventosRegistro();
+        console.log('✅ Select de eventos encontrado, cargando...');
+        setTimeout(cargarEventosRegistro, 500);
+    } else {
+        console.warn('⚠️ No se encontró el select de eventos en la página');
     }
 });

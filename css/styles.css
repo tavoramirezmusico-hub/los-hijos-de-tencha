@@ -1665,7 +1665,6 @@ footer small {
     height: 100%;
     background: #000;
     display: none;
-    /* ← antes era opacity:0; visibility:hidden */
     justify-content: center;
     align-items: center;
     z-index: 99999;
@@ -1673,7 +1672,6 @@ footer small {
 
 #transicion.activo {
     display: flex;
-    /* ← se muestra solo cuando tiene la clase */
 }
 
 #transicion img {
@@ -1922,7 +1920,6 @@ footer small {
 @media (max-width: 480px) {
     .spotify-embed iframe {
         height: 160px !important;
-        /* Un poco más alto para mejor visibilidad */
     }
 }
 
