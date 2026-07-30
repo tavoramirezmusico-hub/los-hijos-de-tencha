@@ -1,6 +1,6 @@
 // =====================================
 // LOS HIJOS DE TENCHA
-// SCRIPT.JS - COMPLETO CON SISTEMA DE REGISTRO
+// SCRIPT.JS - COMPLETO CON SISTEMA DE REGISTRO Y GALERÍA MEJORADA
 // =====================================
 
 console.log("Sitio Oficial de Los Hijos de Tencha");
@@ -43,85 +43,184 @@ window.addEventListener("scroll", () => {
 });
 
 // =====================================
-// GALERÍA 2.0 - VISOR PROFESIONAL
+// GALERÍA CON CATEGORÍAS - DATOS
 // =====================================
 
-const fotos = document.querySelectorAll(".foto img");
-const visorGaleria = document.getElementById("visor-galeria");
-const imagenGaleria = document.getElementById("imagen-galeria");
-const cerrarGaleria = document.getElementById("cerrar-galeria");
-const anterior = document.getElementById("foto-anterior");
-const siguiente = document.getElementById("foto-siguiente");
-const fotoActual = document.getElementById("foto-actual");
-const totalFotos = document.getElementById("total-fotos");
+const galeriaDatos = {
+    'vocho': {
+        titulo: 'Sesión Vocho',
+        fotos: [
+            'img/galeria/foto1.webp',
+            'img/galeria/foto2.webp'
+        ]
+    },
+    'disco': {
+        titulo: 'Sesión Disco Cumbias',
+        fotos: [
+            'img/galeria/foto3.webp',
+            'img/galeria/foto4.webp'
+        ]
+    },
+    'lanzamiento': {
+        titulo: 'Cumbia Salvaje - Lanzamiento',
+        fotos: [
+            'img/galeria/lanzamiento/foto1.webp',
+            'img/galeria/lanzamiento/foto2.webp',
+            'img/galeria/lanzamiento/foto3.webp'
+        ]
+    },
+    'eventos': {
+        titulo: 'Eventos',
+        fotos: [
+            'img/galeria/eventos/foto1.webp',
+            'img/galeria/eventos/foto2.webp'
+        ]
+    }
+};
 
-let indiceActual = 0;
+// =====================================
+// GALERÍA CON CATEGORÍAS - FUNCIONES
+// =====================================
 
-if (visorGaleria && imagenGaleria && fotos.length) {
-    totalFotos.textContent = fotos.length;
+let categoriaActual = 'todas';
+let fotosActuales = [];
+let indiceActualVisor = 0;
 
-    function mostrarFoto(indice) {
-        indiceActual = indice;
-        imagenGaleria.src = fotos[indice].src;
-        fotoActual.textContent = indice + 1;
-        visorGaleria.style.display = "flex";
-        document.body.style.overflow = "hidden";
-        visorGaleria.classList.remove("mostrar");
-        setTimeout(() => {
-            visorGaleria.classList.add("mostrar");
-        }, 10);
+function cargarGaleria(categoria) {
+    const grid = document.getElementById('galeriaGrid');
+    if (!grid) return;
+
+    categoriaActual = categoria;
+
+    // Obtener fotos de la categoría seleccionada
+    let fotos = [];
+    if (categoria === 'todas') {
+        // Combinar todas las fotos
+        Object.keys(galeriaDatos).forEach(key => {
+            fotos = fotos.concat(galeriaDatos[key].fotos);
+        });
+    } else if (galeriaDatos[categoria]) {
+        fotos = galeriaDatos[categoria].fotos;
     }
 
-    fotos.forEach((foto, indice) => {
-        foto.addEventListener("click", () => {
-            mostrarFoto(indice);
+    fotosActuales = fotos;
+
+    // Actualizar botones de categorías
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.categoria === categoria);
+    });
+
+    // Renderizar fotos
+    if (fotos.length === 0) {
+        grid.innerHTML = `<div class="galeria-vacia">📸 No hay fotos en esta categoría aún.</div>`;
+        return;
+    }
+
+    grid.innerHTML = fotos.map((foto, index) => `
+        <div class="foto animar" data-index="${index}">
+            <img src="${foto}" loading="lazy" alt="${galeriaDatos[categoria]?.titulo || 'Foto'}">
+            <div class="foto-overlay">
+                <span>${galeriaDatos[categoria]?.titulo || 'Evento'}</span>
+            </div>
+        </div>
+    `).join('');
+
+    // Agregar eventos a las fotos
+    grid.querySelectorAll('.foto').forEach(el => {
+        el.addEventListener('click', function () {
+            const index = parseInt(this.dataset.index);
+            abrirVisor(index);
         });
     });
 
-    cerrarGaleria.addEventListener("click", () => {
-        visorGaleria.style.display = "none";
-        document.body.style.overflow = "";
+    // Re-aplicar animaciones
+    document.querySelectorAll('.galeria-grid .foto').forEach(el => {
+        setTimeout(() => el.classList.add('visible'), 100);
     });
+}
 
-    visorGaleria.addEventListener("click", (e) => {
+// =====================================
+// VISOR DE GALERÍA MEJORADO
+// =====================================
+
+const visorGaleria = document.getElementById('visor-galeria');
+const imagenGaleria = document.getElementById('imagen-galeria');
+const cerrarGaleria = document.getElementById('cerrar-galeria');
+const anterior = document.getElementById('foto-anterior');
+const siguiente = document.getElementById('foto-siguiente');
+const fotoActual = document.getElementById('foto-actual');
+const totalFotos = document.getElementById('total-fotos');
+
+function abrirVisor(index) {
+    if (!visorGaleria || !imagenGaleria) return;
+    if (fotosActuales.length === 0) return;
+
+    indiceActualVisor = index;
+    mostrarFotoVisor(indiceActualVisor);
+    visorGaleria.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function mostrarFotoVisor(indice) {
+    if (!imagenGaleria || !fotoActual || !totalFotos) return;
+    if (fotosActuales.length === 0) return;
+
+    if (indice < 0) indice = fotosActuales.length - 1;
+    if (indice >= fotosActuales.length) indice = 0;
+
+    indiceActualVisor = indice;
+    imagenGaleria.src = fotosActuales[indice];
+    fotoActual.textContent = indice + 1;
+    totalFotos.textContent = fotosActuales.length;
+
+    // Animación de cambio
+    imagenGaleria.style.animation = 'none';
+    setTimeout(() => {
+        imagenGaleria.style.animation = 'zoomEntrada .35s ease';
+    }, 50);
+}
+
+function cerrarVisor() {
+    if (visorGaleria) {
+        visorGaleria.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+// Eventos del visor
+if (cerrarGaleria) {
+    cerrarGaleria.addEventListener('click', cerrarVisor);
+}
+
+if (visorGaleria) {
+    visorGaleria.addEventListener('click', (e) => {
         if (e.target === visorGaleria) {
-            visorGaleria.style.display = "none";
-            document.body.style.overflow = "";
-        }
-    });
-
-    siguiente.addEventListener("click", (e) => {
-        e.stopPropagation();
-        indiceActual++;
-        if (indiceActual >= fotos.length) {
-            indiceActual = 0;
-        }
-        mostrarFoto(indiceActual);
-    });
-
-    anterior.addEventListener("click", (e) => {
-        e.stopPropagation();
-        indiceActual--;
-        if (indiceActual < 0) {
-            indiceActual = fotos.length - 1;
-        }
-        mostrarFoto(indiceActual);
-    });
-
-    document.addEventListener("keydown", (e) => {
-        if (visorGaleria.style.display !== "flex") return;
-        if (e.key === "Escape") {
-            visorGaleria.style.display = "none";
-            document.body.style.overflow = "";
-        }
-        if (e.key === "ArrowRight") {
-            siguiente.click();
-        }
-        if (e.key === "ArrowLeft") {
-            anterior.click();
+            cerrarVisor();
         }
     });
 }
+
+if (anterior) {
+    anterior.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mostrarFotoVisor(indiceActualVisor - 1);
+    });
+}
+
+if (siguiente) {
+    siguiente.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mostrarFotoVisor(indiceActualVisor + 1);
+    });
+}
+
+// Navegación por teclado
+document.addEventListener('keydown', (e) => {
+    if (!visorGaleria || !visorGaleria.classList.contains('active')) return;
+    if (e.key === 'Escape') cerrarVisor();
+    if (e.key === 'ArrowRight') mostrarFotoVisor(indiceActualVisor + 1);
+    if (e.key === 'ArrowLeft') mostrarFotoVisor(indiceActualVisor - 1);
+});
 
 // =====================================
 // ANIMACIONES AL HACER SCROLL
@@ -571,37 +670,12 @@ async function registrarAsistentePublico() {
 
             const qrUrl = `https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=${docRef.id}`;
 
-            // Obtener datos completos del evento
-            const eventoData = eventoDoc.data();
-            const fechaEvento = eventoData.fecha || '';
-            const lugarEvento = eventoData.lugar || '';
-            const descripcionEvento = eventoData.descripcion || '';
-
-            // Formatear fecha (si existe)
-            let fechaFormateada = 'Fecha por confirmar';
-            let horaFormateada = 'Hora por confirmar';
-
-            if (fechaEvento) {
-                try {
-                    const fechaObj = new Date(fechaEvento + 'T00:00:00');
-                    const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-                    fechaFormateada = fechaObj.getDate() + ' de ' + meses[fechaObj.getMonth()] + ' ' + fechaObj.getFullYear();
-                    // Si tienes hora en el evento, puedes agregarla aquí
-                    horaFormateada = '8:00 PM'; // Puedes modificar esto si tienes campo de hora
-                } catch (e) {
-                    fechaFormateada = fechaEvento;
-                }
-            }
-
             const templateParams = {
                 to_email: email,
                 to_name: nombre,
                 event_name: nombreEvento,
                 asistente_id: docRef.id,
-                qr_url: qrUrl,
-                event_date: fechaFormateada,
-                event_time: horaFormateada,
-                event_location: lugarEvento || ''
+                qr_url: qrUrl
             };
 
             console.log('📧 Enviando correo a:', email);
@@ -704,16 +778,32 @@ async function probarEmailJS() {
 }
 
 // ============================================================
-// INICIALIZAR REGISTRO AL CARGAR LA PÁGINA
+// INICIALIZAR REGISTRO Y GALERÍA AL CARGAR LA PÁGINA
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', function () {
-    console.log('🔄 Inicializando sistema de registro...');
+    console.log('🔄 Inicializando sistema...');
 
+    // Inicializar registro
     if (document.getElementById('selectEventoRegistro')) {
         console.log('✅ Select de eventos encontrado, cargando...');
         setTimeout(cargarEventosRegistro, 500);
     } else {
         console.warn('⚠️ No se encontró el select de eventos en la página');
+    }
+
+    // Inicializar galería
+    if (document.getElementById('galeriaGrid')) {
+        console.log('✅ Galería encontrada, cargando...');
+        // Cargar categoría por defecto
+        cargarGaleria('todas');
+
+        // Eventos de los botones de categoría
+        document.querySelectorAll('.cat-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const categoria = this.dataset.categoria;
+                cargarGaleria(categoria);
+            });
+        });
     }
 });
