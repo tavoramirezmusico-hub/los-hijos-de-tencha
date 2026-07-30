@@ -404,18 +404,49 @@ try {
 }
 
 // ============================================================
-// EMAILJS CONFIGURACIÓN
+// EMAILJS CONFIGURACIÓN - VERSIÓN MEJORADA
 // ============================================================
 const EMAILJS_USER_ID = '7bmV4hpwq7pFObQ8W';
 const EMAILJS_SERVICE_ID = 'service_49w40s8';
 const EMAILJS_TEMPLATE_ID = 'template_5ulhotx';
 
-if (typeof emailjs !== 'undefined') {
-    emailjs.init(EMAILJS_USER_ID);
-    console.log('✅ EmailJS inicializado');
-} else {
-    console.warn('⚠️ EmailJS no está cargado');
+// Función para inicializar EmailJS de forma segura
+function initEmailJS() {
+    if (typeof emailjs !== 'undefined') {
+        try {
+            emailjs.init(EMAILJS_USER_ID);
+            console.log('✅ EmailJS inicializado correctamente');
+            return true;
+        } catch (e) {
+            console.error('❌ Error al inicializar EmailJS:', e);
+            return false;
+        }
+    } else {
+        console.warn('⚠️ EmailJS no está cargado, intentando cargar dinámicamente...');
+        return new Promise((resolve) => {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+            script.onload = function () {
+                try {
+                    emailjs.init(EMAILJS_USER_ID);
+                    console.log('✅ EmailJS inicializado (carga dinámica)');
+                    resolve(true);
+                } catch (e) {
+                    console.error('❌ Error al inicializar EmailJS (carga dinámica):', e);
+                    resolve(false);
+                }
+            };
+            script.onerror = function () {
+                console.error('❌ No se pudo cargar EmailJS');
+                resolve(false);
+            };
+            document.head.appendChild(script);
+        });
+    }
 }
+
+// Inicializar EmailJS
+initEmailJS();
 
 // ============================================================
 // CARGAR EVENTOS EN EL SELECT DE REGISTRO
@@ -466,7 +497,6 @@ async function registrarAsistentePublico() {
     const eventoId = document.getElementById('selectEventoRegistro').value;
     const nombre = document.getElementById('nombreRegistro').value.trim();
     const email = document.getElementById('emailRegistro').value.trim();
-    const mensaje = document.getElementById('mensajeRegistro');
 
     if (!eventoId) {
         mostrarMensajeRegistro('⚠️ Selecciona un evento', 'error');
@@ -484,9 +514,11 @@ async function registrarAsistentePublico() {
     mostrarMensajeRegistro('⏳ Registrando...', 'info');
 
     try {
+        // Obtener nombre del evento
         const eventoDoc = await db.collection('eventos').doc(eventoId).get();
         const nombreEvento = eventoDoc.exists ? eventoDoc.data().nombre : 'Evento';
 
+        // Crear asistente en Firebase
         const asistente = {
             nombre,
             email,
@@ -501,21 +533,40 @@ async function registrarAsistentePublico() {
 
         const docRef = await db.collection('asistentes').add(asistente);
 
+        // Agregar ID al evento
         await db.collection('eventos').doc(eventoId).update({
             asistentes: firebase.firestore.FieldValue.arrayUnion(docRef.id)
         });
 
+        // =====================================
+        // ENVIAR CORREO CON EMAILJS
+        // =====================================
         try {
+            // Asegurar que EmailJS esté inicializado
             if (typeof emailjs === 'undefined') {
                 await new Promise((resolve) => {
                     const script = document.createElement('script');
                     script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
                     script.onload = function () {
-                        emailjs.init(EMAILJS_USER_ID);
+                        try {
+                            emailjs.init(EMAILJS_USER_ID);
+                            console.log('✅ EmailJS inicializado (carga dinámica en registro)');
+                        } catch (e) {
+                            console.error('❌ Error al inicializar EmailJS:', e);
+                        }
+                        resolve();
+                    };
+                    script.onerror = function () {
+                        console.error('❌ No se pudo cargar EmailJS');
                         resolve();
                     };
                     document.head.appendChild(script);
                 });
+            }
+
+            // Esperar un poco para asegurar que EmailJS está listo
+            if (typeof emailjs !== 'undefined') {
+                await new Promise(resolve => setTimeout(resolve, 500));
             }
 
             const qrUrl = `https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=${docRef.id}`;
@@ -528,24 +579,35 @@ async function registrarAsistentePublico() {
                 qr_url: qrUrl
             };
 
-            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+            console.log('📧 Enviando correo a:', email);
+            console.log('📧 Parámetros:', templateParams);
 
+            const result = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+            console.log('✅ Correo enviado exitosamente:', result);
+
+            // Marcar como enviado en Firebase
             await db.collection('asistentes').doc(docRef.id).update({
                 emailEnviado: true,
                 emailEnviadoEn: new Date().toISOString()
             });
 
-            console.log('✅ Correo enviado a', email);
+            console.log('✅ Registro completado y correo enviado a', email);
+            mostrarMensajeRegistro(`✅ ¡Registro exitoso! Se ha enviado un correo a ${email} con tu entrada digital.`, 'success');
 
         } catch (emailError) {
             console.error('❌ Error al enviar correo:', emailError);
+            if (emailError.text) {
+                console.error('❌ Detalle del error:', emailError.text);
+            }
+            // Mostrar mensaje de que el registro fue exitoso pero el correo falló
+            mostrarMensajeRegistro(`✅ Registro exitoso, pero no se pudo enviar el correo. Contacta al organizador.`, 'error');
         }
 
-        mostrarMensajeRegistro(`✅ ¡Registro exitoso! Se ha enviado un correo a ${email} con tu entrada digital.`, 'success');
-
+        // Limpiar formulario
         document.getElementById('nombreRegistro').value = '';
         document.getElementById('emailRegistro').value = '';
 
+        // Recargar eventos para actualizar contador
         cargarEventosRegistro();
 
     } catch (error) {
@@ -570,7 +632,49 @@ function mostrarMensajeRegistro(texto, tipo) {
         setTimeout(() => {
             mensaje.style.display = 'none';
             mensaje.className = 'mensaje-registro';
-        }, 6000);
+        }, 8000);
+    }
+}
+
+// ============================================================
+// FUNCIÓN DE PRUEBA PARA EMAILJS
+// ============================================================
+
+async function probarEmailJS() {
+    console.log('🧪 Probando EmailJS...');
+
+    try {
+        // Verificar que emailjs existe
+        if (typeof emailjs === 'undefined') {
+            console.error('❌ EmailJS no está cargado');
+            alert('❌ EmailJS no está cargado. Verifica los scripts.');
+            return;
+        }
+
+        console.log('✅ EmailJS está cargado');
+
+        const templateParams = {
+            to_email: 'tavoramirezmusico@gmail.com',
+            to_name: 'Prueba',
+            event_name: 'Evento de Prueba',
+            asistente_id: 'test_123',
+            qr_url: 'https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=test_123'
+        };
+
+        console.log('📧 Enviando correo de prueba con parámetros:', templateParams);
+
+        const result = await emailjs.send(
+            EMAILJS_SERVICE_ID,
+            EMAILJS_TEMPLATE_ID,
+            templateParams
+        );
+
+        console.log('✅ Correo de prueba enviado:', result);
+        alert('✅ Correo de prueba enviado. Revisa tu bandeja (y SPAM).');
+
+    } catch (error) {
+        console.error('❌ Error al enviar correo de prueba:', error);
+        alert('❌ Error: ' + (error.text || error.message) + ' - Revisa la consola para más detalles');
     }
 }
 
