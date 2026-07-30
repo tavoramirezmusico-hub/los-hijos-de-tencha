@@ -180,7 +180,7 @@
     <!-- Estilos adicionales para menú scroll horizontal y galería -->
     <style>
         /* =====================================
-           MENÚ CON SCROLL HORIZONTAL
+           MENÚ CON SCROLL HORIZONTAL - LETRAS MÁS GRANDES
            ===================================== */
         .menu {
             display: flex;
@@ -213,10 +213,13 @@
 
         .menu li a,
         .menu li span {
-            padding: 6px 14px;
-            font-size: 0.8rem;
+            padding: 8px 18px;
+            font-size: 0.95rem;
+            /* ← TAMAÑO MÁS GRANDE */
             white-space: nowrap;
             display: block;
+            font-weight: 500;
+            letter-spacing: 0.3px;
         }
 
         .menu li a:hover {
@@ -333,6 +336,12 @@
             .foto {
                 height: 220px;
             }
+
+            .menu li a,
+            .menu li span {
+                font-size: 0.85rem;
+                padding: 6px 14px;
+            }
         }
 
         @media (max-width: 600px) {
@@ -347,6 +356,12 @@
             .galeria-categorias .cat-btn {
                 padding: 8px 16px;
                 font-size: 0.8rem;
+            }
+
+            .menu li a,
+            .menu li span {
+                font-size: 0.8rem;
+                padding: 6px 12px;
             }
         }
 
@@ -505,6 +520,33 @@
         .animar.visible {
             opacity: 1;
             transform: translateY(0) scale(1);
+        }
+
+        /* =====================================
+           BOTÓN COMUNIDAD WHATSAPP
+           ===================================== */
+        .btn-comunidad {
+            display: inline-block;
+            padding: 16px 40px;
+            background: #25D366;
+            color: #fff;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+        }
+
+        .btn-comunidad:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
+            background: #20b85a;
+        }
+
+        .btn-comunidad i {
+            margin-right: 10px;
+            font-size: 1.3rem;
         }
     </style>
 
@@ -873,7 +915,7 @@
                 <button class="cat-btn" data-categoria="vocho">🚗 Sesión Vocho</button>
                 <button class="cat-btn" data-categoria="disco">🎵 Sesión Disco Cumbias</button>
                 <button class="cat-btn" data-categoria="lanzamiento">🎸 Cumbia Salvaje</button>
-                <!-- <button class="cat-btn" data-categoria="eventos">🎤 Eventos</button> --> <!-- COMENTADO -->
+                <!-- <button class="cat-btn" data-categoria="eventos">🎤 Eventos</button> -->
             </div>
 
             <div class="galeria-grid" id="galeriaGrid">
@@ -1077,6 +1119,20 @@
 
             </div>
 
+            <!-- =====================================
+         BOTÓN ÚNETE A NUESTRA COMUNIDAD - WHATSAPP
+    ===================================== -->
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="https://chat.whatsapp.com/H2ry6GFbBDe8Q5UsNMcDdu?s=cl&p=i&ilr=2" target="_blank"
+                    onclick="gtag('event','click_comunidad_whatsapp');" class="btn-comunidad">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    Únete a nuestra comunidad
+                </a>
+                <p style="color: #888; font-size: 0.8rem; margin-top: 8px;">
+                    📱 Conéctate con otros fans en nuestro grupo de WhatsApp
+                </p>
+            </div>
+
         </div>
 
     </section>
@@ -1184,8 +1240,11 @@
             var enlaceReportaje = document.getElementById('enlace-reportaje');
             if (enlaceReportaje) {
                 enlaceReportaje.addEventListener('click', function (e) {
+                    // Prevenir que el script de transición lo capture
                     e.stopPropagation();
+                    // Guardar el destino
                     var destino = this.href;
+                    // Navegar directamente
                     window.location.href = destino;
                     return false;
                 });
