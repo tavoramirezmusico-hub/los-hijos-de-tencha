@@ -419,7 +419,7 @@ footer small {
 
 
 /* =====================================
-   VISOR DE FOTOS
+   VISOR DE FOTOS - GALERÍA MEJORADA
 ===================================== */
 
 
@@ -436,6 +436,9 @@ footer small {
     animation: fadeVisor .25s ease;
 }
 
+.visor.active {
+    display: flex;
+}
 
 .visor img {
     max-width: 90vw;
@@ -443,8 +446,9 @@ footer small {
     width: auto;
     height: auto;
     object-fit: contain;
-    border-radius: 18px;
+    border-radius: 12px;
     box-shadow: 0 20px 50px rgba(0, 0, 0, .6);
+    animation: zoomEntrada .35s ease;
 }
 
 
@@ -461,6 +465,9 @@ footer small {
     font-size: 2rem;
     cursor: pointer;
     transition: .3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 
@@ -483,6 +490,9 @@ footer small {
     font-size: 2rem;
     cursor: pointer;
     transition: .3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 
@@ -2501,5 +2511,87 @@ footer small {
     #registro-eventos .btn-registrar {
         padding: 14px;
         font-size: 1rem;
+    }
+}
+
+/* =====================================
+   ESTILOS ADICIONALES PARA GALERÍA CON CATEGORÍAS
+===================================== */
+
+.galeria-categorias {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 35px;
+}
+
+.galeria-categorias .cat-btn {
+    padding: 10px 24px;
+    background: #1c1c1c;
+    border: 2px solid #333;
+    border-radius: 30px;
+    color: #aaa;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Poppins', sans-serif;
+}
+
+.galeria-categorias .cat-btn:hover {
+    border-color: #ffcc00;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.galeria-categorias .cat-btn.active {
+    background: #ffcc00;
+    color: #000;
+    border-color: #ffcc00;
+}
+
+.foto .foto-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 25px 15px 15px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.foto:hover .foto-overlay {
+    opacity: 1;
+}
+
+.foto .foto-overlay span {
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: block;
+    text-align: center;
+}
+
+.galeria-vacia {
+    text-align: center;
+    color: #666;
+    padding: 60px 20px;
+    font-size: 1.1rem;
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 768px) {
+    .galeria-categorias .cat-btn {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .galeria-categorias .cat-btn {
+        padding: 6px 12px;
+        font-size: 0.7rem;
     }
 }
