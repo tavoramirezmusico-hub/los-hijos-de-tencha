@@ -2393,3 +2393,116 @@ footer small {
     position: relative !important;
     cursor: pointer;
 }
+
+/* ============================================================
+   FORMULARIO DE REGISTRO PÚBLICO - SISTEMA DE ENTRADAS
+   ============================================================ */
+
+#registro-eventos {
+    background: #111;
+    padding: 80px 20px;
+}
+
+#registro-eventos .formulario-registro {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+#registro-eventos select,
+#registro-eventos input {
+    width: 100%;
+    padding: 14px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 1rem;
+    margin-bottom: 12px;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    transition: border 0.3s ease;
+}
+
+#registro-eventos select:focus,
+#registro-eventos input:focus {
+    outline: none;
+    border-color: #ffcc00;
+}
+
+#registro-eventos select option {
+    background: #1a1a1a;
+    color: #fff;
+}
+
+#registro-eventos .btn-registrar {
+    width: 100%;
+    padding: 16px;
+    background: #ffcc00;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+}
+
+#registro-eventos .btn-registrar:hover {
+    background: #e6b800;
+    transform: scale(1.02);
+}
+
+#registro-eventos .btn-registrar:active {
+    transform: scale(0.98);
+}
+
+#registro-eventos .mensaje-registro {
+    margin-top: 15px;
+    text-align: center;
+    display: none;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+#registro-eventos .mensaje-registro.success {
+    display: block;
+    color: #00c853;
+    background: rgba(0, 200, 83, 0.1);
+    border: 1px solid #00c853;
+}
+
+#registro-eventos .mensaje-registro.error {
+    display: block;
+    color: #d32f2f;
+    background: rgba(211, 47, 47, 0.1);
+    border: 1px solid #d32f2f;
+}
+
+#registro-eventos .mensaje-registro.info {
+    display: block;
+    color: #ffcc00;
+    background: rgba(255, 204, 0, 0.1);
+    border: 1px solid #ffcc00;
+}
+
+/* ============================================================
+   RESPONSIVE - FORMULARIO DE REGISTRO
+   ============================================================ */
+
+@media (max-width: 480px) {
+    #registro-eventos {
+        padding: 50px 15px;
+    }
+
+    #registro-eventos select,
+    #registro-eventos input {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+
+    #registro-eventos .btn-registrar {
+        padding: 14px;
+        font-size: 1rem;
+    }
+}

@@ -745,7 +745,42 @@
     </section>
 
 
+    <!-- =====================================
+         REGISTRO PARA EVENTOS - SISTEMA DE ENTRADAS
+    ===================================== -->
+    <section id="registro-eventos" class="animar" style="background: #111; padding: 80px 20px;">
+        <div class="contenedor">
+            <div class="titulo-seccion">
+                <span>Inscríbete</span>
+                <h2>Regístrate para el próximo evento</h2>
+                <p style="color: #aaa; max-width: 600px; margin: 10px auto 0;">
+                    Completa el formulario y recibirás tu entrada digital con código QR.
+                </p>
+            </div>
 
+            <div style="max-width: 500px; margin: 0 auto;">
+                <select id="selectEventoRegistro"
+                    style="width:100%; padding:14px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#fff; font-size:1rem; margin-bottom:12px; font-family:'Poppins',sans-serif;">
+                    <option value="">Cargando eventos...</option>
+                </select>
+
+                <input type="text" id="nombreRegistro" placeholder="Tu nombre completo"
+                    style="width:100%; padding:14px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#fff; font-size:1rem; margin-bottom:12px; font-family:'Poppins',sans-serif;">
+
+                <input type="email" id="emailRegistro" placeholder="Tu correo electrónico"
+                    style="width:100%; padding:14px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#fff; font-size:1rem; margin-bottom:12px; font-family:'Poppins',sans-serif;">
+
+                <button onclick="registrarAsistentePublico()"
+                    style="width:100%; padding:16px; background:#ffcc00; color:#000; border:none; border-radius:8px; font-size:1.1rem; font-weight:700; cursor:pointer; transition:.3s; font-family:'Poppins',sans-serif;">
+                    ✅ Registrarme
+                </button>
+
+                <div id="mensajeRegistro"
+                    style="margin-top:15px; text-align:center; display:none; font-family:'Poppins',sans-serif;"></div>
+            </div>
+        </div>
+
+    </section>
 
 
     <footer>

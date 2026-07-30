@@ -383,3 +383,215 @@ document.addEventListener('DOMContentLoaded', function () {
 
     console.log('✅ Control de videos activado (modo simple)');
 });
+
+// ============================================================
+// SISTEMA DE REGISTRO PÚBLICO - LOS HIJOS DE TENCHA
+// ============================================================
+
+// ============================================================
+// CONFIGURACIÓN DE FIREBASE (si no está ya inicializado)
+// ============================================================
+if (typeof firebase === 'undefined') {
+    console.warn('Firebase no está cargado, cargando...');
+    // Firebase ya debería estar cargado desde el HTML
+}
+
+// Verificar que Firebase esté disponible
+if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+    const firebaseConfig = {
+        apiKey: "AIzaSyDvp_6UFymZZnqxMyL6yobJ3twLMvVkThw",
+        authDomain: "base-entradas-tenchos.firebaseapp.com",
+        projectId: "base-entradas-tenchos",
+        storageBucket: "base-entradas-tenchos.firebasestorage.app",
+        messagingSenderId: "273676503007",
+        appId: "1:273676503007:web:56180c485b648ef076a66a"
+    };
+    firebase.initializeApp(firebaseConfig);
+}
+const db = firebase.firestore();
+
+// ============================================================
+// EMAILJS CONFIGURACIÓN
+// ============================================================
+const EMAILJS_USER_ID = '7bmV4hpwq7pFObQ8W';
+const EMAILJS_SERVICE_ID = 'service_49w40s8';
+const EMAILJS_TEMPLATE_ID = 'template_5ulhotx';
+
+// Cargar EmailJS dinámicamente si no está cargado
+if (typeof emailjs === 'undefined') {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+    document.head.appendChild(script);
+    script.onload = function () {
+        emailjs.init(EMAILJS_USER_ID);
+        console.log('✅ EmailJS inicializado');
+    };
+} else {
+    emailjs.init(EMAILJS_USER_ID);
+}
+
+// ============================================================
+// CARGAR EVENTOS EN EL SELECT DE REGISTRO
+// ============================================================
+
+async function cargarEventosRegistro() {
+    const select = document.getElementById('selectEventoRegistro');
+    if (!select) return;
+
+    try {
+        const snapshot = await db.collection('eventos').orderBy('creadoEn', 'desc').get();
+        let options = '<option value="">Selecciona un evento</option>';
+
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            options += `<option value="${doc.id}">${data.nombre}</option>`;
+        });
+
+        select.innerHTML = options;
+    } catch (error) {
+        console.error('Error al cargar eventos:', error);
+        select.innerHTML = '<option value="">Error al cargar eventos</option>';
+    }
+}
+
+// ============================================================
+// REGISTRAR ASISTENTE DESDE FORMULARIO PÚBLICO
+// ============================================================
+
+async function registrarAsistentePublico() {
+    const eventoId = document.getElementById('selectEventoRegistro').value;
+    const nombre = document.getElementById('nombreRegistro').value.trim();
+    const email = document.getElementById('emailRegistro').value.trim();
+    const mensaje = document.getElementById('mensajeRegistro');
+
+    // Validar campos
+    if (!eventoId) {
+        mostrarMensajeRegistro('⚠️ Selecciona un evento', 'error');
+        return;
+    }
+    if (!nombre) {
+        mostrarMensajeRegistro('⚠️ Ingresa tu nombre completo', 'error');
+        return;
+    }
+    if (!email || !email.includes('@')) {
+        mostrarMensajeRegistro('⚠️ Ingresa un correo válido', 'error');
+        return;
+    }
+
+    // Mostrar estado de carga
+    mostrarMensajeRegistro('⏳ Registrando...', 'info');
+
+    try {
+        // Obtener nombre del evento
+        const eventoDoc = await db.collection('eventos').doc(eventoId).get();
+        const nombreEvento = eventoDoc.exists ? eventoDoc.data().nombre : 'Evento';
+
+        // Crear asistente en Firebase
+        const asistente = {
+            nombre,
+            email,
+            ingresado: false,
+            fechaIngreso: null,
+            eventoId: eventoId,
+            creadoEn: new Date().toISOString(),
+            banda: 'Los Hijos de Tencha',
+            registradoDesde: 'formulario_publico',
+            emailEnviado: false
+        };
+
+        const docRef = await db.collection('asistentes').add(asistente);
+
+        // Agregar ID al evento
+        await db.collection('eventos').doc(eventoId).update({
+            asistentes: firebase.firestore.FieldValue.arrayUnion(docRef.id)
+        });
+
+        // =====================================
+        // ENVIAR CORREO CON EMAILJS
+        // =====================================
+        try {
+            // Esperar a que EmailJS esté listo
+            if (typeof emailjs === 'undefined') {
+                await new Promise(resolve => {
+                    const checkEmailJS = setInterval(() => {
+                        if (typeof emailjs !== 'undefined') {
+                            clearInterval(checkEmailJS);
+                            resolve();
+                        }
+                    }, 100);
+                });
+            }
+
+            const qrUrl = `https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=${docRef.id}`;
+
+            const templateParams = {
+                to_email: email,
+                to_name: nombre,
+                event_name: nombreEvento,
+                asistente_id: docRef.id,
+                qr_url: qrUrl
+            };
+
+            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+
+            // Marcar como enviado
+            await db.collection('asistentes').doc(docRef.id).update({
+                emailEnviado: true,
+                emailEnviadoEn: new Date().toISOString()
+            });
+
+            console.log('✅ Correo enviado a', email);
+
+        } catch (emailError) {
+            console.error('Error al enviar correo:', emailError);
+            // El asistente ya está registrado aunque falle el correo
+        }
+
+        // Mostrar éxito
+        mostrarMensajeRegistro(`✅ ¡Registro exitoso! Se ha enviado un correo a ${email} con tu entrada digital.`, 'success');
+
+        // Limpiar formulario
+        document.getElementById('nombreRegistro').value = '';
+        document.getElementById('emailRegistro').value = '';
+
+    } catch (error) {
+        console.error('Error al registrar:', error);
+        mostrarMensajeRegistro('❌ Error al registrar: ' + error.message, 'error');
+    }
+}
+
+// ============================================================
+// MOSTRAR MENSAJE EN FORMULARIO DE REGISTRO
+// ============================================================
+
+function mostrarMensajeRegistro(texto, tipo) {
+    const mensaje = document.getElementById('mensajeRegistro');
+    if (!mensaje) return;
+
+    mensaje.style.display = 'block';
+    mensaje.textContent = texto;
+
+    const colores = {
+        success: '#00c853',
+        error: '#d32f2f',
+        info: '#ffcc00'
+    };
+    mensaje.style.color = colores[tipo] || '#fff';
+
+    if (tipo === 'success' || tipo === 'error') {
+        setTimeout(() => {
+            mensaje.style.display = 'none';
+        }, 6000);
+    }
+}
+
+// ============================================================
+// INICIALIZAR REGISTRO AL CARGAR LA PÁGINA
+// ============================================================
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Cargar eventos para el registro público
+    if (document.getElementById('selectEventoRegistro')) {
+        cargarEventosRegistro();
+    }
+});
