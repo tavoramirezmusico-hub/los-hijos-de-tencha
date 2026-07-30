@@ -92,10 +92,8 @@ function cargarGaleria(categoria) {
 
     categoriaActual = categoria;
 
-    // Obtener fotos de la categoría seleccionada
     let fotos = [];
     if (categoria === 'todas') {
-        // Combinar todas las fotos
         Object.keys(galeriaDatos).forEach(key => {
             fotos = fotos.concat(galeriaDatos[key].fotos);
         });
@@ -105,12 +103,10 @@ function cargarGaleria(categoria) {
 
     fotosActuales = fotos;
 
-    // Actualizar botones de categorías
     document.querySelectorAll('.cat-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.categoria === categoria);
     });
 
-    // Renderizar fotos
     if (fotos.length === 0) {
         grid.innerHTML = `<div class="galeria-vacia">📸 No hay fotos en esta categoría aún.</div>`;
         return;
@@ -125,7 +121,6 @@ function cargarGaleria(categoria) {
         </div>
     `).join('');
 
-    // Agregar eventos a las fotos
     grid.querySelectorAll('.foto').forEach(el => {
         el.addEventListener('click', function () {
             const index = parseInt(this.dataset.index);
@@ -133,7 +128,6 @@ function cargarGaleria(categoria) {
         });
     });
 
-    // Re-aplicar animaciones
     document.querySelectorAll('.galeria-grid .foto').forEach(el => {
         setTimeout(() => el.classList.add('visible'), 100);
     });
@@ -173,7 +167,6 @@ function mostrarFotoVisor(indice) {
     fotoActual.textContent = indice + 1;
     totalFotos.textContent = fotosActuales.length;
 
-    // Animación de cambio
     imagenGaleria.style.animation = 'none';
     setTimeout(() => {
         imagenGaleria.style.animation = 'zoomEntrada .35s ease';
@@ -187,7 +180,6 @@ function cerrarVisor() {
     }
 }
 
-// Eventos del visor
 if (cerrarGaleria) {
     cerrarGaleria.addEventListener('click', cerrarVisor);
 }
@@ -214,7 +206,6 @@ if (siguiente) {
     });
 }
 
-// Navegación por teclado
 document.addEventListener('keydown', (e) => {
     if (!visorGaleria || !visorGaleria.classList.contains('active')) return;
     if (e.key === 'Escape') cerrarVisor();
@@ -503,13 +494,12 @@ try {
 }
 
 // ============================================================
-// EMAILJS CONFIGURACIÓN - VERSIÓN MEJORADA
+// EMAILJS CONFIGURACIÓN
 // ============================================================
 const EMAILJS_USER_ID = '7bmV4hpwq7pFObQ8W';
 const EMAILJS_SERVICE_ID = 'service_49w40s8';
 const EMAILJS_TEMPLATE_ID = 'template_5ulhotx';
 
-// Función para inicializar EmailJS de forma segura
 function initEmailJS() {
     if (typeof emailjs !== 'undefined') {
         try {
@@ -544,7 +534,6 @@ function initEmailJS() {
     }
 }
 
-// Inicializar EmailJS
 initEmailJS();
 
 // ============================================================
@@ -589,7 +578,7 @@ async function cargarEventosRegistro() {
 }
 
 // ============================================================
-// REGISTRAR ASISTENTE DESDE FORMULARIO PÚBLICO
+// REGISTRAR ASISTENTE DESDE FORMULARIO PÚBLICO - CORREGIDO
 // ============================================================
 
 async function registrarAsistentePublico() {
@@ -613,9 +602,29 @@ async function registrarAsistentePublico() {
     mostrarMensajeRegistro('⏳ Registrando...', 'info');
 
     try {
-        // Obtener nombre del evento
+        // Obtener datos completos del evento
         const eventoDoc = await db.collection('eventos').doc(eventoId).get();
-        const nombreEvento = eventoDoc.exists ? eventoDoc.data().nombre : 'Evento';
+        const eventoData = eventoDoc.exists ? eventoDoc.data() : null;
+        const nombreEvento = eventoData ? eventoData.nombre : 'Evento';
+
+        // Formatear fecha y hora para el correo
+        let fechaFormateada = 'Fecha por confirmar';
+        let horaFormateada = 'Hora por confirmar';
+        let lugarFormateado = eventoData?.lugar || '';
+
+        if (eventoData?.fecha) {
+            try {
+                const fechaObj = new Date(eventoData.fecha + 'T00:00:00');
+                const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                fechaFormateada = fechaObj.getDate() + ' de ' + meses[fechaObj.getMonth()] + ' ' + fechaObj.getFullYear();
+            } catch (e) {
+                fechaFormateada = eventoData.fecha;
+            }
+        }
+
+        if (eventoData?.hora) {
+            horaFormateada = eventoData.hora;
+        }
 
         // Crear asistente en Firebase
         const asistente = {
@@ -638,10 +647,9 @@ async function registrarAsistentePublico() {
         });
 
         // =====================================
-        // ENVIAR CORREO CON EMAILJS
+        // ENVIAR CORREO CON EMAILJS (con fecha, hora y lugar)
         // =====================================
         try {
-            // Asegurar que EmailJS esté inicializado
             if (typeof emailjs === 'undefined') {
                 await new Promise((resolve) => {
                     const script = document.createElement('script');
@@ -663,7 +671,6 @@ async function registrarAsistentePublico() {
                 });
             }
 
-            // Esperar un poco para asegurar que EmailJS está listo
             if (typeof emailjs !== 'undefined') {
                 await new Promise(resolve => setTimeout(resolve, 500));
             }
@@ -675,7 +682,10 @@ async function registrarAsistentePublico() {
                 to_name: nombre,
                 event_name: nombreEvento,
                 asistente_id: docRef.id,
-                qr_url: qrUrl
+                qr_url: qrUrl,
+                event_date: fechaFormateada,
+                event_time: horaFormateada,
+                event_location: lugarFormateado
             };
 
             console.log('📧 Enviando correo a:', email);
@@ -684,7 +694,6 @@ async function registrarAsistentePublico() {
             const result = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
             console.log('✅ Correo enviado exitosamente:', result);
 
-            // Marcar como enviado en Firebase
             await db.collection('asistentes').doc(docRef.id).update({
                 emailEnviado: true,
                 emailEnviadoEn: new Date().toISOString()
@@ -698,7 +707,6 @@ async function registrarAsistentePublico() {
             if (emailError.text) {
                 console.error('❌ Detalle del error:', emailError.text);
             }
-            // Mostrar mensaje de que el registro fue exitoso pero el correo falló
             mostrarMensajeRegistro(`✅ Registro exitoso, pero no se pudo enviar el correo. Contacta al organizador.`, 'error');
         }
 
@@ -743,7 +751,6 @@ async function probarEmailJS() {
     console.log('🧪 Probando EmailJS...');
 
     try {
-        // Verificar que emailjs existe
         if (typeof emailjs === 'undefined') {
             console.error('❌ EmailJS no está cargado');
             alert('❌ EmailJS no está cargado. Verifica los scripts.');
@@ -754,10 +761,13 @@ async function probarEmailJS() {
 
         const templateParams = {
             to_email: 'tavoramirezmusico@gmail.com',
-            to_name: 'Prueba',
-            event_name: 'Evento de Prueba',
-            asistente_id: 'test_123',
-            qr_url: 'https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=test_123'
+            to_name: 'Prueba Completa',
+            event_name: 'Evento de Prueba con Fecha',
+            asistente_id: 'test_123456',
+            qr_url: 'https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=test_123456',
+            event_date: '30 de Julio 2026',
+            event_time: '20:00',
+            event_location: 'Bar Starview, San José'
         };
 
         console.log('📧 Enviando correo de prueba con parámetros:', templateParams);
@@ -769,7 +779,7 @@ async function probarEmailJS() {
         );
 
         console.log('✅ Correo de prueba enviado:', result);
-        alert('✅ Correo de prueba enviado. Revisa tu bandeja (y SPAM).');
+        alert('✅ Correo de prueba enviado. Revisa tu bandeja.');
 
     } catch (error) {
         console.error('❌ Error al enviar correo de prueba:', error);
@@ -795,10 +805,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Inicializar galería
     if (document.getElementById('galeriaGrid')) {
         console.log('✅ Galería encontrada, cargando...');
-        // Cargar categoría por defecto
         cargarGaleria('todas');
 
-        // Eventos de los botones de categoría
         document.querySelectorAll('.cat-btn').forEach(btn => {
             btn.addEventListener('click', function () {
                 const categoria = this.dataset.categoria;
