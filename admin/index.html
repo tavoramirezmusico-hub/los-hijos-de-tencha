@@ -19,6 +19,9 @@
     <!-- html2canvas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
+    <!-- SheetJS para exportar a Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
     <style>
         /* =====================================
            ESTILOS ADMIN - LOS HIJOS DE TENCHA
@@ -321,6 +324,16 @@
             transform: scale(1.02);
         }
 
+        .btn-excel-todo {
+            background: #0f5a2a;
+            color: #fff;
+        }
+
+        .btn-excel-todo:hover {
+            background: #0a4a1f;
+            transform: scale(1.02);
+        }
+
         .event-list {
             list-style: none;
         }
@@ -442,11 +455,6 @@
 
         .assistant-item .badge-envio.pendiente {
             background: #ff9800;
-            color: #fff;
-        }
-
-        .assistant-item .badge-envio.error {
-            background: #d32f2f;
             color: #fff;
         }
 
@@ -809,12 +817,11 @@
                             <option value="">Selecciona un evento</option>
                         </select>
 
-                        <!-- BOTONES EXPORTAR -->
                         <div class="btn-group-botones">
                             <button class="btn btn-excel" onclick="exportarExcel()">
                                 📊 Exportar a Excel
                             </button>
-                            <button class="btn btn-excel" onclick="exportarTodosEventos()" style="background:#0f5a2a;">
+                            <button class="btn btn-excel-todo" onclick="exportarTodosEventos()">
                                 📊 Exportar Todo
                             </button>
                         </div>
@@ -925,7 +932,6 @@
         const EMAILJS_SERVICE_ID = 'service_49w40s8';
         const EMAILJS_TEMPLATE_ID = 'template_5ulhotx';
 
-        // Inicializar EmailJS
         if (typeof emailjs !== 'undefined') {
             emailjs.init(EMAILJS_USER_ID);
             console.log('✅ EmailJS inicializado en admin');
@@ -961,7 +967,6 @@
             document.getElementById('passwordInput').focus();
         }
 
-        // Siempre mostrar el login al cargar
         document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('loginOverlay').classList.add('active');
             document.getElementById('mainContent').style.display = 'none';
@@ -998,7 +1003,6 @@
             document.querySelectorAll('.tabs button').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tab).classList.add('active');
             event.target.classList.add('active');
-
             if (tab === 'eventos') cargarEventos();
             if (tab === 'asistentes') cargarSelects();
         }
@@ -1096,21 +1100,21 @@
         }
 
         // ============================================================
-        // GESTIÓN DE ASISTENTES CON ENVÍO DE CORREO
+        // GESTIÓN DE ASISTENTES
         // ============================================================
 
         async function cargarSelects() {
             try {
                 const snapshot = await db.collection('eventos').orderBy('creadoEn', 'desc').get();
-                const eventos = [];
+                const eventosList = [];
                 snapshot.forEach(doc => {
-                    eventos.push({ id: doc.id, ...doc.data() });
+                    eventosList.push({ id: doc.id, ...doc.data() });
                 });
 
                 const select1 = document.getElementById('selectEventoAsistentes');
                 const select2 = document.getElementById('selectEventoAgregar');
 
-                const options = eventos.map(e =>
+                const options = eventosList.map(e =>
                     `<option value="${e.id}">${e.nombre}</option>`
                 ).join('');
 
@@ -1162,7 +1166,6 @@
 
                 try {
                     const qrUrl = `https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=${docRef.id}`;
-
                     const templateParams = {
                         to_email: email,
                         to_name: nombre,
@@ -1170,14 +1173,11 @@
                         asistente_id: docRef.id,
                         qr_url: qrUrl
                     };
-
                     await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
-
                     await db.collection('asistentes').doc(docRef.id).update({
                         emailEnviado: true,
                         emailEnviadoEn: new Date().toISOString()
                     });
-
                     showToast(`✅ ${nombre} agregado y correo enviado a ${email}`, 'success');
                 } catch (emailError) {
                     console.error('Error al enviar correo:', emailError);
@@ -1186,7 +1186,6 @@
 
                 document.getElementById('asistenteNombre').value = '';
                 document.getElementById('asistenteEmail').value = '';
-
                 cargarAsistentes();
                 cargarEventos();
             } catch (error) {
@@ -1386,7 +1385,7 @@
         });
 
         // ============================================================
-        // EXPORTAR A EXCEL
+        // EXPORTAR A EXCEL CON FORMATO (COMPATIBLE MAC Y CELULAR)
         // ============================================================
 
         function exportarExcel() {
@@ -1409,26 +1408,91 @@
                 return;
             }
 
-            let csv = '\uFEFF';
-            csv += 'Nombre,Email,Estado,Fecha de Ingreso,ID\n';
+            // Crear datos con formato
+            const data = [];
 
-            asistentesEvento.forEach(a => {
-                const estado = a.ingresado ? 'Ingresado' : 'Pendiente';
-                const fechaIngreso = a.fechaIngreso ? new Date(a.fechaIngreso).toLocaleString() : '';
-                csv += `"${a.nombre}","${a.email}","${estado}","${fechaIngreso}","${a.id}"\n`;
+            // Encabezados con formato
+            const headerRow = ['#', 'Nombre', 'Email', 'Estado', 'Fecha de Ingreso', 'ID de Validación'];
+            data.push(headerRow);
+
+            // Datos
+            asistentesEvento.forEach((a, index) => {
+                const estado = a.ingresado ? 'INGRESADO' : 'PENDIENTE';
+                const fechaIngreso = a.fechaIngreso ? new Date(a.fechaIngreso).toLocaleString('es-CR') : '-';
+                data.push([
+                    index + 1,
+                    a.nombre,
+                    a.email,
+                    estado,
+                    fechaIngreso,
+                    a.id
+                ]);
             });
 
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', `asistentes_${evento.nombre.replace(/\s/g, '_')}_${new Date().toISOString().split('T')[0]}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
+            // Crear libro
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(data);
 
-            showToast(`✅ ${asistentesEvento.length} asistentes exportados a Excel`, 'success');
+            // Establecer ancho de columnas
+            ws['!cols'] = [
+                { wch: 6 },   // #
+                { wch: 32 },  // Nombre
+                { wch: 38 },  // Email
+                { wch: 16 },  // Estado
+                { wch: 28 },  // Fecha de Ingreso
+                { wch: 28 }   // ID
+            ];
+
+            // Aplicar formato a los encabezados (negrita, centrado)
+            const range = XLSX.utils.decode_range(ws['!ref']);
+            for (let col = range.s.c; col <= range.e.c; col++) {
+                const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
+                if (!ws[cellAddress]) continue;
+                ws[cellAddress].s = {
+                    font: { bold: true, color: { rgb: "FFFFFF" } },
+                    fill: { fgColor: { rgb: "FF6B00" } },
+                    alignment: { horizontal: "center", vertical: "center" }
+                };
+            }
+
+            // Aplicar formato a los datos
+            for (let row = 1; row < data.length; row++) {
+                for (let col = range.s.c; col <= range.e.c; col++) {
+                    const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
+                    if (!ws[cellAddress]) continue;
+
+                    // Alinear ID a la izquierda
+                    if (col === 5) {
+                        ws[cellAddress].s = { alignment: { horizontal: "left" } };
+                    }
+
+                    // Color de fondo para estado
+                    if (col === 3) {
+                        const estado = ws[cellAddress].v;
+                        if (estado === 'INGRESADO') {
+                            ws[cellAddress].s = {
+                                font: { bold: true, color: { rgb: "FFFFFF" } },
+                                fill: { fgColor: { rgb: "00C853" } },
+                                alignment: { horizontal: "center", vertical: "center" }
+                            };
+                        } else if (estado === 'PENDIENTE') {
+                            ws[cellAddress].s = {
+                                font: { bold: true, color: { rgb: "FFFFFF" } },
+                                fill: { fgColor: { rgb: "FF9800" } },
+                                alignment: { horizontal: "center", vertical: "center" }
+                            };
+                        }
+                    }
+                }
+            }
+
+            XLSX.utils.book_append_sheet(wb, ws, 'Asistentes');
+
+            // Descargar
+            const nombreArchivo = `Asistentes_${evento.nombre.replace(/\s/g, '_')}_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, nombreArchivo);
+
+            showToast(`✅ ${asistentesEvento.length} asistentes exportados a Excel con formato`, 'success');
         }
 
         function exportarTodosEventos() {
@@ -1437,7 +1501,6 @@
                 return;
             }
 
-            // Obtener todos los asistentes de todos los eventos
             let todosLosAsistentes = [];
             eventos.forEach(e => {
                 const asistentesEvento = asistentes.filter(a => a.eventoId === e.id);
@@ -1454,24 +1517,83 @@
                 return;
             }
 
-            let csv = '\uFEFF';
-            csv += 'Evento,Nombre,Email,Estado,Fecha de Ingreso,ID\n';
+            // Crear datos con formato
+            const data = [];
+            const headerRow = ['#', 'Evento', 'Nombre', 'Email', 'Estado', 'Fecha de Ingreso', 'ID de Validación'];
+            data.push(headerRow);
 
-            todosLosAsistentes.forEach(a => {
-                const estado = a.ingresado ? 'Ingresado' : 'Pendiente';
-                const fechaIngreso = a.fechaIngreso ? new Date(a.fechaIngreso).toLocaleString() : '';
-                csv += `"${a.evento}","${a.nombre}","${a.email}","${estado}","${fechaIngreso}","${a.id}"\n`;
+            todosLosAsistentes.forEach((a, index) => {
+                const estado = a.ingresado ? 'INGRESADO' : 'PENDIENTE';
+                const fechaIngreso = a.fechaIngreso ? new Date(a.fechaIngreso).toLocaleString('es-CR') : '-';
+                data.push([
+                    index + 1,
+                    a.evento,
+                    a.nombre,
+                    a.email,
+                    estado,
+                    fechaIngreso,
+                    a.id
+                ]);
             });
 
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', `todos_los_asistentes_${new Date().toISOString().split('T')[0]}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(data);
+
+            ws['!cols'] = [
+                { wch: 6 },
+                { wch: 30 },
+                { wch: 30 },
+                { wch: 38 },
+                { wch: 16 },
+                { wch: 28 },
+                { wch: 28 }
+            ];
+
+            // Formato a encabezados
+            const range = XLSX.utils.decode_range(ws['!ref']);
+            for (let col = range.s.c; col <= range.e.c; col++) {
+                const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
+                if (!ws[cellAddress]) continue;
+                ws[cellAddress].s = {
+                    font: { bold: true, color: { rgb: "FFFFFF" } },
+                    fill: { fgColor: { rgb: "FF6B00" } },
+                    alignment: { horizontal: "center", vertical: "center" }
+                };
+            }
+
+            // Formato a datos
+            for (let row = 1; row < data.length; row++) {
+                for (let col = range.s.c; col <= range.e.c; col++) {
+                    const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
+                    if (!ws[cellAddress]) continue;
+
+                    if (col === 6) {
+                        ws[cellAddress].s = { alignment: { horizontal: "left" } };
+                    }
+
+                    if (col === 4) {
+                        const estado = ws[cellAddress].v;
+                        if (estado === 'INGRESADO') {
+                            ws[cellAddress].s = {
+                                font: { bold: true, color: { rgb: "FFFFFF" } },
+                                fill: { fgColor: { rgb: "00C853" } },
+                                alignment: { horizontal: "center", vertical: "center" }
+                            };
+                        } else if (estado === 'PENDIENTE') {
+                            ws[cellAddress].s = {
+                                font: { bold: true, color: { rgb: "FFFFFF" } },
+                                fill: { fgColor: { rgb: "FF9800" } },
+                                alignment: { horizontal: "center", vertical: "center" }
+                            };
+                        }
+                    }
+                }
+            }
+
+            XLSX.utils.book_append_sheet(wb, ws, 'Todos los Asistentes');
+
+            const nombreArchivo = `Todos_los_asistentes_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, nombreArchivo);
 
             showToast(`✅ ${todosLosAsistentes.length} asistentes exportados de ${eventos.length} eventos`, 'success');
         }
