@@ -311,6 +311,16 @@
             font-size: 0.8rem;
         }
 
+        .btn-excel {
+            background: #1a7a3a;
+            color: #fff;
+        }
+
+        .btn-excel:hover {
+            background: #0f5a2a;
+            transform: scale(1.02);
+        }
+
         .event-list {
             list-style: none;
         }
@@ -643,6 +653,18 @@
             display: none !important;
         }
 
+        .btn-group-botones {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-group-botones .btn {
+            flex: 1;
+            min-width: 150px;
+        }
+
         .toast {
             position: fixed;
             bottom: 20px;
@@ -725,6 +747,10 @@
             .login-box {
                 padding: 30px 20px;
             }
+
+            .btn-group-botones .btn {
+                min-width: 100%;
+            }
         }
     </style>
 </head>
@@ -782,6 +808,17 @@
                         <select id="selectEventoAsistentes" onchange="cargarAsistentes()">
                             <option value="">Selecciona un evento</option>
                         </select>
+
+                        <!-- BOTONES EXPORTAR -->
+                        <div class="btn-group-botones">
+                            <button class="btn btn-excel" onclick="exportarExcel()">
+                                📊 Exportar a Excel
+                            </button>
+                            <button class="btn btn-excel" onclick="exportarTodosEventos()" style="background:#0f5a2a;">
+                                📊 Exportar Todo
+                            </button>
+                        </div>
+
                         <div id="statsContainer" class="stats hidden">
                             <div class="stat">
                                 <div class="number" id="totalAsistentes">0</div>
@@ -908,7 +945,6 @@
                 error.classList.remove('show');
                 document.getElementById('loginOverlay').classList.remove('active');
                 document.getElementById('mainContent').style.display = 'block';
-                // NO se guarda en localStorage - siempre pide contraseña
                 iniciarApp();
             } else {
                 error.classList.add('show');
@@ -1348,6 +1384,97 @@
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') cerrarQR();
         });
+
+        // ============================================================
+        // EXPORTAR A EXCEL
+        // ============================================================
+
+        function exportarExcel() {
+            const eventoId = document.getElementById('selectEventoAsistentes').value;
+            if (!eventoId) {
+                showToast('⚠️ Selecciona un evento primero', 'error');
+                return;
+            }
+
+            const evento = eventos.find(e => e.id === eventoId);
+            if (!evento) {
+                showToast('⚠️ Evento no encontrado', 'error');
+                return;
+            }
+
+            const asistentesEvento = asistentes.filter(a => a.eventoId === eventoId);
+
+            if (asistentesEvento.length === 0) {
+                showToast('⚠️ No hay asistentes para exportar', 'error');
+                return;
+            }
+
+            let csv = '\uFEFF';
+            csv += 'Nombre,Email,Estado,Fecha de Ingreso,ID\n';
+
+            asistentesEvento.forEach(a => {
+                const estado = a.ingresado ? 'Ingresado' : 'Pendiente';
+                const fechaIngreso = a.fechaIngreso ? new Date(a.fechaIngreso).toLocaleString() : '';
+                csv += `"${a.nombre}","${a.email}","${estado}","${fechaIngreso}","${a.id}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `asistentes_${evento.nombre.replace(/\s/g, '_')}_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            showToast(`✅ ${asistentesEvento.length} asistentes exportados a Excel`, 'success');
+        }
+
+        function exportarTodosEventos() {
+            if (eventos.length === 0) {
+                showToast('⚠️ No hay eventos para exportar', 'error');
+                return;
+            }
+
+            // Obtener todos los asistentes de todos los eventos
+            let todosLosAsistentes = [];
+            eventos.forEach(e => {
+                const asistentesEvento = asistentes.filter(a => a.eventoId === e.id);
+                asistentesEvento.forEach(a => {
+                    todosLosAsistentes.push({
+                        evento: e.nombre,
+                        ...a
+                    });
+                });
+            });
+
+            if (todosLosAsistentes.length === 0) {
+                showToast('⚠️ No hay asistentes registrados en ningún evento', 'error');
+                return;
+            }
+
+            let csv = '\uFEFF';
+            csv += 'Evento,Nombre,Email,Estado,Fecha de Ingreso,ID\n';
+
+            todosLosAsistentes.forEach(a => {
+                const estado = a.ingresado ? 'Ingresado' : 'Pendiente';
+                const fechaIngreso = a.fechaIngreso ? new Date(a.fechaIngreso).toLocaleString() : '';
+                csv += `"${a.evento}","${a.nombre}","${a.email}","${estado}","${fechaIngreso}","${a.id}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `todos_los_asistentes_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            showToast(`✅ ${todosLosAsistentes.length} asistentes exportados de ${eventos.length} eventos`, 'success');
+        }
 
         // ============================================================
         // INICIALIZACIÓN
