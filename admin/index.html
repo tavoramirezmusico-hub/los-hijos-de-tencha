@@ -732,7 +732,7 @@
 <body>
 
     <!-- ===== LOGIN MODAL ===== -->
-    <div class="login-overlay" id="loginOverlay">
+    <div class="login-overlay active" id="loginOverlay">
         <div class="login-box">
             <img src="../img/logo.webp" alt="Los Hijos de Tencha" class="logo-login">
             <h2>🔐 ADMINISTRACIÓN</h2>
@@ -895,10 +895,9 @@
         }
 
         // ============================================================
-        // SISTEMA DE LOGIN
+        // SISTEMA DE LOGIN - SIEMPRE PIDE CONTRASEÑA
         // ============================================================
         const PASSWORD = 'tencha2026';
-        const SESSION_KEY = 'tencha_admin_logged';
 
         function verificarPassword() {
             const input = document.getElementById('passwordInput');
@@ -909,7 +908,7 @@
                 error.classList.remove('show');
                 document.getElementById('loginOverlay').classList.remove('active');
                 document.getElementById('mainContent').style.display = 'block';
-                localStorage.setItem(SESSION_KEY, 'true');
+                // NO se guarda en localStorage - siempre pide contraseña
                 iniciarApp();
             } else {
                 error.classList.add('show');
@@ -920,24 +919,18 @@
         }
 
         function cerrarSesion() {
-            localStorage.removeItem(SESSION_KEY);
             document.getElementById('mainContent').style.display = 'none';
             document.getElementById('loginOverlay').classList.add('active');
             document.getElementById('passwordInput').value = '';
             document.getElementById('passwordInput').focus();
         }
 
-        function verificarSesion() {
-            if (localStorage.getItem(SESSION_KEY) === 'true') {
-                document.getElementById('loginOverlay').classList.remove('active');
-                document.getElementById('mainContent').style.display = 'block';
-                iniciarApp();
-            } else {
-                document.getElementById('loginOverlay').classList.add('active');
-                document.getElementById('mainContent').style.display = 'none';
-                setTimeout(() => document.getElementById('passwordInput').focus(), 300);
-            }
-        }
+        // Siempre mostrar el login al cargar
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('loginOverlay').classList.add('active');
+            document.getElementById('mainContent').style.display = 'none';
+            setTimeout(() => document.getElementById('passwordInput').focus(), 300);
+        });
 
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' && document.getElementById('loginOverlay').classList.contains('active')) {
@@ -1111,11 +1104,9 @@
             }
 
             try {
-                // Obtener nombre del evento
                 const eventoDoc = await db.collection('eventos').doc(eventoId).get();
                 const nombreEvento = eventoDoc.exists ? eventoDoc.data().nombre : 'Evento';
 
-                // Crear asistente en Firebase
                 const asistente = {
                     nombre,
                     email,
@@ -1129,14 +1120,10 @@
 
                 const docRef = await db.collection('asistentes').add(asistente);
 
-                // Agregar ID al evento
                 await db.collection('eventos').doc(eventoId).update({
                     asistentes: firebase.firestore.FieldValue.arrayUnion(docRef.id)
                 });
 
-                // =====================================
-                // ENVIAR CORREO CON EMAILJS
-                // =====================================
                 try {
                     const qrUrl = `https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=${docRef.id}`;
 
@@ -1150,7 +1137,6 @@
 
                     await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
 
-                    // Marcar como enviado
                     await db.collection('asistentes').doc(docRef.id).update({
                         emailEnviado: true,
                         emailEnviadoEn: new Date().toISOString()
@@ -1366,8 +1352,8 @@
         // ============================================================
         // INICIALIZACIÓN
         // ============================================================
-
-        verificarSesion();
     </script>
 
 </body>
+
+</html>

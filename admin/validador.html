@@ -595,7 +595,7 @@
 <body>
 
     <!-- ===== LOGIN MODAL ===== -->
-    <div class="login-overlay" id="loginOverlay">
+    <div class="login-overlay active" id="loginOverlay">
         <div class="login-box">
             <img src="../img/logo.webp" alt="Los Hijos de Tencha" class="logo-login">
             <h2>🔐 VALIDADOR</h2>
@@ -707,10 +707,9 @@
         const db = firebase.firestore();
 
         // ============================================================
-        // SISTEMA DE LOGIN
+        // SISTEMA DE LOGIN - SIEMPRE PIDE CONTRASEÑA
         // ============================================================
         const PASSWORD = 'tencha2026';
-        const SESSION_KEY = 'tencha_validador_logged';
 
         function verificarPassword() {
             const input = document.getElementById('passwordInput');
@@ -721,7 +720,7 @@
                 error.classList.remove('show');
                 document.getElementById('loginOverlay').classList.remove('active');
                 document.getElementById('mainContent').style.display = 'block';
-                localStorage.setItem(SESSION_KEY, 'true');
+                // NO se guarda en localStorage - siempre pide contraseña
                 iniciarApp();
             } else {
                 error.classList.add('show');
@@ -732,24 +731,18 @@
         }
 
         function cerrarSesion() {
-            localStorage.removeItem(SESSION_KEY);
             document.getElementById('mainContent').style.display = 'none';
             document.getElementById('loginOverlay').classList.add('active');
             document.getElementById('passwordInput').value = '';
             document.getElementById('passwordInput').focus();
         }
 
-        function verificarSesion() {
-            if (localStorage.getItem(SESSION_KEY) === 'true') {
-                document.getElementById('loginOverlay').classList.remove('active');
-                document.getElementById('mainContent').style.display = 'block';
-                iniciarApp();
-            } else {
-                document.getElementById('loginOverlay').classList.add('active');
-                document.getElementById('mainContent').style.display = 'none';
-                setTimeout(() => document.getElementById('passwordInput').focus(), 300);
-            }
-        }
+        // Siempre mostrar el login al cargar
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('loginOverlay').classList.add('active');
+            document.getElementById('mainContent').style.display = 'none';
+            setTimeout(() => document.getElementById('passwordInput').focus(), 300);
+        });
 
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' && document.getElementById('loginOverlay').classList.contains('active')) {
@@ -1024,8 +1017,6 @@
         // ============================================================
         // INICIALIZACIÓN
         // ============================================================
-
-        verificarSesion();
 
         document.addEventListener('visibilitychange', function () {
             if (document.hidden && isScanning) {
