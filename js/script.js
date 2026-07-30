@@ -1,6 +1,6 @@
 // =====================================
 // LOS HIJOS DE TENCHA
-// SCRIPT.JS - VERSIÓN SIMPLIFICADA PARA MÓVIL
+// SCRIPT.JS - VERSIÓN DEFINITIVA CON FIX PARA MÓVIL
 // =====================================
 
 console.log("Sitio Oficial de Los Hijos de Tencha");
@@ -93,7 +93,10 @@ let indiceActualVisor = 0;
 
 function cargarGaleria(categoria) {
     const grid = document.getElementById('galeriaGrid');
-    if (!grid) return;
+    if (!grid) {
+        console.warn('⚠️ No se encontró el contenedor de la galería');
+        return;
+    }
 
     categoriaActual = categoria;
 
@@ -108,6 +111,7 @@ function cargarGaleria(categoria) {
 
     fotosActuales = fotos;
 
+    // Actualizar botones de categorías
     document.querySelectorAll('.cat-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.categoria === categoria);
     });
@@ -117,6 +121,7 @@ function cargarGaleria(categoria) {
         return;
     }
 
+    // Generar HTML con un contenedor interno para mejor control en móvil
     grid.innerHTML = fotos.map((foto, index) => {
         let titulo = '';
         if (categoria === 'todas') {
@@ -130,24 +135,42 @@ function cargarGaleria(categoria) {
             titulo = galeriaDatos[categoria]?.titulo || 'Evento';
         }
         return `
-        <div class="foto animar" data-index="${index}">
-            <img src="${foto}" alt="${titulo}">
+        <div class="foto" data-index="${index}">
+            <img src="${foto}" alt="${titulo}" loading="lazy">
             <div class="foto-overlay">
                 <span>${titulo}</span>
             </div>
         </div>
     `}).join('');
 
+    // Forzar actualización del grid en móvil
+    if (window.innerWidth <= 600) {
+        grid.style.display = 'flex';
+        grid.style.flexDirection = 'column';
+        grid.style.gap = '16px';
+        grid.style.padding = '0 4px';
+    }
+
+    // Agregar eventos de click a las fotos
     grid.querySelectorAll('.foto').forEach(el => {
         el.addEventListener('click', function () {
             const index = parseInt(this.dataset.index);
-            abrirVisor(index);
+            // Verificar que la imagen exista antes de abrir el visor
+            const img = this.querySelector('img');
+            if (img && img.src && img.src !== '') {
+                abrirVisor(index);
+            }
         });
     });
 
-    document.querySelectorAll('.galeria-grid .foto').forEach(el => {
-        setTimeout(() => el.classList.add('visible'), 100);
+    // Activar animaciones escalonadas
+    document.querySelectorAll('.galeria-grid .foto').forEach((el, i) => {
+        setTimeout(() => {
+            el.classList.add('visible');
+        }, 100 + (i * 50));
     });
+
+    console.log(`✅ Galería cargada: ${fotos.length} fotos en categoría "${categoria}"`);
 }
 
 // =====================================
@@ -165,6 +188,10 @@ const totalFotos = document.getElementById('total-fotos');
 function abrirVisor(index) {
     if (!visorGaleria || !imagenGaleria) return;
     if (fotosActuales.length === 0) return;
+
+    // Verificar que la imagen exista
+    const imgSrc = fotosActuales[index];
+    if (!imgSrc) return;
 
     indiceActualVisor = index;
     mostrarFotoVisor(indiceActualVisor);
@@ -801,6 +828,7 @@ async function probarEmailJS() {
 document.addEventListener('DOMContentLoaded', function () {
     console.log('🔄 Inicializando sistema...');
 
+    // Inicializar registro
     if (document.getElementById('selectEventoRegistro')) {
         console.log('✅ Select de eventos encontrado, cargando...');
         setTimeout(cargarEventosRegistro, 500);
@@ -808,6 +836,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.warn('⚠️ No se encontró el select de eventos en la página');
     }
 
+    // Inicializar galería
     if (document.getElementById('galeriaGrid')) {
         console.log('✅ Galería encontrada, cargando...');
         cargarGaleria('todas');
@@ -818,5 +847,37 @@ document.addEventListener('DOMContentLoaded', function () {
                 cargarGaleria(categoria);
             });
         });
+    }
+
+    // FORZAR: Reaplicar estilos de móvil después de cargar
+    setTimeout(function () {
+        if (window.innerWidth <= 600) {
+            const grid = document.getElementById('galeriaGrid');
+            if (grid) {
+                grid.style.display = 'flex';
+                grid.style.flexDirection = 'column';
+                grid.style.gap = '16px';
+                grid.style.padding = '0 4px';
+            }
+        }
+    }, 500);
+});
+
+// Escuchar cambios de tamaño de pantalla para móvil
+window.addEventListener('resize', function () {
+    const grid = document.getElementById('galeriaGrid');
+    if (!grid) return;
+
+    if (window.innerWidth <= 600) {
+        grid.style.display = 'flex';
+        grid.style.flexDirection = 'column';
+        grid.style.gap = '16px';
+        grid.style.padding = '0 4px';
+    } else {
+        // Restaurar grid en pantallas más grandes
+        grid.style.display = '';
+        grid.style.flexDirection = '';
+        grid.style.gap = '';
+        grid.style.padding = '';
     }
 });
