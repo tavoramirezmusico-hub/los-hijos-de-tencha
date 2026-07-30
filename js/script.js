@@ -51,14 +51,26 @@ const galeriaDatos = {
         titulo: 'Sesión Vocho',
         fotos: [
             'img/galeria/foto1.webp',
-            'img/galeria/foto2.webp'
+            'img/galeria/foto2.webp',
+            'img/galeria/foto7.webp',
+            'img/galeria/foto8.webp',
+            'img/galeria/foto9.webp',
+            'img/galeria/foto10.webp',
+            'img/galeria/foto11.webp',
+            'img/galeria/foto12.webp',
+            'img/galeria/foto13.webp',
+            'img/galeria/foto14.webp',
+            'img/galeria/foto15.webp',
+            'img/galeria/foto16.webp'
         ]
     },
     'disco': {
         titulo: 'Sesión Disco Cumbias',
         fotos: [
             'img/galeria/foto3.webp',
-            'img/galeria/foto4.webp'
+            'img/galeria/foto4.webp',
+            'img/galeria/foto5.webp',
+            'img/galeria/foto6.webp'
         ]
     },
     'lanzamiento': {
@@ -68,7 +80,7 @@ const galeriaDatos = {
             'img/galeria/lanzamiento/foto2.webp',
             'img/galeria/lanzamiento/foto3.webp'
         ]
-    },
+    }
     // 'eventos': {   // ← COMENTADO
     //     titulo: 'Eventos',
     //     fotos: [
@@ -112,14 +124,28 @@ function cargarGaleria(categoria) {
         return;
     }
 
-    grid.innerHTML = fotos.map((foto, index) => `
+    grid.innerHTML = fotos.map((foto, index) => {
+        // Determinar el título según la categoría
+        let titulo = '';
+        if (categoria === 'todas') {
+            // Si es "todas", buscar a qué categoría pertenece la foto
+            for (let key in galeriaDatos) {
+                if (galeriaDatos[key].fotos.includes(foto)) {
+                    titulo = galeriaDatos[key].titulo;
+                    break;
+                }
+            }
+        } else {
+            titulo = galeriaDatos[categoria]?.titulo || 'Evento';
+        }
+        return `
         <div class="foto animar" data-index="${index}">
-            <img src="${foto}" loading="lazy" alt="${galeriaDatos[categoria]?.titulo || 'Foto'}">
+            <img src="${foto}" loading="lazy" alt="${titulo}">
             <div class="foto-overlay">
-                <span>${galeriaDatos[categoria]?.titulo || 'Evento'}</span>
+                <span>${titulo}</span>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 
     grid.querySelectorAll('.foto').forEach(el => {
         el.addEventListener('click', function () {
