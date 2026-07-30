@@ -522,63 +522,107 @@
         }
 
         /* =====================================
-           BOTÓN COMUNIDAD WHATSAPP - ESTILO MEJORADO
+           BOTÓN COMUNIDAD WHATSAPP - ESTILO NARANJA
            ===================================== */
         .btn-comunidad {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            padding: 18px 45px;
-            background: #ffcc00;
-            color: #000;
+            gap: 14px;
+            padding: 18px 42px;
+            background: #f57c00;
+            color: #ffffff;
             border-radius: 50px;
             font-weight: 700;
             font-size: 1.15rem;
             text-decoration: none;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(255, 204, 0, 0.35);
-            border: 2px solid #ffcc00;
+            box-shadow: 0 4px 20px rgba(245, 124, 0, 0.4);
+            border: 2px solid #f57c00;
+            font-family: 'Poppins', sans-serif;
         }
 
         .btn-comunidad:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 10px 35px rgba(255, 204, 0, 0.5);
-            background: #fff;
-            border-color: #fff;
-            color: #000;
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 10px 35px rgba(245, 124, 0, 0.6);
+            background: #e65100;
+            border-color: #e65100;
+            color: #ffffff;
         }
 
-        .btn-comunidad i {
-            font-size: 1.5rem;
-            color: #25D366;
-            transition: color 0.3s ease;
-        }
-
-        .btn-comunidad:hover i {
-            color: #25D366;
-        }
-
-        .btn-comunidad .whatsapp-text {
-            font-weight: 700;
+        .btn-comunidad:active {
+            transform: scale(0.97);
         }
 
         .btn-comunidad .whatsapp-icon-bg {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
-            background: #25D366;
+            width: 44px;
+            height: 44px;
+            background: #ffffff;
             border-radius: 50%;
-            color: #fff;
-            font-size: 1.2rem;
+            color: #f57c00;
+            font-size: 1.4rem;
             transition: all 0.3s ease;
+            flex-shrink: 0;
         }
 
         .btn-comunidad:hover .whatsapp-icon-bg {
-            background: #1ebe5a;
-            transform: scale(1.05);
+            background: #ffffff;
+            transform: scale(1.08);
+            color: #e65100;
+        }
+
+        .btn-comunidad .whatsapp-text {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+
+        .btn-comunidad .whatsapp-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: #ffffff;
+            margin-left: 4px;
+        }
+
+        @media (max-width: 700px) {
+            .btn-comunidad {
+                padding: 14px 28px;
+                font-size: 1rem;
+                gap: 10px;
+            }
+
+            .btn-comunidad .whatsapp-icon-bg {
+                width: 38px;
+                height: 38px;
+                font-size: 1.1rem;
+            }
+
+            .btn-comunidad .whatsapp-badge {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .btn-comunidad {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+                gap: 8px;
+            }
+
+            .btn-comunidad .whatsapp-icon-bg {
+                width: 32px;
+                height: 32px;
+                font-size: 0.95rem;
+            }
         }
 
         /* =====================================
@@ -691,32 +735,9 @@
                 font-size: 0.65rem;
                 padding: 4px 14px;
             }
-
-            .btn-comunidad {
-                padding: 14px 30px;
-                font-size: 1rem;
-            }
-
-            .btn-comunidad .whatsapp-icon-bg {
-                width: 34px;
-                height: 34px;
-                font-size: 1rem;
-            }
         }
 
         @media (max-width: 480px) {
-            .btn-comunidad {
-                padding: 12px 24px;
-                font-size: 0.9rem;
-                gap: 8px;
-            }
-
-            .btn-comunidad .whatsapp-icon-bg {
-                width: 30px;
-                height: 30px;
-                font-size: 0.85rem;
-            }
-
             .lanzamientos-wrapper {
                 gap: 25px;
             }
@@ -1302,7 +1323,7 @@
 
             <!-- =====================================
          BOTÓN ÚNETE A NUESTRA COMUNIDAD - WHATSAPP
-         ESTILO MEJORADO
+         ESTILO NARANJA
     ===================================== -->
             <div style="text-align: center; margin-top: 30px;">
                 <a href="https://chat.whatsapp.com/H2ry6GFbBDe8Q5UsNMcDdu?s=cl&p=i&ilr=2" target="_blank"
