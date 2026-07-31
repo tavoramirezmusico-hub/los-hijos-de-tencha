@@ -621,15 +621,15 @@
     <!-- ============================================= -->
     <script>
         // =====================================
-        // CONFIGURACIÓN DE FIREBASE
+        // CONFIGURACIÓN DE FIREBASE - TU PROYECTO
         // =====================================
         const firebaseConfig = {
-            apiKey: "AIzaSyDvp_6UFymZZnqxMyL6yobJ3twLMvVkThw",
-            authDomain: "base-entradas-tenchos.firebaseapp.com",
-            projectId: "base-entradas-tenchos",
-            storageBucket: "base-entradas-tenchos.firebasestorage.app",
-            messagingSenderId: "273676503007",
-            appId: "1:273676503007:web:56180c485b648ef076a66a"
+            apiKey: "AIzaSyABjZX0aNBCiFHm19-xPtQ0XEUYyu2i1vI",
+            authDomain: "galeria-tencha-64075.firebaseapp.com",
+            projectId: "galeria-tencha-64075",
+            storageBucket: "galeria-tencha-64075.firebasestorage.app",
+            messagingSenderId: "772811330414",
+            appId: "1:772811330414:web:928a23b3ad80cdaac1277f"
         };
 
         // Inicializar Firebase si no está ya inicializado
@@ -645,14 +645,12 @@
         let fotosActuales = [];
         let indiceActualVisor = 0;
         let categoriaActual = 'todas';
-        let todasLasFotos = [];
 
         // =====================================
         // CARGAR FOTOS DESDE FIREBASE
         // =====================================
         async function cargarFotosDesdeFirebase() {
             const grid = document.getElementById('galeriaGrid');
-            const loading = document.getElementById('galeriaLoading');
 
             try {
                 console.log('🔄 Cargando fotos desde Firebase...');
@@ -685,12 +683,6 @@
                     datosFirebase[categoria].fotos.push(data.url);
                 });
 
-                // Guardar todas las fotos para el visor
-                todasLasFotos = [];
-                Object.keys(datosFirebase).forEach(key => {
-                    todasLasFotos = todasLasFotos.concat(datosFirebase[key].fotos);
-                });
-
                 // Renderizar la galería
                 renderizarGaleria(datosFirebase, categoriaActual);
 
@@ -700,6 +692,8 @@
                     <div class="galeria-error">
                         <i class="fas fa-exclamation-circle"></i>
                         Error al cargar la galería. Por favor, intenta de nuevo.
+                        <br><br>
+                        <small style="color:#666;">${error.message}</small>
                     </div>
                 `;
             }
@@ -781,12 +775,10 @@
         function cambiarCategoria(categoria) {
             categoriaActual = categoria;
 
-            // Actualizar botones
             document.querySelectorAll('.cat-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.categoria === categoria);
             });
 
-            // Recargar la galería desde Firebase
             cargarFotosDesdeFirebase();
         }
 
@@ -878,10 +870,8 @@
         document.addEventListener('DOMContentLoaded', function () {
             console.log('🔄 Inicializando galería con Firebase...');
 
-            // Cargar fotos desde Firebase
             cargarFotosDesdeFirebase();
 
-            // Eventos de categorías
             document.querySelectorAll('.cat-btn').forEach(btn => {
                 btn.addEventListener('click', function () {
                     const categoria = this.dataset.categoria;
