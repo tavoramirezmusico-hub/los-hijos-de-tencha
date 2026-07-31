@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Galería de Fotos | Los Hijos de Tencha</title>
+
+    <meta name="description"
+        content="Galería de fotos oficial de Los Hijos de Tencha. Sesiones de fotos, conciertos, lanzamientos y momentos especiales de la banda costarricense.">
+
+    <link rel="canonical" href="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/galeria.html">
+
+    <meta property="og:title" content="Galería de Fotos | Los Hijos de Tencha">
+    <meta property="og:description"
+        content="Galería de fotos oficial de Los Hijos de Tencha. Sesiones de fotos, conciertos y momentos especiales.">
+    <meta property="og:image" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/img/hero.webp">
+    <meta property="og:url" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/galeria.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_CR">
+    <meta property="og:site_name" content="Los Hijos de Tencha">
+
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- GOOGLE ANALYTICS -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YNRK4G09LN"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('config', 'G-YNRK4G09LN');
+    </script>
+
+    <style>
+        /* =====================================
+           MENÚ CON SCROLL HORIZONTAL
+           ===================================== */
+        .menu {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 8px 0;
+            scrollbar-width: thin;
+            scrollbar-color: #ffcc00 transparent;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+
+        .menu::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .menu::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .menu::-webkit-scrollbar-thumb {
+            background: #ffcc00;
+            border-radius: 4px;
+        }
+
+        .menu li {
+            flex-shrink: 0;
+        }
+
+        .menu li a,
+        .menu li span {
+            padding: 8px 18px;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            display: block;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .menu li a:hover {
+            background: #ffcc00;
+            color: #000;
+            border-radius: 20px;
+        }
+
+        .menu-activo {
+            color: #ffcc00 !important;
+            font-weight: 600;
+        }
+
+        @media (max-width: 900px) {
+
+            .menu li a,
+            .menu li span {
+                font-size: 0.85rem;
+                padding: 6px 14px;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .menu li a,
+            .menu li span {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+            }
+        }
+
+        /* =====================================
+           GALERÍA - ESTILOS PROPIOS
+           ===================================== */
+        .galeria-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .foto-item {
+            height: 280px;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            background: #2a2a2a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .foto-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+            display: block;
+        }
+
+        .foto-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 35px rgba(255, 204, 0, 0.2);
+        }
+
+        .foto-item:hover img {
+            transform: scale(1.08);
+        }
+
+        .foto-item .foto-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 15px 15px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .foto-item:hover .foto-overlay {
+            opacity: 1;
+        }
+
+        .foto-item .foto-overlay span {
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: block;
+            text-align: center;
+        }
+
+        .galeria-vacia {
+            text-align: center;
+            color: #666;
+            padding: 60px 20px;
+            font-size: 1.1rem;
+            grid-column: 1 / -1;
+        }
+
+        .galeria-categorias {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 35px;
+        }
+
+        .galeria-categorias .cat-btn {
+            padding: 10px 24px;
+            background: #1c1c1c;
+            border: 2px solid #333;
+            border-radius: 30px;
+            color: #aaa;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .galeria-categorias .cat-btn:hover {
+            border-color: #ffcc00;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .galeria-categorias .cat-btn.active {
+            background: #ffcc00;
+            color: #000;
+            border-color: #ffcc00;
+        }
+
+        /* RESPONSIVE GALERÍA */
+        @media (max-width: 900px) {
+            .galeria-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .foto-item {
+                height: 240px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .galeria-grid {
+                display: flex !important;
+                flex-direction: column;
+                gap: 16px;
+                padding: 0 4px;
+            }
+
+            .foto-item {
+                height: 280px !important;
+                width: 100% !important;
+                border-radius: 14px;
+                min-height: 280px;
+            }
+
+            .foto-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .galeria-categorias .cat-btn {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* =====================================
+           VISOR DE GALERÍA MEJORADO
+           ===================================== */
+        .visor {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .95);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            z-index: 99999;
+            animation: fadeVisor .25s ease;
+        }
+
+        .visor.active {
+            display: flex;
+        }
+
+        .visor img {
+            max-width: 90vw;
+            max-height: 85vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, .6);
+            animation: zoomEntrada .35s ease;
+        }
+
+        .visor .cerrar-visor {
+            position: absolute;
+            top: 25px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .12);
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .visor .cerrar-visor:hover {
+            background: #ffcc00;
+            color: #000;
+        }
+
+        .visor .flecha {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 55px;
+            height: 55px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .12);
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .visor .flecha:hover {
+            background: #ffcc00;
+            color: #000;
+        }
+
+        .visor .flecha-izq {
+            left: 30px;
+        }
+
+        .visor .flecha-der {
+            right: 30px;
+        }
+
+        .visor .contador-visor {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, .6);
+            padding: 10px 20px;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        @keyframes fadeVisor {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes zoomEntrada {
+            from {
+                opacity: 0;
+                transform: scale(.85);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .visor .flecha {
+                width: 45px;
+                height: 45px;
+                font-size: 1.4rem;
+            }
+
+            .visor .cerrar-visor {
+                width: 45px;
+                height: 45px;
+                font-size: 1.6rem;
+            }
+
+            .visor .flecha-izq {
+                left: 15px;
+            }
+
+            .visor .flecha-der {
+                right: 15px;
+            }
+        }
+
+        .animar {
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+            transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .animar.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="hero-galeria">
+        <nav>
+            <a href="index.html" class="logo">
+                <img src="img/logo.webp" alt="Los Hijos de Tencha">
+            </a>
+            <button id="menu-btn" class="menu-btn">
+                <img src="img/menu-icono.webp" alt="Menú">
+                <span>Menú</span>
+            </button>
+            <ul class="menu">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="index.html#banda">La Banda</a></li>
+                <li><a href="index.html#eventos">Eventos</a></li>
+                <li><span class="menu-activo">Galería</span></li>
+                <li><a href="index.html#musica">Lanzamientos</a></li>
+                <li><a href="canciones.html">Cancionero</a></li>
+                <li><a href="videoteca.html">Videos</a></li>
+                <li><a href="noticias.html">Tencha Noticias</a></li>
+                <li><a href="index.html#integrantes">Integrantes</a></li>
+                <li><a href="index.html#tienda">Tienda</a></li>
+                <li><a href="index.html#contacto">Contacto</a></li>
+                <li><a href="admin/" style="color: #ffcc00; font-weight: 700;">⚙️ Admin</a></li>
+            </ul>
+        </nav>
+        <div class="titulo-galeria">
+            <span>LOS HIJOS DE TENCHA</span>
+            <h1>Galería de Fotos</h1>
+            <p>Explora las sesiones de fotos, conciertos y momentos especiales de la banda.</p>
+        </div>
+    </header>
+
+    <section class="galeria-seccion animar">
+        <div class="contenedor">
+            <div class="titulo-seccion">
+                <span>MOMENTOS</span>
+                <h2>Nuestra Galería</h2>
+            </div>
+
+            <!-- Categorías -->
+            <div class="galeria-categorias" id="galeriaCategorias">
+                <button class="cat-btn active" data-categoria="todas">📸 Todas</button>
+                <button class="cat-btn" data-categoria="vocho">🚗 Sesión Vocho</button>
+                <button class="cat-btn" data-categoria="disco">🎵 Sesión Disco Cumbias</button>
+                <button class="cat-btn" data-categoria="lanzamiento">🎸 Cumbia Salvaje</button>
+            </div>
+
+            <div class="galeria-grid" id="galeriaGrid">
+                <!-- Las fotos se cargan desde JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <img src="img/logo.webp" alt="Logo Los Hijos de Tencha">
+        <p>Los Hijos de Tencha © 2026</p>
+        <p class="credito-web">Diseñado por <a href="https://www.instagram.com/tavo_musico" target="_blank"
+                rel="noopener noreferrer">Tavo Músico</a></p>
+    </footer>
+
+    <button id="subir"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <!-- ==========================
+         VISOR DE GALERÍA
+    ========================== -->
+    <div id="visor-galeria" class="visor">
+        <button id="cerrar-galeria" class="cerrar-visor">&times;</button>
+        <button id="foto-anterior" class="flecha flecha-izq">&#10094;</button>
+        <img id="imagen-galeria" src="" alt="Foto ampliada">
+        <button id="foto-siguiente" class="flecha flecha-der">&#10095;</button>
+        <div class="contador-visor">
+            <span id="foto-actual">1</span>
+            /
+            <span id="total-fotos">0</span>
+        </div>
+    </div>
+
+    <!-- Pantalla de transición -->
+    <div id="transicion">
+        <img src="img/transicion.gif" alt="Transición">
+    </div>
+
+    <!-- ============================================= -->
+    <!-- FIREBASE SDKs                                -->
+    <!-- ============================================= -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <script src="js/script.js"></script>
+    <script src="js/eventos.js"></script>
+
+    <!-- ============================================= -->
+    <!-- SCRIPT ESPECÍFICO PARA GALERÍA               -->
+    <!-- ============================================= -->
+    <script>
+        // =====================================
+        // GALERÍA CON CATEGORÍAS - DATOS (desde Firebase)
+        // =====================================
+
+        const galeriaDatos = {
+            'vocho': {
+                titulo: 'Sesión Vocho',
+                fotos: [
+                    'img/galeria/foto1.webp',
+                    'img/galeria/foto2.webp',
+                    'img/galeria/foto7.webp',
+                    'img/galeria/foto8.webp',
+                    'img/galeria/foto9.webp',
+                    'img/galeria/foto10.webp',
+                    'img/galeria/foto11.webp',
+                    'img/galeria/foto12.webp',
+                    'img/galeria/foto13.webp',
+                    'img/galeria/foto14.webp',
+                    'img/galeria/foto15.webp',
+                    'img/galeria/foto16.webp'
+                ]
+            },
+            'disco': {
+                titulo: 'Sesión Disco Cumbias',
+                fotos: [
+                    'img/galeria/foto3.webp',
+                    'img/galeria/foto4.webp',
+                    'img/galeria/foto5.webp',
+                    'img/galeria/foto6.webp'
+                ]
+            },
+            'lanzamiento': {
+                titulo: 'Cumbia Salvaje - Lanzamiento',
+                fotos: [
+                    'img/galeria/lanzamiento/foto1.webp',
+                    'img/galeria/lanzamiento/foto2.webp',
+                    'img/galeria/lanzamiento/foto3.webp'
+                ]
+            }
+        };
+
+        let categoriaActual = 'todas';
+        let fotosActuales = [];
+        let indiceActualVisor = 0;
+
+        function cargarGaleria(categoria) {
+            const grid = document.getElementById('galeriaGrid');
+            if (!grid) {
+                console.warn('⚠️ No se encontró el contenedor de la galería');
+                return;
+            }
+
+            categoriaActual = categoria;
+
+            let fotos = [];
+            if (categoria === 'todas') {
+                Object.keys(galeriaDatos).forEach(key => {
+                    fotos = fotos.concat(galeriaDatos[key].fotos);
+                });
+            } else if (galeriaDatos[categoria]) {
+                fotos = galeriaDatos[categoria].fotos;
+            }
+
+            fotosActuales = fotos;
+
+            // Actualizar botones de categorías
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.categoria === categoria);
+            });
+
+            if (fotos.length === 0) {
+                grid.innerHTML = `<div class="galeria-vacia">📸 No hay fotos en esta categoría aún.</div>`;
+                return;
+            }
+
+            // Generar HTML de la galería
+            grid.innerHTML = fotos.map((foto, index) => {
+                let titulo = '';
+                if (categoria === 'todas') {
+                    for (let key in galeriaDatos) {
+                        if (galeriaDatos[key].fotos.includes(foto)) {
+                            titulo = galeriaDatos[key].titulo;
+                            break;
+                        }
+                    }
+                } else {
+                    titulo = galeriaDatos[categoria]?.titulo || 'Evento';
+                }
+                return `
+                <div class="foto-item" data-index="${index}">
+                    <img src="${foto}" alt="${titulo}" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='#2a2a2a';">
+                    <div class="foto-overlay">
+                        <span>${titulo}</span>
+                    </div>
+                </div>
+            `}).join('');
+
+            // Agregar eventos de click a las fotos
+            grid.querySelectorAll('.foto-item').forEach(el => {
+                el.addEventListener('click', function () {
+                    const index = parseInt(this.dataset.index);
+                    const img = this.querySelector('img');
+                    if (img && img.src && img.src !== '') {
+                        abrirVisor(index);
+                    }
+                });
+            });
+
+            // Activar animaciones escalonadas
+            document.querySelectorAll('.galeria-grid .foto-item').forEach((el, i) => {
+                setTimeout(() => {
+                    el.classList.add('visible');
+                }, 100 + (i * 50));
+            });
+
+            console.log(`✅ Galería cargada: ${fotos.length} fotos en categoría "${categoria}"`);
+        }
+
+        // =====================================
+        // VISOR DE GALERÍA
+        // =====================================
+
+        const visorGaleria = document.getElementById('visor-galeria');
+        const imagenGaleria = document.getElementById('imagen-galeria');
+        const cerrarGaleria = document.getElementById('cerrar-galeria');
+        const anterior = document.getElementById('foto-anterior');
+        const siguiente = document.getElementById('foto-siguiente');
+        const fotoActual = document.getElementById('foto-actual');
+        const totalFotos = document.getElementById('total-fotos');
+
+        function abrirVisor(index) {
+            if (!visorGaleria || !imagenGaleria) return;
+            if (fotosActuales.length === 0) return;
+
+            const imgSrc = fotosActuales[index];
+            if (!imgSrc) return;
+
+            indiceActualVisor = index;
+            mostrarFotoVisor(indiceActualVisor);
+            visorGaleria.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function mostrarFotoVisor(indice) {
+            if (!imagenGaleria || !fotoActual || !totalFotos) return;
+            if (fotosActuales.length === 0) return;
+
+            if (indice < 0) indice = fotosActuales.length - 1;
+            if (indice >= fotosActuales.length) indice = 0;
+
+            indiceActualVisor = indice;
+            imagenGaleria.src = fotosActuales[indice];
+            fotoActual.textContent = indice + 1;
+            totalFotos.textContent = fotosActuales.length;
+
+            imagenGaleria.style.animation = 'none';
+            setTimeout(() => {
+                imagenGaleria.style.animation = 'zoomEntrada .35s ease';
+            }, 50);
+        }
+
+        function cerrarVisor() {
+            if (visorGaleria) {
+                visorGaleria.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        if (cerrarGaleria) {
+            cerrarGaleria.addEventListener('click', cerrarVisor);
+        }
+
+        if (visorGaleria) {
+            visorGaleria.addEventListener('click', (e) => {
+                if (e.target === visorGaleria) {
+                    cerrarVisor();
+                }
+            });
+        }
+
+        if (anterior) {
+            anterior.addEventListener('click', (e) => {
+                e.stopPropagation();
+                mostrarFotoVisor(indiceActualVisor - 1);
+            });
+        }
+
+        if (siguiente) {
+            siguiente.addEventListener('click', (e) => {
+                e.stopPropagation();
+                mostrarFotoVisor(indiceActualVisor + 1);
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (!visorGaleria || !visorGaleria.classList.contains('active')) return;
+            if (e.key === 'Escape') cerrarVisor();
+            if (e.key === 'ArrowRight') mostrarFotoVisor(indiceActualVisor + 1);
+            if (e.key === 'ArrowLeft') mostrarFotoVisor(indiceActualVisor - 1);
+        });
+
+        // =====================================
+        // INICIALIZAR GALERÍA
+        // =====================================
+
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('🔄 Inicializando galería...');
+
+            if (document.getElementById('galeriaGrid')) {
+                console.log('✅ Galería encontrada, cargando...');
+                cargarGaleria('todas');
+
+                document.querySelectorAll('.cat-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const categoria = this.dataset.categoria;
+                        cargarGaleria(categoria);
+                    });
+                });
+            }
+        });
+    </script>
+
+</body>
+
+</html>

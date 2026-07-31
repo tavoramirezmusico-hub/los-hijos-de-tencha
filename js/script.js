@@ -1,6 +1,6 @@
 // =====================================
 // LOS HIJOS DE TENCHA
-// SCRIPT.JS - RECONSTRUIDO CON RUTAS RELATIVAS
+// SCRIPT.JS - SIN GALERÍA (AHORA EN GALERIA.HTML)
 // =====================================
 
 console.log("Sitio Oficial de Los Hijos de Tencha");
@@ -40,212 +40,6 @@ window.addEventListener("scroll", () => {
     if (menu && menu.classList.contains("activo")) {
         menu.classList.remove("activo");
     }
-});
-
-// =====================================
-// GALERÍA CON CATEGORÍAS - DATOS
-// =====================================
-
-// USANDO RUTAS RELATIVAS (no absolutas)
-const galeriaDatos = {
-    'vocho': {
-        titulo: 'Sesión Vocho',
-        fotos: [
-            'img/galeria/foto1.webp',
-            'img/galeria/foto2.webp',
-            'img/galeria/foto7.webp',
-            'img/galeria/foto8.webp',
-            'img/galeria/foto9.webp',
-            'img/galeria/foto10.webp',
-            'img/galeria/foto11.webp',
-            'img/galeria/foto12.webp',
-            'img/galeria/foto13.webp',
-            'img/galeria/foto14.webp',
-            'img/galeria/foto15.webp',
-            'img/galeria/foto16.webp'
-        ]
-    },
-    'disco': {
-        titulo: 'Sesión Disco Cumbias',
-        fotos: [
-            'img/galeria/foto3.webp',
-            'img/galeria/foto4.webp',
-            'img/galeria/foto5.webp',
-            'img/galeria/foto6.webp'
-        ]
-    },
-    'lanzamiento': {
-        titulo: 'Cumbia Salvaje - Lanzamiento',
-        fotos: [
-            'img/galeria/lanzamiento/foto1.webp',
-            'img/galeria/lanzamiento/foto2.webp',
-            'img/galeria/lanzamiento/foto3.webp'
-        ]
-    }
-};
-
-// =====================================
-// GALERÍA CON CATEGORÍAS - FUNCIONES
-// =====================================
-
-let categoriaActual = 'todas';
-let fotosActuales = [];
-let indiceActualVisor = 0;
-
-function cargarGaleria(categoria) {
-    const grid = document.getElementById('galeriaGrid');
-    if (!grid) {
-        console.warn('⚠️ No se encontró el contenedor de la galería');
-        return;
-    }
-
-    categoriaActual = categoria;
-
-    let fotos = [];
-    if (categoria === 'todas') {
-        Object.keys(galeriaDatos).forEach(key => {
-            fotos = fotos.concat(galeriaDatos[key].fotos);
-        });
-    } else if (galeriaDatos[categoria]) {
-        fotos = galeriaDatos[categoria].fotos;
-    }
-
-    fotosActuales = fotos;
-
-    // Actualizar botones de categorías
-    document.querySelectorAll('.cat-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.categoria === categoria);
-    });
-
-    if (fotos.length === 0) {
-        grid.innerHTML = `<div class="galeria-vacia">📸 No hay fotos en esta categoría aún.</div>`;
-        return;
-    }
-
-    // Generar HTML de la galería
-    grid.innerHTML = fotos.map((foto, index) => {
-        let titulo = '';
-        if (categoria === 'todas') {
-            for (let key in galeriaDatos) {
-                if (galeriaDatos[key].fotos.includes(foto)) {
-                    titulo = galeriaDatos[key].titulo;
-                    break;
-                }
-            }
-        } else {
-            titulo = galeriaDatos[categoria]?.titulo || 'Evento';
-        }
-        return `
-        <div class="foto" data-index="${index}">
-            <img src="${foto}" alt="${titulo}" loading="lazy">
-            <div class="foto-overlay">
-                <span>${titulo}</span>
-            </div>
-        </div>
-    `}).join('');
-
-    // Agregar eventos de click a las fotos
-    grid.querySelectorAll('.foto').forEach(el => {
-        el.addEventListener('click', function () {
-            const index = parseInt(this.dataset.index);
-            const img = this.querySelector('img');
-            if (img && img.src && img.src !== '') {
-                abrirVisor(index);
-            }
-        });
-    });
-
-    // Activar animaciones escalonadas
-    document.querySelectorAll('.galeria-grid .foto').forEach((el, i) => {
-        setTimeout(() => {
-            el.classList.add('visible');
-        }, 100 + (i * 50));
-    });
-
-    console.log(`✅ Galería cargada: ${fotos.length} fotos en categoría "${categoria}"`);
-}
-
-// =====================================
-// VISOR DE GALERÍA MEJORADO
-// =====================================
-
-const visorGaleria = document.getElementById('visor-galeria');
-const imagenGaleria = document.getElementById('imagen-galeria');
-const cerrarGaleria = document.getElementById('cerrar-galeria');
-const anterior = document.getElementById('foto-anterior');
-const siguiente = document.getElementById('foto-siguiente');
-const fotoActual = document.getElementById('foto-actual');
-const totalFotos = document.getElementById('total-fotos');
-
-function abrirVisor(index) {
-    if (!visorGaleria || !imagenGaleria) return;
-    if (fotosActuales.length === 0) return;
-
-    const imgSrc = fotosActuales[index];
-    if (!imgSrc) return;
-
-    indiceActualVisor = index;
-    mostrarFotoVisor(indiceActualVisor);
-    visorGaleria.classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-function mostrarFotoVisor(indice) {
-    if (!imagenGaleria || !fotoActual || !totalFotos) return;
-    if (fotosActuales.length === 0) return;
-
-    if (indice < 0) indice = fotosActuales.length - 1;
-    if (indice >= fotosActuales.length) indice = 0;
-
-    indiceActualVisor = indice;
-    imagenGaleria.src = fotosActuales[indice];
-    fotoActual.textContent = indice + 1;
-    totalFotos.textContent = fotosActuales.length;
-
-    imagenGaleria.style.animation = 'none';
-    setTimeout(() => {
-        imagenGaleria.style.animation = 'zoomEntrada .35s ease';
-    }, 50);
-}
-
-function cerrarVisor() {
-    if (visorGaleria) {
-        visorGaleria.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-}
-
-if (cerrarGaleria) {
-    cerrarGaleria.addEventListener('click', cerrarVisor);
-}
-
-if (visorGaleria) {
-    visorGaleria.addEventListener('click', (e) => {
-        if (e.target === visorGaleria) {
-            cerrarVisor();
-        }
-    });
-}
-
-if (anterior) {
-    anterior.addEventListener('click', (e) => {
-        e.stopPropagation();
-        mostrarFotoVisor(indiceActualVisor - 1);
-    });
-}
-
-if (siguiente) {
-    siguiente.addEventListener('click', (e) => {
-        e.stopPropagation();
-        mostrarFotoVisor(indiceActualVisor + 1);
-    });
-}
-
-document.addEventListener('keydown', (e) => {
-    if (!visorGaleria || !visorGaleria.classList.contains('active')) return;
-    if (e.key === 'Escape') cerrarVisor();
-    if (e.key === 'ArrowRight') mostrarFotoVisor(indiceActualVisor + 1);
-    if (e.key === 'ArrowLeft') mostrarFotoVisor(indiceActualVisor - 1);
 });
 
 // =====================================
@@ -357,7 +151,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 destino.includes("index.html") ||
                 destino.includes("canciones.html") ||
                 destino.includes("videoteca.html") ||
-                destino.includes("noticias.html")
+                destino.includes("noticias.html") ||
+                destino.includes("galeria.html")
             ) {
                 if (
                     destino === window.location.href ||
@@ -813,7 +608,7 @@ async function probarEmailJS() {
 }
 
 // ============================================================
-// INICIALIZAR REGISTRO Y GALERÍA AL CARGAR LA PÁGINA
+// INICIALIZAR REGISTRO AL CARGAR LA PÁGINA
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -824,17 +619,5 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(cargarEventosRegistro, 500);
     } else {
         console.warn('⚠️ No se encontró el select de eventos en la página');
-    }
-
-    if (document.getElementById('galeriaGrid')) {
-        console.log('✅ Galería encontrada, cargando...');
-        cargarGaleria('todas');
-
-        document.querySelectorAll('.cat-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                const categoria = this.dataset.categoria;
-                cargarGaleria(categoria);
-            });
-        });
     }
 });

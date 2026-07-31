@@ -177,7 +177,7 @@
 
 
 
-    <!-- Estilos adicionales para menú scroll horizontal y galería -->
+    <!-- Estilos adicionales para menú scroll horizontal -->
     <style>
         /* =====================================
            MENÚ CON SCROLL HORIZONTAL - LETRAS MÁS GRANDES
@@ -232,116 +232,7 @@
             font-weight: 600;
         }
 
-        /* =====================================
-           GALERÍA MEJORADA - CON FIX PARA MÓVIL
-           ===================================== */
-        .galeria-categorias {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-
-        .galeria-categorias .cat-btn {
-            padding: 10px 24px;
-            background: #1c1c1c;
-            border: 2px solid #333;
-            border-radius: 30px;
-            color: #aaa;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .galeria-categorias .cat-btn:hover {
-            border-color: #ffcc00;
-            color: #fff;
-        }
-
-        .galeria-categorias .cat-btn.active {
-            background: #ffcc00;
-            color: #000;
-            border-color: #ffcc00;
-        }
-
-        .galeria-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-
-        .foto {
-            height: 280px;
-            border-radius: 16px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-            cursor: pointer;
-            transition: all 0.4s ease;
-            background: #1a1a1a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .foto img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-            display: block;
-        }
-
-        .foto:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 15px 35px rgba(255, 204, 0, 0.2);
-        }
-
-        .foto:hover img {
-            transform: scale(1.08);
-        }
-
-        .foto .foto-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 20px 15px 15px;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
-        .foto:hover .foto-overlay {
-            opacity: 1;
-        }
-
-        .foto .foto-overlay span {
-            color: #fff;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .galeria-vacia {
-            text-align: center;
-            color: #666;
-            padding: 60px 20px;
-            font-size: 1.1rem;
-        }
-
         @media (max-width: 900px) {
-            .galeria-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 16px;
-            }
-
-            .foto {
-                height: 240px;
-            }
 
             .menu li a,
             .menu li span {
@@ -351,177 +242,11 @@
         }
 
         @media (max-width: 600px) {
-            .galeria-grid {
-                display: flex !important;
-                flex-direction: column;
-                gap: 16px;
-                padding: 0 4px;
-            }
-
-            .foto {
-                height: 280px !important;
-                width: 100% !important;
-                border-radius: 14px;
-                min-height: 280px;
-            }
-
-            .foto img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-
-            .galeria-categorias .cat-btn {
-                padding: 8px 16px;
-                font-size: 0.8rem;
-            }
 
             .menu li a,
             .menu li span {
                 font-size: 0.8rem;
                 padding: 6px 12px;
-            }
-        }
-
-        /* =====================================
-           VISOR DE GALERÍA MEJORADO
-           ===================================== */
-        .visor {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, .95);
-            backdrop-filter: blur(8px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
-            z-index: 99999;
-            animation: fadeVisor .25s ease;
-        }
-
-        .visor.active {
-            display: flex;
-        }
-
-        .visor img {
-            max-width: 90vw;
-            max-height: 85vh;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-            border-radius: 12px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, .6);
-            animation: zoomEntrada .35s ease;
-        }
-
-        .visor .cerrar-visor {
-            position: absolute;
-            top: 25px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            border: none;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, .12);
-            color: white;
-            font-size: 2rem;
-            cursor: pointer;
-            transition: .3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .visor .cerrar-visor:hover {
-            background: #ffcc00;
-            color: #000;
-        }
-
-        .visor .flecha {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 55px;
-            height: 55px;
-            border: none;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, .12);
-            color: white;
-            font-size: 1.8rem;
-            cursor: pointer;
-            transition: .3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .visor .flecha:hover {
-            background: #ffcc00;
-            color: #000;
-        }
-
-        .visor .flecha-izq {
-            left: 30px;
-        }
-
-        .visor .flecha-der {
-            right: 30px;
-        }
-
-        .visor .contador-visor {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, .6);
-            padding: 10px 20px;
-            border-radius: 30px;
-            color: white;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        @keyframes fadeVisor {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes zoomEntrada {
-            from {
-                opacity: 0;
-                transform: scale(.85);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        @media (max-width: 700px) {
-            .visor .flecha {
-                width: 45px;
-                height: 45px;
-                font-size: 1.4rem;
-            }
-
-            .visor .cerrar-visor {
-                width: 45px;
-                height: 45px;
-                font-size: 1.6rem;
-            }
-
-            .visor .flecha-izq {
-                left: 15px;
-            }
-
-            .visor .flecha-der {
-                right: 15px;
             }
         }
 
@@ -783,7 +508,7 @@
 
                 <li><a href="#eventos">Eventos</a></li>
 
-                <li><a href="#galeria">Galería</a></li>
+                <li><a href="galeria.html">Galería</a></li>
 
                 <li><a href="#musica">Lanzamientos</a></li>
 
@@ -1094,39 +819,6 @@
     </section>
 
 
-
-    <!-- =====================================
-         GALERÍA MEJORADA CON CATEGORÍAS
-    ===================================== -->
-    <section id="galeria" class="animar">
-
-        <div class="contenedor">
-
-            <div class="titulo-seccion">
-
-                <span>Momentos</span>
-
-                <h2>Galería</h2>
-
-            </div>
-
-            <!-- Categorías -->
-            <div class="galeria-categorias" id="galeriaCategorias">
-                <button class="cat-btn active" data-categoria="todas">📸 Todas</button>
-                <button class="cat-btn" data-categoria="vocho">🚗 Sesión Vocho</button>
-                <button class="cat-btn" data-categoria="disco">🎵 Sesión Disco Cumbias</button>
-                <button class="cat-btn" data-categoria="lanzamiento">🎸 Cumbia Salvaje</button>
-                <!-- <button class="cat-btn" data-categoria="eventos">🎤 Eventos</button> -->
-            </div>
-
-            <div class="galeria-grid" id="galeriaGrid">
-                <!-- Las fotos se cargan desde JavaScript -->
-            </div>
-
-        </div>
-
-    </section>
-
     <!-- =====================================
          SECCIÓN LANZAMIENTOS MEJORADA
     ===================================== -->
@@ -1392,36 +1084,6 @@
 
     </div>
 
-
-    <!-- ==========================
-     VISOR DE GALERÍA MEJORADO
-========================== -->
-    <div id="visor-galeria" class="visor">
-
-        <button id="cerrar-galeria" class="cerrar-visor">
-            &times;
-        </button>
-
-        <button id="foto-anterior" class="flecha flecha-izq">
-            &#10094;
-        </button>
-
-        <img id="imagen-galeria" src="" alt="Foto ampliada">
-
-        <button id="foto-siguiente" class="flecha flecha-der">
-            &#10095;
-        </button>
-
-        <div class="contador-visor">
-
-            <span id="foto-actual">1</span>
-            /
-            <span id="total-fotos">0</span>
-
-        </div>
-
-    </div>
-
     <!-- Pantalla de transición -->
     <div id="transicion">
         <img src="img/transicion.gif" alt="Transición">
@@ -1438,23 +1100,6 @@
 
     <script src="js/script.js"></script>
     <script src="js/eventos.js"></script>
-
-    <!-- ============================================= -->
-    <!-- DESACTIVAR TRANSICIÓN PARA "VER REPORTAJE"    -->
-    <!-- ============================================= -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var enlaceReportaje = document.getElementById('enlace-reportaje');
-            if (enlaceReportaje) {
-                enlaceReportaje.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    var destino = this.href;
-                    window.location.href = destino;
-                    return false;
-                });
-            }
-        });
-    </script>
 
 </body>
 
