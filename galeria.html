@@ -2,627 +2,324 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Galería Tencha</title>
 
-    <title>Galería de Fotos | Los Hijos de Tencha</title>
-
-    <meta name="description"
-        content="Galería de fotos oficial de Los Hijos de Tencha. Sesiones de fotos, conciertos, lanzamientos y momentos especiales de la banda costarricense.">
-
-    <link rel="canonical" href="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/galeria.html">
-
-    <meta property="og:title" content="Galería de Fotos | Los Hijos de Tencha">
-    <meta property="og:description"
-        content="Galería de fotos oficial de Los Hijos de Tencha. Sesiones de fotos, conciertos y momentos especiales.">
-    <meta property="og:image" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/img/hero.webp">
-    <meta property="og:url" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/galeria.html">
-    <meta property="og:type" content="website">
-    <meta property="og:locale" content="es_CR">
-    <meta property="og:site_name" content="Los Hijos de Tencha">
-
-    <link rel="stylesheet" href="css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-    <!-- GOOGLE ANALYTICS -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YNRK4G09LN"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-        gtag('config', 'G-YNRK4G09LN');
-    </script>
+    <!-- Firebase SDK (solo Firestore) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
 
     <style>
-        /* =====================================
-           MENÚ CON SCROLL HORIZONTAL
-           ===================================== */
-        .menu {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            white-space: nowrap;
-            padding: 8px 0;
-            scrollbar-width: thin;
-            scrollbar-color: #ffcc00 transparent;
-            -webkit-overflow-scrolling: touch;
-            scroll-behavior: smooth;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .menu::-webkit-scrollbar {
-            height: 4px;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            padding: 2rem 1rem;
         }
 
-        .menu::-webkit-scrollbar-track {
-            background: transparent;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        .menu::-webkit-scrollbar-thumb {
-            background: #ffcc00;
-            border-radius: 4px;
-        }
-
-        .menu li {
-            flex-shrink: 0;
-        }
-
-        .menu li a,
-        .menu li span {
-            padding: 8px 18px;
-            font-size: 0.95rem;
-            white-space: nowrap;
-            display: block;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-        }
-
-        .menu li a:hover {
-            background: #ffcc00;
-            color: #000;
-            border-radius: 20px;
-        }
-
-        .menu-activo {
-            color: #ffcc00 !important;
-            font-weight: 600;
-        }
-
-        @media (max-width: 900px) {
-
-            .menu li a,
-            .menu li span {
-                font-size: 0.85rem;
-                padding: 6px 14px;
-            }
-        }
-
-        @media (max-width: 600px) {
-
-            .menu li a,
-            .menu li span {
-                font-size: 0.8rem;
-                padding: 6px 12px;
-            }
-        }
-
-        /* =====================================
-           HERO GALERÍA - ENCABEZADO CENTRADO
-           ===================================== */
-        .hero-galeria {
-            min-height: 50vh;
-            background:
-                linear-gradient(rgba(0, 0, 0, .65), rgba(0, 0, 0, .75)),
-                url("../img/hero.webp");
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .titulo-galeria {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+        .header {
             text-align: center;
-            padding: 60px 20px;
+            margin-bottom: 2.5rem;
         }
 
-        .titulo-galeria span {
-            color: #ffcc00;
-            letter-spacing: 3px;
+        .header h1 {
+            font-size: 2.8rem;
+            color: #1a1a2e;
+            letter-spacing: 2px;
+            font-weight: 300;
+        }
+
+        .header h1 span {
             font-weight: 700;
-            font-size: 0.9rem;
+            color: #e94560;
+        }
+
+        .header p {
+            color: #555;
+            margin-top: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .upload-section {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 1.2rem;
+        }
+
+        .upload-section .field {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .upload-section label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.3rem;
             text-transform: uppercase;
-            margin-bottom: 10px;
+            letter-spacing: 0.5px;
         }
 
-        .titulo-galeria h1 {
-            font-size: 3.5rem;
-            margin: 10px 0 15px;
-            line-height: 1.2;
-            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        .upload-section input[type="url"],
+        .upload-section input[type="text"] {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            background: #fafafa;
         }
 
-        .titulo-galeria p {
-            font-size: 1.2rem;
-            max-width: 700px;
-            color: #ddd;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        .upload-section input:focus {
+            border-color: #e94560;
+            outline: none;
+            background: white;
         }
 
-        @media (max-width: 900px) {
-            .titulo-galeria h1 {
-                font-size: 2.8rem;
-            }
-
-            .titulo-galeria p {
-                font-size: 1rem;
-            }
+        .upload-section .btn-upload {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 0.7rem 2.2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.25s;
+            height: 47px;
+            white-space: nowrap;
         }
 
-        @media (max-width: 600px) {
-            .hero-galeria {
-                min-height: 40vh;
-            }
-
-            .titulo-galeria {
-                padding: 40px 16px;
-            }
-
-            .titulo-galeria h1 {
-                font-size: 2.2rem;
-            }
-
-            .titulo-galeria p {
-                font-size: 0.95rem;
-                padding: 0 10px;
-            }
-
-            .titulo-galeria span {
-                font-size: 0.75rem;
-            }
+        .upload-section .btn-upload:hover {
+            background: #c73652;
+            transform: scale(1.02);
         }
 
-        /* =====================================
-           GALERÍA - ESTILOS PROPIOS
-           ===================================== */
-        .galeria-grid {
+        .upload-section .btn-upload:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status {
+            padding: 0.7rem 1.2rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status.success {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            display: block;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.loading {
+            display: block;
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+
+        .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.8rem;
         }
 
-        .foto-item {
-            height: 280px;
+        .gallery-item {
+            background: white;
             border-radius: 16px;
             overflow: hidden;
-            position: relative;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-            cursor: pointer;
-            transition: all 0.4s ease;
-            background: #2a2a2a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .foto-item img {
+        .gallery-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .gallery-item .image-wrapper {
+            width: 100%;
+            padding-top: 75%;
+            position: relative;
+            background: #e9ecef;
+            overflow: hidden;
+        }
+
+        .gallery-item .image-wrapper img {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
-            display: block;
+            transition: 0.3s;
         }
 
-        .foto-item:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 15px 35px rgba(255, 204, 0, 0.2);
+        .gallery-item:hover .image-wrapper img {
+            transform: scale(1.03);
         }
 
-        .foto-item:hover img {
-            transform: scale(1.08);
+        .gallery-item .info {
+            padding: 1rem 1.2rem 1.2rem;
         }
 
-        .foto-item .foto-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 20px 15px 15px;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
-        .foto-item:hover .foto-overlay {
-            opacity: 1;
-        }
-
-        .foto-item .foto-overlay span {
-            color: #fff;
-            font-size: 0.85rem;
-            font-weight: 500;
-            display: block;
-            text-align: center;
-        }
-
-        .galeria-vacia {
-            text-align: center;
-            color: #666;
-            padding: 60px 20px;
-            font-size: 1.1rem;
-            grid-column: 1 / -1;
-        }
-
-        .galeria-categorias {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 35px;
-        }
-
-        .galeria-categorias .cat-btn {
-            padding: 10px 24px;
-            background: #1c1c1c;
-            border: 2px solid #333;
-            border-radius: 30px;
-            color: #aaa;
-            font-size: 0.9rem;
+        .gallery-item .info .title {
             font-weight: 600;
+            font-size: 1.05rem;
+            color: #1a1a2e;
+            margin-bottom: 0.2rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .gallery-item .info .date {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .gallery-item .btn-delete {
+            background: none;
+            border: none;
+            color: #dc3545;
+            font-size: 0.8rem;
             cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Poppins', sans-serif;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            transition: 0.2s;
+            margin-top: 0.4rem;
+            font-weight: 500;
         }
 
-        .galeria-categorias .cat-btn:hover {
-            border-color: #ffcc00;
-            color: #fff;
-            transform: translateY(-2px);
+        .gallery-item .btn-delete:hover {
+            background: #dc3545;
+            color: white;
         }
 
-        .galeria-categorias .cat-btn.active {
-            background: #ffcc00;
-            color: #000;
-            border-color: #ffcc00;
+        .empty-message {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #888;
+            font-size: 1.2rem;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
         }
 
-        /* RESPONSIVE GALERÍA */
-        @media (max-width: 900px) {
-            .galeria-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 16px;
-            }
+        .empty-message span {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
 
-            .foto-item {
-                height: 240px;
-            }
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .info-box strong {
+            color: #0d47a1;
         }
 
         @media (max-width: 600px) {
-            .galeria-grid {
-                display: flex !important;
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .upload-section {
                 flex-direction: column;
-                gap: 16px;
-                padding: 0 4px;
+                align-items: stretch;
             }
 
-            .foto-item {
-                height: 280px !important;
-                width: 100% !important;
-                border-radius: 14px;
-                min-height: 280px;
-            }
-
-            .foto-item img {
+            .upload-section .btn-upload {
                 width: 100%;
-                height: 100%;
-                object-fit: cover;
             }
 
-            .galeria-categorias .cat-btn {
-                padding: 8px 16px;
-                font-size: 0.8rem;
+            .gallery-grid {
+                grid-template-columns: 1fr;
             }
-        }
-
-        /* =====================================
-           VISOR DE GALERÍA MEJORADO
-           ===================================== */
-        .visor {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, .95);
-            backdrop-filter: blur(8px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
-            z-index: 99999;
-            animation: fadeVisor .25s ease;
-        }
-
-        .visor.active {
-            display: flex;
-        }
-
-        .visor img {
-            max-width: 90vw;
-            max-height: 85vh;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-            border-radius: 12px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, .6);
-            animation: zoomEntrada .35s ease;
-        }
-
-        .visor .cerrar-visor {
-            position: absolute;
-            top: 25px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            border: none;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, .12);
-            color: white;
-            font-size: 2rem;
-            cursor: pointer;
-            transition: .3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .visor .cerrar-visor:hover {
-            background: #ffcc00;
-            color: #000;
-        }
-
-        .visor .flecha {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 55px;
-            height: 55px;
-            border: none;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, .12);
-            color: white;
-            font-size: 1.8rem;
-            cursor: pointer;
-            transition: .3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .visor .flecha:hover {
-            background: #ffcc00;
-            color: #000;
-        }
-
-        .visor .flecha-izq {
-            left: 30px;
-        }
-
-        .visor .flecha-der {
-            right: 30px;
-        }
-
-        .visor .contador-visor {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, .6);
-            padding: 10px 20px;
-            border-radius: 30px;
-            color: white;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        @keyframes fadeVisor {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes zoomEntrada {
-            from {
-                opacity: 0;
-                transform: scale(.85);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        @media (max-width: 700px) {
-            .visor .flecha {
-                width: 45px;
-                height: 45px;
-                font-size: 1.4rem;
-            }
-
-            .visor .cerrar-visor {
-                width: 45px;
-                height: 45px;
-                font-size: 1.6rem;
-            }
-
-            .visor .flecha-izq {
-                left: 15px;
-            }
-
-            .visor .flecha-der {
-                right: 15px;
-            }
-        }
-
-        .animar {
-            opacity: 0;
-            transform: translateY(50px) scale(0.95);
-            transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
-                transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        .animar.visible {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-
-        /* =====================================
-           LOADING / ERROR
-           ===================================== */
-        .galeria-loading {
-            text-align: center;
-            color: #aaa;
-            padding: 60px 20px;
-            font-size: 1.2rem;
-            grid-column: 1 / -1;
-        }
-
-        .galeria-loading i {
-            font-size: 2rem;
-            margin-bottom: 15px;
-            display: block;
-            color: #ffcc00;
-        }
-
-        .galeria-error {
-            text-align: center;
-            color: #d32f2f;
-            padding: 60px 20px;
-            font-size: 1.1rem;
-            grid-column: 1 / -1;
-        }
-
-        .galeria-error i {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            display: block;
         }
     </style>
 </head>
 
 <body>
 
-    <header class="hero-galeria">
-        <nav>
-            <a href="index.html" class="logo">
-                <img src="img/logo.webp" alt="Los Hijos de Tencha">
-            </a>
-            <button id="menu-btn" class="menu-btn">
-                <img src="img/menu-icono.webp" alt="Menú">
-                <span>Menú</span>
-            </button>
-            <ul class="menu">
-                <li><a href="index.html">Inicio</a></li>
-                <li><a href="index.html#banda">La Banda</a></li>
-                <li><a href="index.html#eventos">Eventos</a></li>
-                <li><span class="menu-activo">Galería</span></li>
-                <li><a href="index.html#musica">Lanzamientos</a></li>
-                <li><a href="canciones.html">Cancionero</a></li>
-                <li><a href="videoteca.html">Videos</a></li>
-                <li><a href="noticias.html">Tencha Noticias</a></li>
-                <li><a href="index.html#integrantes">Integrantes</a></li>
-                <li><a href="index.html#tienda">Tienda</a></li>
-                <li><a href="index.html#contacto">Contacto</a></li>
-                <li><a href="admin/" style="color: #ffcc00; font-weight: 700;">⚙️ Admin</a></li>
-            </ul>
-        </nav>
-        <div class="titulo-galeria">
-            <span>LOS HIJOS DE TENCHA</span>
-            <h1>Galería de Fotos</h1>
-            <p>Explora las sesiones de fotos, conciertos y momentos especiales de la banda.</p>
+    <div class="container">
+
+        <div class="header">
+            <h1>📸 <span>Galería</span> Tencha</h1>
+            <p>Sube imágenes usando URLs (Imgur, Google Drive, etc.)</p>
         </div>
-    </header>
 
-    <section class="galeria-seccion animar">
-        <div class="contenedor">
-            <div class="titulo-seccion">
-                <span>MOMENTOS</span>
-                <h2>Nuestra Galería</h2>
-            </div>
-
-            <!-- Categorías -->
-            <div class="galeria-categorias" id="galeriaCategorias">
-                <button class="cat-btn active" data-categoria="todas">📸 Todas</button>
-                <button class="cat-btn" data-categoria="vocho">🚗 Sesión Vocho</button>
-                <button class="cat-btn" data-categoria="disco">🎵 Sesión Disco Cumbias</button>
-                <button class="cat-btn" data-categoria="lanzamiento">🎸 Cumbia Salvaje</button>
-            </div>
-
-            <div class="galeria-grid" id="galeriaGrid">
-                <!-- Estado de carga inicial -->
-                <div class="galeria-loading" id="galeriaLoading">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    Cargando fotos...
-                </div>
-            </div>
+        <div class="info-box">
+            <strong>📌 ¿Cómo obtener una URL de imagen?</strong><br>
+            1. Sube tu imagen a <a href="https://imgur.com/upload" target="_blank">Imgur</a> (gratis, sin cuenta
+            necesaria)<br>
+            2. Copia la URL directa de la imagen (termina en .jpg, .png, etc.)<br>
+            3. Pégala aquí y dale un título
         </div>
-    </section>
 
-    <footer>
-        <img src="img/logo.webp" alt="Logo Los Hijos de Tencha">
-        <p>Los Hijos de Tencha © 2026</p>
-        <p class="credito-web">Diseñado por <a href="https://www.instagram.com/tavo_musico" target="_blank"
-                rel="noopener noreferrer">Tavo Músico</a></p>
-    </footer>
+        <div id="statusMessage" class="status"></div>
 
-    <button id="subir"><i class="fa-solid fa-arrow-up"></i></button>
-
-    <!-- ==========================
-         VISOR DE GALERÍA
-    ========================== -->
-    <div id="visor-galeria" class="visor">
-        <button id="cerrar-galeria" class="cerrar-visor">&times;</button>
-        <button id="foto-anterior" class="flecha flecha-izq">&#10094;</button>
-        <img id="imagen-galeria" src="" alt="Foto ampliada">
-        <button id="foto-siguiente" class="flecha flecha-der">&#10095;</button>
-        <div class="contador-visor">
-            <span id="foto-actual">1</span>
-            /
-            <span id="total-fotos">0</span>
+        <div class="upload-section">
+            <div class="field">
+                <label for="urlInput">🔗 URL de la imagen</label>
+                <input type="url" id="urlInput" placeholder="https://i.imgur.com/ejemplo.jpg" />
+            </div>
+            <div class="field">
+                <label for="titleInput">🏷️ Título (opcional)</label>
+                <input type="text" id="titleInput" placeholder="Mi foto..." maxlength="60" />
+            </div>
+            <button class="btn-upload" id="uploadBtn">Agregar imagen</button>
         </div>
+
+        <div id="galleryGrid" class="gallery-grid">
+            <!-- Las imágenes se cargarán aquí desde Firestore -->
+        </div>
+
     </div>
 
-    <!-- Pantalla de transición -->
-    <div id="transicion">
-        <img src="img/transicion.gif" alt="Transición">
-    </div>
-
-    <!-- ============================================= -->
-    <!-- FIREBASE SDKs                                -->
-    <!-- ============================================= -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
-    <script src="js/script.js"></script>
-    <script src="js/eventos.js"></script>
-
-    <!-- ============================================= -->
-    <!-- SCRIPT ESPECÍFICO PARA GALERÍA CON FIREBASE  -->
-    <!-- ============================================= -->
     <script>
-        // =====================================
-        // CONFIGURACIÓN DE FIREBASE - TU PROYECTO
-        // =====================================
+        // ============================================================
+        //  CONFIGURACIÓN DE FIREBASE
+        // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyABjZX0aNBCiFHm19-xPtQ0XEUYyu2i1vI",
             authDomain: "galeria-tencha-64075.firebaseapp.com",
@@ -632,255 +329,238 @@
             appId: "1:772811330414:web:928a23b3ad80cdaac1277f"
         };
 
-        // Inicializar Firebase si no está ya inicializado
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-
+        // Inicializar Firebase (SOLO Firestore)
+        firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // =====================================
-        // VARIABLES GLOBALES
-        // =====================================
-        let fotosActuales = [];
-        let indiceActualVisor = 0;
-        let categoriaActual = 'todas';
+        // ============================================================
+        //  REFERENCIAS A ELEMENTOS DEL DOM
+        // ============================================================
+        const urlInput = document.getElementById('urlInput');
+        const titleInput = document.getElementById('titleInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const galleryGrid = document.getElementById('galleryGrid');
+        const statusEl = document.getElementById('statusMessage');
 
-        // =====================================
-        // CARGAR FOTOS DESDE FIREBASE
-        // =====================================
-        async function cargarFotosDesdeFirebase() {
-            const grid = document.getElementById('galeriaGrid');
+        // ============================================================
+        //  FUNCIONES AUXILIARES
+        // ============================================================
+        function showStatus(message, type = 'loading') {
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => {
+                    statusEl.className = 'status';
+                }, 5000);
+            }
+        }
+
+        function clearStatus() {
+            statusEl.className = 'status';
+        }
+
+        // ============================================================
+        //  VALIDAR URL DE IMAGEN
+        // ============================================================
+        function isValidImageUrl(url) {
+            // Verificar que sea una URL válida y termine en extensión de imagen
+            const imageExtensions = /\.(jpg|jpeg|png|gif|webp|bmp|svg)(\?.*)?$/i;
+            try {
+                const urlObj = new URL(url);
+                return imageExtensions.test(urlObj.pathname) || url.includes('imgur.com');
+            } catch {
+                return false;
+            }
+        }
+
+        // ============================================================
+        //  AGREGAR IMAGEN A FIRESTORE
+        // ============================================================
+        async function addImage(url, title) {
+            if (!url.trim()) {
+                showStatus('❌ Por favor ingresa una URL de imagen.', 'error');
+                return;
+            }
+
+            if (!isValidImageUrl(url)) {
+                showStatus('❌ URL inválida. Asegúrate de que termine en .jpg, .png, etc.', 'error');
+                return;
+            }
+
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = 'Agregando...';
+            showStatus('⏳ Agregando imagen...', 'loading');
 
             try {
-                console.log('🔄 Cargando fotos desde Firebase...');
+                // Verificar que la imagen existe (cargarla)
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                await new Promise((resolve, reject) => {
+                    img.onload = resolve;
+                    img.onerror = () => reject(new Error('La imagen no se pudo cargar. Verifica la URL.'));
+                    img.src = url;
+                });
 
-                const snapshot = await db.collection('galeria_fotos')
-                    .where('activo', '==', true)
-                    .orderBy('orden')
+                // Guardar en Firestore
+                const docRef = await db.collection('imagenes').add({
+                    title: title.trim() || 'Sin título',
+                    url: url.trim(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Agregar al DOM
+                addImageToDOM(docRef.id, {
+                    title: title.trim() || 'Sin título',
+                    url: url.trim(),
+                    createdAt: new Date().toISOString()
+                });
+
+                showStatus('✅ Imagen agregada con éxito!', 'success');
+                urlInput.value = '';
+                titleInput.value = '';
+
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus('❌ ' + error.message, 'error');
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = 'Agregar imagen';
+            }
+        }
+
+        // ============================================================
+        //  ELIMINAR IMAGEN
+        // ============================================================
+        async function deleteImage(docId, element) {
+            if (!confirm('¿Eliminar esta imagen?')) return;
+
+            try {
+                await db.collection('imagenes').doc(docId).delete();
+                element.remove();
+                showStatus('🗑️ Imagen eliminada.', 'success');
+
+                const items = galleryGrid.querySelectorAll('.gallery-item');
+                if (items.length === 0) {
+                    galleryGrid.innerHTML = `
+                    <div class="empty-message">
+                        <span>🖼️</span>
+                        No hay imágenes aún.<br>¡Agrega tu primera foto!
+                    </div>
+                `;
+                }
+
+            } catch (error) {
+                console.error('Error al eliminar:', error);
+                showStatus('❌ Error al eliminar: ' + error.message, 'error');
+            }
+        }
+
+        // ============================================================
+        //  AGREGAR IMAGEN AL DOM
+        // ============================================================
+        function addImageToDOM(docId, data) {
+            const emptyMsg = galleryGrid.querySelector('.empty-message');
+            if (emptyMsg) emptyMsg.remove();
+
+            const date = data.createdAt ? new Date(data.createdAt).toLocaleDateString('es-ES') : 'Fecha desconocida';
+
+            const item = document.createElement('div');
+            item.className = 'gallery-item';
+            item.dataset.id = docId;
+            item.innerHTML = `
+            <div class="image-wrapper">
+                <img src="${data.url}" alt="${data.title}" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23ddd%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2214%22%3EImagen no disponible%3C/text%3E%3C/svg%3E'" />
+            </div>
+            <div class="info">
+                <div class="title" title="${data.title}">${data.title}</div>
+                <div class="date">📅 ${date}</div>
+                <button class="btn-delete" data-docid="${docId}">🗑️ Eliminar</button>
+            </div>
+        `;
+
+            const deleteBtn = item.querySelector('.btn-delete');
+            deleteBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const docId = this.dataset.docid;
+                deleteImage(docId, item);
+            });
+
+            galleryGrid.appendChild(item);
+        }
+
+        // ============================================================
+        //  CARGAR IMÁGENES DESDE FIRESTORE
+        // ============================================================
+        async function loadGallery() {
+            showStatus('⏳ Cargando galería...', 'loading');
+
+            try {
+                const snapshot = await db.collection('imagenes')
+                    .orderBy('createdAt', 'desc')
                     .get();
 
+                galleryGrid.innerHTML = '';
+
                 if (snapshot.empty) {
-                    grid.innerHTML = `
-                        <div class="galeria-vacia">
-                            📸 No hay fotos disponibles en la galería.
-                        </div>
-                    `;
+                    galleryGrid.innerHTML = `
+                    <div class="empty-message">
+                        <span>🖼️</span>
+                        No hay imágenes aún.<br>¡Agrega tu primera foto!
+                    </div>
+                `;
+                    clearStatus();
                     return;
                 }
 
-                // Construir el objeto de datos desde Firebase
-                const datosFirebase = {};
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    const categoria = data.categoria;
-                    if (!datosFirebase[categoria]) {
-                        datosFirebase[categoria] = {
-                            titulo: data.titulo,
-                            fotos: []
-                        };
-                    }
-                    datosFirebase[categoria].fotos.push(data.url);
+                    addImageToDOM(doc.id, data);
                 });
 
-                // Renderizar la galería
-                renderizarGaleria(datosFirebase, categoriaActual);
+                clearStatus();
 
             } catch (error) {
-                console.error('❌ Error al cargar fotos desde Firebase:', error);
-                grid.innerHTML = `
-                    <div class="galeria-error">
-                        <i class="fas fa-exclamation-circle"></i>
-                        Error al cargar la galería. Por favor, intenta de nuevo.
-                        <br><br>
-                        <small style="color:#666;">${error.message}</small>
-                    </div>
-                `;
+                console.error('Error al cargar galería:', error);
+                showStatus('❌ Error al cargar la galería: ' + error.message, 'error');
+                galleryGrid.innerHTML = `
+                <div class="empty-message" style="color:#721c24;">
+                    <span>⚠️</span>
+                    Error al cargar las imágenes.<br>
+                    Verifica tu conexión o la configuración de Firebase.
+                </div>
+            `;
             }
         }
 
-        // =====================================
-        // RENDERIZAR GALERÍA
-        // =====================================
-        function renderizarGaleria(datos, categoria) {
-            const grid = document.getElementById('galeriaGrid');
-
-            let fotos = [];
-            let tituloCategoria = '';
-
-            if (categoria === 'todas') {
-                Object.keys(datos).forEach(key => {
-                    fotos = fotos.concat(datos[key].fotos);
-                });
-                tituloCategoria = 'Todas las fotos';
-            } else if (datos[categoria]) {
-                fotos = datos[categoria].fotos;
-                tituloCategoria = datos[categoria].titulo;
-            } else {
-                grid.innerHTML = `
-                    <div class="galeria-vacia">
-                        📸 No hay fotos en esta categoría.
-                    </div>
-                `;
-                return;
-            }
-
-            if (fotos.length === 0) {
-                grid.innerHTML = `
-                    <div class="galeria-vacia">
-                        📸 No hay fotos en esta categoría.
-                    </div>
-                `;
-                return;
-            }
-
-            fotosActuales = fotos;
-
-            // Generar HTML
-            grid.innerHTML = fotos.map((foto, index) => {
-                return `
-                    <div class="foto-item" data-index="${index}">
-                        <img src="${foto}" alt="${tituloCategoria}" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='#2a2a2a';">
-                        <div class="foto-overlay">
-                            <span>${tituloCategoria}</span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            // Agregar eventos de click
-            grid.querySelectorAll('.foto-item').forEach(el => {
-                el.addEventListener('click', function () {
-                    const index = parseInt(this.dataset.index);
-                    const img = this.querySelector('img');
-                    if (img && img.src && img.src !== '' && !img.classList.contains('error')) {
-                        abrirVisor(index);
-                    }
-                });
-            });
-
-            // Activar animaciones
-            document.querySelectorAll('.galeria-grid .foto-item').forEach((el, i) => {
-                setTimeout(() => {
-                    el.classList.add('visible');
-                }, 100 + (i * 50));
-            });
-
-            console.log(`✅ Galería renderizada: ${fotos.length} fotos en categoría "${categoria}"`);
-        }
-
-        // =====================================
-        // CAMBIAR CATEGORÍA
-        // =====================================
-        function cambiarCategoria(categoria) {
-            categoriaActual = categoria;
-
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.categoria === categoria);
-            });
-
-            cargarFotosDesdeFirebase();
-        }
-
-        // =====================================
-        // VISOR DE GALERÍA
-        // =====================================
-        const visorGaleria = document.getElementById('visor-galeria');
-        const imagenGaleria = document.getElementById('imagen-galeria');
-        const cerrarGaleria = document.getElementById('cerrar-galeria');
-        const anterior = document.getElementById('foto-anterior');
-        const siguiente = document.getElementById('foto-siguiente');
-        const fotoActual = document.getElementById('foto-actual');
-        const totalFotos = document.getElementById('total-fotos');
-
-        function abrirVisor(index) {
-            if (!visorGaleria || !imagenGaleria) return;
-            if (fotosActuales.length === 0) return;
-
-            const imgSrc = fotosActuales[index];
-            if (!imgSrc) return;
-
-            indiceActualVisor = index;
-            mostrarFotoVisor(indiceActualVisor);
-            visorGaleria.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function mostrarFotoVisor(indice) {
-            if (!imagenGaleria || !fotoActual || !totalFotos) return;
-            if (fotosActuales.length === 0) return;
-
-            if (indice < 0) indice = fotosActuales.length - 1;
-            if (indice >= fotosActuales.length) indice = 0;
-
-            indiceActualVisor = indice;
-            imagenGaleria.src = fotosActuales[indice];
-            fotoActual.textContent = indice + 1;
-            totalFotos.textContent = fotosActuales.length;
-
-            imagenGaleria.style.animation = 'none';
-            setTimeout(() => {
-                imagenGaleria.style.animation = 'zoomEntrada .35s ease';
-            }, 50);
-        }
-
-        function cerrarVisor() {
-            if (visorGaleria) {
-                visorGaleria.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        }
-
-        if (cerrarGaleria) {
-            cerrarGaleria.addEventListener('click', cerrarVisor);
-        }
-
-        if (visorGaleria) {
-            visorGaleria.addEventListener('click', (e) => {
-                if (e.target === visorGaleria) {
-                    cerrarVisor();
-                }
-            });
-        }
-
-        if (anterior) {
-            anterior.addEventListener('click', (e) => {
-                e.stopPropagation();
-                mostrarFotoVisor(indiceActualVisor - 1);
-            });
-        }
-
-        if (siguiente) {
-            siguiente.addEventListener('click', (e) => {
-                e.stopPropagation();
-                mostrarFotoVisor(indiceActualVisor + 1);
-            });
-        }
-
-        document.addEventListener('keydown', (e) => {
-            if (!visorGaleria || !visorGaleria.classList.contains('active')) return;
-            if (e.key === 'Escape') cerrarVisor();
-            if (e.key === 'ArrowRight') mostrarFotoVisor(indiceActualVisor + 1);
-            if (e.key === 'ArrowLeft') mostrarFotoVisor(indiceActualVisor - 1);
+        // ============================================================
+        //  EVENTOS
+        // ============================================================
+        uploadBtn.addEventListener('click', function () {
+            const url = urlInput.value.trim();
+            const title = titleInput.value.trim();
+            addImage(url, title);
         });
 
-        // =====================================
-        // INICIALIZAR
-        // =====================================
-        document.addEventListener('DOMContentLoaded', function () {
-            console.log('🔄 Inicializando galería con Firebase...');
-
-            cargarFotosDesdeFirebase();
-
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const categoria = this.dataset.categoria;
-                    cambiarCategoria(categoria);
-                });
-            });
+        // Subir con Enter
+        urlInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                uploadBtn.click();
+            }
         });
+        titleInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                uploadBtn.click();
+            }
+        });
+
+        // ============================================================
+        //  INICIAR
+        // ============================================================
+        loadGallery();
+
     </script>
-
 </body>
 
 </html>
