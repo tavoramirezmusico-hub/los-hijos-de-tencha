@@ -786,10 +786,10 @@
         });
 
         // =====================================
-        // INICIALIZAR GALERÍA
+        // INICIALIZAR GALERÍA - CON FORZADO PARA MÓVIL
         // =====================================
 
-        document.addEventListener('DOMContentLoaded', function () {
+        function inicializarGaleria() {
             console.log('🔄 Inicializando galería...');
 
             if (document.getElementById('galeriaGrid')) {
@@ -802,8 +802,36 @@
                         cargarGaleria(categoria);
                     });
                 });
+            } else {
+                console.warn('⚠️ No se encontró la galería, reintentando...');
+                // Reintentar después de 500ms
+                setTimeout(inicializarGaleria, 500);
             }
-        });
+        }
+
+        // Esperar a que el DOM esté listo
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function () {
+                // Esperar un poco más para móviles
+                setTimeout(inicializarGaleria, 300);
+            });
+        } else {
+            // Si el DOM ya está cargado, ejecutar directamente
+            setTimeout(inicializarGaleria, 300);
+        }
+
+        // Forzar recarga en móviles - detectar si es móvil y recargar si es necesario
+        if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            console.log('📱 Dispositivo móvil detectado, forzando carga...');
+            // Si la galería no se carga en 2 segundos, reintentar
+            setTimeout(function () {
+                const grid = document.getElementById('galeriaGrid');
+                if (grid && grid.children.length === 0) {
+                    console.log('🔄 Reintentando carga en móvil...');
+                    inicializarGaleria();
+                }
+            }, 2000);
+        }
     </script>
 
 </body>
