@@ -152,7 +152,7 @@
 
         .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.8rem;
         }
 
@@ -258,6 +258,18 @@
             color: #0d47a1;
         }
 
+        .info-box a {
+            color: #0d47a1;
+            font-weight: 600;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
         @media (max-width: 600px) {
             .header h1 {
                 font-size: 2rem;
@@ -292,8 +304,8 @@
             <strong>📌 ¿Cómo obtener una URL de imagen?</strong><br>
             1. Sube tu imagen a <a href="https://imgur.com/upload" target="_blank">Imgur</a> (gratis, sin cuenta
             necesaria)<br>
-            2. Copia la URL directa de la imagen (termina en .jpg, .png, etc.)<br>
-            3. Pégala aquí y dale un título
+            2. Haz clic derecho en la imagen → <strong>"Copiar URL de la imagen"</strong><br>
+            3. Pega la URL aquí y dale un título
         </div>
 
         <div id="statusMessage" class="status"></div>
@@ -307,11 +319,15 @@
                 <label for="titleInput">🏷️ Título (opcional)</label>
                 <input type="text" id="titleInput" placeholder="Mi foto..." maxlength="60" />
             </div>
-            <button class="btn-upload" id="uploadBtn">Agregar imagen</button>
+            <button class="btn-upload" id="uploadBtn">➕ Agregar imagen</button>
         </div>
 
         <div id="galleryGrid" class="gallery-grid">
             <!-- Las imágenes se cargarán aquí desde Firestore -->
+        </div>
+
+        <div class="footer">
+            © 2026 Galería Tencha - Hecho con ❤️ y Firebase
         </div>
 
     </div>
@@ -363,11 +379,14 @@
         //  VALIDAR URL DE IMAGEN
         // ============================================================
         function isValidImageUrl(url) {
-            // Verificar que sea una URL válida y termine en extensión de imagen
-            const imageExtensions = /\.(jpg|jpeg|png|gif|webp|bmp|svg)(\?.*)?$/i;
             try {
                 const urlObj = new URL(url);
-                return imageExtensions.test(urlObj.pathname) || url.includes('imgur.com');
+                // Verificar extensiones de imagen
+                const imageExtensions = /\.(jpg|jpeg|png|gif|webp|bmp|svg)(\?.*)?$/i;
+                if (imageExtensions.test(urlObj.pathname)) return true;
+                // Verificar si es de imgur (las URLs de imgur no siempre tienen extensión)
+                if (url.includes('imgur.com') || url.includes('i.imgur.com')) return true;
+                return false;
             } catch {
                 return false;
             }
@@ -383,21 +402,30 @@
             }
 
             if (!isValidImageUrl(url)) {
-                showStatus('❌ URL inválida. Asegúrate de que termine en .jpg, .png, etc.', 'error');
+                showStatus('❌ URL inválida. Asegúrate de que sea una URL de imagen válida.', 'error');
                 return;
             }
 
             uploadBtn.disabled = true;
-            uploadBtn.textContent = 'Agregando...';
-            showStatus('⏳ Agregando imagen...', 'loading');
+            uploadBtn.textContent = '⏳ Agregando...';
+            showStatus('⏳ Verificando imagen...', 'loading');
 
             try {
-                // Verificar que la imagen existe (cargarla)
+                // Verificar que la imagen existe
                 const img = new Image();
                 img.crossOrigin = 'anonymous';
                 await new Promise((resolve, reject) => {
-                    img.onload = resolve;
-                    img.onerror = () => reject(new Error('La imagen no se pudo cargar. Verifica la URL.'));
+                    const timeout = setTimeout(() => {
+                        reject(new Error('La imagen tardó demasiado en cargarse.'));
+                    }, 10000);
+                    img.onload = () => {
+                        clearTimeout(timeout);
+                        resolve();
+                    };
+                    img.onerror = () => {
+                        clearTimeout(timeout);
+                        reject(new Error('No se pudo cargar la imagen. Verifica la URL.'));
+                    };
                     img.src = url;
                 });
 
@@ -424,7 +452,7 @@
                 showStatus('❌ ' + error.message, 'error');
             } finally {
                 uploadBtn.disabled = false;
-                uploadBtn.textContent = 'Agregar imagen';
+                uploadBtn.textContent = '➕ Agregar imagen';
             }
         }
 
@@ -432,12 +460,12 @@
         //  ELIMINAR IMAGEN
         // ============================================================
         async function deleteImage(docId, element) {
-            if (!confirm('¿Eliminar esta imagen?')) return;
+            if (!confirm('¿Estás seguro de que quieres eliminar esta imagen?')) return;
 
             try {
                 await db.collection('imagenes').doc(docId).delete();
                 element.remove();
-                showStatus('🗑️ Imagen eliminada.', 'success');
+                showStatus('🗑️ Imagen eliminada correctamente.', 'success');
 
                 const items = galleryGrid.querySelectorAll('.gallery-item');
                 if (items.length === 0) {
@@ -459,17 +487,23 @@
         //  AGREGAR IMAGEN AL DOM
         // ============================================================
         function addImageToDOM(docId, data) {
+            // Si existe el mensaje vacío, lo removemos
             const emptyMsg = galleryGrid.querySelector('.empty-message');
             if (emptyMsg) emptyMsg.remove();
 
-            const date = data.createdAt ? new Date(data.createdAt).toLocaleDateString('es-ES') : 'Fecha desconocida';
+            const date = data.createdAt ? new Date(data.createdAt).toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }) : 'Fecha desconocida';
 
             const item = document.createElement('div');
             item.className = 'gallery-item';
             item.dataset.id = docId;
             item.innerHTML = `
             <div class="image-wrapper">
-                <img src="${data.url}" alt="${data.title}" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23ddd%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2214%22%3EImagen no disponible%3C/text%3E%3C/svg%3E'" />
+                <img src="${data.url}" alt="${data.title}" loading="lazy" 
+                     onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f8f9fa%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2216%22%3E❌ Imagen no disponible%3C/text%3E%3C/svg%3E'" />
             </div>
             <div class="info">
                 <div class="title" title="${data.title}">${data.title}</div>
@@ -478,6 +512,7 @@
             </div>
         `;
 
+            // Evento para eliminar
             const deleteBtn = item.querySelector('.btn-delete');
             deleteBtn.addEventListener('click', function (e) {
                 e.stopPropagation();
@@ -514,7 +549,10 @@
 
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    addImageToDOM(doc.id, data);
+                    // Si la URL está vacía, no la mostramos
+                    if (data.url) {
+                        addImageToDOM(doc.id, data);
+                    }
                 });
 
                 clearStatus();
@@ -523,10 +561,12 @@
                 console.error('Error al cargar galería:', error);
                 showStatus('❌ Error al cargar la galería: ' + error.message, 'error');
                 galleryGrid.innerHTML = `
-                <div class="empty-message" style="color:#721c24;">
+                <div class="empty-message" style="color:#721c24; border: 2px solid #f5c6cb;">
                     <span>⚠️</span>
                     Error al cargar las imágenes.<br>
                     Verifica tu conexión o la configuración de Firebase.
+                    <br><br>
+                    <small style="font-size:0.8rem;">Error: ${error.message}</small>
                 </div>
             `;
             }
@@ -541,7 +581,7 @@
             addImage(url, title);
         });
 
-        // Subir con Enter
+        // Subir con Enter en cualquier campo
         urlInput.addEventListener('keydown', function (e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -556,9 +596,12 @@
         });
 
         // ============================================================
-        //  INICIAR
+        //  INICIAR APLICACIÓN
         // ============================================================
         loadGallery();
+
+        // Recargar automáticamente cada 30 segundos (opcional)
+        // setInterval(loadGallery, 30000);
 
     </script>
 </body>
