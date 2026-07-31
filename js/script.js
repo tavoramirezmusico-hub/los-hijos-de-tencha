@@ -1,6 +1,6 @@
 // =====================================
 // LOS HIJOS DE TENCHA
-// SCRIPT.JS - VERSIÓN CON RUTAS ABSOLUTAS
+// SCRIPT.JS - RECONSTRUIDO CON RUTAS RELATIVAS
 // =====================================
 
 console.log("Sitio Oficial de Los Hijos de Tencha");
@@ -46,42 +46,40 @@ window.addEventListener("scroll", () => {
 // GALERÍA CON CATEGORÍAS - DATOS
 // =====================================
 
-// Ruta base para las imágenes (AJUSTA ESTA RUTA A LA TUYA)
-const RUTA_BASE = '/los-hijos-de-tencha/';
-
+// USANDO RUTAS RELATIVAS (no absolutas)
 const galeriaDatos = {
     'vocho': {
         titulo: 'Sesión Vocho',
         fotos: [
-            RUTA_BASE + 'img/galeria/foto1.webp',
-            RUTA_BASE + 'img/galeria/foto2.webp',
-            RUTA_BASE + 'img/galeria/foto7.webp',
-            RUTA_BASE + 'img/galeria/foto8.webp',
-            RUTA_BASE + 'img/galeria/foto9.webp',
-            RUTA_BASE + 'img/galeria/foto10.webp',
-            RUTA_BASE + 'img/galeria/foto11.webp',
-            RUTA_BASE + 'img/galeria/foto12.webp',
-            RUTA_BASE + 'img/galeria/foto13.webp',
-            RUTA_BASE + 'img/galeria/foto14.webp',
-            RUTA_BASE + 'img/galeria/foto15.webp',
-            RUTA_BASE + 'img/galeria/foto16.webp'
+            'img/galeria/foto1.webp',
+            'img/galeria/foto2.webp',
+            'img/galeria/foto7.webp',
+            'img/galeria/foto8.webp',
+            'img/galeria/foto9.webp',
+            'img/galeria/foto10.webp',
+            'img/galeria/foto11.webp',
+            'img/galeria/foto12.webp',
+            'img/galeria/foto13.webp',
+            'img/galeria/foto14.webp',
+            'img/galeria/foto15.webp',
+            'img/galeria/foto16.webp'
         ]
     },
     'disco': {
         titulo: 'Sesión Disco Cumbias',
         fotos: [
-            RUTA_BASE + 'img/galeria/foto3.webp',
-            RUTA_BASE + 'img/galeria/foto4.webp',
-            RUTA_BASE + 'img/galeria/foto5.webp',
-            RUTA_BASE + 'img/galeria/foto6.webp'
+            'img/galeria/foto3.webp',
+            'img/galeria/foto4.webp',
+            'img/galeria/foto5.webp',
+            'img/galeria/foto6.webp'
         ]
     },
     'lanzamiento': {
         titulo: 'Cumbia Salvaje - Lanzamiento',
         fotos: [
-            RUTA_BASE + 'img/galeria/lanzamiento/foto1.webp',
-            RUTA_BASE + 'img/galeria/lanzamiento/foto2.webp',
-            RUTA_BASE + 'img/galeria/lanzamiento/foto3.webp'
+            'img/galeria/lanzamiento/foto1.webp',
+            'img/galeria/lanzamiento/foto2.webp',
+            'img/galeria/lanzamiento/foto3.webp'
         ]
     }
 };
@@ -124,7 +122,7 @@ function cargarGaleria(categoria) {
         return;
     }
 
-    // Generar HTML
+    // Generar HTML de la galería
     grid.innerHTML = fotos.map((foto, index) => {
         let titulo = '';
         if (categoria === 'todas') {
