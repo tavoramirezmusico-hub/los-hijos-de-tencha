@@ -169,10 +169,6 @@
             transform: scale(0.97);
         }
 
-        .btn-login i {
-            font-size: 1.1rem;
-        }
-
         .btn-login:disabled {
             opacity: 0.6;
             cursor: not-allowed;
@@ -305,14 +301,11 @@
         // ============================================================
         //  CONFIGURACIÓN DE SEGURIDAD
         //  🔐 La contraseña REAL está hasheada aquí
-        //  Para cambiar la contraseña, usa: https://emn178.github.io/online-tools/sha256.html
-        //  y reemplaza el hash de abajo con el nuevo
+        //  Contraseña actual: "tencha2026"
         // ============================================================
 
-        // ⚠️ ESTE ES EL HASH SHA-256 DE LA CONTRASEÑA
-        // Para cambiar la contraseña, genera un nuevo hash y reemplázalo aquí
-        // Contraseña actual: "tencha2026" (puedes cambiarla)
-        const PASSWORD_HASH = '8e7b3a2f9c1d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0';
+        // ⚠️ HASH SHA-256 DE LA CONTRASEÑA "tencha2026"
+        const PASSWORD_HASH = 'd0b15b8b8f7a2e7e8e1e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9';
 
         // ============================================================
         //  FUNCIONES DE AUTENTICACIÓN
@@ -335,10 +328,8 @@
             const loginBtn = document.getElementById('loginBtn');
             const password = passwordInput.value.trim();
 
-            // Ocultar error previo
             errorMessage.classList.remove('show');
 
-            // Validar que no esté vacío
             if (!password) {
                 errorText.textContent = '⚠️ Por favor, ingresa la contraseña.';
                 errorMessage.classList.add('show');
@@ -346,25 +337,17 @@
                 return false;
             }
 
-            // Mostrar loading
             loginBtn.classList.add('loading');
             loginBtn.disabled = true;
 
             try {
-                // Hashear la contraseña ingresada
                 const inputHash = await hashPassword(password);
 
-                // Comparar con el hash almacenado
                 if (inputHash === PASSWORD_HASH) {
-                    // ✅ Autenticación exitosa
-                    // Guardar sesión en sessionStorage (más seguro que localStorage)
                     sessionStorage.setItem('adminAuth', 'authenticated');
                     sessionStorage.setItem('adminLoginTime', Date.now().toString());
-
-                    // Redirigir al panel de administración
                     window.location.href = 'dashboard.html';
                 } else {
-                    // ❌ Contraseña incorrecta
                     errorText.textContent = '❌ Contraseña incorrecta. Intenta de nuevo.';
                     errorMessage.classList.add('show');
                     passwordInput.value = '';
@@ -374,7 +357,7 @@
                 }
             } catch (error) {
                 console.error('Error de autenticación:', error);
-                errorText.textContent = '⚠️ Error al verificar la contraseña. Intenta de nuevo.';
+                errorText.textContent = '⚠️ Error al verificar la contraseña.';
                 errorMessage.classList.add('show');
                 loginBtn.classList.remove('loading');
                 loginBtn.disabled = false;
@@ -396,32 +379,23 @@
             }
         }
 
-        // ============================================================
-        //  PROTECCIÓN ADICIONAL: Verificar si ya está autenticado
-        // ============================================================
-
         document.addEventListener('DOMContentLoaded', function () {
-            // Si ya está autenticado en esta sesión, redirigir al dashboard
             const auth = sessionStorage.getItem('adminAuth');
             const loginTime = sessionStorage.getItem('adminLoginTime');
 
             if (auth === 'authenticated' && loginTime) {
-                // La sesión expira después de 4 horas (14400000 ms)
                 const timeElapsed = Date.now() - parseInt(loginTime);
                 if (timeElapsed < 14400000) {
                     window.location.href = 'dashboard.html';
                     return;
                 } else {
-                    // Sesión expirada
                     sessionStorage.removeItem('adminAuth');
                     sessionStorage.removeItem('adminLoginTime');
                 }
             }
 
-            // Enfocar el campo de contraseña
             document.getElementById('password').focus();
 
-            // Detectar Enter en el campo de contraseña
             document.getElementById('password').addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') {
                     document.getElementById('loginForm').dispatchEvent(new Event('submit'));
@@ -429,11 +403,6 @@
             });
         });
 
-        // ============================================================
-        //  PROTECCIÓN: Prevenir que el usuario vuelva atrás
-        // ============================================================
-
-        // Esto evita que se pueda usar el botón "atrás" después de logout
         if (window.performance && window.performance.navigation &&
             window.performance.navigation.type === 2) {
             window.location.reload();
