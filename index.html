@@ -180,7 +180,7 @@
     <!-- Estilos adicionales para menú scroll horizontal -->
     <style>
         /* =====================================
-           MENÚ CON SCROLL HORIZONTAL - LETRAS MÁS GRANDES
+           MENÚ CON SCROLL HORIZONTAL
            ===================================== */
         .menu {
             display: flex;
@@ -247,6 +247,88 @@
             .menu li span {
                 font-size: 0.8rem;
                 padding: 6px 12px;
+            }
+        }
+
+        /* =====================================
+           HERO INDEX - MEJORADO (MISMA PROPORCIÓN QUE GALERÍA)
+           ===================================== */
+        .hero {
+            min-height: 100vh;
+            background:
+                linear-gradient(rgba(0, 0, 0, .55), rgba(0, 0, 0, .65)),
+                url("img/hero.webp");
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hero-contenido {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .hero-etiqueta {
+            color: #ffcc00;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            line-height: 1.2;
+            margin: 10px 0 15px;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            color: #ddd;
+            margin-bottom: 35px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        @media (max-width: 900px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+                padding: 0 15px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero {
+                min-height: 100vh;
+            }
+
+            .hero-contenido {
+                padding: 40px 16px;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 0.95rem;
+                padding: 0 10px;
+            }
+
+            .hero-etiqueta {
+                font-size: 0.75rem;
             }
         }
 
@@ -1102,5 +1184,3 @@
     <script src="js/eventos.js"></script>
 
 </body>
-
-</html>

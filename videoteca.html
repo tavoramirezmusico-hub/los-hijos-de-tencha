@@ -44,12 +44,9 @@
         gtag('config', 'G-YNRK4G09LN');
     </script>
 
-    <!-- ============================================= -->
-    <!-- ESTILOS DEL MENÚ UNIFICADO                    -->
-    <!-- ============================================= -->
     <style>
         /* =====================================
-           MENÚ CON SCROLL HORIZONTAL - LETRAS MÁS GRANDES
+           MENÚ CON SCROLL HORIZONTAL
            ===================================== */
         .menu {
             display: flex;
@@ -116,6 +113,86 @@
             .menu li span {
                 font-size: 0.8rem;
                 padding: 6px 12px;
+            }
+        }
+
+        /* =====================================
+           HERO VIDEOTECA - MEJORADO (MISMA PROPORCIÓN QUE GALERÍA)
+           ===================================== */
+        .hero-videoteca {
+            min-height: 50vh;
+            background:
+                linear-gradient(rgba(0, 0, 0, .65), rgba(0, 0, 0, .75)),
+                url("img/hero.webp");
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .titulo-videoteca {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .titulo-videoteca span {
+            color: #ffcc00;
+            letter-spacing: 3px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .titulo-videoteca h1 {
+            font-size: 3.5rem;
+            margin: 10px 0 15px;
+            line-height: 1.2;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .titulo-videoteca p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            color: #ddd;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        @media (max-width: 900px) {
+            .titulo-videoteca h1 {
+                font-size: 2.8rem;
+            }
+
+            .titulo-videoteca p {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero-videoteca {
+                min-height: 40vh;
+            }
+
+            .titulo-videoteca {
+                padding: 40px 16px;
+            }
+
+            .titulo-videoteca h1 {
+                font-size: 2.2rem;
+            }
+
+            .titulo-videoteca p {
+                font-size: 0.95rem;
+                padding: 0 10px;
+            }
+
+            .titulo-videoteca span {
+                font-size: 0.75rem;
             }
         }
 
