@@ -255,27 +255,6 @@
                 font-size: 0.9rem;
             }
         }
-
-        /* DEBUG INFO - solo visible en consola */
-        .debug-info {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 10px;
-            margin-top: 15px;
-            font-size: 0.7rem;
-            color: #666;
-            display: none;
-        }
-
-        .debug-info.show {
-            display: block;
-        }
-
-        .debug-info code {
-            color: #ffcc00;
-            word-break: break-all;
-        }
     </style>
 </head>
 
@@ -311,15 +290,6 @@
             </button>
         </form>
 
-        <!-- Debug info - se muestra temporalmente -->
-        <div class="debug-info" id="debugInfo">
-            <p>🔍 <strong>Debug:</strong></p>
-            <p>Hash esperado: <code
-                    id="debugExpected">d0b15b8b8f7a2e7e8e1e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9</code></p>
-            <p>Hash generado: <code id="debugGenerated">-</code></p>
-            <p>Coinciden: <span id="debugMatch">-</span></p>
-        </div>
-
         <div class="login-footer">
             <a href="../index.html">← Volver al sitio</a>
         </div>
@@ -329,7 +299,7 @@
         // ============================================================
         //  HASH CORRECTO PARA LA CONTRASEÑA "tencha2026"
         // ============================================================
-        const PASSWORD_HASH = 'd0b15b8b8f7a2e7e8e1e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9';
+        const PASSWORD_HASH = '435a4954c470cee2b68da8bee7f879e00db66866b6d4dd7be0af3701e21db53f';
 
         async function hashPassword(password) {
             const encoder = new TextEncoder();
@@ -346,9 +316,6 @@
             const errorMessage = document.getElementById('errorMessage');
             const errorText = document.getElementById('errorText');
             const loginBtn = document.getElementById('loginBtn');
-            const debugInfo = document.getElementById('debugInfo');
-            const debugGenerated = document.getElementById('debugGenerated');
-            const debugMatch = document.getElementById('debugMatch');
             const password = passwordInput.value.trim();
 
             errorMessage.classList.remove('show');
@@ -365,17 +332,6 @@
 
             try {
                 const inputHash = await hashPassword(password);
-
-                // Mostrar debug
-                debugInfo.classList.add('show');
-                debugGenerated.textContent = inputHash;
-                debugMatch.textContent = (inputHash === PASSWORD_HASH) ? '✅ SÍ' : '❌ NO';
-                debugMatch.style.color = (inputHash === PASSWORD_HASH) ? '#00c853' : '#ff4444';
-
-                console.log('🔍 DEBUG:');
-                console.log('  Hash esperado:  ' + PASSWORD_HASH);
-                console.log('  Hash generado:  ' + inputHash);
-                console.log('  Coinciden:     ' + (inputHash === PASSWORD_HASH ? '✅ SÍ' : '❌ NO'));
 
                 if (inputHash === PASSWORD_HASH) {
                     sessionStorage.setItem('adminAuth', 'authenticated');
