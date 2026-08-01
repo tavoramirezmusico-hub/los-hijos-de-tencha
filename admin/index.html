@@ -993,10 +993,9 @@
                     <h1>LOS HIJOS DE <span>TENCHA</span></h1>
                 </div>
                 <div class="header-actions">
-                    <a href="../validador.html" class="btn btn-outline btn-sm"><i class="fa-solid fa-qrcode"></i>
-                        Validador</a>
-                    <a href="#" class="btn btn-secondary btn-sm" onclick="irWeb()"><i class="fa-solid fa-globe"></i>
-                        Web</a>
+                    <a href="#" class="btn btn-outline btn-sm" onclick="salirYRedirigir('../validador.html')"><i
+                            class="fa-solid fa-qrcode"></i> Validador</a>
+                    <a href="../index.html" class="btn btn-secondary btn-sm"><i class="fa-solid fa-globe"></i> Web</a>
                     <button class="btn btn-danger btn-sm" onclick="cerrarSesion()"><i
                             class="fa-solid fa-right-from-bracket"></i> Salir</button>
                 </div>
@@ -1228,11 +1227,11 @@
             }
         }
 
-        function irWeb() {
-            // Cerrar sesión antes de ir a la web pública
+        function salirYRedirigir(destino) {
+            // Cerrar sesión de admin antes de ir al validador
             sessionStorage.removeItem('adminAuth');
             sessionStorage.removeItem('adminLoginTime');
-            window.location.href = '../index.html';
+            window.location.href = destino;
         }
 
         function cerrarSesion() {
