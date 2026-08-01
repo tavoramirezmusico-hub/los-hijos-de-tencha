@@ -212,7 +212,6 @@
             color: #fff;
         }
 
-        /* Loading spinner */
         .spinner {
             display: none;
             width: 20px;
@@ -298,18 +297,7 @@
     </div>
 
     <script>
-        // ============================================================
-        //  CONFIGURACIÓN DE SEGURIDAD
-        //  🔐 La contraseña REAL está hasheada aquí
-        //  Contraseña actual: "tencha2026"
-        // ============================================================
-
-        // ⚠️ HASH SHA-256 DE LA CONTRASEÑA "tencha2026"
         const PASSWORD_HASH = 'd0b15b8b8f7a2e7e8e1e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9';
-
-        // ============================================================
-        //  FUNCIONES DE AUTENTICACIÓN
-        // ============================================================
 
         async function hashPassword(password) {
             const encoder = new TextEncoder();

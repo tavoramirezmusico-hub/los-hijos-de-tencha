@@ -6,20 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Los Hijos de Tencha - Validador</title>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
-    <!-- Librería para escáner QR -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
-        /* =====================================
-           ESTILOS VALIDADOR - LOS HIJOS DE TENCHA
-           ===================================== */
         * {
             margin: 0;
             padding: 0;
@@ -39,7 +31,6 @@
             margin: 0 auto;
         }
 
-        /* ===== LOGIN MODAL ===== */
         .login-overlay {
             display: none;
             position: fixed;
@@ -203,7 +194,6 @@
             color: #fff;
         }
 
-        /* Spinner */
         .spinner-login {
             display: none;
             width: 20px;
@@ -229,7 +219,6 @@
             }
         }
 
-        /* ===== HEADER ===== */
         .header {
             text-align: center;
             padding: 20px 0;
@@ -691,7 +680,6 @@
 
 <body>
 
-    <!-- ===== LOGIN MODAL ===== -->
     <div class="login-overlay active" id="loginOverlay">
         <div class="login-box">
             <img src="img/logo.webp" alt="Los Hijos de Tencha" class="logo-login">
@@ -715,10 +703,8 @@
         </div>
     </div>
 
-    <!-- ===== CONTENIDO PRINCIPAL ===== -->
     <div id="mainContent" style="display:none;">
         <div class="container">
-            <!-- HEADER -->
             <div class="header">
                 <div class="logo-container">
                     <img src="img/logo.webp" alt="Los Hijos de Tencha">
@@ -737,7 +723,6 @@
                 <button onclick="switchTab('lista', this)">📋 Lista</button>
             </div>
 
-            <!-- Tab: Escáner -->
             <div id="tab-escaner" class="tab-content active">
                 <div class="card">
                     <h3>📷 Escanear Código QR</h3>
@@ -768,7 +753,6 @@
                 </div>
             </div>
 
-            <!-- Tab: Lista -->
             <div id="tab-lista" class="tab-content">
                 <div class="card">
                     <h3>📋 Asistentes por Evento</h3>
@@ -800,17 +784,7 @@
     </div>
 
     <script>
-        // ============================================================
-        // CONFIGURACIÓN DE SEGURIDAD - HASH SHA-256
-        // ============================================================
-
-        // ⚠️ ESTE ES EL HASH SHA-256 DE LA CONTRASEÑA
-        // Para cambiar la contraseña, genera un nuevo hash y reemplázalo aquí
-        // Contraseña actual: "" (puedes cambiarla)
         const PASSWORD_HASH = 'd0b15b8b8f7a2e7e8e1e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9';
-        // ============================================================
-        // FUNCIONES DE AUTENTICACIÓN
-        // ============================================================
 
         async function hashPassword(password) {
             const encoder = new TextEncoder();
@@ -845,7 +819,6 @@
                     error.classList.remove('show');
                     document.getElementById('loginOverlay').classList.remove('active');
                     document.getElementById('mainContent').style.display = 'block';
-                    // Guardar sesión con expiración
                     sessionStorage.setItem('validadorAuth', 'authenticated');
                     sessionStorage.setItem('validadorLoginTime', Date.now().toString());
                     iniciarApp();
@@ -886,9 +859,7 @@
             document.getElementById('loginOverlay').classList.add('active');
             document.getElementById('passwordInput').value = '';
             document.getElementById('passwordInput').focus();
-            // Detener escáner si está activo
             if (isScanning) stopScanner();
-            // Ocultar resultado de escaneo
             document.getElementById('resultadoEscaneo').innerHTML = '';
         }
 
@@ -898,7 +869,7 @@
 
             if (auth === 'authenticated' && loginTime) {
                 const timeElapsed = Date.now() - parseInt(loginTime);
-                if (timeElapsed < 14400000) { // 4 horas
+                if (timeElapsed < 14400000) {
                     document.getElementById('loginOverlay').classList.remove('active');
                     document.getElementById('mainContent').style.display = 'block';
                     iniciarApp();
@@ -913,9 +884,6 @@
             return false;
         }
 
-        // ============================================================
-        // CONFIGURACIÓN DE FIREBASE
-        // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyDvp_6UFymZZnqxMyL6yobJ3twLMvVkThw",
             authDomain: "base-entradas-tenchos.firebaseapp.com",
@@ -928,17 +896,10 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // ============================================================
-        // VARIABLES GLOBALES
-        // ============================================================
         let html5QrCode = null;
         let isScanning = false;
         let ultimoEscaneo = null;
         let currentCamera = 'environment';
-
-        // ============================================================
-        // FUNCIONES PRINCIPALES
-        // ============================================================
 
         function iniciarApp() {
             cargarSelectEventos();
@@ -951,7 +912,6 @@
             document.getElementById('tab-' + tab).classList.add('active');
             btn.classList.add('active');
             if (tab === 'lista') cargarSelectEventos();
-            // Si cambiamos a escáner y no está activo, detener
             if (tab !== 'escaner' && isScanning) {
                 stopScanner();
             }
@@ -966,10 +926,6 @@
                 toast.classList.remove('show');
             }, 4000);
         }
-
-        // ============================================================
-        // ESCÁNER
-        // ============================================================
 
         function startScanner() {
             if (isScanning) return;
@@ -1046,13 +1002,7 @@
             }
         }
 
-        function onScanError(err) {
-            // Ignorar errores (son normales mientras busca)
-        }
-
-        // ============================================================
-        // VALIDACIÓN DE ASISTENTES
-        // ============================================================
+        function onScanError(err) { }
 
         async function validarAsistente(asistenteId) {
             try {
@@ -1121,10 +1071,6 @@
                         </div>
                     `;
         }
-
-        // ============================================================
-        // LISTA DE ASISTENTES
-        // ============================================================
 
         async function cargarSelectEventos() {
             try {
@@ -1196,17 +1142,11 @@
             }
         }
 
-        // ============================================================
-        // INICIALIZACIÓN
-        // ============================================================
-
         document.addEventListener('DOMContentLoaded', function () {
-            // Verificar sesión al cargar
             if (!verificarSesion()) {
                 document.getElementById('passwordInput').focus();
             }
 
-            // Enter en el campo de contraseña
             document.getElementById('passwordInput').addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') {
                     verificarPassword();
@@ -1219,10 +1159,6 @@
                 stopScanner();
             }
         });
-
-        // ============================================================
-        // PROTECCIÓN: Prevenir que el usuario vuelva atrás
-        // ============================================================
 
         if (window.performance && window.performance.navigation &&
             window.performance.navigation.type === 2) {
