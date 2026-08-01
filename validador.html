@@ -17,9 +17,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
-        /* =====================================
-           ESTILOS VALIDADOR - LOS HIJOS DE TENCHA
-           ===================================== */
         * {
             margin: 0;
             padding: 0;
@@ -39,7 +36,6 @@
             margin: 0 auto;
         }
 
-        /* ===== LOGIN MODAL ===== */
         .login-overlay {
             display: none;
             position: fixed;
@@ -228,7 +224,6 @@
             }
         }
 
-        /* ===== HEADER ===== */
         .header {
             text-align: center;
             padding: 20px 0;
@@ -690,10 +685,9 @@
 
 <body>
 
-    <!-- ===== LOGIN MODAL ===== -->
     <div class="login-overlay active" id="loginOverlay">
         <div class="login-box">
-            <img src="../img/logo.webp" alt="Los Hijos de Tencha" class="logo-login">
+            <img src="img/logo.webp" alt="Los Hijos de Tencha" class="logo-login">
             <h2>🔐 VALIDADOR</h2>
             <p class="subtitle">Ingresa la contraseña para continuar</p>
             <div class="input-wrapper">
@@ -709,23 +703,21 @@
             </button>
             <div class="error-msg" id="loginError">❌ Contraseña incorrecta</div>
             <div class="login-footer">
-                <a href="../index.html">← Volver al sitio</a>
+                <a href="index.html">← Volver al sitio</a>
             </div>
         </div>
     </div>
 
-    <!-- ===== CONTENIDO PRINCIPAL ===== -->
     <div id="mainContent" style="display:none;">
         <div class="container">
-            <!-- HEADER -->
             <div class="header">
                 <div class="logo-container">
-                    <img src="../img/logo.webp" alt="Los Hijos de Tencha">
+                    <img src="img/logo.webp" alt="Los Hijos de Tencha">
                     <h1>LOS HIJOS DE <span>TENCHA</span></h1>
                 </div>
                 <div class="header-actions">
-                    <a href="../admin/index.html" class="btn btn-outline btn-sm">⚙️ Admin</a>
-                    <a href="../index.html" class="btn btn-secondary btn-sm">🏠 Web</a>
+                    <a href="admin/index.html" class="btn btn-outline btn-sm">⚙️ Admin</a>
+                    <a href="index.html" class="btn btn-secondary btn-sm">🏠 Web</a>
                     <button class="btn btn-danger btn-sm" onclick="cerrarSesion()">🚪 Salir</button>
                 </div>
                 <p>🎸 Validador de Entradas</p>
@@ -736,7 +728,6 @@
                 <button onclick="switchTab('lista', this)">📋 Lista</button>
             </div>
 
-            <!-- Tab: Escáner -->
             <div id="tab-escaner" class="tab-content active">
                 <div class="card">
                     <h3>📷 Escanear Código QR</h3>
@@ -767,7 +758,6 @@
                 </div>
             </div>
 
-            <!-- Tab: Lista -->
             <div id="tab-lista" class="tab-content">
                 <div class="card">
                     <h3>📋 Asistentes por Evento</h3>
@@ -799,9 +789,6 @@
     </div>
 
     <script>
-        // ============================================================
-        // CONFIGURACIÓN DE FIREBASE
-        // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyDvp_6UFymZZnqxMyL6yobJ3twLMvVkThw",
             authDomain: "base-entradas-tenchos.firebaseapp.com",
@@ -814,11 +801,6 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // ============================================================
-        // SISTEMA DE LOGIN CON HASH SHA-256 (SEGURO)
-        // ============================================================
-
-        // Hash correcto para la contraseña "tencha2026"
         const PASSWORD_HASH = '435a4954c470cee2b68da8bee7f879e00db66866b6d4dd7be0af3701e21db53f';
 
         async function hashPassword(password) {
@@ -854,7 +836,6 @@
                     error.classList.remove('show');
                     document.getElementById('loginOverlay').classList.remove('active');
                     document.getElementById('mainContent').style.display = 'block';
-                    // Guardar sesión con expiración (4 horas)
                     sessionStorage.setItem('validadorAuth', 'authenticated');
                     sessionStorage.setItem('validadorLoginTime', Date.now().toString());
                     iniciarApp();
@@ -905,7 +886,7 @@
 
             if (auth === 'authenticated' && loginTime) {
                 const timeElapsed = Date.now() - parseInt(loginTime);
-                if (timeElapsed < 14400000) { // 4 horas
+                if (timeElapsed < 14400000) {
                     document.getElementById('loginOverlay').classList.remove('active');
                     document.getElementById('mainContent').style.display = 'block';
                     iniciarApp();
@@ -920,17 +901,10 @@
             return false;
         }
 
-        // ============================================================
-        // VARIABLES GLOBALES
-        // ============================================================
         let html5QrCode = null;
         let isScanning = false;
         let ultimoEscaneo = null;
         let currentCamera = 'environment';
-
-        // ============================================================
-        // FUNCIONES PRINCIPALES
-        // ============================================================
 
         function iniciarApp() {
             cargarSelectEventos();
@@ -948,19 +922,15 @@
             }
         }
 
-        function showToast(mensaje, tipo = 'success') {
+        function showToast(mensaje, tipo) {
             const toast = document.getElementById('toast');
             toast.textContent = mensaje;
-            toast.className = 'toast show ' + tipo;
+            toast.className = 'toast show ' + (tipo || 'success');
             clearTimeout(toast._timeout);
             toast._timeout = setTimeout(() => {
                 toast.classList.remove('show');
             }, 4000);
         }
-
-        // ============================================================
-        // ESCÁNER
-        // ============================================================
 
         function startScanner() {
             if (isScanning) return;
@@ -1037,13 +1007,7 @@
             }
         }
 
-        function onScanError(err) {
-            // Ignorar errores (son normales mientras busca)
-        }
-
-        // ============================================================
-        // VALIDACIÓN DE ASISTENTES
-        // ============================================================
+        function onScanError(err) { }
 
         async function validarAsistente(asistenteId) {
             try {
@@ -1097,7 +1061,7 @@
             document.getElementById('manualId').value = '';
         }
 
-        function mostrarResultado(exito, titulo, mensaje, tipo = '') {
+        function mostrarResultado(exito, titulo, mensaje, tipo) {
             const container = document.getElementById('resultadoEscaneo');
             const icono = exito ? '🎉' : (tipo === 'ya-ingreso' ? '⏳' : '❌');
             const estadoClass = exito ? 'estado-exito' : (tipo === 'ya-ingreso' ? 'estado-ya-ingreso' : 'estado-error');
@@ -1112,10 +1076,6 @@
                         </div>
                     `;
         }
-
-        // ============================================================
-        // LISTA DE ASISTENTES
-        // ============================================================
 
         async function cargarSelectEventos() {
             try {
@@ -1187,10 +1147,6 @@
             }
         }
 
-        // ============================================================
-        // INICIALIZACIÓN
-        // ============================================================
-
         document.addEventListener('DOMContentLoaded', function () {
             if (!verificarSesion()) {
                 document.getElementById('passwordInput').focus();
@@ -1209,7 +1165,6 @@
             }
         });
 
-        // Prevenir que el usuario vuelva atrás después de logout
         if (window.performance && window.performance.navigation &&
             window.performance.navigation.type === 2) {
             window.location.reload();
