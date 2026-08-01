@@ -25,17 +25,20 @@
 
         body {
             font-family: 'Poppins', 'Segoe UI', sans-serif;
-            background: #111;
+            background: #0a0a0a;
             color: #fff;
             min-height: 100vh;
             padding: 20px;
+            background-image: radial-gradient(ellipse at 30% 20%, rgba(255, 204, 0, 0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(255, 204, 0, 0.02) 0%, transparent 50%);
         }
 
         .container {
-            max-width: 500px;
+            max-width: 520px;
             margin: 0 auto;
         }
 
+        /* ===== LOGIN MODAL ===== */
         .login-overlay {
             display: none;
             position: fixed;
@@ -43,10 +46,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(0, 0, 0, 0.97);
             z-index: 9999;
             justify-content: center;
             align-items: center;
+            backdrop-filter: blur(8px);
         }
 
         .login-overlay.active {
@@ -54,15 +58,29 @@
         }
 
         .login-box {
-            background: #1c1c1c;
+            background: #141414;
             padding: 40px 30px;
-            border-radius: 16px;
+            border-radius: 24px;
             max-width: 380px;
             width: 95%;
             text-align: center;
-            border: 2px solid #ffcc00;
+            border: 1px solid rgba(255, 204, 0, 0.12);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
             position: relative;
             overflow: hidden;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         .login-box::before {
@@ -72,24 +90,37 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, #ffcc00, #ff8800);
+            background: linear-gradient(90deg, #ffcc00, #f5a623, #ffcc00);
+            background-size: 200% 100%;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
         }
 
         .login-box .logo-login {
-            height: 80px;
+            height: 75px;
             width: auto;
-            margin-bottom: 15px;
-            border-radius: 12px;
+            margin-bottom: 12px;
         }
 
         .login-box h2 {
             color: #ffcc00;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             margin-bottom: 5px;
         }
 
         .login-box .subtitle {
-            color: #aaa;
+            color: #888;
             font-size: 0.85rem;
             margin-bottom: 20px;
         }
@@ -111,11 +142,11 @@
         .login-box input {
             width: 100%;
             padding: 14px 14px 14px 46px;
-            background: #111;
-            border: 1px solid #444;
-            border-radius: 8px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 12px;
             color: #fff;
-            font-size: 1.1rem;
+            font-size: 1rem;
             transition: border 0.3s;
             font-family: 'Poppins', 'Segoe UI', sans-serif;
         }
@@ -123,7 +154,7 @@
         .login-box input:focus {
             outline: none;
             border-color: #ffcc00;
-            box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.1);
+            box-shadow: 0 0 0 4px rgba(255, 204, 0, 0.06);
         }
 
         .login-box .toggle-password {
@@ -137,6 +168,7 @@
             cursor: pointer;
             font-size: 1rem;
             transition: color 0.3s;
+            padding: 5px;
         }
 
         .login-box .toggle-password:hover {
@@ -149,7 +181,7 @@
             background: #ffcc00;
             color: #000;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
@@ -162,6 +194,7 @@
         .login-box .btn-login:hover {
             background: #e6b800;
             transform: scale(1.02);
+            box-shadow: 0 8px 30px rgba(255, 204, 0, 0.2);
         }
 
         .login-box .btn-login:active {
@@ -182,6 +215,23 @@
 
         .login-box .error-msg.show {
             display: block;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-8px);
+            }
+
+            75% {
+                transform: translateX(8px);
+            }
         }
 
         .login-box .login-footer {
@@ -193,6 +243,7 @@
         .login-box .login-footer a {
             color: #ffcc00;
             text-decoration: none;
+            transition: color 0.3s;
         }
 
         .login-box .login-footer a:hover {
@@ -224,10 +275,11 @@
             }
         }
 
+        /* ===== HEADER ===== */
         .header {
             text-align: center;
-            padding: 20px 0;
-            border-bottom: 3px solid #ffcc00;
+            padding: 20px 0 18px;
+            border-bottom: 2px solid rgba(255, 204, 0, 0.12);
             margin-bottom: 20px;
         }
 
@@ -240,16 +292,16 @@
         }
 
         .header .logo-container img {
-            height: 60px;
+            height: 55px;
             width: auto;
-            border-radius: 8px;
+            border-radius: 10px;
             object-fit: contain;
         }
 
         .header .logo-container h1 {
             margin: 0;
             color: #ffcc00;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 900;
             letter-spacing: 2px;
         }
@@ -260,51 +312,76 @@
 
         .header .header-actions {
             display: flex;
-            justify-content: flex-end;
-            margin-top: 10px;
+            justify-content: center;
+            margin-top: 12px;
             gap: 10px;
             flex-wrap: wrap;
         }
 
         .header .header-actions .btn-sm {
-            padding: 6px 14px;
-            font-size: 0.7rem;
+            padding: 8px 18px;
+            font-size: 0.75rem;
             width: auto;
-            border-radius: 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+        }
+
+        .header .header-actions .btn-sm:hover {
+            transform: translateY(-2px);
         }
 
         .header p {
-            color: #ccc;
-            font-size: 0.9rem;
-            margin-top: 5px;
+            color: #888;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            letter-spacing: 0.5px;
         }
 
+        /* ===== CARDS ===== */
         .card {
-            background: #1c1c1c;
-            border-radius: 12px;
-            padding: 20px;
+            background: #141414;
+            border-radius: 16px;
+            padding: 22px;
             margin-bottom: 20px;
-            border-left: 4px solid #ffcc00;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: border-color 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(255, 204, 0, 0.12);
         }
 
         .card h3 {
             color: #ffcc00;
             margin-bottom: 15px;
-            font-size: 1.1rem;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .card .instrucciones {
             color: #aaa;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin-bottom: 15px;
-            padding: 10px;
-            background: #111;
-            border-radius: 8px;
+            padding: 12px 14px;
+            background: #1a1a1a;
+            border-radius: 10px;
             border-left: 3px solid #ffcc00;
         }
 
         .card .instrucciones li {
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             list-style: none;
         }
 
@@ -316,13 +393,13 @@
             width: 100%;
             padding: 14px;
             border: none;
-            border-radius: 8px;
-            font-size: 1rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             font-family: 'Poppins', 'Segoe UI', sans-serif;
         }
 
@@ -333,7 +410,8 @@
 
         .btn-primary:hover {
             background: #e6b800;
-            transform: scale(1.02);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 204, 0, 0.2);
         }
 
         .btn-success {
@@ -343,6 +421,7 @@
 
         .btn-success:hover {
             background: #00b34a;
+            transform: translateY(-2px);
         }
 
         .btn-danger {
@@ -352,15 +431,17 @@
 
         .btn-danger:hover {
             background: #b71c1c;
+            transform: translateY(-2px);
         }
 
         .btn-secondary {
-            background: #444;
+            background: #2a2a2a;
             color: #fff;
         }
 
         .btn-secondary:hover {
-            background: #555;
+            background: #3a3a3a;
+            transform: translateY(-2px);
         }
 
         .btn-warning {
@@ -370,6 +451,7 @@
 
         .btn-warning:hover {
             background: #e68900;
+            transform: translateY(-2px);
         }
 
         .btn-outline {
@@ -381,18 +463,33 @@
         .btn-outline:hover {
             background: #ffcc00;
             color: #000;
+            transform: translateY(-2px);
         }
 
         .btn-sm {
-            padding: 8px 16px;
+            padding: 8px 18px;
             width: auto;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .btn-sm:hover {
+            transform: translateY(-2px);
         }
 
         .btn-group {
             display: flex;
             gap: 10px;
-            margin-top: 10px;
+            margin-top: 12px;
         }
 
         .btn-group .btn {
@@ -402,13 +499,14 @@
         select,
         input {
             width: 100%;
-            padding: 12px;
+            padding: 12px 14px;
             margin-bottom: 12px;
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 8px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 10px;
             color: #fff;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            transition: border 0.3s;
             font-family: 'Poppins', 'Segoe UI', sans-serif;
         }
 
@@ -416,20 +514,27 @@
         input:focus {
             outline: none;
             border-color: #ffcc00;
+            box-shadow: 0 0 0 4px rgba(255, 204, 0, 0.05);
         }
 
+        select option {
+            background: #1a1a1a;
+        }
+
+        /* ===== SCANNER ===== */
         #reader {
             width: 100%;
             max-width: 400px;
             margin: 0 auto;
-            border-radius: 12px;
+            border-radius: 14px;
             overflow: hidden;
             background: #000;
-            min-height: 300px;
+            min-height: 280px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         #reader video {
-            border-radius: 12px;
+            border-radius: 14px;
             width: 100%;
             height: auto;
         }
@@ -437,22 +542,26 @@
         .scanner-controls {
             display: flex;
             gap: 10px;
-            margin-top: 10px;
+            margin-top: 12px;
             flex-wrap: wrap;
         }
 
         .scanner-controls .btn {
             flex: 1;
             min-width: 80px;
+            padding: 12px;
+            font-size: 0.85rem;
         }
 
+        /* ===== RESULTADO ===== */
         .resultado {
-            background: #111;
+            background: #1a1a1a;
             padding: 20px;
             border-radius: 12px;
             margin-top: 15px;
             text-align: center;
-            border: 2px solid #444;
+            border: 2px solid #333;
+            transition: border-color 0.3s;
         }
 
         .resultado.exito {
@@ -465,11 +574,11 @@
 
         .resultado .icono {
             font-size: 3rem;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .resultado .nombre {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: #fff;
         }
@@ -477,7 +586,7 @@
         .resultado .detalle {
             color: #aaa;
             font-size: 0.9rem;
-            margin-top: 5px;
+            margin-top: 4px;
         }
 
         .resultado .estado {
@@ -486,6 +595,7 @@
             border-radius: 20px;
             margin-top: 10px;
             font-weight: 600;
+            font-size: 0.8rem;
         }
 
         .estado-exito {
@@ -503,25 +613,36 @@
             color: #fff;
         }
 
+        /* ===== LISTA ASISTENTES ===== */
         .assistant-item {
-            background: #111;
-            padding: 12px;
+            background: #1a1a1a;
+            padding: 12px 14px;
             margin-bottom: 8px;
-            border-radius: 8px;
+            border-radius: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-left: 3px solid #555;
+            border-left: 3px solid #333;
+            transition: all 0.3s;
+        }
+
+        .assistant-item:hover {
+            background: #222;
         }
 
         .assistant-item.ingresado {
             border-left-color: #00c853;
-            opacity: 0.6;
+            opacity: 0.7;
+        }
+
+        .assistant-item .info {
+            flex: 1;
         }
 
         .assistant-item .info .nombre {
             font-weight: 600;
             color: #fff;
+            font-size: 0.95rem;
         }
 
         .assistant-item .info .email {
@@ -530,11 +651,12 @@
         }
 
         .assistant-item .info .estado {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             padding: 2px 10px;
             border-radius: 20px;
             display: inline-block;
             margin-top: 4px;
+            font-weight: 600;
         }
 
         .estado-sin-ingresar {
@@ -547,28 +669,38 @@
             color: #fff;
         }
 
+        /* ===== TABS ===== */
         .tabs {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 20px;
         }
 
         .tabs button {
             flex: 1;
-            padding: 12px;
-            background: #1c1c1c;
+            padding: 12px 8px;
+            background: #141414;
             border: none;
-            border-radius: 8px;
-            color: #aaa;
+            border-radius: 12px;
+            color: #888;
             font-weight: 600;
+            font-size: 0.8rem;
             cursor: pointer;
             transition: all 0.3s;
             font-family: 'Poppins', 'Segoe UI', sans-serif;
+            border: 1px solid transparent;
+        }
+
+        .tabs button:hover {
+            color: #fff;
+            border-color: rgba(255, 204, 0, 0.1);
         }
 
         .tabs button.active {
             background: #ffcc00;
             color: #000;
+            border-color: #ffcc00;
+            box-shadow: 0 4px 20px rgba(255, 204, 0, 0.12);
         }
 
         .tab-content {
@@ -577,86 +709,93 @@
 
         .tab-content.active {
             display: block;
+            animation: fadeIn 0.3s ease;
         }
 
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #333;
-            color: #fff;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            z-index: 2000;
-            display: none;
-            max-width: 90%;
-            text-align: center;
-        }
-
-        .toast.show {
-            display: block;
-            animation: slideUp 0.3s ease;
-        }
-
-        .toast.success {
-            background: #00c853;
-        }
-
-        .toast.error {
-            background: #d32f2f;
-        }
-
-        .toast.info {
-            background: #2196f3;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateX(-50%) translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
-        }
-
+        /* ===== STATS ===== */
         .stats {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .stats .stat {
-            background: #111;
-            padding: 15px;
-            border-radius: 8px;
+            background: #1a1a1a;
+            padding: 14px;
+            border-radius: 12px;
             text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
         .stats .stat .number {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 900;
             color: #ffcc00;
         }
 
         .stats .stat .label {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             color: #888;
             text-transform: uppercase;
             letter-spacing: 1px;
+            font-weight: 600;
         }
 
         .hidden {
             display: none !important;
         }
 
-        .full-width {
-            width: 100%;
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #222;
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            z-index: 2000;
+            display: none;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+        }
+
+        .toast.show {
+            display: block;
+            animation: slideUp 0.4s ease;
+        }
+
+        .toast.success {
+            background: #00c853;
+            border-color: #00c853;
+        }
+
+        .toast.error {
+            background: #d32f2f;
+            border-color: #d32f2f;
+        }
+
+        .toast.info {
+            background: #1976d2;
+            border-color: #1976d2;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
         }
 
         @media (max-width: 480px) {
@@ -669,15 +808,30 @@
             }
 
             .header .logo-container img {
-                height: 45px;
+                height: 40px;
+            }
+
+            .login-box {
+                padding: 30px 20px;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .tabs button {
+                font-size: 0.7rem;
+                padding: 10px 6px;
             }
 
             .btn-group {
                 flex-direction: column;
             }
 
-            .login-box {
-                padding: 30px 20px;
+            .scanner-controls .btn {
+                min-width: 60px;
+                padding: 10px;
+                font-size: 0.75rem;
             }
         }
     </style>
@@ -685,6 +839,7 @@
 
 <body>
 
+    <!-- ===== LOGIN MODAL ===== -->
     <div class="login-overlay active" id="loginOverlay">
         <div class="login-box">
             <img src="img/logo.webp" alt="Los Hijos de Tencha" class="logo-login">
@@ -703,34 +858,39 @@
             </button>
             <div class="error-msg" id="loginError">❌ Contraseña incorrecta</div>
             <div class="login-footer">
-                <a href="index.html">← Volver al sitio</a>
+                <a href="index.html"><i class="fa-solid fa-arrow-left"></i> Volver al sitio</a>
             </div>
         </div>
     </div>
 
+    <!-- ===== CONTENIDO PRINCIPAL ===== -->
     <div id="mainContent" style="display:none;">
         <div class="container">
+            <!-- HEADER -->
             <div class="header">
                 <div class="logo-container">
                     <img src="img/logo.webp" alt="Los Hijos de Tencha">
                     <h1>LOS HIJOS DE <span>TENCHA</span></h1>
                 </div>
                 <div class="header-actions">
-                    <a href="admin/index.html" class="btn btn-outline btn-sm">⚙️ Admin</a>
-                    <a href="index.html" class="btn btn-secondary btn-sm">🏠 Web</a>
-                    <button class="btn btn-danger btn-sm" onclick="cerrarSesion()">🚪 Salir</button>
+                    <a href="admin/index.html" class="btn btn-outline btn-sm"><i class="fa-solid fa-gear"></i> Admin</a>
+                    <a href="index.html" class="btn btn-secondary btn-sm"><i class="fa-solid fa-globe"></i> Web</a>
+                    <button class="btn btn-danger btn-sm" onclick="cerrarSesion()"><i
+                            class="fa-solid fa-right-from-bracket"></i> Salir</button>
                 </div>
                 <p>🎸 Validador de Entradas</p>
             </div>
 
             <div class="tabs">
-                <button class="active" onclick="switchTab('escaner', this)">📷 Escáner</button>
-                <button onclick="switchTab('lista', this)">📋 Lista</button>
+                <button class="active" onclick="switchTab('escaner', this)"><i class="fa-solid fa-qrcode"></i>
+                    Escáner</button>
+                <button onclick="switchTab('lista', this)"><i class="fa-solid fa-list"></i> Lista</button>
             </div>
 
+            <!-- Tab: Escáner -->
             <div id="tab-escaner" class="tab-content active">
                 <div class="card">
-                    <h3>📷 Escanear Código QR</h3>
+                    <h3><i class="fa-solid fa-camera"></i> Escanear Código QR</h3>
                     <div class="instrucciones">
                         <li>Asegúrate de tener buena iluminación</li>
                         <li>Acerca el QR lentamente a la cámara</li>
@@ -739,28 +899,31 @@
                     </div>
                     <div id="reader"></div>
                     <div class="scanner-controls">
-                        <button class="btn btn-primary" id="startScanBtn" onclick="startScanner()">▶️ Iniciar</button>
-                        <button class="btn btn-danger" id="stopScanBtn" onclick="stopScanner()" style="display:none;">⏹️
-                            Detener</button>
+                        <button class="btn btn-primary" id="startScanBtn" onclick="startScanner()"><i
+                                class="fa-solid fa-play"></i> Iniciar</button>
+                        <button class="btn btn-danger" id="stopScanBtn" onclick="stopScanner()" style="display:none;"><i
+                                class="fa-solid fa-stop"></i> Detener</button>
                         <button class="btn btn-warning" id="switchCameraBtn" onclick="switchCamera()"
-                            style="display:none;">🔄 Cámara</button>
+                            style="display:none;"><i class="fa-solid fa-rotate"></i> Cámara</button>
                     </div>
                     <div id="resultadoEscaneo"></div>
                 </div>
 
                 <div class="card">
-                    <h3>🔑 Validación Manual</h3>
-                    <p style="color:#aaa;font-size:0.8rem;margin-bottom:10px;">
+                    <h3><i class="fa-solid fa-keyboard"></i> Validación Manual</h3>
+                    <p style="color:#888;font-size:0.8rem;margin-bottom:12px;">
                         Si el escáner no funciona, copia y pega el ID de la entrada
                     </p>
                     <input type="text" id="manualId" placeholder="ID del asistente (ej: abc123)" />
-                    <button class="btn btn-secondary" onclick="validarManual()">🔍 Validar</button>
+                    <button class="btn btn-secondary" onclick="validarManual()"><i
+                            class="fa-solid fa-magnifying-glass"></i> Validar</button>
                 </div>
             </div>
 
+            <!-- Tab: Lista -->
             <div id="tab-lista" class="tab-content">
                 <div class="card">
-                    <h3>📋 Asistentes por Evento</h3>
+                    <h3><i class="fa-solid fa-users"></i> Asistentes por Evento</h3>
                     <select id="selectEventoLista" onchange="cargarListaAsistentes()">
                         <option value="">Selecciona un evento</option>
                     </select>
@@ -779,7 +942,9 @@
                         </div>
                     </div>
                     <div id="listaAsistentes">
-                        <p style="color:#666;text-align:center;padding:20px;">Selecciona un evento</p>
+                        <p style="color:#666;text-align:center;padding:20px;font-size:0.9rem;">
+                            <i class="fa-solid fa-arrow-up"></i> Selecciona un evento para ver los asistentes
+                        </p>
                     </div>
                 </div>
             </div>
@@ -789,6 +954,9 @@
     </div>
 
     <script>
+        // ============================================================
+        // CONFIGURACIÓN DE FIREBASE
+        // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyDvp_6UFymZZnqxMyL6yobJ3twLMvVkThw",
             authDomain: "base-entradas-tenchos.firebaseapp.com",
@@ -800,6 +968,10 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+
+        // ============================================================
+        // SISTEMA DE LOGIN CON HASH SHA-256 (SEGURO)
+        // ============================================================
 
         const PASSWORD_HASH = '435a4954c470cee2b68da8bee7f879e00db66866b6d4dd7be0af3701e21db53f';
 
@@ -901,10 +1073,17 @@
             return false;
         }
 
+        // ============================================================
+        // VARIABLES GLOBALES
+        // ============================================================
         let html5QrCode = null;
         let isScanning = false;
         let ultimoEscaneo = null;
         let currentCamera = 'environment';
+
+        // ============================================================
+        // FUNCIONES PRINCIPALES
+        // ============================================================
 
         function iniciarApp() {
             cargarSelectEventos();
@@ -932,6 +1111,10 @@
             }, 4000);
         }
 
+        // ============================================================
+        // ESCÁNER
+        // ============================================================
+
         function startScanner() {
             if (isScanning) return;
 
@@ -944,7 +1127,7 @@
 
             const config = {
                 fps: 15,
-                qrbox: { width: 280, height: 280 },
+                qrbox: { width: 260, height: 260 },
                 aspectRatio: 1.0,
                 formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE]
             };
@@ -1007,7 +1190,13 @@
             }
         }
 
-        function onScanError(err) { }
+        function onScanError(err) {
+            // Ignorar errores (son normales mientras busca)
+        }
+
+        // ============================================================
+        // VALIDACIÓN DE ASISTENTES
+        // ============================================================
 
         async function validarAsistente(asistenteId) {
             try {
@@ -1077,6 +1266,10 @@
                     `;
         }
 
+        // ============================================================
+        // LISTA DE ASISTENTES
+        // ============================================================
+
         async function cargarSelectEventos() {
             try {
                 const snapshot = await db.collection('eventos').orderBy('creadoEn', 'desc').get();
@@ -1096,7 +1289,7 @@
             const eventoId = document.getElementById('selectEventoLista').value;
             if (!eventoId) {
                 document.getElementById('listaAsistentes').innerHTML =
-                    '<p style="color:#666;text-align:center;padding:20px;">Selecciona un evento</p>';
+                    '<p style="color:#666;text-align:center;padding:20px;font-size:0.9rem;"><i class="fa-solid fa-arrow-up"></i> Selecciona un evento</p>';
                 document.getElementById('statsListaContainer').classList.add('hidden');
                 return;
             }
@@ -1124,7 +1317,8 @@
 
                 const list = document.getElementById('listaAsistentes');
                 if (asistentes.length === 0) {
-                    list.innerHTML = '<p style="color:#666;text-align:center;padding:20px;">No hay asistentes</p>';
+                    list.innerHTML =
+                        '<p style="color:#666;text-align:center;padding:20px;font-size:0.9rem;"><i class="fa-regular fa-user"></i> No hay asistentes</p>';
                     return;
                 }
 
@@ -1136,7 +1330,7 @@
                                     <span class="estado ${a.ingresado ? 'estado-ingresado' : 'estado-sin-ingresar'}">
                                         ${a.ingresado ? '✅ Ya ingresó' : '⏳ Sin ingresar'}
                                     </span>
-                                    ${a.fechaIngreso ? `<span style="font-size:0.6rem;color:#666;margin-left:10px;">${new Date(a.fechaIngreso).toLocaleString()}</span>` : ''}
+                                    ${a.fechaIngreso ? `<span style="font-size:0.55rem;color:#666;margin-left:8px;">${new Date(a.fechaIngreso).toLocaleString()}</span>` : ''}
                                 </div>
                             </div>
                         `).join('');
@@ -1146,6 +1340,10 @@
                 showToast('❌ Error al cargar lista', 'error');
             }
         }
+
+        // ============================================================
+        // INICIALIZACIÓN
+        // ============================================================
 
         document.addEventListener('DOMContentLoaded', function () {
             if (!verificarSesion()) {

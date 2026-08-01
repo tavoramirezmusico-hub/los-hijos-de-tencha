@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administración | Los Hijos de Tencha</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         * {
@@ -19,17 +20,24 @@
             background: #0a0a0a;
             min-height: 100vh;
             color: #fff;
+            background-image: radial-gradient(ellipse at 80% 20%, rgba(255, 204, 0, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 20% 80%, rgba(255, 204, 0, 0.02) 0%, transparent 50%);
         }
 
+        /* ===== HEADER ===== */
         .admin-header {
             background: #141414;
             padding: 20px 40px;
-            border-bottom: 1px solid #222;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
         }
 
         .admin-header .logo-area {
@@ -41,33 +49,42 @@
         .admin-header .logo-area img {
             width: 50px;
             height: auto;
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+
+        .admin-header .logo-area img:hover {
+            transform: scale(1.05);
         }
 
         .admin-header .logo-area h1 {
             font-size: 1.3rem;
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .admin-header .logo-area span {
             color: #ffcc00;
+            font-weight: 800;
         }
 
         .admin-header .admin-actions {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
         .admin-header .admin-actions .user-badge {
             background: #1c1c1c;
             padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
+            border-radius: 25px;
+            font-size: 0.8rem;
             color: #aaa;
             display: flex;
             align-items: center;
             gap: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .admin-header .admin-actions .user-badge i {
@@ -79,9 +96,9 @@
             color: #fff;
             border: none;
             padding: 10px 22px;
-            border-radius: 10px;
+            border-radius: 12px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.3s;
             font-family: 'Poppins', sans-serif;
@@ -92,7 +109,8 @@
 
         .btn-logout:hover {
             background: #b71c1c;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(211, 47, 47, 0.3);
         }
 
         .btn-logout:active {
@@ -100,13 +118,13 @@
         }
 
         .btn-back {
-            background: #333;
+            background: #222;
             color: #fff;
             border: none;
-            padding: 10px 22px;
-            border-radius: 10px;
+            padding: 10px 20px;
+            border-radius: 12px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.3s;
             font-family: 'Poppins', sans-serif;
@@ -117,24 +135,44 @@
         }
 
         .btn-back:hover {
-            background: #444;
-            transform: translateY(-2px);
+            background: #333;
+            transform: translateY(-3px);
         }
 
+        /* ===== CONTENIDO ===== */
         .admin-content {
             padding: 40px;
             max-width: 1200px;
             margin: 0 auto;
+            animation: fadeUp 0.5s ease;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .admin-content .page-title {
-            font-size: 2rem;
+            font-size: 2.2rem;
+            font-weight: 800;
             margin-bottom: 5px;
+            background: linear-gradient(135deg, #ffcc00, #f5a623);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .admin-content .subtitle {
             color: #888;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
+            font-size: 1rem;
         }
 
         .admin-grid {
@@ -145,62 +183,102 @@
 
         .admin-card {
             background: #141414;
-            border: 1px solid #222;
-            border-radius: 16px;
-            padding: 30px;
-            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            padding: 30px 25px;
+            transition: all 0.4s ease;
             cursor: pointer;
             text-decoration: none;
             color: #fff;
             display: block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ffcc00, transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .admin-card:hover::before {
+            opacity: 1;
         }
 
         .admin-card:hover {
-            transform: translateY(-5px);
-            border-color: #ffcc00;
-            box-shadow: 0 10px 30px rgba(255, 204, 0, 0.05);
+            transform: translateY(-8px);
+            border-color: rgba(255, 204, 0, 0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
         }
 
         .admin-card .icon {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             margin-bottom: 15px;
             display: block;
         }
 
         .admin-card h3 {
             font-size: 1.1rem;
+            font-weight: 700;
             margin-bottom: 8px;
         }
 
         .admin-card p {
             color: #888;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            line-height: 1.5;
         }
 
+        .admin-card .card-badge {
+            display: inline-block;
+            background: rgba(255, 204, 0, 0.12);
+            color: #ffcc00;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 10px;
+        }
+
+        .admin-card .card-badge.soon {
+            background: rgba(255, 255, 255, 0.05);
+            color: #666;
+        }
+
+        /* ===== QUICK ACCESS ===== */
         .quick-access {
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 1px solid #222;
+            margin-top: 50px;
+            padding-top: 35px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .quick-access h3 {
             color: #aaa;
-            font-size: 1rem;
-            font-weight: 500;
+            font-size: 0.9rem;
+            font-weight: 600;
             margin-bottom: 15px;
             letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
         .quick-access .links {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
         .quick-access .links a {
-            background: #1c1c1c;
-            padding: 10px 20px;
-            border-radius: 10px;
+            background: #1a1a1a;
+            padding: 10px 22px;
+            border-radius: 12px;
             color: #aaa;
             text-decoration: none;
             font-size: 0.85rem;
@@ -208,35 +286,109 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            border: 1px solid transparent;
         }
 
         .quick-access .links a:hover {
             background: #ffcc00;
             color: #000;
+            transform: translateY(-3px);
+            border-color: #ffcc00;
+            box-shadow: 0 8px 25px rgba(255, 204, 0, 0.15);
         }
 
-        @media (max-width: 600px) {
-            .admin-header {
-                padding: 15px 20px;
-                flex-direction: column;
-                align-items: flex-start;
+        .quick-access .links a i {
+            font-size: 0.9rem;
+        }
+
+        /* ===== TOAST ===== */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #222;
+            color: #fff;
+            padding: 14px 30px;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            z-index: 9999;
+            display: none;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-family: 'Poppins', sans-serif;
+            animation: slideUp 0.4s ease;
+        }
+
+        #toast.show {
+            display: block;
+        }
+
+        #toast.success {
+            background: #00c853;
+            border-color: #00c853;
+        }
+
+        #toast.error {
+            background: #d32f2f;
+            border-color: #d32f2f;
+        }
+
+        #toast.info {
+            background: #1976d2;
+            border-color: #1976d2;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(25px);
             }
 
-            .admin-header .admin-actions {
-                width: 100%;
-                justify-content: space-between;
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .admin-header {
+                padding: 15px 20px;
+            }
+
+            .admin-header .admin-actions .user-badge {
+                font-size: 0.7rem;
+                padding: 6px 12px;
+            }
+
+            .btn-back,
+            .btn-logout {
+                padding: 8px 14px;
+                font-size: 0.75rem;
             }
 
             .admin-content {
-                padding: 20px;
+                padding: 25px 20px;
             }
 
             .admin-content .page-title {
-                font-size: 1.5rem;
+                font-size: 1.6rem;
             }
 
             .admin-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+            }
+
+            .admin-card {
+                padding: 20px;
+            }
+
+            .admin-card .icon {
+                font-size: 2rem;
             }
 
             .quick-access .links {
@@ -248,15 +400,29 @@
             }
         }
 
-        @media (max-width: 400px) {
-            .admin-header .admin-actions {
+        @media (max-width: 480px) {
+            .admin-header {
                 flex-direction: column;
                 align-items: stretch;
+                gap: 10px;
+            }
+
+            .admin-header .logo-area {
+                justify-content: center;
+            }
+
+            .admin-header .admin-actions {
+                justify-content: center;
+            }
+
+            .admin-grid {
+                grid-template-columns: 1fr;
             }
 
             .btn-logout,
             .btn-back {
                 justify-content: center;
+                flex: 1;
             }
         }
     </style>
@@ -277,58 +443,63 @@
                 <i class="fa-solid fa-qrcode"></i> Validador
             </a>
             <a href="../index.html" class="btn-back">
-                <i class="fa-solid fa-house"></i> Web
+                <i class="fa-solid fa-globe"></i> Web
             </a>
             <div class="user-badge">
                 <i class="fa-solid fa-shield-halved"></i>
                 Administrador
             </div>
             <button class="btn-logout" onclick="logout()">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                Cerrar sesión
+                <i class="fa-solid fa-right-from-bracket"></i> Salir
             </button>
         </div>
     </header>
 
     <div class="admin-content" id="adminContent">
         <h1 class="page-title">📊 Panel de Administración</h1>
-        <p class="subtitle">Gestiona el contenido de Los Hijos de Tencha</p>
+        <p class="subtitle">Gestiona todo el contenido de Los Hijos de Tencha</p>
 
         <div class="admin-grid">
             <a href="index.html" class="admin-card">
                 <span class="icon">🎟️</span>
                 <h3>Gestionar Entradas</h3>
                 <p>Crear eventos, agregar asistentes y validar entradas</p>
+                <span class="card-badge">Activo</span>
             </a>
 
             <a href="#" class="admin-card" onclick="showToast('Próximamente disponible', 'info')">
                 <span class="icon">📰</span>
                 <h3>Gestionar Noticias</h3>
                 <p>Agregar, editar o eliminar noticias</p>
+                <span class="card-badge soon">Próximamente</span>
             </a>
 
             <a href="#" class="admin-card" onclick="showToast('Próximamente disponible', 'info')">
                 <span class="icon">🎵</span>
                 <h3>Gestionar Canciones</h3>
                 <p>Agregar, editar o eliminar canciones</p>
+                <span class="card-badge soon">Próximamente</span>
             </a>
 
             <a href="#" class="admin-card" onclick="showToast('Próximamente disponible', 'info')">
                 <span class="icon">🎬</span>
                 <h3>Gestionar Videos</h3>
                 <p>Agregar, editar o eliminar videos</p>
+                <span class="card-badge soon">Próximamente</span>
             </a>
 
             <a href="#" class="admin-card" onclick="showToast('Próximamente disponible', 'info')">
                 <span class="icon">📸</span>
                 <h3>Gestionar Galería</h3>
                 <p>Agregar, editar o eliminar fotos</p>
+                <span class="card-badge soon">Próximamente</span>
             </a>
 
             <a href="#" class="admin-card" onclick="showToast('Próximamente disponible', 'info')">
                 <span class="icon">👕</span>
                 <h3>Gestionar Tienda</h3>
                 <p>Agregar, editar o eliminar productos</p>
+                <span class="card-badge soon">Próximamente</span>
             </a>
         </div>
 
@@ -336,6 +507,7 @@
             <h3>🔗 Acceso Rápido</h3>
             <div class="links">
                 <a href="index.html"><i class="fa-solid fa-ticket"></i> Gestión de Entradas</a>
+                <a href="../validador.html"><i class="fa-solid fa-qrcode"></i> Validador QR</a>
                 <a href="../noticias.html" target="_blank"><i class="fa-regular fa-newspaper"></i> Ver Noticias</a>
                 <a href="../canciones.html" target="_blank"><i class="fa-solid fa-music"></i> Ver Cancionero</a>
                 <a href="../videoteca.html" target="_blank"><i class="fa-solid fa-video"></i> Ver Videoteca</a>
@@ -345,23 +517,7 @@
         </div>
     </div>
 
-    <div id="toast" style="
-        position: fixed;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #333;
-        color: #fff;
-        padding: 14px 28px;
-        border-radius: 12px;
-        font-size: 0.9rem;
-        z-index: 9999;
-        display: none;
-        max-width: 90%;
-        text-align: center;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-        font-family: 'Poppins', sans-serif;
-    ">
+    <div id="toast">
         <span id="toastText"></span>
     </div>
 
@@ -397,28 +553,20 @@
         function showToast(message, type) {
             const toast = document.getElementById('toast');
             const toastText = document.getElementById('toastText');
-            const colors = {
-                success: '#00c853',
-                error: '#d32f2f',
-                info: '#ffcc00'
-            };
 
             toastText.textContent = message;
-            toast.style.background = colors[type] || '#333';
-            toast.style.display = 'block';
+            toast.className = 'show ' + (type || 'info');
 
             clearTimeout(toast._timeout);
             toast._timeout = setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3000);
+                toast.classList.remove('show');
+            }, 3500);
         }
 
         document.addEventListener('DOMContentLoaded', function () {
             if (!checkAuth()) {
                 return;
             }
-
-            document.getElementById('adminContent').style.display = 'block';
         });
 
         if (window.performance && window.performance.navigation &&
@@ -429,7 +577,7 @@
         document.addEventListener('keydown', function (e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
                 e.preventDefault();
-                showToast('⚠️ Usa el botón "Cerrar sesión" para salir', 'info');
+                showToast('⚠️ Usa el botón "Salir" para cerrar sesión', 'info');
                 return false;
             }
         });
