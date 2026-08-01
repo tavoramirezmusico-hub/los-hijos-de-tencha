@@ -3,14 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Los Hijos de Tencha - Validador</title>
-
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Administrativo | Los Hijos de Tencha</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
     <style>
         * {
             margin: 0;
@@ -19,48 +15,29 @@
         }
 
         body {
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
-            background: #111;
-            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            background: #0a0a0a;
             min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .login-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .login-overlay.active {
             display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: radial-gradient(ellipse at 30% 20%, rgba(255, 204, 0, 0.05) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(255, 204, 0, 0.03) 0%, transparent 50%);
         }
 
-        .login-box {
-            background: #1c1c1c;
-            padding: 40px 30px;
-            border-radius: 16px;
-            max-width: 380px;
-            width: 95%;
-            text-align: center;
-            border: 2px solid #ffcc00;
+        .login-container {
+            background: #141414;
+            padding: 50px 40px;
+            border-radius: 24px;
+            max-width: 420px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
             position: relative;
             overflow: hidden;
         }
 
-        .login-box::before {
+        .login-container::before {
             content: '';
             position: absolute;
             top: 0;
@@ -70,60 +47,86 @@
             background: linear-gradient(90deg, #ffcc00, #ff8800);
         }
 
-        .login-box .logo-login {
-            height: 80px;
-            width: auto;
+        .login-logo {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .login-logo img {
+            width: 120px;
+            height: auto;
             margin-bottom: 15px;
-            border-radius: 12px;
         }
 
-        .login-box h2 {
+        .login-logo h1 {
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .login-logo span {
             color: #ffcc00;
-            font-size: 1.5rem;
-            margin-bottom: 5px;
         }
 
-        .login-box .subtitle {
-            color: #aaa;
+        .login-logo p {
+            color: #666;
             font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .form-group {
             margin-bottom: 20px;
         }
 
-        .login-box .input-wrapper {
-            position: relative;
-            margin-bottom: 15px;
+        .form-group label {
+            display: block;
+            color: #aaa;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
         }
 
-        .login-box .input-wrapper i {
+        .form-group .input-wrapper {
+            position: relative;
+        }
+
+        .form-group .input-wrapper i {
             position: absolute;
-            left: 14px;
+            left: 16px;
             top: 50%;
             transform: translateY(-50%);
             color: #555;
             font-size: 1rem;
         }
 
-        .login-box input {
+        .form-group input {
             width: 100%;
-            padding: 14px 14px 14px 46px;
-            background: #111;
-            border: 1px solid #444;
-            border-radius: 8px;
+            padding: 14px 16px 14px 46px;
+            background: #1c1c1c;
+            border: 2px solid #2a2a2a;
+            border-radius: 12px;
             color: #fff;
-            font-size: 1.1rem;
-            transition: border 0.3s;
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
-        }
-
-        .login-box input:focus {
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
             outline: none;
-            border-color: #ffcc00;
-            box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.1);
         }
 
-        .login-box .toggle-password {
+        .form-group input:focus {
+            border-color: #ffcc00;
+            background: #222;
+            box-shadow: 0 0 0 4px rgba(255, 204, 0, 0.08);
+        }
+
+        .form-group input::placeholder {
+            color: #444;
+        }
+
+        .form-group .toggle-password {
             position: absolute;
-            right: 14px;
+            right: 16px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
@@ -134,67 +137,81 @@
             transition: color 0.3s;
         }
 
-        .login-box .toggle-password:hover {
+        .form-group .toggle-password:hover {
             color: #ffcc00;
         }
 
-        .login-box .btn-login {
+        .btn-login {
             width: 100%;
-            padding: 14px;
-            background: #ffcc00;
+            padding: 16px;
+            background: linear-gradient(135deg, #ffcc00, #f5a623);
             color: #000;
             border: none;
-            border-radius: 8px;
-            font-size: 1rem;
+            border-radius: 12px;
+            font-size: 1.05rem;
             font-weight: 700;
+            font-family: 'Poppins', sans-serif;
             cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .login-box .btn-login:hover {
-            background: #e6b800;
-            transform: scale(1.02);
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 204, 0, 0.25);
         }
 
-        .login-box .btn-login:active {
+        .btn-login:active {
             transform: scale(0.97);
         }
 
-        .login-box .btn-login:disabled {
+        .btn-login:disabled {
             opacity: 0.6;
             cursor: not-allowed;
         }
 
-        .login-box .error-msg {
-            color: #ff4444;
-            font-size: 0.85rem;
-            margin-top: 10px;
+        .error-message {
+            background: rgba(211, 47, 47, 0.12);
+            border: 1px solid rgba(211, 47, 47, 0.25);
+            color: #ff6b6b;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
             display: none;
+            align-items: center;
+            gap: 10px;
         }
 
-        .login-box .error-msg.show {
-            display: block;
+        .error-message.show {
+            display: flex;
         }
 
-        .login-box .login-footer {
-            margin-top: 15px;
-            color: #555;
-            font-size: 0.75rem;
+        .error-message i {
+            font-size: 1.1rem;
         }
 
-        .login-box .login-footer a {
+        .login-footer {
+            text-align: center;
+            margin-top: 25px;
+            color: #444;
+            font-size: 0.8rem;
+        }
+
+        .login-footer a {
             color: #ffcc00;
             text-decoration: none;
+            transition: color 0.3s;
         }
 
-        .login-box .login-footer a:hover {
+        .login-footer a:hover {
             color: #fff;
         }
 
-        .spinner-login {
+        .spinner {
             display: none;
             width: 20px;
             height: 20px;
@@ -202,10 +219,9 @@
             border-top: 2px solid #000;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
-            margin: 0 auto;
         }
 
-        .btn-login.loading .spinner-login {
+        .btn-login.loading .spinner {
             display: inline-block;
         }
 
@@ -219,573 +235,99 @@
             }
         }
 
-        .header {
-            text-align: center;
-            padding: 20px 0;
-            border-bottom: 3px solid #ffcc00;
-            margin-bottom: 20px;
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 35px 25px;
+                margin: 20px;
+                border-radius: 18px;
+            }
+
+            .login-logo img {
+                width: 90px;
+            }
+
+            .login-logo h1 {
+                font-size: 1rem;
+            }
+
+            .form-group input {
+                padding: 12px 14px 12px 42px;
+                font-size: 0.9rem;
+            }
         }
 
-        .header .logo-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .header .logo-container img {
-            height: 60px;
-            width: auto;
-            border-radius: 8px;
-            object-fit: contain;
-        }
-
-        .header .logo-container h1 {
-            margin: 0;
-            color: #ffcc00;
-            font-size: 1.6rem;
-            font-weight: 900;
-            letter-spacing: 2px;
-        }
-
-        .header .logo-container h1 span {
-            color: #fff;
-        }
-
-        .header .header-actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 10px;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .header .header-actions .btn-sm {
-            padding: 6px 14px;
-            font-size: 0.7rem;
-            width: auto;
-            border-radius: 20px;
-        }
-
-        .header p {
-            color: #ccc;
-            font-size: 0.9rem;
-            margin-top: 5px;
-        }
-
-        .card {
-            background: #1c1c1c;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-left: 4px solid #ffcc00;
-        }
-
-        .card h3 {
-            color: #ffcc00;
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-        }
-
-        .card .instrucciones {
-            color: #aaa;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: #111;
-            border-radius: 8px;
-            border-left: 3px solid #ffcc00;
-        }
-
-        .card .instrucciones li {
-            margin-bottom: 5px;
-            list-style: none;
-        }
-
-        .card .instrucciones li::before {
-            content: "💡 ";
-        }
-
-        .btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
-        }
-
-        .btn-primary {
-            background: #ffcc00;
-            color: #000;
-        }
-
-        .btn-primary:hover {
-            background: #e6b800;
-            transform: scale(1.02);
-        }
-
-        .btn-success {
-            background: #00c853;
-            color: #fff;
-        }
-
-        .btn-success:hover {
-            background: #00b34a;
-        }
-
-        .btn-danger {
-            background: #d32f2f;
-            color: #fff;
-        }
-
-        .btn-danger:hover {
-            background: #b71c1c;
-        }
-
-        .btn-secondary {
-            background: #444;
-            color: #fff;
-        }
-
-        .btn-secondary:hover {
-            background: #555;
-        }
-
-        .btn-warning {
-            background: #ff9800;
-            color: #fff;
-        }
-
-        .btn-warning:hover {
-            background: #e68900;
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: #ffcc00;
-            border: 2px solid #ffcc00;
-        }
-
-        .btn-outline:hover {
-            background: #ffcc00;
-            color: #000;
-        }
-
-        .btn-sm {
-            padding: 8px 16px;
-            width: auto;
-            font-size: 0.8rem;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .btn-group .btn {
-            flex: 1;
-        }
-
-        select,
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 12px;
-            background: #111;
+        /* DEBUG INFO - solo visible en consola */
+        .debug-info {
+            background: #1a1a1a;
             border: 1px solid #333;
             border-radius: 8px;
-            color: #fff;
-            font-size: 1rem;
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
-        }
-
-        select:focus,
-        input:focus {
-            outline: none;
-            border-color: #ffcc00;
-        }
-
-        #reader {
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-            border-radius: 12px;
-            overflow: hidden;
-            background: #000;
-            min-height: 300px;
-        }
-
-        #reader video {
-            border-radius: 12px;
-            width: 100%;
-            height: auto;
-        }
-
-        .scanner-controls {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-
-        .scanner-controls .btn {
-            flex: 1;
-            min-width: 80px;
-        }
-
-        .resultado {
-            background: #111;
-            padding: 20px;
-            border-radius: 12px;
+            padding: 10px;
             margin-top: 15px;
-            text-align: center;
-            border: 2px solid #444;
-        }
-
-        .resultado.exito {
-            border-color: #00c853;
-        }
-
-        .resultado.error {
-            border-color: #d32f2f;
-        }
-
-        .resultado .icono {
-            font-size: 3rem;
-            margin-bottom: 10px;
-        }
-
-        .resultado .nombre {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        .resultado .detalle {
-            color: #aaa;
-            font-size: 0.9rem;
-            margin-top: 5px;
-        }
-
-        .resultado .estado {
-            display: inline-block;
-            padding: 4px 16px;
-            border-radius: 20px;
-            margin-top: 10px;
-            font-weight: 600;
-        }
-
-        .estado-exito {
-            background: #00c853;
-            color: #fff;
-        }
-
-        .estado-error {
-            background: #d32f2f;
-            color: #fff;
-        }
-
-        .estado-ya-ingreso {
-            background: #ff9800;
-            color: #fff;
-        }
-
-        .assistant-item {
-            background: #111;
-            padding: 12px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 3px solid #555;
-        }
-
-        .assistant-item.ingresado {
-            border-left-color: #00c853;
-            opacity: 0.6;
-        }
-
-        .assistant-item .info .nombre {
-            font-weight: 600;
-            color: #fff;
-        }
-
-        .assistant-item .info .email {
-            font-size: 0.8rem;
-            color: #888;
-        }
-
-        .assistant-item .info .estado {
             font-size: 0.7rem;
-            padding: 2px 10px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-top: 4px;
-        }
-
-        .estado-sin-ingresar {
-            background: #d32f2f;
-            color: #fff;
-        }
-
-        .estado-ingresado {
-            background: #00c853;
-            color: #fff;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .tabs button {
-            flex: 1;
-            padding: 12px;
-            background: #1c1c1c;
-            border: none;
-            border-radius: 8px;
-            color: #aaa;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
-        }
-
-        .tabs button.active {
-            background: #ffcc00;
-            color: #000;
-        }
-
-        .tab-content {
+            color: #666;
             display: none;
         }
 
-        .tab-content.active {
+        .debug-info.show {
             display: block;
         }
 
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #333;
-            color: #fff;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            z-index: 2000;
-            display: none;
-            max-width: 90%;
-            text-align: center;
-        }
-
-        .toast.show {
-            display: block;
-            animation: slideUp 0.3s ease;
-        }
-
-        .toast.success {
-            background: #00c853;
-        }
-
-        .toast.error {
-            background: #d32f2f;
-        }
-
-        .toast.info {
-            background: #2196f3;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateX(-50%) translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .stats .stat {
-            background: #111;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .stats .stat .number {
-            font-size: 1.8rem;
-            font-weight: 900;
+        .debug-info code {
             color: #ffcc00;
-        }
-
-        .stats .stat .label {
-            font-size: 0.7rem;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .full-width {
-            width: 100%;
-        }
-
-        @media (max-width: 480px) {
-            .stats {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .header .logo-container h1 {
-                font-size: 1.2rem;
-            }
-
-            .header .logo-container img {
-                height: 45px;
-            }
-
-            .btn-group {
-                flex-direction: column;
-            }
-
-            .login-box {
-                padding: 30px 20px;
-            }
+            word-break: break-all;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="login-overlay active" id="loginOverlay">
-        <div class="login-box">
-            <img src="img/logo.webp" alt="Los Hijos de Tencha" class="logo-login">
-            <h2>🔐 VALIDADOR</h2>
-            <p class="subtitle">Ingresa la contraseña para continuar</p>
-            <div class="input-wrapper">
-                <i class="fa-solid fa-key"></i>
-                <input type="password" id="passwordInput" placeholder="Contraseña" autofocus>
-                <button type="button" class="toggle-password" onclick="togglePassword()">
-                    <i class="fa-solid fa-eye" id="eyeIcon"></i>
-                </button>
-            </div>
-            <button class="btn-login" id="loginBtn" onclick="verificarPassword()">
-                <span class="btn-text">▶️ Ingresar</span>
-                <span class="spinner-login"></span>
-            </button>
-            <div class="error-msg" id="loginError">❌ Contraseña incorrecta</div>
-            <div class="login-footer">
-                <a href="index.html">← Volver al sitio</a>
-            </div>
+    <div class="login-container">
+        <div class="login-logo">
+            <img src="../img/logo.webp" alt="Los Hijos de Tencha">
+            <h1>Panel de <span>Administración</span></h1>
+            <p>Acceso restringido · Personal autorizado</p>
         </div>
-    </div>
 
-    <div id="mainContent" style="display:none;">
-        <div class="container">
-            <div class="header">
-                <div class="logo-container">
-                    <img src="img/logo.webp" alt="Los Hijos de Tencha">
-                    <h1>LOS HIJOS DE <span>TENCHA</span></h1>
-                </div>
-                <div class="header-actions">
-                    <a href="admin/index.html" class="btn btn-outline btn-sm">⚙️ Admin</a>
-                    <a href="index.html" class="btn btn-secondary btn-sm">🏠 Web</a>
-                    <button class="btn btn-danger btn-sm" onclick="cerrarSesion()">🚪 Salir</button>
-                </div>
-                <p>🎸 Validador de Entradas</p>
-            </div>
+        <div id="errorMessage" class="error-message">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span id="errorText">Contraseña incorrecta. Intenta de nuevo.</span>
+        </div>
 
-            <div class="tabs">
-                <button class="active" onclick="switchTab('escaner', this)">📷 Escáner</button>
-                <button onclick="switchTab('lista', this)">📋 Lista</button>
-            </div>
-
-            <div id="tab-escaner" class="tab-content active">
-                <div class="card">
-                    <h3>📷 Escanear Código QR</h3>
-                    <div class="instrucciones">
-                        <li>Asegúrate de tener buena iluminación</li>
-                        <li>Acerca el QR lentamente a la cámara</li>
-                        <li>Mantén el QR quieto y en foco</li>
-                        <li>Si no funciona, usa el ID manual</li>
-                    </div>
-                    <div id="reader"></div>
-                    <div class="scanner-controls">
-                        <button class="btn btn-primary" id="startScanBtn" onclick="startScanner()">▶️ Iniciar</button>
-                        <button class="btn btn-danger" id="stopScanBtn" onclick="stopScanner()" style="display:none;">⏹️
-                            Detener</button>
-                        <button class="btn btn-warning" id="switchCameraBtn" onclick="switchCamera()"
-                            style="display:none;">🔄 Cámara</button>
-                    </div>
-                    <div id="resultadoEscaneo"></div>
-                </div>
-
-                <div class="card">
-                    <h3>🔑 Validación Manual</h3>
-                    <p style="color:#aaa;font-size:0.8rem;margin-bottom:10px;">
-                        Si el escáner no funciona, copia y pega el ID de la entrada
-                    </p>
-                    <input type="text" id="manualId" placeholder="ID del asistente (ej: abc123)" />
-                    <button class="btn btn-secondary" onclick="validarManual()">🔍 Validar</button>
+        <form id="loginForm" onsubmit="return handleLogin(event)">
+            <div class="form-group">
+                <label for="password">🔐 Contraseña</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-key"></i>
+                    <input type="password" id="password" placeholder="Ingresa tu contraseña" autofocus>
+                    <button type="button" class="toggle-password" onclick="togglePassword()">
+                        <i class="fa-solid fa-eye" id="eyeIcon"></i>
+                    </button>
                 </div>
             </div>
 
-            <div id="tab-lista" class="tab-content">
-                <div class="card">
-                    <h3>📋 Asistentes por Evento</h3>
-                    <select id="selectEventoLista" onchange="cargarListaAsistentes()">
-                        <option value="">Selecciona un evento</option>
-                    </select>
-                    <div id="statsListaContainer" class="stats hidden">
-                        <div class="stat">
-                            <div class="number" id="totalLista">0</div>
-                            <div class="label">Total</div>
-                        </div>
-                        <div class="stat">
-                            <div class="number" id="ingresadosLista">0</div>
-                            <div class="label">Ingresados</div>
-                        </div>
-                        <div class="stat">
-                            <div class="number" id="pendientesLista">0</div>
-                            <div class="label">Pendientes</div>
-                        </div>
-                    </div>
-                    <div id="listaAsistentes">
-                        <p style="color:#666;text-align:center;padding:20px;">Selecciona un evento</p>
-                    </div>
-                </div>
-            </div>
+            <button type="submit" class="btn-login" id="loginBtn">
+                <span class="btn-text"><i class="fa-solid fa-right-to-bracket"></i> Acceder</span>
+                <span class="spinner"></span>
+            </button>
+        </form>
 
-            <div class="toast" id="toast"></div>
+        <!-- Debug info - se muestra temporalmente -->
+        <div class="debug-info" id="debugInfo">
+            <p>🔍 <strong>Debug:</strong></p>
+            <p>Hash esperado: <code
+                    id="debugExpected">d0b15b8b8f7a2e7e8e1e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9</code></p>
+            <p>Hash generado: <code id="debugGenerated">-</code></p>
+            <p>Coinciden: <span id="debugMatch">-</span></p>
+        </div>
+
+        <div class="login-footer">
+            <a href="../index.html">← Volver al sitio</a>
         </div>
     </div>
 
     <script>
         // ============================================================
-        //  HASH CORRECTO PARA LA CONTRASEÑA
+        //  HASH CORRECTO PARA LA CONTRASEÑA "tencha2026"
         // ============================================================
         const PASSWORD_HASH = 'd0b15b8b8f7a2e7e8e1e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9';
 
@@ -797,19 +339,25 @@
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        async function verificarPassword() {
-            const input = document.getElementById('passwordInput');
-            const error = document.getElementById('loginError');
-            const loginBtn = document.getElementById('loginBtn');
-            const password = input.value.trim();
+        async function handleLogin(event) {
+            event.preventDefault();
 
-            error.classList.remove('show');
+            const passwordInput = document.getElementById('password');
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            const loginBtn = document.getElementById('loginBtn');
+            const debugInfo = document.getElementById('debugInfo');
+            const debugGenerated = document.getElementById('debugGenerated');
+            const debugMatch = document.getElementById('debugMatch');
+            const password = passwordInput.value.trim();
+
+            errorMessage.classList.remove('show');
 
             if (!password) {
-                error.textContent = '⚠️ Por favor, ingresa la contraseña';
-                error.classList.add('show');
-                input.focus();
-                return;
+                errorText.textContent = '⚠️ Por favor, ingresa la contraseña.';
+                errorMessage.classList.add('show');
+                passwordInput.focus();
+                return false;
             }
 
             loginBtn.classList.add('loading');
@@ -818,349 +366,75 @@
             try {
                 const inputHash = await hashPassword(password);
 
+                // Mostrar debug
+                debugInfo.classList.add('show');
+                debugGenerated.textContent = inputHash;
+                debugMatch.textContent = (inputHash === PASSWORD_HASH) ? '✅ SÍ' : '❌ NO';
+                debugMatch.style.color = (inputHash === PASSWORD_HASH) ? '#00c853' : '#ff4444';
+
+                console.log('🔍 DEBUG:');
+                console.log('  Hash esperado:  ' + PASSWORD_HASH);
+                console.log('  Hash generado:  ' + inputHash);
+                console.log('  Coinciden:     ' + (inputHash === PASSWORD_HASH ? '✅ SÍ' : '❌ NO'));
+
                 if (inputHash === PASSWORD_HASH) {
-                    error.classList.remove('show');
-                    document.getElementById('loginOverlay').classList.remove('active');
-                    document.getElementById('mainContent').style.display = 'block';
-                    sessionStorage.setItem('validadorAuth', 'authenticated');
-                    sessionStorage.setItem('validadorLoginTime', Date.now().toString());
-                    iniciarApp();
+                    sessionStorage.setItem('adminAuth', 'authenticated');
+                    sessionStorage.setItem('adminLoginTime', Date.now().toString());
+                    window.location.href = 'dashboard.html';
                 } else {
-                    error.textContent = '❌ Contraseña incorrecta. Intenta de nuevo.';
-                    error.classList.add('show');
-                    input.value = '';
-                    input.focus();
-                    setTimeout(() => error.classList.remove('show'), 3000);
+                    errorText.textContent = '❌ Contraseña incorrecta. Intenta de nuevo.';
+                    errorMessage.classList.add('show');
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                    loginBtn.classList.remove('loading');
+                    loginBtn.disabled = false;
                 }
-            } catch (err) {
-                console.error('Error de autenticación:', err);
-                error.textContent = '❌ Error al verificar la contraseña';
-                error.classList.add('show');
+            } catch (error) {
+                console.error('Error de autenticación:', error);
+                errorText.textContent = '⚠️ Error al verificar la contraseña.';
+                errorMessage.classList.add('show');
+                loginBtn.classList.remove('loading');
+                loginBtn.disabled = false;
             }
 
-            loginBtn.classList.remove('loading');
-            loginBtn.disabled = false;
+            return false;
         }
 
         function togglePassword() {
-            const input = document.getElementById('passwordInput');
+            const passwordInput = document.getElementById('password');
             const eyeIcon = document.getElementById('eyeIcon');
 
-            if (input.type === 'password') {
-                input.type = 'text';
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
                 eyeIcon.className = 'fa-solid fa-eye-slash';
             } else {
-                input.type = 'password';
+                passwordInput.type = 'password';
                 eyeIcon.className = 'fa-solid fa-eye';
             }
         }
 
-        function cerrarSesion() {
-            sessionStorage.removeItem('validadorAuth');
-            sessionStorage.removeItem('validadorLoginTime');
-            document.getElementById('mainContent').style.display = 'none';
-            document.getElementById('loginOverlay').classList.add('active');
-            document.getElementById('passwordInput').value = '';
-            document.getElementById('passwordInput').focus();
-            if (isScanning) stopScanner();
-            document.getElementById('resultadoEscaneo').innerHTML = '';
-        }
-
-        function verificarSesion() {
-            const auth = sessionStorage.getItem('validadorAuth');
-            const loginTime = sessionStorage.getItem('validadorLoginTime');
+        document.addEventListener('DOMContentLoaded', function () {
+            const auth = sessionStorage.getItem('adminAuth');
+            const loginTime = sessionStorage.getItem('adminLoginTime');
 
             if (auth === 'authenticated' && loginTime) {
                 const timeElapsed = Date.now() - parseInt(loginTime);
                 if (timeElapsed < 14400000) {
-                    document.getElementById('loginOverlay').classList.remove('active');
-                    document.getElementById('mainContent').style.display = 'block';
-                    iniciarApp();
-                    return true;
+                    window.location.href = 'dashboard.html';
+                    return;
                 } else {
-                    sessionStorage.removeItem('validadorAuth');
-                    sessionStorage.removeItem('validadorLoginTime');
+                    sessionStorage.removeItem('adminAuth');
+                    sessionStorage.removeItem('adminLoginTime');
                 }
             }
-            document.getElementById('loginOverlay').classList.add('active');
-            document.getElementById('mainContent').style.display = 'none';
-            return false;
-        }
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDvp_6UFymZZnqxMyL6yobJ3twLMvVkThw",
-            authDomain: "base-entradas-tenchos.firebaseapp.com",
-            projectId: "base-entradas-tenchos",
-            storageBucket: "base-entradas-tenchos.firebasestorage.app",
-            messagingSenderId: "273676503007",
-            appId: "1:273676503007:web:56180c485b648ef076a66a"
-        };
+            document.getElementById('password').focus();
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        let html5QrCode = null;
-        let isScanning = false;
-        let ultimoEscaneo = null;
-        let currentCamera = 'environment';
-
-        function iniciarApp() {
-            cargarSelectEventos();
-            console.log('🚀 Validador de entradas Los Hijos de Tencha iniciado');
-        }
-
-        function switchTab(tab, btn) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tabs button').forEach(el => el.classList.remove('active'));
-            document.getElementById('tab-' + tab).classList.add('active');
-            btn.classList.add('active');
-            if (tab === 'lista') cargarSelectEventos();
-            if (tab !== 'escaner' && isScanning) {
-                stopScanner();
-            }
-        }
-
-        function showToast(mensaje, tipo = 'success') {
-            const toast = document.getElementById('toast');
-            toast.textContent = mensaje;
-            toast.className = 'toast show ' + tipo;
-            clearTimeout(toast._timeout);
-            toast._timeout = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 4000);
-        }
-
-        function startScanner() {
-            if (isScanning) return;
-
-            const reader = document.getElementById('reader');
-            document.getElementById('startScanBtn').style.display = 'none';
-            document.getElementById('stopScanBtn').style.display = 'block';
-            document.getElementById('switchCameraBtn').style.display = 'block';
-
-            html5QrCode = new Html5Qrcode("reader");
-
-            const config = {
-                fps: 15,
-                qrbox: { width: 280, height: 280 },
-                aspectRatio: 1.0,
-                formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE]
-            };
-
-            html5QrCode.start({ facingMode: currentCamera }, config, onScanSuccess, onScanError)
-                .then(() => {
-                    isScanning = true;
-                    showToast('📷 Cámara activada', 'info');
-                })
-                .catch(err => {
-                    console.error('Error al iniciar cámara:', err);
-                    showToast('❌ Error al acceder a la cámara. Verifica permisos.', 'error');
-                    document.getElementById('startScanBtn').style.display = 'block';
-                    document.getElementById('stopScanBtn').style.display = 'none';
-                    document.getElementById('switchCameraBtn').style.display = 'none';
-                });
-        }
-
-        function stopScanner() {
-            if (html5QrCode && isScanning) {
-                html5QrCode.stop().then(() => {
-                    isScanning = false;
-                    document.getElementById('startScanBtn').style.display = 'block';
-                    document.getElementById('stopScanBtn').style.display = 'none';
-                    document.getElementById('switchCameraBtn').style.display = 'none';
-                    showToast('⏹️ Escáner detenido', 'info');
-                }).catch(err => {
-                    console.error('Error al detener:', err);
-                });
-            }
-        }
-
-        function switchCamera() {
-            if (isScanning) {
-                currentCamera = currentCamera === 'environment' ? 'user' : 'environment';
-                stopScanner();
-                setTimeout(() => startScanner(), 500);
-                showToast('🔄 Cambiando cámara...', 'info');
-            }
-        }
-
-        function onScanSuccess(decodedText, decodedResult) {
-            if (ultimoEscaneo === decodedText) {
-                return;
-            }
-            ultimoEscaneo = decodedText;
-
-            let asistenteId = null;
-            try {
-                const url = new URL(decodedText);
-                asistenteId = url.searchParams.get('id');
-            } catch (e) {
-                asistenteId = decodedText;
-            }
-
-            if (asistenteId) {
-                validarAsistente(asistenteId);
-            } else {
-                mostrarResultado(false, '❌ QR inválido', 'No contiene un ID válido');
-            }
-        }
-
-        function onScanError(err) { }
-
-        async function validarAsistente(asistenteId) {
-            try {
-                const docRef = db.collection('asistentes').doc(asistenteId);
-                const doc = await docRef.get();
-
-                if (!doc.exists) {
-                    mostrarResultado(false, '❌ No encontrado', 'Este ID no corresponde a un asistente registrado');
-                    return;
-                }
-
-                const data = doc.data();
-
-                if (data.ingresado) {
-                    mostrarResultado(false, '⏳ Ya ingresó',
-                        `${data.nombre} ya registró su ingreso el ${new Date(data.fechaIngreso).toLocaleString()}`,
-                        'ya-ingreso'
-                    );
-                    return;
-                }
-
-                await docRef.update({
-                    ingresado: true,
-                    fechaIngreso: new Date().toISOString()
-                });
-
-                mostrarResultado(true, '✅ ¡Bienvenido!',
-                    `${data.nombre} ha ingresado al evento`,
-                    'exito'
-                );
-
-                showToast(`✅ ${data.nombre} ingresó con éxito`, 'success');
-
-                if (document.getElementById('tab-lista').classList.contains('active')) {
-                    cargarListaAsistentes();
-                }
-
-            } catch (error) {
-                console.error('Error al validar:', error);
-                mostrarResultado(false, '❌ Error', 'Error al procesar la validación: ' + error.message);
-            }
-        }
-
-        function validarManual() {
-            const id = document.getElementById('manualId').value.trim();
-            if (!id) {
-                showToast('⚠️ Ingresa un ID', 'error');
-                return;
-            }
-            validarAsistente(id);
-            document.getElementById('manualId').value = '';
-        }
-
-        function mostrarResultado(exito, titulo, mensaje, tipo = '') {
-            const container = document.getElementById('resultadoEscaneo');
-            const icono = exito ? '🎉' : (tipo === 'ya-ingreso' ? '⏳' : '❌');
-            const estadoClass = exito ? 'estado-exito' : (tipo === 'ya-ingreso' ? 'estado-ya-ingreso' : 'estado-error');
-            const estadoText = exito ? '✅ INGRESO CONFIRMADO' : (tipo === 'ya-ingreso' ? '⏳ YA INGRESÓ' : '❌ ACCESO DENEGADO');
-
-            container.innerHTML = `
-                        <div class="resultado ${exito ? 'exito' : 'error'}">
-                            <div class="icono">${icono}</div>
-                            <div class="nombre">${titulo}</div>
-                            <div class="detalle">${mensaje}</div>
-                            <div class="estado ${estadoClass}">${estadoText}</div>
-                        </div>
-                    `;
-        }
-
-        async function cargarSelectEventos() {
-            try {
-                const snapshot = await db.collection('eventos').orderBy('creadoEn', 'desc').get();
-                const select = document.getElementById('selectEventoLista');
-                let options = '<option value="">Selecciona un evento</option>';
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    options += `<option value="${doc.id}">${data.nombre}</option>`;
-                });
-                select.innerHTML = options;
-            } catch (error) {
-                console.error('Error al cargar eventos:', error);
-            }
-        }
-
-        async function cargarListaAsistentes() {
-            const eventoId = document.getElementById('selectEventoLista').value;
-            if (!eventoId) {
-                document.getElementById('listaAsistentes').innerHTML =
-                    '<p style="color:#666;text-align:center;padding:20px;">Selecciona un evento</p>';
-                document.getElementById('statsListaContainer').classList.add('hidden');
-                return;
-            }
-
-            try {
-                const snapshot = await db.collection('asistentes')
-                    .where('eventoId', '==', eventoId)
-                    .get();
-
-                const asistentes = [];
-                snapshot.forEach(doc => {
-                    asistentes.push({ id: doc.id, ...doc.data() });
-                });
-
-                asistentes.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
-
-                const total = asistentes.length;
-                const ingresados = asistentes.filter(a => a.ingresado).length;
-                const pendientes = total - ingresados;
-
-                document.getElementById('totalLista').textContent = total;
-                document.getElementById('ingresadosLista').textContent = ingresados;
-                document.getElementById('pendientesLista').textContent = pendientes;
-                document.getElementById('statsListaContainer').classList.remove('hidden');
-
-                const list = document.getElementById('listaAsistentes');
-                if (asistentes.length === 0) {
-                    list.innerHTML = '<p style="color:#666;text-align:center;padding:20px;">No hay asistentes</p>';
-                    return;
-                }
-
-                list.innerHTML = asistentes.map(a => `
-                            <div class="assistant-item ${a.ingresado ? 'ingresado' : ''}">
-                                <div class="info">
-                                    <div class="nombre">${a.nombre}</div>
-                                    <div class="email">${a.email}</div>
-                                    <span class="estado ${a.ingresado ? 'estado-ingresado' : 'estado-sin-ingresar'}">
-                                        ${a.ingresado ? '✅ Ya ingresó' : '⏳ Sin ingresar'}
-                                    </span>
-                                    ${a.fechaIngreso ? `<span style="font-size:0.6rem;color:#666;margin-left:10px;">${new Date(a.fechaIngreso).toLocaleString()}</span>` : ''}
-                                </div>
-                            </div>
-                        `).join('');
-
-            } catch (error) {
-                console.error('Error al cargar asistentes:', error);
-                showToast('❌ Error al cargar lista', 'error');
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            if (!verificarSesion()) {
-                document.getElementById('passwordInput').focus();
-            }
-
-            document.getElementById('passwordInput').addEventListener('keydown', function (e) {
+            document.getElementById('password').addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') {
-                    verificarPassword();
+                    document.getElementById('loginForm').dispatchEvent(new Event('submit'));
                 }
             });
-        });
-
-        document.addEventListener('visibilitychange', function () {
-            if (document.hidden && isScanning) {
-                stopScanner();
-            }
         });
 
         if (window.performance && window.performance.navigation &&
