@@ -160,10 +160,6 @@
             box-shadow: 0 0 0 5px rgba(255, 204, 0, 0.08);
         }
 
-        .form-group input:focus+i {
-            color: #ffcc00;
-        }
-
         .form-group input::placeholder {
             color: #444;
         }
@@ -440,7 +436,9 @@
                 if (inputHash === PASSWORD_HASH) {
                     sessionStorage.setItem('adminAuth', 'authenticated');
                     sessionStorage.setItem('adminLoginTime', Date.now().toString());
-                    window.location.href = 'dashboard.html';
+                    const redirect = sessionStorage.getItem('adminRedirect') || 'dashboard.html';
+                    sessionStorage.removeItem('adminRedirect');
+                    window.location.href = redirect;
                 } else {
                     errorText.textContent = '❌ Contraseña incorrecta. Intenta de nuevo.';
                     errorMessage.classList.add('show');
@@ -487,6 +485,12 @@
                     sessionStorage.removeItem('adminAuth');
                     sessionStorage.removeItem('adminLoginTime');
                 }
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirect = urlParams.get('redirect');
+            if (redirect) {
+                sessionStorage.setItem('adminRedirect', redirect);
             }
 
             document.getElementById('password').focus();

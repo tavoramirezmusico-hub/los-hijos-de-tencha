@@ -442,7 +442,7 @@
             <a href="../validador.html" class="btn-back">
                 <i class="fa-solid fa-qrcode"></i> Validador
             </a>
-            <a href="../index.html" class="btn-back">
+            <a href="#" class="btn-back" onclick="irWeb()">
                 <i class="fa-solid fa-globe"></i> Web
             </a>
             <div class="user-badge">
@@ -542,6 +542,13 @@
             }
 
             return true;
+        }
+
+        function irWeb() {
+            // Cerrar sesión antes de ir a la web pública
+            sessionStorage.removeItem('adminAuth');
+            sessionStorage.removeItem('adminLoginTime');
+            window.location.href = '../index.html';
         }
 
         function logout() {
