@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Tienda | Los Hijos de Tencha</title>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="css/admin.css">
+
+    <style>
+        /* ============================================================
+           ESTILOS ESPECÍFICOS DE TIENDA
+           ============================================================ */
+
+        .producto-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+            margin-bottom: 12px;
+            transition: var(--transition);
+            align-items: center;
+        }
+
+        .producto-item:hover {
+            border-color: rgba(255, 204, 0, 0.15);
+        }
+
+        .producto-item .producto-thumb {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+        }
+
+        .producto-item .producto-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .producto-item .producto-info .producto-nombre {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 2px;
+        }
+
+        .producto-item .producto-info .producto-meta {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .producto-item .producto-info .producto-desc {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-top: 2px;
+        }
+
+        .producto-item .producto-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .producto-item .producto-actions .btn-admin {
+            padding: 4px 12px;
+            font-size: 0.7rem;
+        }
+
+        .producto-item .producto-precio {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--color-primary);
+            white-space: nowrap;
+            padding: 0 12px;
+        }
+
+        .producto-vacia {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--color-text-muted);
+        }
+
+        .producto-vacia i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.3;
+        }
+
+        /* Preview de imagen */
+        .image-preview {
+            margin: 12px 0;
+            padding: 12px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            border: 1px dashed var(--color-border);
+            display: none;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .image-preview.show {
+            display: flex;
+        }
+
+        .image-preview img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .image-preview .image-info {
+            flex: 1;
+            font-size: 0.85rem;
+        }
+
+        .image-preview .image-info .filename {
+            color: var(--color-text);
+            font-weight: 500;
+        }
+
+        .image-preview .image-info .filesize {
+            color: var(--color-text-muted);
+            font-size: 0.75rem;
+        }
+
+        .image-preview .image-remove {
+            background: none;
+            border: none;
+            color: var(--color-danger);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 4px 8px;
+            transition: var(--transition);
+        }
+
+        .image-preview .image-remove:hover {
+            transform: scale(1.2);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .producto-item {
+                flex-wrap: wrap;
+            }
+
+            .producto-item .producto-thumb {
+                width: 60px;
+                height: 60px;
+            }
+
+            .producto-item .producto-precio {
+                font-size: 1rem;
+                padding: 0 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .producto-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .producto-item .producto-thumb {
+                width: 100%;
+                height: 150px;
+            }
+
+            .producto-item .producto-actions {
+                justify-content: center;
+            }
+
+            .producto-item .producto-precio {
+                text-align: center;
+                padding: 8px 0;
+            }
+
+            .image-preview {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .image-preview img {
+                width: 120px;
+                height: 120px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ============================================================
+    SIDEBAR
+    ============================================================ -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-brand">
+            <img src="../img/logo.webp" alt="Los Hijos de Tencha">
+            <h2>Panel <span>Admin</span></h2>
+        </div>
+
+        <ul class="sidebar-nav">
+            <li class="nav-label">Menú Principal</li>
+            <li><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+            <li><a href="eventos.html"><i class="fa-solid fa-calendar"></i> Eventos</a></li>
+            <li><a href="noticias.html"><i class="fa-solid fa-newspaper"></i> Noticias</a></li>
+            <li><a href="galeria.html"><i class="fa-solid fa-images"></i> Galería</a></li>
+
+            <li class="nav-divider"></li>
+            <li class="nav-label">Contenido</li>
+            <li><a href="canciones.html"><i class="fa-solid fa-music"></i> Canciones</a></li>
+            <li><a href="videos.html"><i class="fa-solid fa-video"></i> Videos</a></li>
+            <li><a href="tienda.html" class="active"><i class="fa-solid fa-shirt"></i> Tienda</a></li>
+
+            <li class="nav-divider"></li>
+            <li class="nav-label">Sistema</li>
+            <li><a href="asistentes.html"><i class="fa-solid fa-users"></i> Asistentes</a></li>
+            <li><a href="../validador.html" target="_blank"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
+            <li><a href="#" onclick="cerrarSesionAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
+        </ul>
+    </aside>
+
+    <div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ============================================================
+    CONTENIDO PRINCIPAL
+    ============================================================ -->
+    <main class="admin-main">
+
+        <!-- HEADER -->
+        <header class="admin-header">
+            <div class="header-left">
+                <button class="hamburger" id="hamburgerBtn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h1><span>👕</span> Gestión de Tienda</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-badge">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Administrador
+                </div>
+                <a href="../index.html#tienda" target="_blank" class="btn-header btn-secondary">
+                    <i class="fa-solid fa-globe"></i> Ver Tienda
+                </a>
+                <button class="btn-header btn-danger" onclick="cerrarSesionAdmin()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Salir
+                </button>
+            </div>
+        </header>
+
+        <!-- ============================================================
+        FORMULARIO
+        ============================================================ -->
+        <div class="admin-card" id="formProducto">
+            <div class="card-header">
+                <h3 id="formTitle"><i class="fa-solid fa-plus-circle"></i> Agregar Producto</h3>
+                <div class="card-actions">
+                    <button class="btn-admin btn-secondary btn-sm" id="btnCancelar" style="display:none;"
+                        onclick="cancelarEdicion()">
+                        <i class="fa-solid fa-xmark"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+
+            <input type="hidden" id="productoId">
+
+            <div class="admin-form-group">
+                <label for="productoNombre">Nombre del producto *</label>
+                <input type="text" id="productoNombre" class="admin-input" placeholder="Ej: Camiseta diseño 1" required>
+            </div>
+
+            <div class="admin-form-group">
+                <label for="productoDescripcion">Descripción (opcional)</label>
+                <input type="text" id="productoDescripcion" class="admin-input"
+                    placeholder="Ej: Camiseta oficial de Los Hijos de Tencha">
+            </div>
+
+            <div class="admin-form-group">
+                <label for="productoPrecio">Precio (en colones) *</label>
+                <input type="text" id="productoPrecio" class="admin-input" placeholder="Ej: 12000" required>
+                <div class="form-help">Solo números, sin puntos ni comas</div>
+            </div>
+
+            <div class="admin-form-group">
+                <label for="productoCategoria">Categoría (opcional)</label>
+                <input type="text" id="productoCategoria" class="admin-input"
+                    placeholder="Ej: Camisetas, Accesorios, Vinilos">
+            </div>
+
+            <div class="admin-form-group">
+                <label for="productoWhatsapp">Enlace de WhatsApp para comprar</label>
+                <input type="url" id="productoWhatsapp" class="admin-input"
+                    placeholder="Ej: https://wa.me/50688636047?text=Me%20interesa%20el%20producto">
+                <div class="form-help">El enlace que se abrirá cuando el usuario haga clic en "Comprar"</div>
+            </div>
+
+            <div class="admin-form-group">
+                <label>Imagen del producto</label>
+                <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                    <input type="file" id="productoImagen" accept="image/*"
+                        style="flex:1; padding:10px; background:var(--color-bg); border:1px solid var(--color-border); border-radius:var(--radius-sm); color:var(--color-text); font-family:var(--font);">
+                    <button class="btn-admin btn-secondary" onclick="document.getElementById('productoImagen').click()">
+                        <i class="fa-solid fa-folder-open"></i> Seleccionar
+                    </button>
+                </div>
+                <div class="form-help">Formatos permitidos: JPG, PNG, WEBP. Tamaño recomendado: 800x800px</div>
+            </div>
+
+            <div class="image-preview" id="imagePreview">
+                <img id="previewImg" src="" alt="Vista previa">
+                <div class="image-info">
+                    <div class="filename" id="previewNombre">imagen.webp</div>
+                    <div class="filesize" id="previewTamaño">0 KB</div>
+                </div>
+                <button class="image-remove" onclick="eliminarImagenSeleccionada()">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+
+            <div id="imagenActualContainer" style="display:none; margin: 8px 0 16px;">
+                <span style="color:var(--color-text-muted); font-size:0.75rem;">Imagen actual:</span>
+                <span id="imagenActualNombre" style="font-size:0.8rem; color:var(--color-primary);"></span>
+            </div>
+
+            <div class="admin-form-group">
+                <label for="productoOrden">Orden (opcional)</label>
+                <input type="number" id="productoOrden" class="admin-input" placeholder="Ej: 1, 2, 3..." min="0">
+                <div class="form-help">Define el orden en el que aparecerá en la tienda</div>
+            </div>
+
+            <div class="admin-form-group">
+                <label for="productoStock">Stock</label>
+                <select id="productoStock" class="admin-select">
+                    <option value="disponible">✅ Disponible</option>
+                    <option value="agotado">❌ Agotado</option>
+                </select>
+            </div>
+
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <button class="btn-admin btn-primary btn-lg" id="btnGuardar" onclick="guardarProducto()">
+                    <i class="fa-solid fa-save"></i> <span id="btnGuardarTexto">Guardar Producto</span>
+                </button>
+                <button class="btn-admin btn-secondary" onclick="limpiarFormulario()">
+                    <i class="fa-solid fa-eraser"></i> Limpiar
+                </button>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        LISTA DE PRODUCTOS
+        ============================================================ -->
+        <div class="admin-card">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-list"></i> Productos</h3>
+                <div class="card-actions">
+                    <span id="productosCount" style="font-size:0.75rem; color:var(--color-text-muted);"></span>
+                </div>
+            </div>
+
+            <div id="listaProductos">
+                <div class="producto-vacia">
+                    <i class="fa-solid fa-box-open"></i>
+                    <p>Cargando productos...</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ============================================================
+    TOAST
+    ============================================================ -->
+    <div id="adminToast" class="admin-toast"></div>
+
+    <!-- ============================================================
+    SCRIPTS
+    ============================================================ -->
+    <script src="js/admin.js"></script>
+
+    <script>
+        // ============================================================
+        // VARIABLES GLOBALES
+        // ============================================================
+        let productos = [];
+        let editandoId = null;
+        let imagenSeleccionada = null;
+        let imagenUrlActual = null;
+
+        // ============================================================
+        // SIDEBAR
+        // ============================================================
+        const sidebar = document.getElementById('adminSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        if (hamburger) hamburger.addEventListener('click', toggleSidebar);
+        if (overlay) overlay.addEventListener('click', toggleSidebar);
+
+        document.querySelectorAll('.admin-sidebar .sidebar-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 992) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+
+        // ============================================================
+        // VERIFICAR SESIÓN
+        // ============================================================
+        (function () {
+            if (!verificarSesionAdmin()) {
+                window.location.href = 'login.html';
+            }
+        })();
+
+        // ============================================================
+        // FUNCIONES CRUD
+        // ============================================================
+
+        async function guardarProducto() {
+            const id = document.getElementById('productoId').value;
+            const nombre = document.getElementById('productoNombre').value.trim();
+            const descripcion = document.getElementById('productoDescripcion').value.trim();
+            const precio = document.getElementById('productoPrecio').value.trim();
+            const categoria = document.getElementById('productoCategoria').value.trim();
+            const whatsapp = document.getElementById('productoWhatsapp').value.trim();
+            const orden = parseInt(document.getElementById('productoOrden').value) || 0;
+            const stock = document.getElementById('productoStock').value;
+
+            // Validaciones
+            if (!nombre) {
+                mostrarToast('⚠️ Ingresa el nombre del producto', 'warning');
+                document.getElementById('productoNombre').focus();
+                return;
+            }
+
+            if (!precio || isNaN(parseInt(precio)) || parseInt(precio) <= 0) {
+                mostrarToast('⚠️ Ingresa un precio válido (solo números)', 'warning');
+                document.getElementById('productoPrecio').focus();
+                return;
+            }
+
+            if (!imagenUrlActual && !imagenSeleccionada && !id) {
+                mostrarToast('⚠️ Selecciona una imagen para el producto', 'warning');
+                return;
+            }
+
+            const btn = document.getElementById('btnGuardar');
+            const btnText = document.getElementById('btnGuardarTexto');
+            btn.classList.add('loading');
+            btn.disabled = true;
+            btnText.textContent = id ? 'Actualizando...' : 'Guardando...';
+
+            try {
+                let imagenUrl = imagenUrlActual;
+
+                // Subir imagen si hay una nueva seleccionada
+                if (imagenSeleccionada) {
+                    const path = `tienda/${Date.now()}_${imagenSeleccionada.name.replace(/\s/g, '_')}`;
+                    const ref = storage.ref(path);
+                    await ref.put(imagenSeleccionada);
+                    imagenUrl = await ref.getDownloadURL();
+                }
+
+                const datos = {
+                    nombre,
+                    descripcion: descripcion || '',
+                    precio: parseInt(precio),
+                    categoria: categoria || 'General',
+                    whatsapp: whatsapp || '',
+                    imagen: imagenUrl || '',
+                    orden: orden,
+                    stock: stock,
+                    actualizadoEn: new Date().toISOString()
+                };
+
+                if (id) {
+                    await db.collection('productos').doc(id).update(datos);
+                    mostrarToast('✅ Producto actualizado con éxito', 'success');
+                } else {
+                    datos.creadoEn = new Date().toISOString();
+                    await db.collection('productos').add(datos);
+                    mostrarToast('✅ Producto guardado con éxito', 'success');
+                }
+
+                limpiarFormulario();
+                cargarProductos();
+
+            } catch (error) {
+                console.error('Error al guardar producto:', error);
+                mostrarToast('❌ Error: ' + error.message, 'error');
+            }
+
+            btn.classList.remove('loading');
+            btn.disabled = false;
+            btnText.textContent = id ? 'Actualizar Producto' : 'Guardar Producto';
+        }
+
+        async function cargarProductos() {
+            const container = document.getElementById('listaProductos');
+
+            try {
+                const snapshot = await db.collection('productos')
+                    .orderBy('orden', 'asc')
+                    .orderBy('creadoEn', 'desc')
+                    .get();
+
+                productos = [];
+                snapshot.forEach(doc => {
+                    productos.push({ id: doc.id, ...doc.data() });
+                });
+
+                document.getElementById('productosCount').textContent = `${productos.length} productos`;
+                renderizarProductos();
+
+            } catch (error) {
+                console.error('Error al cargar productos:', error);
+                container.innerHTML = `
+                            <div class="producto-vacia">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <p>Error al cargar productos: ${error.message}</p>
+                            </div>
+                        `;
+            }
+        }
+
+        function renderizarProductos() {
+            const container = document.getElementById('listaProductos');
+
+            if (productos.length === 0) {
+                container.innerHTML = `
+                            <div class="producto-vacia">
+                                <i class="fa-solid fa-box-open"></i>
+                                <p>No hay productos en la tienda. ¡Agrega el primero!</p>
+                            </div>
+                        `;
+                return;
+            }
+
+            let html = '';
+            productos.forEach(producto => {
+                const stockText = producto.stock === 'disponible' ? '✅ Disponible' : '❌ Agotado';
+                const stockBadge = producto.stock === 'disponible' ? 'badge-success' : 'badge-danger';
+                const precioFormateado = '₡' + producto.precio.toLocaleString();
+
+                html += `
+                            <div class="producto-item">
+                                <img class="producto-thumb" src="${producto.imagen || '../img/logo.webp'}" alt="${sanitizar(producto.nombre)}" onerror="this.src='../img/logo.webp'">
+                                <div class="producto-info">
+                                    <div class="producto-nombre">${sanitizar(producto.nombre)}</div>
+                                    <div class="producto-meta">
+                                        <span><i class="fa-regular fa-tag"></i> ${sanitizar(producto.categoria || 'General')}</span>
+                                        <span class="badge-admin ${stockBadge}">${stockText}</span>
+                                        ${producto.orden > 0 ? `<span><i class="fa-regular fa-hashtag"></i> #${producto.orden}</span>` : ''}
+                                    </div>
+                                    ${producto.descripcion ? `<div class="producto-desc">${sanitizar(producto.descripcion)}</div>` : ''}
+                                </div>
+                                <div class="producto-precio">${precioFormateado}</div>
+                                <div class="producto-actions">
+                                    <button class="btn-admin btn-primary btn-sm" onclick="editarProducto('${producto.id}')">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <button class="btn-admin btn-danger btn-sm" onclick="eliminarProducto('${producto.id}')">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        async function editarProducto(id) {
+            try {
+                const doc = await db.collection('productos').doc(id).get();
+                if (!doc.exists) {
+                    mostrarToast('❌ Producto no encontrado', 'error');
+                    return;
+                }
+
+                const data = doc.data();
+
+                editandoId = id;
+                document.getElementById('productoId').value = id;
+                document.getElementById('productoNombre').value = data.nombre || '';
+                document.getElementById('productoDescripcion').value = data.descripcion || '';
+                document.getElementById('productoPrecio').value = data.precio || '';
+                document.getElementById('productoCategoria').value = data.categoria || '';
+                document.getElementById('productoWhatsapp').value = data.whatsapp || '';
+                document.getElementById('productoOrden').value = data.orden || '';
+                document.getElementById('productoStock').value = data.stock || 'disponible';
+
+                // Mostrar imagen actual
+                if (data.imagen) {
+                    imagenUrlActual = data.imagen;
+                    document.getElementById('imagenActualContainer').style.display = 'block';
+                    document.getElementById('imagenActualNombre').textContent = obtenerNombreArchivo(data.imagen);
+                } else {
+                    imagenUrlActual = null;
+                    document.getElementById('imagenActualContainer').style.display = 'none';
+                }
+
+                document.getElementById('imagePreview').classList.remove('show');
+                imagenSeleccionada = null;
+
+                document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Editar Producto';
+                document.getElementById('btnGuardarTexto').textContent = 'Actualizar Producto';
+                document.getElementById('btnCancelar').style.display = 'inline-flex';
+
+                document.getElementById('formProducto').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                mostrarToast(`✏️ Editando: ${data.nombre}`, 'info');
+
+            } catch (error) {
+                console.error('Error al editar:', error);
+                mostrarToast('❌ Error al cargar el producto', 'error');
+            }
+        }
+
+        async function eliminarProducto(id) {
+            const producto = productos.find(p => p.id === id);
+            if (!producto) return;
+
+            if (!confirm(`¿Eliminar el producto "${producto.nombre}"?`)) {
+                return;
+            }
+
+            try {
+                // Eliminar imagen de Storage
+                if (producto.imagen) {
+                    try {
+                        await eliminarArchivo(producto.imagen);
+                    } catch (e) {
+                        console.warn('No se pudo eliminar la imagen:', e);
+                    }
+                }
+
+                await db.collection('productos').doc(id).delete();
+                mostrarToast('✅ Producto eliminado', 'success');
+                cargarProductos();
+
+                if (editandoId === id) {
+                    limpiarFormulario();
+                }
+
+            } catch (error) {
+                console.error('Error al eliminar:', error);
+                mostrarToast('❌ Error al eliminar el producto', 'error');
+            }
+        }
+
+        function limpiarFormulario() {
+            editandoId = null;
+            document.getElementById('productoId').value = '';
+            document.getElementById('productoNombre').value = '';
+            document.getElementById('productoDescripcion').value = '';
+            document.getElementById('productoPrecio').value = '';
+            document.getElementById('productoCategoria').value = '';
+            document.getElementById('productoWhatsapp').value = '';
+            document.getElementById('productoOrden').value = '';
+            document.getElementById('productoStock').value = 'disponible';
+
+            imagenUrlActual = null;
+            imagenSeleccionada = null;
+            document.getElementById('imagePreview').classList.remove('show');
+            document.getElementById('imagenActualContainer').style.display = 'none';
+            document.getElementById('productoImagen').value = '';
+
+            document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-plus-circle"></i> Agregar Producto';
+            document.getElementById('btnGuardarTexto').textContent = 'Guardar Producto';
+            document.getElementById('btnCancelar').style.display = 'none';
+        }
+
+        function cancelarEdicion() {
+            if (confirm('¿Cancelar la edición? Los cambios no guardados se perderán.')) {
+                limpiarFormulario();
+            }
+        }
+
+        // ============================================================
+        // MANEJO DE IMAGEN
+        // ============================================================
+
+        document.getElementById('productoImagen').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                mostrarToast('⚠️ Selecciona una imagen válida', 'warning');
+                this.value = '';
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                mostrarToast('⚠️ La imagen no debe superar los 5MB', 'warning');
+                this.value = '';
+                return;
+            }
+
+            imagenSeleccionada = file;
+
+            const preview = document.getElementById('imagePreview');
+            const img = document.getElementById('previewImg');
+            const nombre = document.getElementById('previewNombre');
+            const tamaño = document.getElementById('previewTamaño');
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+
+            nombre.textContent = file.name;
+            tamaño.textContent = (file.size / 1024).toFixed(1) + ' KB';
+            preview.classList.add('show');
+
+            document.getElementById('imagenActualContainer').style.display = 'none';
+            imagenUrlActual = null;
+        });
+
+        function eliminarImagenSeleccionada() {
+            imagenSeleccionada = null;
+            document.getElementById('imagePreview').classList.remove('show');
+            document.getElementById('productoImagen').value = '';
+        }
+
+        // ============================================================
+        // INICIALIZAR
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function () {
+            cargarProductos();
+            console.log('🚀 Gestor de Tienda cargado');
+        });
+
+        // Prevenir cierre con Ctrl+W
+        document.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
+                e.preventDefault();
+                mostrarToast('⚠️ Usa el botón "Salir" para cerrar sesión', 'warning');
+                return false;
+            }
+        });
+    </script>
+
+</body>
+
+</html>

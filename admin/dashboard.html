@@ -4,591 +4,638 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administración | Los Hijos de Tencha</title>
+    <title>Dashboard | Los Hijos de Tencha</title>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="css/admin.css">
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* ============================================================
+           ESTILOS ESPECÍFICOS DEL DASHBOARD
+           ============================================================ */
+        .dashboard-welcome {
+            margin-bottom: 25px;
         }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #0a0a0a;
-            min-height: 100vh;
-            color: #fff;
-            background-image: radial-gradient(ellipse at 80% 20%, rgba(255, 204, 0, 0.03) 0%, transparent 50%),
-                radial-gradient(ellipse at 20% 80%, rgba(255, 204, 0, 0.02) 0%, transparent 50%);
-        }
-
-        /* ===== HEADER ===== */
-        .admin-header {
-            background: #141414;
-            padding: 20px 40px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-        }
-
-        .admin-header .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .admin-header .logo-area img {
-            width: 50px;
-            height: auto;
-            border-radius: 10px;
-            transition: transform 0.3s;
-        }
-
-        .admin-header .logo-area img:hover {
-            transform: scale(1.05);
-        }
-
-        .admin-header .logo-area h1 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .admin-header .logo-area span {
-            color: #ffcc00;
+        .dashboard-welcome h1 {
+            font-size: 1.8rem;
             font-weight: 800;
         }
 
-        .admin-header .admin-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
+        .dashboard-welcome h1 span {
+            color: var(--color-primary);
         }
 
-        .admin-header .admin-actions .user-badge {
-            background: #1c1c1c;
-            padding: 8px 16px;
-            border-radius: 25px;
-            font-size: 0.8rem;
-            color: #aaa;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        .dashboard-welcome p {
+            color: var(--color-text-muted);
+            font-size: 0.95rem;
+            margin-top: 4px;
         }
 
-        .admin-header .admin-actions .user-badge i {
-            color: #ffcc00;
-        }
-
-        .btn-logout {
-            background: #d32f2f;
-            color: #fff;
-            border: none;
-            padding: 10px 22px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Poppins', sans-serif;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-logout:hover {
-            background: #b71c1c;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(211, 47, 47, 0.3);
-        }
-
-        .btn-logout:active {
-            transform: scale(0.97);
-        }
-
-        .btn-back {
-            background: #222;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Poppins', sans-serif;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-        }
-
-        .btn-back:hover {
-            background: #333;
-            transform: translateY(-3px);
-        }
-
-        /* ===== CONTENIDO ===== */
-        .admin-content {
-            padding: 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-            animation: fadeUp 0.5s ease;
-        }
-
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .admin-content .page-title {
-            font-size: 2.2rem;
-            font-weight: 800;
-            margin-bottom: 5px;
-            background: linear-gradient(135deg, #ffcc00, #f5a623);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .admin-content .subtitle {
-            color: #888;
-            margin-bottom: 35px;
-            font-size: 1rem;
-        }
-
-        .admin-grid {
+        .admin-stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 25px;
         }
 
-        .admin-card {
-            background: #141414;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 18px;
-            padding: 30px 25px;
-            transition: all 0.4s ease;
-            cursor: pointer;
-            text-decoration: none;
-            color: #fff;
-            display: block;
+        .admin-stat-card {
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            transition: var(--transition);
             position: relative;
             overflow: hidden;
         }
 
-        .admin-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #ffcc00, transparent);
-            opacity: 0;
-            transition: opacity 0.4s;
+        .admin-stat-card:hover {
+            border-color: rgba(255, 204, 0, 0.15);
+            transform: translateY(-3px);
         }
 
-        .admin-card:hover::before {
-            opacity: 1;
+        .admin-stat-card .stat-number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--color-primary);
+            line-height: 1.2;
         }
 
-        .admin-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(255, 204, 0, 0.2);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-        }
-
-        .admin-card .icon {
-            font-size: 2.8rem;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        .admin-card h3 {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .admin-card p {
-            color: #888;
-            font-size: 0.85rem;
-            line-height: 1.5;
-        }
-
-        .admin-card .card-badge {
-            display: inline-block;
-            background: rgba(255, 204, 0, 0.12);
-            color: #ffcc00;
-            padding: 3px 12px;
-            border-radius: 20px;
-            font-size: 0.6rem;
-            font-weight: 700;
+        .admin-stat-card .stat-label {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-top: 10px;
-        }
-
-        .admin-card .card-badge.soon {
-            background: rgba(255, 255, 255, 0.05);
-            color: #666;
-        }
-
-        /* ===== QUICK ACCESS ===== */
-        .quick-access {
-            margin-top: 50px;
-            padding-top: 35px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .quick-access h3 {
-            color: #aaa;
-            font-size: 0.9rem;
             font-weight: 600;
-            margin-bottom: 15px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            margin-top: 4px;
         }
 
-        .quick-access .links {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
+        .admin-stat-card .stat-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2.5rem;
+            color: rgba(255, 204, 0, 0.08);
         }
 
-        .quick-access .links a {
-            background: #1a1a1a;
-            padding: 10px 22px;
+        .admin-stat-card .stat-change {
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-top: 6px;
+            display: inline-block;
+            padding: 2px 10px;
             border-radius: 12px;
-            color: #aaa;
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: all 0.3s;
+        }
+
+        .admin-stat-card .stat-change.up {
+            color: var(--color-success);
+            background: rgba(0, 200, 83, 0.1);
+        }
+
+        .admin-stat-card .stat-change.down {
+            color: var(--color-danger);
+            background: rgba(211, 47, 47, 0.1);
+        }
+
+        /* Grid de 2 columnas */
+        .dashboard-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Lista de actividad reciente */
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--color-border);
             display: flex;
             align-items: center;
-            gap: 8px;
-            border: 1px solid transparent;
-        }
-
-        .quick-access .links a:hover {
-            background: #ffcc00;
-            color: #000;
-            transform: translateY(-3px);
-            border-color: #ffcc00;
-            box-shadow: 0 8px 25px rgba(255, 204, 0, 0.15);
-        }
-
-        .quick-access .links a i {
+            gap: 12px;
             font-size: 0.9rem;
         }
 
-        /* ===== TOAST ===== */
-        #toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #222;
-            color: #fff;
-            padding: 14px 30px;
-            border-radius: 14px;
-            font-size: 0.9rem;
-            z-index: 9999;
-            display: none;
-            max-width: 90%;
+        .activity-list li:last-child {
+            border-bottom: none;
+        }
+
+        .activity-list li .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 204, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-primary);
+            flex-shrink: 0;
+            font-size: 0.8rem;
+        }
+
+        .activity-list li .activity-text {
+            flex: 1;
+        }
+
+        .activity-list li .activity-text .activity-title {
+            font-weight: 500;
+        }
+
+        .activity-list li .activity-text .activity-meta {
+            color: var(--color-text-muted);
+            font-size: 0.75rem;
+        }
+
+        .activity-list li .activity-time {
+            color: var(--color-text-muted);
+            font-size: 0.7rem;
+            white-space: nowrap;
+        }
+
+        /* Tarjetas de acceso rápido */
+        .quick-access-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .quick-access-grid .quick-item {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
             text-align: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            font-family: 'Poppins', sans-serif;
-            animation: slideUp 0.4s ease;
+            text-decoration: none;
+            color: var(--color-text);
+            transition: var(--transition);
+            cursor: pointer;
         }
 
-        #toast.show {
+        .quick-access-grid .quick-item:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-3px);
+            background: rgba(255, 204, 0, 0.04);
+        }
+
+        .quick-access-grid .quick-item i {
+            font-size: 1.8rem;
+            color: var(--color-primary);
+            margin-bottom: 8px;
             display: block;
         }
 
-        #toast.success {
-            background: #00c853;
-            border-color: #00c853;
+        .quick-access-grid .quick-item span {
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: block;
         }
 
-        #toast.error {
-            background: #d32f2f;
-            border-color: #d32f2f;
+        .quick-access-grid .quick-item .quick-badge {
+            font-size: 0.55rem;
+            background: rgba(255, 204, 0, 0.12);
+            color: var(--color-primary);
+            padding: 1px 8px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 4px;
         }
 
-        #toast.info {
-            background: #1976d2;
-            border-color: #1976d2;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateX(-50%) translateY(25px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
+        /* RESPONSIVE */
+        @media (max-width: 992px) {
+            .dashboard-grid-2 {
+                grid-template-columns: 1fr;
             }
         }
 
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
-            .admin-header {
-                padding: 15px 20px;
-            }
-
-            .admin-header .admin-actions .user-badge {
-                font-size: 0.7rem;
-                padding: 6px 12px;
-            }
-
-            .btn-back,
-            .btn-logout {
-                padding: 8px 14px;
-                font-size: 0.75rem;
-            }
-
-            .admin-content {
-                padding: 25px 20px;
-            }
-
-            .admin-content .page-title {
-                font-size: 1.6rem;
-            }
-
-            .admin-grid {
+            .admin-stats-grid {
                 grid-template-columns: 1fr 1fr;
-                gap: 15px;
-            }
-
-            .admin-card {
-                padding: 20px;
-            }
-
-            .admin-card .icon {
-                font-size: 2rem;
-            }
-
-            .quick-access .links {
-                flex-direction: column;
-            }
-
-            .quick-access .links a {
-                justify-content: center;
             }
         }
 
         @media (max-width: 480px) {
-            .admin-header {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 10px;
-            }
-
-            .admin-header .logo-area {
-                justify-content: center;
-            }
-
-            .admin-header .admin-actions {
-                justify-content: center;
-            }
-
-            .admin-grid {
+            .admin-stats-grid {
                 grid-template-columns: 1fr;
             }
 
-            .btn-logout,
-            .btn-back {
-                justify-content: center;
-                flex: 1;
+            .quick-access-grid {
+                grid-template-columns: 1fr 1fr;
             }
+
+            .dashboard-welcome h1 {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* Skeleton loading */
+        .skeleton {
+            background: linear-gradient(90deg, var(--color-bg) 25%, var(--color-bg-hover) 50%, var(--color-bg) 75%);
+            background-size: 200% 100%;
+            animation: skeleton 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        @keyframes skeleton {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .skeleton-text {
+            height: 16px;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-text.w-50 {
+            width: 50%;
+        }
+
+        .skeleton-text.w-75 {
+            width: 75%;
+        }
+
+        .skeleton-number {
+            height: 36px;
+            width: 60px;
         }
     </style>
 </head>
 
 <body>
 
-    <header class="admin-header">
-        <div class="logo-area">
+    <!-- ============================================================
+    SIDEBAR (MENÚ LATERAL)
+    ============================================================ -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-brand">
             <img src="../img/logo.webp" alt="Los Hijos de Tencha">
-            <h1>Panel <span>Admin</span></h1>
+            <h2>Panel <span>Admin</span></h2>
         </div>
-        <div class="admin-actions">
-            <a href="index.html" class="btn-back">
-                <i class="fa-solid fa-ticket"></i> Entradas
-            </a>
-            <a href="#" class="btn-back" onclick="salirYRedirigir('../validador.html')">
-                <i class="fa-solid fa-qrcode"></i> Validador
-            </a>
-            <a href="../index.html" class="btn-back">
-                <i class="fa-solid fa-globe"></i> Web
-            </a>
-            <div class="user-badge">
-                <i class="fa-solid fa-shield-halved"></i>
-                Administrador
+
+        <ul class="sidebar-nav">
+            <li class="nav-label">Menú Principal</li>
+            <li><a href="dashboard.html" class="active"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+            <li><a href="eventos.html"><i class="fa-solid fa-calendar"></i> Eventos</a></li>
+            <li><a href="noticias.html"><i class="fa-solid fa-newspaper"></i> Noticias</a></li>
+            <li><a href="galeria.html"><i class="fa-solid fa-images"></i> Galería</a></li>
+
+            <li class="nav-divider"></li>
+            <li class="nav-label">Contenido</li>
+            <li><a href="canciones.html"><i class="fa-solid fa-music"></i> Canciones</a></li>
+            <li><a href="videos.html"><i class="fa-solid fa-video"></i> Videos</a></li>
+            <li><a href="tienda.html"><i class="fa-solid fa-shirt"></i> Tienda</a></li>
+
+            <li class="nav-divider"></li>
+            <li class="nav-label">Sistema</li>
+            <li><a href="asistentes.html"><i class="fa-solid fa-users"></i> Asistentes</a></li>
+            <li><a href="../validador.html" target="_blank"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
+            <li><a href="#" onclick="cerrarSesionAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
+        </ul>
+    </aside>
+
+    <!-- Overlay para móvil -->
+    <div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ============================================================
+    CONTENIDO PRINCIPAL
+    ============================================================ -->
+    <main class="admin-main">
+
+        <!-- HEADER SUPERIOR -->
+        <header class="admin-header">
+            <div class="header-left">
+                <button class="hamburger" id="hamburgerBtn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h1><span>📊</span> Dashboard</h1>
             </div>
-            <button class="btn-logout" onclick="logout()">
-                <i class="fa-solid fa-right-from-bracket"></i> Salir
-            </button>
-        </div>
-    </header>
+            <div class="header-right">
+                <div class="user-badge">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Administrador
+                </div>
+                <a href="../validador.html" target="_blank" class="btn-header btn-secondary">
+                    <i class="fa-solid fa-qrcode"></i> Validador
+                </a>
+                <a href="../index.html" target="_blank" class="btn-header btn-secondary">
+                    <i class="fa-solid fa-globe"></i> Web
+                </a>
+                <button class="btn-header btn-danger" onclick="cerrarSesionAdmin()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Salir
+                </button>
+            </div>
+        </header>
 
-    <div class="admin-content" id="adminContent">
-        <h1 class="page-title">📊 Panel de Administración</h1>
-        <p class="subtitle">Gestiona todo el contenido de Los Hijos de Tencha</p>
-
-        <div class="admin-grid">
-            <a href="index.html" class="admin-card">
-                <span class="icon">🎟️</span>
-                <h3>Gestionar Entradas</h3>
-                <p>Crear eventos, agregar asistentes y validar entradas</p>
-                <span class="card-badge">Activo</span>
-            </a>
-
-            <a href="#" class="admin-card" onclick="showToast('Próximamente disponible', 'info')">
-                <span class="icon">📰</span>
-                <h3>Gestionar Noticias</h3>
-                <p>Agregar, editar o eliminar noticias</p>
-                <span class="card-badge soon">Próximamente</span>
-            </a>
-
-            <a href="#" class="admin-card" onclick="showToast('Próximamente disponible', 'info')">
-                <span class="icon">🎵</span>
-                <h3>Gestionar Canciones</h3>
-                <p>Agregar, editar o eliminar canciones</p>
-                <span class="card-badge soon">Próximamente</span>
-            </a>
-
-            <a href="#" class="admin-card" onclick="showToast('Próximamente disponible', 'info')">
-                <span class="icon">🎬</span>
-                <h3>Gestionar Videos</h3>
-                <p>Agregar, editar o eliminar videos</p>
-                <span class="card-badge soon">Próximamente</span>
-            </a>
-
-            <a href="#" class="admin-card" onclick="showToast('Próximamente disponible', 'info')">
-                <span class="icon">📸</span>
-                <h3>Gestionar Galería</h3>
-                <p>Agregar, editar o eliminar fotos</p>
-                <span class="card-badge soon">Próximamente</span>
-            </a>
-
-            <a href="#" class="admin-card" onclick="showToast('Próximamente disponible', 'info')">
-                <span class="icon">👕</span>
-                <h3>Gestionar Tienda</h3>
-                <p>Agregar, editar o eliminar productos</p>
-                <span class="card-badge soon">Próximamente</span>
-            </a>
+        <!-- BIENVENIDA -->
+        <div class="dashboard-welcome">
+            <h1>Bienvenido, <span>Administrador</span></h1>
+            <p>Este es el panel de control de Los Hijos de Tencha. Aquí puedes gestionar todo el contenido del sitio.
+            </p>
         </div>
 
-        <div class="quick-access">
-            <h3>🔗 Acceso Rápido</h3>
-            <div class="links">
-                <a href="index.html"><i class="fa-solid fa-ticket"></i> Gestión de Entradas</a>
-                <a href="../validador.html"><i class="fa-solid fa-qrcode"></i> Validador QR</a>
-                <a href="../noticias.html" target="_blank"><i class="fa-regular fa-newspaper"></i> Ver Noticias</a>
-                <a href="../canciones.html" target="_blank"><i class="fa-solid fa-music"></i> Ver Cancionero</a>
-                <a href="../videoteca.html" target="_blank"><i class="fa-solid fa-video"></i> Ver Videoteca</a>
-                <a href="../galeria.html" target="_blank"><i class="fa-solid fa-images"></i> Ver Galería</a>
-                <a href="../index.html" target="_blank"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
+        <!-- ============================================================
+        ESTADÍSTICAS
+        ============================================================ -->
+        <div class="admin-stats-grid" id="statsGrid">
+            <div class="admin-stat-card">
+                <div class="stat-number" id="totalEventos">0</div>
+                <div class="stat-label">Eventos</div>
+                <div class="stat-icon"><i class="fa-regular fa-calendar"></i></div>
+            </div>
+
+            <div class="admin-stat-card">
+                <div class="stat-number" id="totalAsistentes">0</div>
+                <div class="stat-label">Asistentes Registrados</div>
+                <div class="stat-icon"><i class="fa-regular fa-user"></i></div>
+            </div>
+
+            <div class="admin-stat-card">
+                <div class="stat-number" id="ingresadosHoy">0</div>
+                <div class="stat-label">Ingresos Hoy</div>
+                <div class="stat-icon"><i class="fa-regular fa-check-circle"></i></div>
+            </div>
+
+            <div class="admin-stat-card">
+                <div class="stat-number" id="totalNoticias">0</div>
+                <div class="stat-label">Noticias</div>
+                <div class="stat-icon"><i class="fa-regular fa-newspaper"></i></div>
             </div>
         </div>
-    </div>
 
-    <div id="toast">
-        <span id="toastText"></span>
-    </div>
+        <!-- ============================================================
+        GRID 2 COLUMNAS
+        ============================================================ -->
+        <div class="dashboard-grid-2">
+
+            <!-- ACTIVIDAD RECIENTE -->
+            <div class="admin-card">
+                <div class="card-header">
+                    <h3><i class="fa-regular fa-clock"></i> Actividad Reciente</h3>
+                    <span style="font-size:0.7rem; color:var(--color-text-muted);">Últimos ingresos</span>
+                </div>
+                <ul class="activity-list" id="actividadReciente">
+                    <li
+                        style="color:var(--color-text-muted); padding:20px 0; text-align:center; justify-content:center;">
+                        <i class="fa-solid fa-spinner fa-spin"></i> Cargando actividad...
+                    </li>
+                </ul>
+            </div>
+
+            <!-- ACCESO RÁPIDO -->
+            <div class="admin-card">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-bolt"></i> Acceso Rápido</h3>
+                </div>
+                <div class="quick-access-grid">
+                    <a href="eventos.html" class="quick-item">
+                        <i class="fa-solid fa-calendar-plus"></i>
+                        <span>Crear Evento</span>
+                    </a>
+                    <a href="noticias.html" class="quick-item">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        <span>Nueva Noticia</span>
+                    </a>
+                    <a href="galeria.html" class="quick-item">
+                        <i class="fa-solid fa-upload"></i>
+                        <span>Subir Fotos</span>
+                    </a>
+                    <a href="canciones.html" class="quick-item">
+                        <i class="fa-solid fa-plus-circle"></i>
+                        <span>Agregar Canción</span>
+                    </a>
+                    <a href="videos.html" class="quick-item">
+                        <i class="fa-solid fa-plus-circle"></i>
+                        <span>Agregar Video</span>
+                    </a>
+                    <a href="tienda.html" class="quick-item">
+                        <i class="fa-solid fa-plus-circle"></i>
+                        <span>Agregar Producto</span>
+                    </a>
+                    <a href="../validador.html" target="_blank" class="quick-item">
+                        <i class="fa-solid fa-qrcode"></i>
+                        <span>Validador QR</span>
+                        <span class="quick-badge">Escáner</span>
+                    </a>
+                    <a href="../index.html" target="_blank" class="quick-item">
+                        <i class="fa-solid fa-globe"></i>
+                        <span>Ver Sitio Web</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ============================================================
+        ENLACES RÁPIDOS ADICIONALES
+        ============================================================ -->
+        <div class="admin-card">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-link"></i> Enlaces Rápidos</h3>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                <a href="eventos.html" class="btn-admin btn-secondary btn-sm"><i class="fa-solid fa-calendar"></i>
+                    Eventos</a>
+                <a href="noticias.html" class="btn-admin btn-secondary btn-sm"><i class="fa-solid fa-newspaper"></i>
+                    Noticias</a>
+                <a href="galeria.html" class="btn-admin btn-secondary btn-sm"><i class="fa-solid fa-images"></i>
+                    Galería</a>
+                <a href="canciones.html" class="btn-admin btn-secondary btn-sm"><i class="fa-solid fa-music"></i>
+                    Canciones</a>
+                <a href="videos.html" class="btn-admin btn-secondary btn-sm"><i class="fa-solid fa-video"></i>
+                    Videos</a>
+                <a href="tienda.html" class="btn-admin btn-secondary btn-sm"><i class="fa-solid fa-shirt"></i>
+                    Tienda</a>
+                <a href="asistentes.html" class="btn-admin btn-secondary btn-sm"><i class="fa-solid fa-users"></i>
+                    Asistentes</a>
+                <a href="../validador.html" target="_blank" class="btn-admin btn-primary btn-sm"><i
+                        class="fa-solid fa-qrcode"></i> Validador</a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ============================================================
+    TOAST
+    ============================================================ -->
+    <div id="adminToast" class="admin-toast"></div>
+
+    <!-- ============================================================
+    SCRIPTS
+    ============================================================ -->
+    <script src="js/admin.js"></script>
 
     <script>
-        function checkAuth() {
-            const auth = sessionStorage.getItem('adminAuth');
-            const loginTime = sessionStorage.getItem('adminLoginTime');
+        // ============================================================
+        // SIDEBAR - MENÚ HAMBURGUESA
+        // ============================================================
+        const sidebar = document.getElementById('adminSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const hamburger = document.getElementById('hamburgerBtn');
 
-            if (!auth || auth !== 'authenticated') {
-                window.location.href = 'login.html';
-                return false;
-            }
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
 
-            if (loginTime) {
-                const timeElapsed = Date.now() - parseInt(loginTime);
-                if (timeElapsed > 14400000) {
-                    sessionStorage.removeItem('adminAuth');
-                    sessionStorage.removeItem('adminLoginTime');
-                    window.location.href = 'login.html';
-                    return false;
+        if (hamburger) {
+            hamburger.addEventListener('click', toggleSidebar);
+        }
+
+        if (overlay) {
+            overlay.addEventListener('click', toggleSidebar);
+        }
+
+        // Cerrar sidebar al hacer clic en un enlace (móvil)
+        document.querySelectorAll('.admin-sidebar .sidebar-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 992) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
                 }
-            }
-
-            return true;
-        }
-
-        function salirYRedirigir(destino) {
-            sessionStorage.removeItem('adminAuth');
-            sessionStorage.removeItem('adminLoginTime');
-            window.location.href = destino;
-        }
-
-        function logout() {
-            sessionStorage.removeItem('adminAuth');
-            sessionStorage.removeItem('adminLoginTime');
-            window.location.href = 'login.html';
-        }
-
-        function showToast(message, type) {
-            const toast = document.getElementById('toast');
-            const toastText = document.getElementById('toastText');
-
-            toastText.textContent = message;
-            toast.className = 'show ' + (type || 'info');
-
-            clearTimeout(toast._timeout);
-            toast._timeout = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3500);
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            if (!checkAuth()) {
-                return;
-            }
+            });
         });
 
-        if (window.performance && window.performance.navigation &&
-            window.performance.navigation.type === 2) {
-            window.location.reload();
+        // ============================================================
+        // VERIFICAR SESIÓN
+        // ============================================================
+        (function verificarSesion() {
+            if (!verificarSesionAdmin()) {
+                window.location.href = 'login.html';
+                return;
+            }
+        })();
+
+        // ============================================================
+        // CARGAR ESTADÍSTICAS
+        // ============================================================
+        async function cargarDashboard() {
+            try {
+                if (!db) {
+                    console.error('Firestore no disponible');
+                    return;
+                }
+
+                // 1. Total de eventos
+                const eventosSnap = await db.collection('eventos').get();
+                document.getElementById('totalEventos').textContent = eventosSnap.size;
+
+                // 2. Total de asistentes
+                const asistentesSnap = await db.collection('asistentes').get();
+                const totalAsistentes = asistentesSnap.size;
+                document.getElementById('totalAsistentes').textContent = totalAsistentes;
+
+                // 3. Ingresados hoy
+                const hoy = new Date();
+                hoy.setHours(0, 0, 0, 0);
+                const manana = new Date(hoy);
+                manana.setDate(manana.getDate() + 1);
+
+                const ingresadosHoySnap = await db.collection('asistentes')
+                    .where('ingresado', '==', true)
+                    .where('fechaIngreso', '>=', hoy.toISOString())
+                    .where('fechaIngreso', '<', manana.toISOString())
+                    .get();
+
+                document.getElementById('ingresadosHoy').textContent = ingresadosHoySnap.size;
+
+                // 4. Total de noticias
+                const noticiasSnap = await db.collection('noticias').get();
+                document.getElementById('totalNoticias').textContent = noticiasSnap.size;
+
+                // 5. Actividad reciente (últimos 10 ingresos)
+                const actividadSnap = await db.collection('asistentes')
+                    .where('ingresado', '==', true)
+                    .orderBy('fechaIngreso', 'desc')
+                    .limit(10)
+                    .get();
+
+                const lista = document.getElementById('actividadReciente');
+
+                if (actividadSnap.empty) {
+                    lista.innerHTML = `
+                                <li style="color:var(--color-text-muted); padding:20px 0; text-align:center; justify-content:center;">
+                                    <i class="fa-regular fa-clock"></i> No hay actividad reciente
+                                </li>
+                            `;
+                } else {
+                    let html = '';
+                    actividadSnap.forEach(doc => {
+                        const data = doc.data();
+                        const fecha = data.fechaIngreso ? new Date(data.fechaIngreso) : null;
+                        const tiempo = fecha ? formatearFechaHora(fecha) : '-';
+
+                        html += `
+                                    <li>
+                                        <div class="activity-icon">
+                                            <i class="fa-solid fa-check"></i>
+                                        </div>
+                                        <div class="activity-text">
+                                            <div class="activity-title">${sanitizar(data.nombre || 'Desconocido')}</div>
+                                            <div class="activity-meta">Ingresó al evento</div>
+                                        </div>
+                                        <div class="activity-time">${tiempo}</div>
+                                    </li>
+                                `;
+                    });
+                    lista.innerHTML = html;
+                }
+
+                console.log('✅ Dashboard cargado correctamente');
+
+            } catch (error) {
+                console.error('Error al cargar dashboard:', error);
+                mostrarToast('❌ Error al cargar el dashboard', 'error');
+
+                // Mostrar mensaje de error en la actividad
+                document.getElementById('actividadReciente').innerHTML = `
+                            <li style="color:var(--color-text-muted); padding:20px 0; text-align:center; justify-content:center;">
+                                <i class="fa-solid fa-triangle-exclamation"></i> Error al cargar actividad
+                            </li>
+                        `;
+            }
         }
 
+        // ============================================================
+        // INICIALIZAR
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function () {
+            cargarDashboard();
+
+            // Recargar estadísticas cada 60 segundos
+            setInterval(cargarDashboard, 60000);
+        });
+
+        // ============================================================
+        // PREVENIR CIERRE CON CTRL+W
+        // ============================================================
         document.addEventListener('keydown', function (e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
                 e.preventDefault();
-                showToast('⚠️ Usa el botón "Salir" para cerrar sesión', 'info');
+                mostrarToast('⚠️ Usa el botón "Salir" para cerrar sesión', 'warning');
                 return false;
             }
         });
 
-        console.log('🔐 Panel de Administración - Sesión activa');
+        console.log('🚀 Dashboard de Los Hijos de Tencha cargado');
     </script>
 
 </body>

@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Validador de Entradas | Los Hijos de Tencha</title>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+    <!-- Librería para escáner QR -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="css/admin.css">
+
+    <style>
+        /* ============================================================
+           ESTILOS ESPECÍFICOS DEL VALIDADOR
+           ============================================================ */
+
+        .validador-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        #reader {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: #000;
+            min-height: 280px;
+            border: 1px solid var(--color-border);
+        }
+
+        #reader video {
+            border-radius: var(--radius);
+            width: 100%;
+            height: auto;
+        }
+
+        .scanner-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .scanner-controls .btn-admin {
+            flex: 1;
+            min-width: 80px;
+            justify-content: center;
+        }
+
+        .scanner-status {
+            text-align: center;
+            padding: 12px;
+            color: var(--color-text-muted);
+            font-size: 0.85rem;
+        }
+
+        .scanner-status .fa-spinner {
+            color: var(--color-primary);
+        }
+
+        .scanner-status.active {
+            color: var(--color-success);
+        }
+
+        .scanner-status.inactive {
+            color: var(--color-text-muted);
+        }
+
+        /* Resultado */
+        .resultado-validacion {
+            background: var(--color-bg);
+            padding: 20px;
+            border-radius: var(--radius);
+            margin-top: 16px;
+            text-align: center;
+            border: 2px solid var(--color-border);
+            transition: var(--transition);
+        }
+
+        .resultado-validacion.exito {
+            border-color: var(--color-success);
+        }
+
+        .resultado-validacion.error {
+            border-color: var(--color-danger);
+        }
+
+        .resultado-validacion.ya-ingreso {
+            border-color: var(--color-warning);
+        }
+
+        .resultado-validacion .icono {
+            font-size: 3rem;
+            margin-bottom: 8px;
+        }
+
+        .resultado-validacion .nombre {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .resultado-validacion .detalle {
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .resultado-validacion .estado-badge {
+            display: inline-block;
+            padding: 4px 20px;
+            border-radius: 20px;
+            margin-top: 10px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        .resultado-validacion .estado-badge.exito {
+            background: var(--color-success);
+            color: #fff;
+        }
+
+        .resultado-validacion .estado-badge.error {
+            background: var(--color-danger);
+            color: #fff;
+        }
+
+        .resultado-validacion .estado-badge.ya-ingreso {
+            background: var(--color-warning);
+            color: #fff;
+        }
+
+        /* Validación manual */
+        .validacion-manual {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .validacion-manual input {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .validacion-manual .btn-admin {
+            flex-shrink: 0;
+        }
+
+        /* Lista de asistentes (mini) */
+        .mini-asistente {
+            display: flex;
+            gap: 12px;
+            padding: 10px 14px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+            margin-bottom: 8px;
+            transition: var(--transition);
+            align-items: center;
+        }
+
+        .mini-asistente:hover {
+            border-color: rgba(255, 204, 0, 0.1);
+        }
+
+        .mini-asistente .mini-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .mini-asistente .mini-info .mini-nombre {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .mini-asistente .mini-info .mini-email {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+        }
+
+        .mini-asistente .mini-estado {
+            font-size: 0.65rem;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .mini-asistente .mini-estado.ingresado {
+            background: rgba(0, 200, 83, 0.15);
+            color: var(--color-success);
+        }
+
+        .mini-asistente .mini-estado.pendiente {
+            background: rgba(255, 152, 0, 0.15);
+            color: var(--color-warning);
+        }
+
+        .mini-asistente.ingresado {
+            border-left: 3px solid var(--color-success);
+            opacity: 0.7;
+        }
+
+        .mini-asistente.pendiente {
+            border-left: 3px solid var(--color-warning);
+        }
+
+        /* Stats mini */
+        .mini-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .mini-stats .stat {
+            background: var(--color-bg);
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            border: 1px solid var(--color-border);
+        }
+
+        .mini-stats .stat .number {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--color-primary);
+        }
+
+        .mini-stats .stat .label {
+            font-size: 0.6rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .mini-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .scanner-controls .btn-admin {
+                min-width: 60px;
+                padding: 10px 14px;
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .mini-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .validacion-manual {
+                flex-direction: column;
+            }
+
+            .validacion-manual input {
+                min-width: 100%;
+            }
+
+            .validador-container {
+                padding: 0 4px;
+            }
+
+            #reader {
+                min-height: 200px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ============================================================
+    SIDEBAR
+    ============================================================ -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-brand">
+            <img src="../img/logo.webp" alt="Los Hijos de Tencha">
+            <h2>Panel <span>Admin</span></h2>
+        </div>
+
+        <ul class="sidebar-nav">
+            <li class="nav-label">Menú Principal</li>
+            <li><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+            <li><a href="eventos.html"><i class="fa-solid fa-calendar"></i> Eventos</a></li>
+            <li><a href="noticias.html"><i class="fa-solid fa-newspaper"></i> Noticias</a></li>
+            <li><a href="galeria.html"><i class="fa-solid fa-images"></i> Galería</a></li>
+
+            <li class="nav-divider"></li>
+            <li class="nav-label">Contenido</li>
+            <li><a href="canciones.html"><i class="fa-solid fa-music"></i> Canciones</a></li>
+            <li><a href="videos.html"><i class="fa-solid fa-video"></i> Videos</a></li>
+            <li><a href="tienda.html"><i class="fa-solid fa-shirt"></i> Tienda</a></li>
+
+            <li class="nav-divider"></li>
+            <li class="nav-label">Sistema</li>
+            <li><a href="asistentes.html"><i class="fa-solid fa-users"></i> Asistentes</a></li>
+            <li><a href="validador.html" class="active"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
+            <li><a href="#" onclick="cerrarSesionAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
+        </ul>
+    </aside>
+
+    <div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ============================================================
+    CONTENIDO PRINCIPAL
+    ============================================================ -->
+    <main class="admin-main">
+
+        <!-- HEADER -->
+        <header class="admin-header">
+            <div class="header-left">
+                <button class="hamburger" id="hamburgerBtn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h1><span>🔐</span> Validador de Entradas</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-badge">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Administrador
+                </div>
+                <a href="../index.html" target="_blank" class="btn-header btn-secondary">
+                    <i class="fa-solid fa-globe"></i> Web
+                </a>
+                <button class="btn-header btn-danger" onclick="cerrarSesionAdmin()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Salir
+                </button>
+            </div>
+        </header>
+
+        <!-- ============================================================
+        CONTENIDO VALIDADOR
+        ============================================================ -->
+        <div class="validador-container">
+
+            <!-- ============================================================
+            TABS
+            ============================================================ -->
+            <div class="sub-tabs">
+                <button class="active" onclick="switchTab('escaner', this)">
+                    <i class="fa-solid fa-qrcode"></i> Escáner
+                </button>
+                <button onclick="switchTab('lista', this)">
+                    <i class="fa-solid fa-list"></i> Lista
+                </button>
+            </div>
+
+            <!-- ============================================================
+            TAB 1: ESCÁNER
+            ============================================================ -->
+            <div id="subTab-escaner" class="sub-tab-content active">
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-camera"></i> Escanear Código QR</h3>
+                    </div>
+
+                    <div class="scanner-status inactive" id="scannerStatus">
+                        <i class="fa-solid fa-circle"></i> Cámara inactiva
+                    </div>
+
+                    <div id="reader"></div>
+
+                    <div class="scanner-controls">
+                        <button class="btn-admin btn-primary" id="startScanBtn" onclick="startScanner()">
+                            <i class="fa-solid fa-play"></i> Iniciar
+                        </button>
+                        <button class="btn-admin btn-danger" id="stopScanBtn" onclick="stopScanner()"
+                            style="display:none;">
+                            <i class="fa-solid fa-stop"></i> Detener
+                        </button>
+                        <button class="btn-admin btn-secondary" id="switchCameraBtn" onclick="switchCamera()"
+                            style="display:none;">
+                            <i class="fa-solid fa-rotate"></i> Cámara
+                        </button>
+                    </div>
+
+                    <div id="resultadoEscaneo"></div>
+                </div>
+
+                <!-- ============================================================
+                VALIDACIÓN MANUAL
+                ============================================================ -->
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-keyboard"></i> Validación Manual</h3>
+                    </div>
+                    <p style="color:var(--color-text-muted); font-size:0.85rem; margin-bottom:12px;">
+                        Si el escáner no funciona, copia y pega el ID de la entrada
+                    </p>
+                    <div class="validacion-manual">
+                        <input type="text" id="manualId" class="admin-input"
+                            placeholder="ID del asistente (ej: abc123)">
+                        <button class="btn-admin btn-secondary" onclick="validarManual()">
+                            <i class="fa-solid fa-magnifying-glass"></i> Validar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================================
+            TAB 2: LISTA DE ASISTENTES
+            ============================================================ -->
+            <div id="subTab-lista" class="sub-tab-content">
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-users"></i> Asistentes por Evento</h3>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label for="selectEventoLista">Seleccionar Evento</label>
+                        <select id="selectEventoLista" class="admin-select" onchange="cargarListaAsistentes()">
+                            <option value="">Selecciona un evento</option>
+                        </select>
+                    </div>
+
+                    <div id="statsListaContainer" style="display:none;">
+                        <div class="mini-stats">
+                            <div class="stat">
+                                <div class="number" id="totalLista">0</div>
+                                <div class="label">Total</div>
+                            </div>
+                            <div class="stat">
+                                <div class="number" id="ingresadosLista">0</div>
+                                <div class="label">Ingresados</div>
+                            </div>
+                            <div class="stat">
+                                <div class="number" id="pendientesLista">0</div>
+                                <div class="label">Pendientes</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="listaAsistentes">
+                        <p style="color:var(--color-text-muted); text-align:center; padding:20px;">
+                            <i class="fa-solid fa-arrow-up"></i> Selecciona un evento
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- ============================================================
+    TOAST
+    ============================================================ -->
+    <div id="adminToast" class="admin-toast"></div>
+
+    <!-- ============================================================
+    SCRIPTS
+    ============================================================ -->
+    <script src="js/admin.js"></script>
+
+    <script>
+        // ============================================================
+        // VARIABLES GLOBALES
+        // ============================================================
+        let html5QrCode = null;
+        let isScanning = false;
+        let ultimoEscaneo = null;
+        let currentCamera = 'environment';
+        let asistentesLista = [];
+
+        // ============================================================
+        // SIDEBAR
+        // ============================================================
+        const sidebar = document.getElementById('adminSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        if (hamburger) hamburger.addEventListener('click', toggleSidebar);
+        if (overlay) overlay.addEventListener('click', toggleSidebar);
+
+        document.querySelectorAll('.admin-sidebar .sidebar-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 992) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+
+        // ============================================================
+        // VERIFICAR SESIÓN
+        // ============================================================
+        (function () {
+            if (!verificarSesionAdmin()) {
+                window.location.href = 'login.html';
+            }
+        })();
+
+        // ============================================================
+        // FUNCIONES - TABS
+        // ============================================================
+
+        function switchTab(tab, btn) {
+            document.querySelectorAll('.sub-tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.sub-tabs button').forEach(el => el.classList.remove('active'));
+            document.getElementById('subTab-' + tab).classList.add('active');
+            btn.classList.add('active');
+
+            if (tab === 'lista') cargarSelectEventos();
+            if (tab !== 'escaner' && isScanning) {
+                stopScanner();
+            }
+        }
+
+        // ============================================================
+        // FUNCIONES - ESCÁNER
+        // ============================================================
+
+        function startScanner() {
+            if (isScanning) return;
+
+            const reader = document.getElementById('reader');
+            const status = document.getElementById('scannerStatus');
+
+            document.getElementById('startScanBtn').style.display = 'none';
+            document.getElementById('stopScanBtn').style.display = 'block';
+            document.getElementById('switchCameraBtn').style.display = 'block';
+
+            status.className = 'scanner-status active';
+            status.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Iniciando cámara...';
+
+            html5QrCode = new Html5Qrcode("reader");
+
+            const config = {
+                fps: 15,
+                qrbox: { width: 260, height: 260 },
+                aspectRatio: 1.0,
+                formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE]
+            };
+
+            html5QrCode.start({ facingMode: currentCamera }, config, onScanSuccess, onScanError)
+                .then(() => {
+                    isScanning = true;
+                    status.className = 'scanner-status active';
+                    status.innerHTML = '<i class="fa-solid fa-circle" style="color:var(--color-success);"></i> Cámara activa - Escaneando...';
+                    mostrarToast('📷 Cámara activada', 'info');
+                })
+                .catch(err => {
+                    console.error('Error al iniciar cámara:', err);
+                    status.className = 'scanner-status inactive';
+                    status.innerHTML = '<i class="fa-solid fa-circle"></i> Error: ' + err.message;
+                    mostrarToast('❌ Error al acceder a la cámara', 'error');
+                    document.getElementById('startScanBtn').style.display = 'block';
+                    document.getElementById('stopScanBtn').style.display = 'none';
+                    document.getElementById('switchCameraBtn').style.display = 'none';
+                });
+        }
+
+        function stopScanner() {
+            if (html5QrCode && isScanning) {
+                html5QrCode.stop().then(() => {
+                    isScanning = false;
+                    document.getElementById('startScanBtn').style.display = 'block';
+                    document.getElementById('stopScanBtn').style.display = 'none';
+                    document.getElementById('switchCameraBtn').style.display = 'none';
+
+                    const status = document.getElementById('scannerStatus');
+                    status.className = 'scanner-status inactive';
+                    status.innerHTML = '<i class="fa-solid fa-circle"></i> Cámara inactiva';
+
+                    mostrarToast('⏹️ Escáner detenido', 'info');
+                }).catch(err => {
+                    console.error('Error al detener:', err);
+                });
+            }
+        }
+
+        function switchCamera() {
+            if (isScanning) {
+                currentCamera = currentCamera === 'environment' ? 'user' : 'environment';
+                stopScanner();
+                setTimeout(() => startScanner(), 500);
+                mostrarToast('🔄 Cambiando cámara...', 'info');
+            }
+        }
+
+        function onScanSuccess(decodedText, decodedResult) {
+            if (ultimoEscaneo === decodedText) {
+                return;
+            }
+            ultimoEscaneo = decodedText;
+
+            let asistenteId = null;
+            try {
+                const url = new URL(decodedText);
+                asistenteId = url.searchParams.get('id');
+            } catch (e) {
+                asistenteId = decodedText;
+            }
+
+            if (asistenteId) {
+                validarAsistente(asistenteId);
+            } else {
+                mostrarResultado(false, '❌ QR inválido', 'No contiene un ID válido', 'error');
+            }
+        }
+
+        function onScanError(err) {
+            // Ignorar errores (son normales mientras busca)
+        }
+
+        // ============================================================
+        // FUNCIONES - VALIDACIÓN
+        // ============================================================
+
+        async function validarAsistente(asistenteId) {
+            try {
+                const docRef = db.collection('asistentes').doc(asistenteId);
+                const doc = await docRef.get();
+
+                if (!doc.exists) {
+                    mostrarResultado(false, '❌ No encontrado', 'Este ID no corresponde a un asistente registrado', 'error');
+                    return;
+                }
+
+                const data = doc.data();
+
+                if (data.ingresado) {
+                    const fecha = data.fechaIngreso ? formatearFechaHora(data.fechaIngreso) : '';
+                    mostrarResultado(false, '⏳ Ya ingresó',
+                        `${data.nombre} ya registró su ingreso${fecha ? ' el ' + fecha : ''}`,
+                        'ya-ingreso'
+                    );
+                    return;
+                }
+
+                await docRef.update({
+                    ingresado: true,
+                    fechaIngreso: new Date().toISOString()
+                });
+
+                mostrarResultado(true, '✅ ¡Bienvenido!',
+                    `${data.nombre} ha ingresado al evento`,
+                    'exito'
+                );
+
+                mostrarToast(`✅ ${data.nombre} ingresó con éxito`, 'success');
+
+                // Actualizar lista si está visible
+                if (document.getElementById('subTab-lista').classList.contains('active')) {
+                    cargarListaAsistentes();
+                }
+
+            } catch (error) {
+                console.error('Error al validar:', error);
+                mostrarResultado(false, '❌ Error', 'Error al procesar la validación: ' + error.message, 'error');
+            }
+        }
+
+        function validarManual() {
+            const id = document.getElementById('manualId').value.trim();
+            if (!id) {
+                mostrarToast('⚠️ Ingresa un ID', 'warning');
+                return;
+            }
+            validarAsistente(id);
+            document.getElementById('manualId').value = '';
+        }
+
+        function mostrarResultado(exito, titulo, mensaje, tipo) {
+            const container = document.getElementById('resultadoEscaneo');
+            const icono = exito ? '🎉' : (tipo === 'ya-ingreso' ? '⏳' : '❌');
+            const estadoClass = exito ? 'exito' : (tipo === 'ya-ingreso' ? 'ya-ingreso' : 'error');
+            const estadoText = exito ? '✅ INGRESO CONFIRMADO' : (tipo === 'ya-ingreso' ? '⏳ YA INGRESÓ' : '❌ ACCESO DENEGADO');
+
+            container.innerHTML = `
+                        <div class="resultado-validacion ${estadoClass}">
+                            <div class="icono">${icono}</div>
+                            <div class="nombre">${titulo}</div>
+                            <div class="detalle">${mensaje}</div>
+                            <div class="estado-badge ${estadoClass}">${estadoText}</div>
+                        </div>
+                    `;
+
+            // Auto limpiar después de 8 segundos si fue exitoso
+            if (exito) {
+                setTimeout(() => {
+                    container.innerHTML = '';
+                }, 8000);
+            }
+        }
+
+        // ============================================================
+        // FUNCIONES - LISTA DE ASISTENTES
+        // ============================================================
+
+        async function cargarSelectEventos() {
+            try {
+                const snapshot = await db.collection('eventos')
+                    .orderBy('creadoEn', 'desc')
+                    .get();
+
+                const select = document.getElementById('selectEventoLista');
+                let options = '<option value="">Selecciona un evento</option>';
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    options += `<option value="${doc.id}">${sanitizar(data.nombre)}</option>`;
+                });
+
+                select.innerHTML = options;
+
+            } catch (error) {
+                console.error('Error al cargar eventos:', error);
+            }
+        }
+
+        async function cargarListaAsistentes() {
+            const eventoId = document.getElementById('selectEventoLista').value;
+            if (!eventoId) {
+                document.getElementById('listaAsistentes').innerHTML =
+                    '<p style="color:var(--color-text-muted); text-align:center; padding:20px;"><i class="fa-solid fa-arrow-up"></i> Selecciona un evento</p>';
+                document.getElementById('statsListaContainer').style.display = 'none';
+                return;
+            }
+
+            try {
+                const snapshot = await db.collection('asistentes')
+                    .where('eventoId', '==', eventoId)
+                    .get();
+
+                asistentesLista = [];
+                snapshot.forEach(doc => {
+                    asistentesLista.push({ id: doc.id, ...doc.data() });
+                });
+
+                asistentesLista.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
+
+                const total = asistentesLista.length;
+                const ingresados = asistentesLista.filter(a => a.ingresado).length;
+                const pendientes = total - ingresados;
+
+                document.getElementById('totalLista').textContent = total;
+                document.getElementById('ingresadosLista').textContent = ingresados;
+                document.getElementById('pendientesLista').textContent = pendientes;
+                document.getElementById('statsListaContainer').style.display = 'block';
+
+                const list = document.getElementById('listaAsistentes');
+
+                if (asistentesLista.length === 0) {
+                    list.innerHTML =
+                        '<p style="color:var(--color-text-muted); text-align:center; padding:20px;"><i class="fa-regular fa-user"></i> No hay asistentes</p>';
+                    return;
+                }
+
+                let html = '';
+                asistentesLista.forEach(a => {
+                    html += `
+                                <div class="mini-asistente ${a.ingresado ? 'ingresado' : 'pendiente'}">
+                                    <div class="mini-info">
+                                        <div class="mini-nombre">${sanitizar(a.nombre)}</div>
+                                        <div class="mini-email">${sanitizar(a.email)}</div>
+                                    </div>
+                                    <span class="mini-estado ${a.ingresado ? 'ingresado' : 'pendiente'}">
+                                        ${a.ingresado ? '✅ Ingresado' : '⏳ Pendiente'}
+                                    </span>
+                                </div>
+                            `;
+                });
+
+                list.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error al cargar asistentes:', error);
+                mostrarToast('❌ Error al cargar lista', 'error');
+            }
+        }
+
+        // ============================================================
+        // INICIALIZAR
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function () {
+            cargarSelectEventos();
+            console.log('🚀 Validador de Entradas cargado');
+        });
+
+        // Detener escáner al cerrar
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden && isScanning) {
+                stopScanner();
+            }
+        });
+
+        // Prevenir cierre con Ctrl+W
+        document.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
+                e.preventDefault();
+                mostrarToast('⚠️ Usa el botón "Salir" para cerrar sesión', 'warning');
+                return false;
+            }
+        });
+    </script>
+
+</body>
+
+</html>

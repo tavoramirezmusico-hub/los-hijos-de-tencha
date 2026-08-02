@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Eventos | Los Hijos de Tencha</title>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <!-- QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- SheetJS para exportar a Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="css/admin.css">
+
+    <style>
+        /* ============================================================
+           ESTILOS ESPECÍFICOS DE EVENTOS
+           ============================================================ */
+
+        .evento-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+            margin-bottom: 12px;
+            transition: var(--transition);
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .evento-item:hover {
+            border-color: rgba(255, 204, 0, 0.15);
+        }
+
+        .evento-item .evento-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .evento-item .evento-info .evento-nombre {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 2px;
+        }
+
+        .evento-item .evento-info .evento-meta {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .evento-item .evento-count {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--color-primary);
+            padding: 0 12px;
+            white-space: nowrap;
+        }
+
+        .evento-item .evento-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .evento-item .evento-actions .btn-admin {
+            padding: 4px 12px;
+            font-size: 0.7rem;
+        }
+
+        .evento-vacia {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--color-text-muted);
+        }
+
+        .evento-vacia i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.3;
+        }
+
+        /* Asistentes */
+        .asistente-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 14px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+            margin-bottom: 8px;
+            transition: var(--transition);
+            align-items: center;
+        }
+
+        .asistente-item:hover {
+            border-color: rgba(255, 204, 0, 0.1);
+        }
+
+        .asistente-item .asistente-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .asistente-item .asistente-info .asistente-nombre {
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .asistente-item .asistente-info .asistente-email {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+        }
+
+        .asistente-item .asistente-info .asistente-extra {
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 2px;
+        }
+
+        .asistente-item .asistente-actions {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .asistente-item .asistente-actions .btn-admin {
+            padding: 2px 10px;
+            font-size: 0.65rem;
+        }
+
+        .asistente-item.ingresado {
+            border-left: 3px solid var(--color-success);
+            opacity: 0.7;
+        }
+
+        .asistente-item.pendiente {
+            border-left: 3px solid var(--color-warning);
+        }
+
+        .stats-eventos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stats-eventos .stat {
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            text-align: center;
+            border: 1px solid var(--color-border);
+        }
+
+        .stats-eventos .stat .number {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--color-primary);
+        }
+
+        .stats-eventos .stat .label {
+            font-size: 0.65rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        /* Tabs dentro de eventos */
+        .sub-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .sub-tabs button {
+            padding: 8px 18px;
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            color: var(--color-text-muted);
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font);
+        }
+
+        .sub-tabs button:hover {
+            border-color: var(--color-primary);
+            color: var(--color-text);
+        }
+
+        .sub-tabs button.active {
+            background: var(--color-primary);
+            color: #000;
+            border-color: var(--color-primary);
+        }
+
+        .sub-tab-content {
+            display: none;
+        }
+
+        .sub-tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn-group-botones {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .btn-group-botones .btn-admin {
+            flex: 1;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .evento-item {
+                flex-wrap: wrap;
+            }
+
+            .evento-item .evento-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .stats-eventos {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .btn-group-botones .btn-admin {
+                min-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .evento-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .evento-item .evento-actions {
+                justify-content: center;
+            }
+
+            .evento-item .evento-count {
+                text-align: center;
+            }
+
+            .stats-eventos {
+                grid-template-columns: 1fr;
+            }
+
+            .sub-tabs {
+                flex-wrap: wrap;
+            }
+
+            .sub-tabs button {
+                flex: 1;
+                text-align: center;
+            }
+
+            .asistente-item {
+                flex-wrap: wrap;
+            }
+
+            .asistente-item .asistente-actions {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ============================================================
+    SIDEBAR
+    ============================================================ -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-brand">
+            <img src="../img/logo.webp" alt="Los Hijos de Tencha">
+            <h2>Panel <span>Admin</span></h2>
+        </div>
+
+        <ul class="sidebar-nav">
+            <li class="nav-label">Menú Principal</li>
+            <li><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+            <li><a href="eventos.html" class="active"><i class="fa-solid fa-calendar"></i> Eventos</a></li>
+            <li><a href="noticias.html"><i class="fa-solid fa-newspaper"></i> Noticias</a></li>
+            <li><a href="galeria.html"><i class="fa-solid fa-images"></i> Galería</a></li>
+
+            <li class="nav-divider"></li>
+            <li class="nav-label">Contenido</li>
+            <li><a href="canciones.html"><i class="fa-solid fa-music"></i> Canciones</a></li>
+            <li><a href="videos.html"><i class="fa-solid fa-video"></i> Videos</a></li>
+            <li><a href="tienda.html"><i class="fa-solid fa-shirt"></i> Tienda</a></li>
+
+            <li class="nav-divider"></li>
+            <li class="nav-label">Sistema</li>
+            <li><a href="asistentes.html"><i class="fa-solid fa-users"></i> Asistentes</a></li>
+            <li><a href="../validador.html" target="_blank"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
+            <li><a href="#" onclick="cerrarSesionAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
+        </ul>
+    </aside>
+
+    <div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ============================================================
+    CONTENIDO PRINCIPAL
+    ============================================================ -->
+    <main class="admin-main">
+
+        <!-- HEADER -->
+        <header class="admin-header">
+            <div class="header-left">
+                <button class="hamburger" id="hamburgerBtn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h1><span>🎟️</span> Gestión de Eventos</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-badge">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Administrador
+                </div>
+                <a href="../index.html#eventos" target="_blank" class="btn-header btn-secondary">
+                    <i class="fa-solid fa-globe"></i> Ver Eventos
+                </a>
+                <button class="btn-header btn-danger" onclick="cerrarSesionAdmin()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Salir
+                </button>
+            </div>
+        </header>
+
+        <!-- ============================================================
+        TABS PRINCIPALES
+        ============================================================ -->
+        <div class="sub-tabs">
+            <button class="active" onclick="switchSubTab('eventos', this)"><i class="fa-solid fa-list"></i>
+                Eventos</button>
+            <button onclick="switchSubTab('asistentes', this)"><i class="fa-solid fa-users"></i> Asistentes</button>
+            <button onclick="switchSubTab('crear', this)"><i class="fa-solid fa-plus"></i> Crear Evento</button>
+            <button onclick="switchSubTab('agregar', this)"><i class="fa-solid fa-user-plus"></i> Agregar
+                Asistente</button>
+        </div>
+
+        <!-- ============================================================
+        TAB 1: LISTA DE EVENTOS
+        ============================================================ -->
+        <div id="subTab-eventos" class="sub-tab-content active">
+            <div class="admin-card">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-calendar"></i> Eventos Creados</h3>
+                    <div class="card-actions">
+                        <span id="eventosCount" style="font-size:0.75rem; color:var(--color-text-muted);"></span>
+                    </div>
+                </div>
+                <div id="listaEventos">
+                    <div class="evento-vacia">
+                        <i class="fa-regular fa-calendar"></i>
+                        <p>Cargando eventos...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        TAB 2: ASISTENTES POR EVENTO
+        ============================================================ -->
+        <div id="subTab-asistentes" class="sub-tab-content">
+            <div class="admin-card">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-users"></i> Asistentes por Evento</h3>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="selectEventoAsistentes">Seleccionar Evento</label>
+                    <select id="selectEventoAsistentes" class="admin-select" onchange="cargarAsistentes()">
+                        <option value="">Selecciona un evento</option>
+                    </select>
+                </div>
+
+                <div class="btn-group-botones">
+                    <button class="btn-admin btn-success btn-sm" onclick="exportarExcel()">
+                        <i class="fa-solid fa-file-excel"></i> Exportar
+                    </button>
+                    <button class="btn-admin btn-primary btn-sm" onclick="exportarTodosEventos()">
+                        <i class="fa-solid fa-file-excel"></i> Exportar Todo
+                    </button>
+                </div>
+
+                <div id="statsContainer" style="display:none;">
+                    <div class="stats-eventos">
+                        <div class="stat">
+                            <div class="number" id="totalAsistentes">0</div>
+                            <div class="label">Total</div>
+                        </div>
+                        <div class="stat">
+                            <div class="number" id="ingresadosCount">0</div>
+                            <div class="label">Ingresados</div>
+                        </div>
+                        <div class="stat">
+                            <div class="number" id="pendientesCount">0</div>
+                            <div class="label">Pendientes</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="asistentesList">
+                    <p style="color:var(--color-text-muted); text-align:center; padding:20px;">
+                        <i class="fa-solid fa-arrow-up"></i> Selecciona un evento para ver los asistentes
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        TAB 3: CREAR EVENTO
+        ============================================================ -->
+        <div id="subTab-crear" class="sub-tab-content">
+            <div class="admin-card">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-plus-circle"></i> Crear Nuevo Evento</h3>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="eventoNombre">Nombre del evento *</label>
+                    <input type="text" id="eventoNombre" class="admin-input"
+                        placeholder="Ej: Concierto en Bar Starview">
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="eventoFecha">Fecha</label>
+                    <input type="date" id="eventoFecha" class="admin-input">
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="eventoHora">Hora</label>
+                    <input type="time" id="eventoHora" class="admin-input">
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="eventoLugar">Lugar (opcional)</label>
+                    <input type="text" id="eventoLugar" class="admin-input" placeholder="Ej: San José, Costa Rica">
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="eventoDescripcion">Descripción (opcional)</label>
+                    <textarea id="eventoDescripcion" class="admin-textarea" placeholder="Descripción del evento"
+                        rows="2"></textarea>
+                </div>
+
+                <button class="btn-admin btn-primary btn-lg" onclick="crearEvento()">
+                    <i class="fa-solid fa-plus"></i> Crear Evento
+                </button>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        TAB 4: AGREGAR ASISTENTE
+        ============================================================ -->
+        <div id="subTab-agregar" class="sub-tab-content">
+            <div class="admin-card">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-user-plus"></i> Agregar Asistente</h3>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="selectEventoAgregar">Evento *</label>
+                    <select id="selectEventoAgregar" class="admin-select">
+                        <option value="">Selecciona un evento</option>
+                    </select>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="asistenteNombre">Nombre completo *</label>
+                    <input type="text" id="asistenteNombre" class="admin-input" placeholder="Nombre del asistente">
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="asistenteEmail">Correo electrónico *</label>
+                    <input type="email" id="asistenteEmail" class="admin-input" placeholder="correo@ejemplo.com">
+                </div>
+
+                <button class="btn-admin btn-success btn-lg" onclick="agregarAsistente()">
+                    <i class="fa-solid fa-check"></i> Agregar Asistente
+                </button>
+                <div id="mensajeAgregar" style="margin-top:12px; display:none;"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ============================================================
+    MODAL QR
+    ============================================================ -->
+    <div class="admin-modal" id="qrModal">
+        <div class="modal-content" style="max-width:500px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-qrcode"></i> Entrada Digital</h3>
+                <button class="modal-close" onclick="cerrarQR()">&times;</button>
+            </div>
+
+            <div
+                style="text-align:center; color:var(--color-primary); font-size:0.7rem; letter-spacing:2px; margin-bottom:8px; font-weight:600;">
+                LOS HIJOS DE TENCHA
+            </div>
+
+            <div id="qrContainer"
+                style="display:flex; justify-content:center; background:#fff; padding:15px; border-radius:12px; margin:10px 0;">
+                <div id="qrcode"></div>
+            </div>
+
+            <div class="admin-form-group"
+                style="text-align:center; background:var(--color-bg); padding:10px; border-radius:8px; border:1px dashed var(--color-border);">
+                <div
+                    style="font-size:0.55rem; text-transform:uppercase; letter-spacing:1px; color:var(--color-text-muted);">
+                    ID de validación</div>
+                <div style="color:var(--color-primary); font-weight:700; font-family:monospace; font-size:0.9rem; letter-spacing:0.5px;"
+                    id="qrIdAsistente">-</div>
+                <button class="btn-admin btn-secondary btn-sm" onclick="copiarId()" style="margin-top:4px;">
+                    <i class="fa-regular fa-copy"></i> Copiar ID
+                </button>
+            </div>
+
+            <div style="background:var(--color-bg); padding:14px; border-radius:10px; margin:12px 0; text-align:left;">
+                <div
+                    style="color:var(--color-text-muted); font-size:0.65rem; text-transform:uppercase; letter-spacing:1px;">
+                    Nombre</div>
+                <div style="font-weight:600; font-size:0.95rem; margin-bottom:4px;" id="qrNombreAsistente">-</div>
+                <div
+                    style="color:var(--color-text-muted); font-size:0.65rem; text-transform:uppercase; letter-spacing:1px;">
+                    Correo</div>
+                <div style="font-weight:600; font-size:0.95rem; margin-bottom:4px;" id="qrEmailAsistente">-</div>
+                <div
+                    style="color:var(--color-text-muted); font-size:0.65rem; text-transform:uppercase; letter-spacing:1px;">
+                    Evento</div>
+                <div style="font-weight:600; font-size:0.95rem;" id="qrEventoAsistente">-</div>
+                <div
+                    style="color:var(--color-primary); font-weight:700; font-size:0.9rem; text-align:center; margin-top:6px; border-top:1px solid var(--color-border); padding-top:6px;">
+                    🎸 Los Hijos de Tencha
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-admin btn-primary" onclick="descargarQR()">
+                    <i class="fa-solid fa-download"></i> Descargar
+                </button>
+                <button class="btn-admin btn-secondary" onclick="cerrarQR()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    TOAST
+    ============================================================ -->
+    <div id="adminToast" class="admin-toast"></div>
+
+    <!-- ============================================================
+    SCRIPTS
+    ============================================================ -->
+    <script src="js/admin.js"></script>
+
+    <script>
+        // ============================================================
+        // VARIABLES GLOBALES
+        // ============================================================
+        let eventos = [];
+        let asistentes = [];
+        let asistenteActual = null;
+
+        // ============================================================
+        // SIDEBAR
+        // ============================================================
+        const sidebar = document.getElementById('adminSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        if (hamburger) hamburger.addEventListener('click', toggleSidebar);
+        if (overlay) overlay.addEventListener('click', toggleSidebar);
+
+        document.querySelectorAll('.admin-sidebar .sidebar-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 992) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+
+        // ============================================================
+        // VERIFICAR SESIÓN
+        // ============================================================
+        (function () {
+            if (!verificarSesionAdmin()) {
+                window.location.href = 'login.html';
+            }
+        })();
+
+        // ============================================================
+        // FUNCIONES - TABS
+        // ============================================================
+
+        function switchSubTab(tab, btn) {
+            document.querySelectorAll('.sub-tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.sub-tabs button').forEach(el => el.classList.remove('active'));
+            document.getElementById('subTab-' + tab).classList.add('active');
+            btn.classList.add('active');
+
+            if (tab === 'eventos') cargarEventos();
+            if (tab === 'asistentes') cargarSelects();
+            if (tab === 'agregar') cargarSelects();
+        }
+
+        // ============================================================
+        // FUNCIONES - EVENTOS
+        // ============================================================
+
+        async function cargarEventos() {
+            try {
+                const snapshot = await db.collection('eventos')
+                    .orderBy('creadoEn', 'desc')
+                    .get();
+
+                eventos = [];
+                snapshot.forEach(doc => {
+                    eventos.push({ id: doc.id, ...doc.data() });
+                });
+
+                document.getElementById('eventosCount').textContent = `${eventos.length} eventos`;
+                renderizarEventos();
+
+            } catch (error) {
+                console.error('Error al cargar eventos:', error);
+                document.getElementById('listaEventos').innerHTML = `
+                            <div class="evento-vacia">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <p>Error al cargar eventos: ${error.message}</p>
+                            </div>
+                        `;
+            }
+        }
+
+        function renderizarEventos() {
+            const container = document.getElementById('listaEventos');
+
+            if (eventos.length === 0) {
+                container.innerHTML = `
+                            <div class="evento-vacia">
+                                <i class="fa-regular fa-calendar"></i>
+                                <p>No hay eventos creados. ¡Crea el primero!</p>
+                            </div>
+                        `;
+                return;
+            }
+
+            let html = '';
+            eventos.forEach(e => {
+                const count = e.asistentes ? e.asistentes.length : 0;
+                const fecha = e.fecha ? formatearFecha(e.fecha) : '';
+                const hora = e.hora || '';
+
+                html += `
+                            <div class="evento-item" onclick="seleccionarEvento('${e.id}')">
+                                <div class="evento-info">
+                                    <div class="evento-nombre">${sanitizar(e.nombre)}</div>
+                                    <div class="evento-meta">
+                                        ${fecha ? `<span><i class="fa-regular fa-calendar"></i> ${fecha}</span>` : ''}
+                                        ${hora ? `<span><i class="fa-regular fa-clock"></i> ${hora}</span>` : ''}
+                                        ${e.lugar ? `<span><i class="fa-regular fa-location-dot"></i> ${sanitizar(e.lugar)}</span>` : ''}
+                                    </div>
+                                </div>
+                                <div class="evento-count">🎫 ${count}</div>
+                                <div class="evento-actions">
+                                    <button class="btn-admin btn-danger btn-sm" onclick="event.stopPropagation(); eliminarEvento('${e.id}')">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function seleccionarEvento(id) {
+            document.querySelector('.sub-tabs button:nth-child(2)').click();
+            document.getElementById('selectEventoAsistentes').value = id;
+            cargarAsistentes();
+        }
+
+        async function crearEvento() {
+            const nombre = document.getElementById('eventoNombre').value.trim();
+            const fecha = document.getElementById('eventoFecha').value;
+            const hora = document.getElementById('eventoHora').value;
+            const lugar = document.getElementById('eventoLugar').value.trim();
+            const descripcion = document.getElementById('eventoDescripcion').value.trim();
+
+            if (!nombre) {
+                mostrarToast('⚠️ Ingresa el nombre del evento', 'warning');
+                document.getElementById('eventoNombre').focus();
+                return;
+            }
+
+            try {
+                const evento = {
+                    nombre,
+                    fecha: fecha || '',
+                    hora: hora || '',
+                    lugar: lugar || '',
+                    descripcion: descripcion || '',
+                    creadoEn: new Date().toISOString(),
+                    asistentes: []
+                };
+
+                await db.collection('eventos').add(evento);
+
+                mostrarToast('✅ Evento "' + nombre + '" creado con éxito', 'success');
+
+                document.getElementById('eventoNombre').value = '';
+                document.getElementById('eventoFecha').value = '';
+                document.getElementById('eventoHora').value = '';
+                document.getElementById('eventoLugar').value = '';
+                document.getElementById('eventoDescripcion').value = '';
+
+                cargarEventos();
+                cargarSelects();
+
+            } catch (error) {
+                console.error('Error al crear evento:', error);
+                mostrarToast('❌ Error: ' + error.message, 'error');
+            }
+        }
+
+        async function eliminarEvento(id) {
+            const evento = eventos.find(e => e.id === id);
+            if (!evento) return;
+
+            if (!confirm(`¿Eliminar el evento "${evento.nombre}" y todos sus asistentes?`)) {
+                return;
+            }
+
+            try {
+                // Eliminar asistentes
+                if (evento.asistentes && evento.asistentes.length > 0) {
+                    for (const asistenteId of evento.asistentes) {
+                        try {
+                            await db.collection('asistentes').doc(asistenteId).delete();
+                        } catch (e) {
+                            console.warn('No se pudo eliminar asistente:', e);
+                        }
+                    }
+                }
+
+                await db.collection('eventos').doc(id).delete();
+                mostrarToast('✅ Evento eliminado', 'success');
+                cargarEventos();
+                cargarSelects();
+
+            } catch (error) {
+                console.error('Error al eliminar evento:', error);
+                mostrarToast('❌ Error: ' + error.message, 'error');
+            }
+        }
+
+        // ============================================================
+        // FUNCIONES - SELECTS
+        // ============================================================
+
+        async function cargarSelects() {
+            try {
+                const snapshot = await db.collection('eventos')
+                    .orderBy('creadoEn', 'desc')
+                    .get();
+
+                const eventosList = [];
+                snapshot.forEach(doc => {
+                    eventosList.push({ id: doc.id, ...doc.data() });
+                });
+
+                const select1 = document.getElementById('selectEventoAsistentes');
+                const select2 = document.getElementById('selectEventoAgregar');
+
+                const options = eventosList.map(e =>
+                    `<option value="${e.id}">${sanitizar(e.nombre)}</option>`
+                ).join('');
+
+                select1.innerHTML = '<option value="">Selecciona un evento</option>' + options;
+                select2.innerHTML = '<option value="">Selecciona un evento</option>' + options;
+
+            } catch (error) {
+                console.error('Error al cargar selects:', error);
+            }
+        }
+
+        // ============================================================
+        // FUNCIONES - ASISTENTES
+        // ============================================================
+
+        async function agregarAsistente() {
+            const eventoId = document.getElementById('selectEventoAgregar').value;
+            const nombre = document.getElementById('asistenteNombre').value.trim();
+            const email = document.getElementById('asistenteEmail').value.trim();
+            const mensaje = document.getElementById('mensajeAgregar');
+
+            if (!eventoId) {
+                mostrarMensajeAgregar(mensaje, '⚠️ Selecciona un evento', 'error');
+                return;
+            }
+            if (!nombre) {
+                mostrarMensajeAgregar(mensaje, '⚠️ Ingresa el nombre', 'error');
+                return;
+            }
+            if (!email || !email.includes('@')) {
+                mostrarMensajeAgregar(mensaje, '⚠️ Ingresa un correo válido', 'error');
+                return;
+            }
+
+            mostrarMensajeAgregar(mensaje, '⏳ Registrando...', 'info');
+
+            try {
+                const eventoDoc = await db.collection('eventos').doc(eventoId).get();
+                const eventoData = eventoDoc.exists ? eventoDoc.data() : null;
+                const nombreEvento = eventoData ? eventoData.nombre : 'Evento';
+
+                const asistente = {
+                    nombre,
+                    email,
+                    ingresado: false,
+                    fechaIngreso: null,
+                    eventoId: eventoId,
+                    creadoEn: new Date().toISOString(),
+                    banda: 'Los Hijos de Tencha',
+                    emailEnviado: false
+                };
+
+                const docRef = await db.collection('asistentes').add(asistente);
+
+                await db.collection('eventos').doc(eventoId).update({
+                    asistentes: firebase.firestore.FieldValue.arrayUnion(docRef.id)
+                });
+
+                // Intentar enviar correo
+                try {
+                    await enviarCorreoAsistente(nombre, email, nombreEvento, docRef.id, eventoData);
+                    await db.collection('asistentes').doc(docRef.id).update({
+                        emailEnviado: true,
+                        emailEnviadoEn: new Date().toISOString()
+                    });
+                    mostrarMensajeAgregar(mensaje, `✅ ${nombre} agregado y correo enviado a ${email}`, 'success');
+                } catch (emailError) {
+                    console.error('Error al enviar correo:', emailError);
+                    mostrarMensajeAgregar(mensaje, `✅ ${nombre} agregado pero el correo no pudo enviarse`, 'warning');
+                }
+
+                document.getElementById('asistenteNombre').value = '';
+                document.getElementById('asistenteEmail').value = '';
+                cargarAsistentes();
+
+            } catch (error) {
+                console.error('Error al agregar asistente:', error);
+                mostrarMensajeAgregar(mensaje, '❌ Error: ' + error.message, 'error');
+            }
+        }
+
+        function mostrarMensajeAgregar(elemento, texto, tipo) {
+            if (!elemento) return;
+            elemento.style.display = 'block';
+            elemento.textContent = texto;
+            elemento.className = 'admin-form-group';
+
+            const colors = {
+                'success': 'var(--color-success)',
+                'error': 'var(--color-danger)',
+                'warning': 'var(--color-warning)',
+                'info': 'var(--color-primary)'
+            };
+
+            elemento.style.color = colors[tipo] || 'var(--color-text)';
+            elemento.style.border = '1px solid ' + (colors[tipo] || 'var(--color-border)');
+            elemento.style.padding = '12px';
+            elemento.style.borderRadius = 'var(--radius-sm)';
+            elemento.style.background = 'var(--color-bg)';
+
+            setTimeout(() => {
+                elemento.style.display = 'none';
+            }, 6000);
+        }
+
+        async function cargarAsistentes() {
+            const eventoId = document.getElementById('selectEventoAsistentes').value;
+            if (!eventoId) {
+                document.getElementById('asistentesList').innerHTML =
+                    '<p style="color:var(--color-text-muted); text-align:center; padding:20px;"><i class="fa-solid fa-arrow-up"></i> Selecciona un evento</p>';
+                document.getElementById('statsContainer').style.display = 'none';
+                return;
+            }
+
+            try {
+                const snapshot = await db.collection('asistentes')
+                    .where('eventoId', '==', eventoId)
+                    .get();
+
+                asistentes = [];
+                snapshot.forEach(doc => {
+                    asistentes.push({ id: doc.id, ...doc.data() });
+                });
+
+                asistentes.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
+
+                const total = asistentes.length;
+                const ingresados = asistentes.filter(a => a.ingresado).length;
+                const pendientes = total - ingresados;
+
+                document.getElementById('totalAsistentes').textContent = total;
+                document.getElementById('ingresadosCount').textContent = ingresados;
+                document.getElementById('pendientesCount').textContent = pendientes;
+                document.getElementById('statsContainer').style.display = 'block';
+
+                const list = document.getElementById('asistentesList');
+
+                if (asistentes.length === 0) {
+                    list.innerHTML =
+                        '<p style="color:var(--color-text-muted); text-align:center; padding:20px;"><i class="fa-regular fa-user"></i> No hay asistentes</p>';
+                    return;
+                }
+
+                const eventoDoc = await db.collection('eventos').doc(eventoId).get();
+                const nombreEvento = eventoDoc.exists ? eventoDoc.data().nombre : 'Evento';
+
+                let html = '';
+                asistentes.forEach(a => {
+                    html += `
+                                <div class="asistente-item ${a.ingresado ? 'ingresado' : 'pendiente'}">
+                                    <div class="asistente-info">
+                                        <div class="asistente-nombre">${sanitizar(a.nombre)}</div>
+                                        <div class="asistente-email">${sanitizar(a.email)}</div>
+                                        <div class="asistente-extra">
+                                            <span class="badge-admin ${a.ingresado ? 'badge-success' : 'badge-warning'}">
+                                                ${a.ingresado ? '✅ Ingresado' : '⏳ Pendiente'}
+                                            </span>
+                                            ${a.fechaIngreso ? `<span>${formatearFechaHora(a.fechaIngreso)}</span>` : ''}
+                                            <span class="badge-admin ${a.emailEnviado ? 'badge-success' : 'badge-warning'}">
+                                                ${a.emailEnviado ? '📧 Enviado' : '📧 Pendiente'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="asistente-actions">
+                                        <button class="btn-admin btn-primary btn-sm" onclick="mostrarQR('${a.id}')">
+                                            <i class="fa-solid fa-qrcode"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                });
+
+                list.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error al cargar asistentes:', error);
+                mostrarToast('❌ Error al cargar asistentes', 'error');
+            }
+        }
+
+        // ============================================================
+        // QR CODE
+        // ============================================================
+
+        async function mostrarQR(asistenteId) {
+            try {
+                const doc = await db.collection('asistentes').doc(asistenteId).get();
+                if (!doc.exists) {
+                    mostrarToast('❌ Asistente no encontrado', 'error');
+                    return;
+                }
+
+                const data = doc.data();
+                asistenteActual = { id: asistenteId, ...data };
+
+                const eventoDoc = await db.collection('eventos').doc(data.eventoId).get();
+                const nombreEvento = eventoDoc.exists ? eventoDoc.data().nombre : 'Evento';
+
+                document.getElementById('qrIdAsistente').textContent = asistenteId;
+                document.getElementById('qrNombreAsistente').textContent = data.nombre || '-';
+                document.getElementById('qrEmailAsistente').textContent = data.email || '-';
+                document.getElementById('qrEventoAsistente').textContent = nombreEvento;
+
+                const container = document.getElementById('qrcode');
+                container.innerHTML = '';
+
+                const url = window.location.origin + '/admin/validador.html?id=' + asistenteId;
+
+                new QRCode(container, {
+                    text: url,
+                    width: 220,
+                    height: 220,
+                    colorDark: '#ffcc00',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+
+                document.getElementById('qrModal').classList.add('active');
+                document.body.style.overflow = 'hidden';
+
+            } catch (error) {
+                console.error('Error al mostrar QR:', error);
+                mostrarToast('❌ Error: ' + error.message, 'error');
+            }
+        }
+
+        function cerrarQR() {
+            document.getElementById('qrModal').classList.remove('active');
+            document.body.style.overflow = '';
+            asistenteActual = null;
+        }
+
+        function copiarId() {
+            const idText = document.getElementById('qrIdAsistente').textContent;
+            navigator.clipboard.writeText(idText).then(() => {
+                mostrarToast('✅ ID copiado', 'success');
+            }).catch(() => {
+                const input = document.createElement('input');
+                input.value = idText;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                mostrarToast('✅ ID copiado', 'success');
+            });
+        }
+
+        function descargarQR() {
+            if (!asistenteActual) {
+                mostrarToast('⚠️ No hay QR para descargar', 'warning');
+                return;
+            }
+
+            // Reutilizar la lógica del QR en el modal para descargar
+            const qrContainer = document.getElementById('qrContainer');
+            const contenido = document.getElementById('qrModal').querySelector('.modal-content');
+
+            html2canvas(contenido, {
+                scale: 2,
+                backgroundColor: '#141414',
+                allowTaint: true,
+                useCORS: true,
+                logging: false
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `entrada_${asistenteActual.nombre.replace(/\s/g, '_')}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                mostrarToast('✅ QR descargado', 'success');
+            }).catch(error => {
+                console.error('Error al descargar QR:', error);
+                mostrarToast('❌ Error al descargar', 'error');
+            });
+        }
+
+        // ============================================================
+        // EXPORTAR EXCEL
+        // ============================================================
+
+        function exportarExcel() {
+            const eventoId = document.getElementById('selectEventoAsistentes').value;
+            if (!eventoId) {
+                mostrarToast('⚠️ Selecciona un evento', 'warning');
+                return;
+            }
+
+            const evento = eventos.find(e => e.id === eventoId);
+            if (!evento) {
+                mostrarToast('⚠️ Evento no encontrado', 'error');
+                return;
+            }
+
+            const asistentesEvento = asistentes.filter(a => a.eventoId === eventoId);
+
+            if (asistentesEvento.length === 0) {
+                mostrarToast('⚠️ No hay asistentes', 'warning');
+                return;
+            }
+
+            const data = [];
+            const headerRow = ['#', 'Nombre', 'Email', 'Estado', 'Fecha Ingreso', 'ID'];
+            data.push(headerRow);
+
+            asistentesEvento.forEach((a, index) => {
+                const estado = a.ingresado ? 'INGRESADO' : 'PENDIENTE';
+                const fechaIngreso = a.fechaIngreso ? formatearFechaHora(a.fechaIngreso) : '-';
+                data.push([
+                    index + 1,
+                    a.nombre,
+                    a.email,
+                    estado,
+                    fechaIngreso,
+                    a.id
+                ]);
+            });
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(data);
+
+            ws['!cols'] = [
+                { wch: 6 }, { wch: 32 }, { wch: 38 }, { wch: 16 }, { wch: 28 }, { wch: 28 }
+            ];
+
+            XLSX.utils.book_append_sheet(wb, ws, 'Asistentes');
+
+            const nombreArchivo =
+                `Asistentes_${evento.nombre.replace(/\s/g, '_')}_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, nombreArchivo);
+
+            mostrarToast(`✅ ${asistentesEvento.length} asistentes exportados`, 'success');
+        }
+
+        function exportarTodosEventos() {
+            if (eventos.length === 0) {
+                mostrarToast('⚠️ No hay eventos', 'warning');
+                return;
+            }
+
+            // Recolectar todos los asistentes
+            const todos = [];
+            eventos.forEach(e => {
+                const asistentesEvento = asistentes.filter(a => a.eventoId === e.id);
+                asistentesEvento.forEach(a => {
+                    todos.push({ evento: e.nombre, ...a });
+                });
+            });
+
+            if (todos.length === 0) {
+                mostrarToast('⚠️ No hay asistentes', 'warning');
+                return;
+            }
+
+            const data = [];
+            const headerRow = ['#', 'Evento', 'Nombre', 'Email', 'Estado', 'Fecha Ingreso', 'ID'];
+            data.push(headerRow);
+
+            todos.forEach((a, index) => {
+                const estado = a.ingresado ? 'INGRESADO' : 'PENDIENTE';
+                const fechaIngreso = a.fechaIngreso ? formatearFechaHora(a.fechaIngreso) : '-';
+                data.push([
+                    index + 1,
+                    a.evento,
+                    a.nombre,
+                    a.email,
+                    estado,
+                    fechaIngreso,
+                    a.id
+                ]);
+            });
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(data);
+
+            ws['!cols'] = [
+                { wch: 6 }, { wch: 30 }, { wch: 30 }, { wch: 38 }, { wch: 16 }, { wch: 28 }, { wch: 28 }
+            ];
+
+            XLSX.utils.book_append_sheet(wb, ws, 'Todos');
+
+            const nombreArchivo = `Todos_los_asistentes_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, nombreArchivo);
+
+            mostrarToast(`✅ ${todos.length} asistentes exportados`, 'success');
+        }
+
+        // ============================================================
+        // INICIALIZAR
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function () {
+            cargarEventos();
+            cargarSelects();
+            console.log('🚀 Gestor de Eventos cargado');
+        });
+
+        // Cerrar modal con Escape
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') cerrarQR();
+            if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
+                e.preventDefault();
+                mostrarToast('⚠️ Usa el botón "Salir" para cerrar sesión', 'warning');
+                return false;
+            }
+        });
+    </script>
+
+</body>
+
+</html>

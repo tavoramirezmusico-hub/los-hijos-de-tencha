@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Noticias | Los Hijos de Tencha</title>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="css/admin.css">
+
+    <!-- Quill.js - Editor WYSIWYG -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+    <style>
+        /* ============================================================
+           ESTILOS ESPECÍFICOS DE NOTICIAS
+           ============================================================ */
+        .noticias-toolbar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .noticias-toolbar .btn-admin {
+            padding: 8px 20px;
+        }
+
+        .noticias-toolbar .btn-admin.active {
+            background: var(--color-primary);
+            color: #000;
+        }
+
+        /* Editor Quill */
+        #editor-container {
+            height: 300px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            margin-bottom: 16px;
+        }
+
+        #editor-container .ql-editor {
+            color: var(--color-text);
+            font-family: var(--font);
+            font-size: 0.95rem;
+        }
+
+        #editor-container .ql-editor p {
+            color: var(--color-text);
+        }
+
+        #editor-container .ql-toolbar {
+            background: var(--color-bg-card);
+            border-color: var(--color-border);
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+        }
+
+        #editor-container .ql-container {
+            border-color: var(--color-border);
+            border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+        }
+
+        #editor-container .ql-stroke {
+            stroke: var(--color-text-muted);
+        }
+
+        #editor-container .ql-fill {
+            fill: var(--color-text-muted);
+        }
+
+        #editor-container .ql-picker-label {
+            color: var(--color-text-muted);
+        }
+
+        #editor-container .ql-picker-options {
+            background: var(--color-bg-card);
+            border-color: var(--color-border);
+        }
+
+        #editor-container .ql-picker-options span {
+            color: var(--color-text);
+        }
+
+        #editor-container .ql-picker-options span:hover {
+            background: rgba(255, 204, 0, 0.1);
+        }
+
+        /* Preview de imagen */
+        .image-preview {
+            margin: 12px 0;
+            padding: 12px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            border: 1px dashed var(--color-border);
+            display: none;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .image-preview.show {
+            display: flex;
+        }
+
+        .image-preview img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .image-preview .image-info {
+            flex: 1;
+            font-size: 0.85rem;
+        }
+
+        .image-preview .image-info .filename {
+            color: var(--color-text);
+            font-weight: 500;
+        }
+
+        .image-preview .image-info .filesize {
+            color: var(--color-text-muted);
+            font-size: 0.75rem;
+        }
+
+        .image-preview .image-remove {
+            background: none;
+            border: none;
+            color: var(--color-danger);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 4px 8px;
+            transition: var(--transition);
+        }
+
+        .image-preview .image-remove:hover {
+            transform: scale(1.2);
+        }
+
+        /* Lista de noticias */
+        .noticia-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+            margin-bottom: 12px;
+            transition: var(--transition);
+            align-items: center;
+        }
+
+        .noticia-item:hover {
+            border-color: rgba(255, 204, 0, 0.15);
+        }
+
+        .noticia-item .noticia-thumb {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: var(--color-bg-card);
+        }
+
+        .noticia-item .noticia-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .noticia-item .noticia-info .noticia-titulo {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 2px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .noticia-item .noticia-info .noticia-meta {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .noticia-item .noticia-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .noticia-item .noticia-actions .btn-admin {
+            padding: 4px 12px;
+            font-size: 0.7rem;
+        }
+
+        .noticia-vacia {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--color-text-muted);
+        }
+
+        .noticia-vacia i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.3;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .noticia-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .noticia-item .noticia-thumb {
+                width: 100%;
+                height: 120px;
+            }
+
+            .noticia-item .noticia-actions {
+                justify-content: flex-end;
+            }
+
+            .image-preview {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .image-preview img {
+                width: 120px;
+                height: 120px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .noticias-toolbar {
+                flex-direction: column;
+            }
+
+            .noticias-toolbar .btn-admin {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ============================================================
+    SIDEBAR (MENÚ LATERAL)
+    ============================================================ -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-brand">
+            <img src="../img/logo.webp" alt="Los Hijos de Tencha">
+            <h2>Panel <span>Admin</span></h2>
+        </div>
+
+        <ul class="sidebar-nav">
+            <li class="nav-label">Menú Principal</li>
+            <li><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+            <li><a href="eventos.html"><i class="fa-solid fa-calendar"></i> Eventos</a></li>
+            <li><a href="noticias.html" class="active"><i class="fa-solid fa-newspaper"></i> Noticias</a></li>
+            <li><a href="galeria.html"><i class="fa-solid fa-images"></i> Galería</a></li>
+
+            <li class="nav-divider"></li>
+            <li class="nav-label">Contenido</li>
+            <li><a href="canciones.html"><i class="fa-solid fa-music"></i> Canciones</a></li>
+            <li><a href="videos.html"><i class="fa-solid fa-video"></i> Videos</a></li>
+            <li><a href="tienda.html"><i class="fa-solid fa-shirt"></i> Tienda</a></li>
+
+            <li class="nav-divider"></li>
+            <li class="nav-label">Sistema</li>
+            <li><a href="asistentes.html"><i class="fa-solid fa-users"></i> Asistentes</a></li>
+            <li><a href="../validador.html" target="_blank"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
+            <li><a href="#" onclick="cerrarSesionAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
+        </ul>
+    </aside>
+
+    <!-- Overlay para móvil -->
+    <div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ============================================================
+    CONTENIDO PRINCIPAL
+    ============================================================ -->
+    <main class="admin-main">
+
+        <!-- HEADER SUPERIOR -->
+        <header class="admin-header">
+            <div class="header-left">
+                <button class="hamburger" id="hamburgerBtn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h1><span>📰</span> Gestión de Noticias</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-badge">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Administrador
+                </div>
+                <a href="../index.html" target="_blank" class="btn-header btn-secondary">
+                    <i class="fa-solid fa-globe"></i> Web
+                </a>
+                <button class="btn-header btn-danger" onclick="cerrarSesionAdmin()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Salir
+                </button>
+            </div>
+        </header>
+
+        <!-- ============================================================
+        FORMULARIO DE CREACIÓN/EDICIÓN
+        ============================================================ -->
+        <div class="admin-card" id="formNoticia">
+            <div class="card-header">
+                <h3 id="formTitle"><i class="fa-solid fa-pen-to-square"></i> Crear Nueva Noticia</h3>
+                <div class="card-actions">
+                    <button class="btn-admin btn-secondary btn-sm" id="btnCancelar" style="display:none;"
+                        onclick="cancelarEdicion()">
+                        <i class="fa-solid fa-xmark"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+
+            <input type="hidden" id="noticiaId">
+
+            <div class="admin-form-group">
+                <label for="noticiaTitulo">Título de la noticia *</label>
+                <input type="text" id="noticiaTitulo" class="admin-input"
+                    placeholder="Ej: ¡Cumbia Salvaje rugió en Starview!" required>
+            </div>
+
+            <div class="admin-form-group">
+                <label for="noticiaFecha">Fecha de publicación *</label>
+                <input type="date" id="noticiaFecha" class="admin-input" required>
+            </div>
+
+            <div class="admin-form-group">
+                <label for="noticiaCategoria">Categoría (opcional)</label>
+                <input type="text" id="noticiaCategoria" class="admin-input"
+                    placeholder="Ej: Conciertos, Lanzamientos, Entrevistas">
+            </div>
+
+            <div class="admin-form-group">
+                <label>Imagen destacada</label>
+                <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                    <input type="file" id="noticiaImagen" accept="image/*"
+                        style="flex:1; padding:10px; background:var(--color-bg); border:1px solid var(--color-border); border-radius:var(--radius-sm); color:var(--color-text); font-family:var(--font);">
+                    <button class="btn-admin btn-secondary" onclick="document.getElementById('noticiaImagen').click()">
+                        <i class="fa-solid fa-folder-open"></i> Seleccionar
+                    </button>
+                </div>
+                <div class="form-help">Formatos permitidos: JPG, PNG, WEBP. Tamaño recomendado: 1200x630px</div>
+            </div>
+
+            <div class="image-preview" id="imagePreview">
+                <img id="previewImg" src="" alt="Vista previa">
+                <div class="image-info">
+                    <div class="filename" id="previewNombre">imagen.webp</div>
+                    <div class="filesize" id="previewTamaño">0 KB</div>
+                </div>
+                <button class="image-remove" onclick="eliminarImagenSeleccionada()">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+
+            <!-- Imagen actual (si existe) -->
+            <div id="imagenActualContainer" style="display:none; margin: 8px 0 16px;">
+                <span style="color:var(--color-text-muted); font-size:0.75rem;">Imagen actual:</span>
+                <span id="imagenActualNombre" style="font-size:0.8rem; color:var(--color-primary);"></span>
+            </div>
+
+            <div class="admin-form-group">
+                <label>Contenido de la noticia *</label>
+                <div id="editor-container"></div>
+            </div>
+
+            <div class="admin-form-group">
+                <label for="noticiaEstado">Estado</label>
+                <select id="noticiaEstado" class="admin-select">
+                    <option value="borrador">📝 Borrador</option>
+                    <option value="publicada" selected>🌐 Publicada</option>
+                </select>
+            </div>
+
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <button class="btn-admin btn-primary btn-lg" id="btnPublicar" onclick="publicarNoticia()">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> <span id="btnPublicarTexto">Publicar Noticia</span>
+                </button>
+                <button class="btn-admin btn-secondary" onclick="limpiarFormulario()">
+                    <i class="fa-solid fa-eraser"></i> Limpiar
+                </button>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        LISTA DE NOTICIAS
+        ============================================================ -->
+        <div class="admin-card">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-list"></i> Noticias Publicadas</h3>
+                <div class="card-actions">
+                    <div class="noticias-toolbar">
+                        <button class="btn-admin btn-secondary btn-sm active" data-filtro="todas"
+                            onclick="filtrarNoticias('todas', this)">
+                            <i class="fa-solid fa-list"></i> Todas
+                        </button>
+                        <button class="btn-admin btn-secondary btn-sm" data-filtro="publicada"
+                            onclick="filtrarNoticias('publicada', this)">
+                            <i class="fa-solid fa-check-circle"></i> Publicadas
+                        </button>
+                        <button class="btn-admin btn-secondary btn-sm" data-filtro="borrador"
+                            onclick="filtrarNoticias('borrador', this)">
+                            <i class="fa-solid fa-pen"></i> Borradores
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="listaNoticias">
+                <div class="noticia-vacia">
+                    <i class="fa-regular fa-newspaper"></i>
+                    <p>Cargando noticias...</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ============================================================
+    TOAST
+    ============================================================ -->
+    <div id="adminToast" class="admin-toast"></div>
+
+    <!-- ============================================================
+    SCRIPTS
+    ============================================================ -->
+    <script src="js/admin.js"></script>
+
+    <script>
+        // ============================================================
+        // VARIABLES GLOBALES
+        // ============================================================
+        let quill = null;
+        let noticias = [];
+        let filtroActual = 'todas';
+        let imagenSeleccionada = null;
+        let imagenUrlActual = null;
+        let editandoId = null;
+
+        // ============================================================
+        // SIDEBAR
+        // ============================================================
+        const sidebar = document.getElementById('adminSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        if (hamburger) hamburger.addEventListener('click', toggleSidebar);
+        if (overlay) overlay.addEventListener('click', toggleSidebar);
+
+        document.querySelectorAll('.admin-sidebar .sidebar-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 992) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+
+        // ============================================================
+        // VERIFICAR SESIÓN
+        // ============================================================
+        (function () {
+            if (!verificarSesionAdmin()) {
+                window.location.href = 'login.html';
+            }
+        })();
+
+        // ============================================================
+        // INICIALIZAR EDITOR QUILL
+        // ============================================================
+        function initQuill() {
+            if (document.getElementById('editor-container')) {
+                quill = new Quill('#editor-container', {
+                    theme: 'snow',
+                    placeholder: 'Escribe el contenido de la noticia aquí...',
+                    modules: {
+                        toolbar: [
+                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            ['blockquote', 'code-block'],
+                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                            [{ 'color': [] }, { 'background': [] }],
+                            ['link', 'image', 'video'],
+                            ['clean']
+                        ]
+                    }
+                });
+                console.log('✅ Editor Quill inicializado');
+            }
+        }
+
+        // ============================================================
+        // FUNCIONES CRUD
+        // ============================================================
+
+        /**
+         * Publica o actualiza una noticia
+         */
+        async function publicarNoticia() {
+            const id = document.getElementById('noticiaId').value;
+            const titulo = document.getElementById('noticiaTitulo').value.trim();
+            const fecha = document.getElementById('noticiaFecha').value;
+            const categoria = document.getElementById('noticiaCategoria').value.trim();
+            const estado = document.getElementById('noticiaEstado').value;
+            const contenido = quill ? quill.root.innerHTML : '';
+
+            // Validaciones
+            if (!titulo) {
+                mostrarToast('⚠️ Ingresa el título de la noticia', 'warning');
+                document.getElementById('noticiaTitulo').focus();
+                return;
+            }
+
+            if (!fecha) {
+                mostrarToast('⚠️ Selecciona una fecha', 'warning');
+                return;
+            }
+
+            const textoPlano = quill ? quill.getText().trim() : '';
+            if (!textoPlano || textoPlano.length < 10) {
+                mostrarToast('⚠️ El contenido es muy corto o está vacío', 'warning');
+                return;
+            }
+
+            // Validar imagen
+            if (!imagenUrlActual && !imagenSeleccionada && !id) {
+                mostrarToast('⚠️ Selecciona una imagen destacada', 'warning');
+                return;
+            }
+
+            const btn = document.getElementById('btnPublicar');
+            const btnText = document.getElementById('btnPublicarTexto');
+            btn.classList.add('loading');
+            btn.disabled = true;
+            btnText.textContent = id ? 'Actualizando...' : 'Publicando...';
+
+            try {
+                let imagenUrl = imagenUrlActual;
+
+                // Subir imagen si hay una nueva seleccionada
+                if (imagenSeleccionada) {
+                    const path = `noticias/${Date.now()}_${imagenSeleccionada.name.replace(/\s/g, '_')}`;
+                    const ref = storage.ref(path);
+                    await ref.put(imagenSeleccionada);
+                    imagenUrl = await ref.getDownloadURL();
+                }
+
+                const datos = {
+                    titulo,
+                    fecha,
+                    categoria: categoria || 'General',
+                    contenido,
+                    estado,
+                    imagen: imagenUrl || '',
+                    actualizadoEn: new Date().toISOString()
+                };
+
+                if (id) {
+                    // Actualizar
+                    await db.collection('noticias').doc(id).update(datos);
+                    mostrarToast('✅ Noticia actualizada con éxito', 'success');
+                } else {
+                    // Crear nueva
+                    datos.creadoEn = new Date().toISOString();
+                    const docRef = await db.collection('noticias').add(datos);
+                    mostrarToast('✅ Noticia publicada con éxito', 'success');
+                }
+
+                limpiarFormulario();
+                cargarNoticias();
+
+            } catch (error) {
+                console.error('Error al publicar noticia:', error);
+                mostrarToast('❌ Error: ' + error.message, 'error');
+            }
+
+            btn.classList.remove('loading');
+            btn.disabled = false;
+            btnText.textContent = id ? 'Actualizar Noticia' : 'Publicar Noticia';
+        }
+
+        /**
+         * Carga las noticias desde Firebase
+         */
+        async function cargarNoticias() {
+            const container = document.getElementById('listaNoticias');
+
+            try {
+                const snapshot = await db.collection('noticias')
+                    .orderBy('fecha', 'desc')
+                    .get();
+
+                noticias = [];
+                snapshot.forEach(doc => {
+                    noticias.push({ id: doc.id, ...doc.data() });
+                });
+
+                renderizarNoticias();
+
+            } catch (error) {
+                console.error('Error al cargar noticias:', error);
+                container.innerHTML = `
+                            <div class="noticia-vacia">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <p>Error al cargar noticias: ${error.message}</p>
+                            </div>
+                        `;
+            }
+        }
+
+        /**
+         * Renderiza la lista de noticias según el filtro
+         */
+        function renderizarNoticias() {
+            const container = document.getElementById('listaNoticias');
+
+            let filtradas = noticias;
+            if (filtroActual !== 'todas') {
+                filtradas = noticias.filter(n => n.estado === filtroActual);
+            }
+
+            if (filtradas.length === 0) {
+                container.innerHTML = `
+                            <div class="noticia-vacia">
+                                <i class="fa-regular fa-newspaper"></i>
+                                <p>${noticias.length === 0 ? 'No hay noticias aún. ¡Crea la primera!' : 'No hay noticias en esta categoría'}</p>
+                            </div>
+                        `;
+                return;
+            }
+
+            let html = '';
+            filtradas.forEach(noticia => {
+                const fecha = noticia.fecha ? formatearFecha(noticia.fecha) : 'Sin fecha';
+                const estado = noticia.estado || 'borrador';
+                const badgeClass = estado === 'publicada' ? 'badge-success' : 'badge-warning';
+                const badgeText = estado === 'publicada' ? '🌐 Publicada' : '📝 Borrador';
+
+                html += `
+                            <div class="noticia-item">
+                                <img class="noticia-thumb" src="${noticia.imagen || '../img/logo.webp'}" alt="${sanitizar(noticia.titulo)}" onerror="this.src='../img/logo.webp'">
+                                <div class="noticia-info">
+                                    <div class="noticia-titulo">${sanitizar(noticia.titulo)}</div>
+                                    <div class="noticia-meta">
+                                        <span><i class="fa-regular fa-calendar"></i> ${fecha}</span>
+                                        <span><i class="fa-regular fa-folder"></i> ${sanitizar(noticia.categoria || 'General')}</span>
+                                        <span class="badge-admin ${badgeClass}">${badgeText}</span>
+                                    </div>
+                                </div>
+                                <div class="noticia-actions">
+                                    <button class="btn-admin btn-primary btn-sm" onclick="editarNoticia('${noticia.id}')">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <button class="btn-admin btn-danger btn-sm" onclick="eliminarNoticia('${noticia.id}')">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        /**
+         * Edita una noticia existente
+         */
+        async function editarNoticia(id) {
+            try {
+                const doc = await db.collection('noticias').doc(id).get();
+                if (!doc.exists) {
+                    mostrarToast('❌ Noticia no encontrada', 'error');
+                    return;
+                }
+
+                const data = doc.data();
+
+                editandoId = id;
+                document.getElementById('noticiaId').value = id;
+                document.getElementById('noticiaTitulo').value = data.titulo || '';
+                document.getElementById('noticiaFecha').value = data.fecha || '';
+                document.getElementById('noticiaCategoria').value = data.categoria || '';
+                document.getElementById('noticiaEstado').value = data.estado || 'borrador';
+
+                if (quill) {
+                    quill.root.innerHTML = data.contenido || '';
+                }
+
+                // Mostrar imagen actual
+                if (data.imagen) {
+                    imagenUrlActual = data.imagen;
+                    document.getElementById('imagenActualContainer').style.display = 'block';
+                    document.getElementById('imagenActualNombre').textContent = obtenerNombreArchivo(data.imagen);
+                } else {
+                    imagenUrlActual = null;
+                    document.getElementById('imagenActualContainer').style.display = 'none';
+                }
+
+                // Ocultar preview de imagen nueva
+                document.getElementById('imagePreview').classList.remove('show');
+                imagenSeleccionada = null;
+
+                document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Editar Noticia';
+                document.getElementById('btnPublicarTexto').textContent = 'Actualizar Noticia';
+                document.getElementById('btnCancelar').style.display = 'inline-flex';
+
+                // Scroll al formulario
+                document.getElementById('formNoticia').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                mostrarToast('✏️ Editando: ' + data.titulo, 'info');
+
+            } catch (error) {
+                console.error('Error al editar:', error);
+                mostrarToast('❌ Error al cargar la noticia', 'error');
+            }
+        }
+
+        /**
+         * Elimina una noticia
+         */
+        async function eliminarNoticia(id) {
+            const noticia = noticias.find(n => n.id === id);
+            if (!noticia) return;
+
+            if (!confirm(`¿Eliminar la noticia "${noticia.titulo}"? Esta acción no se puede deshacer.`)) {
+                return;
+            }
+
+            try {
+                // Eliminar imagen de Storage si existe
+                if (noticia.imagen) {
+                    try {
+                        await eliminarArchivo(noticia.imagen);
+                    } catch (e) {
+                        console.warn('No se pudo eliminar la imagen:', e);
+                    }
+                }
+
+                await db.collection('noticias').doc(id).delete();
+                mostrarToast('✅ Noticia eliminada', 'success');
+                cargarNoticias();
+
+                if (editandoId === id) {
+                    limpiarFormulario();
+                }
+
+            } catch (error) {
+                console.error('Error al eliminar:', error);
+                mostrarToast('❌ Error al eliminar la noticia', 'error');
+            }
+        }
+
+        /**
+         * Filtra las noticias
+         */
+        function filtrarNoticias(filtro, btn) {
+            filtroActual = filtro;
+
+            document.querySelectorAll('.noticias-toolbar .btn-admin').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+
+            renderizarNoticias();
+        }
+
+        /**
+         * Limpia el formulario
+         */
+        function limpiarFormulario() {
+            editandoId = null;
+            document.getElementById('noticiaId').value = '';
+            document.getElementById('noticiaTitulo').value = '';
+            document.getElementById('noticiaFecha').value = new Date().toISOString().split('T')[0];
+            document.getElementById('noticiaCategoria').value = '';
+            document.getElementById('noticiaEstado').value = 'publicada';
+
+            if (quill) {
+                quill.root.innerHTML = '';
+            }
+
+            imagenUrlActual = null;
+            imagenSeleccionada = null;
+            document.getElementById('imagePreview').classList.remove('show');
+            document.getElementById('imagenActualContainer').style.display = 'none';
+
+            document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Crear Nueva Noticia';
+            document.getElementById('btnPublicarTexto').textContent = 'Publicar Noticia';
+            document.getElementById('btnCancelar').style.display = 'none';
+
+            document.getElementById('noticiaImagen').value = '';
+        }
+
+        /**
+         * Cancela la edición
+         */
+        function cancelarEdicion() {
+            if (confirm('¿Cancelar la edición? Los cambios no guardados se perderán.')) {
+                limpiarFormulario();
+            }
+        }
+
+        /**
+         * Maneja la selección de imagen
+         */
+        document.getElementById('noticiaImagen').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Validar tipo
+            if (!file.type.startsWith('image/')) {
+                mostrarToast('⚠️ Selecciona una imagen válida', 'warning');
+                this.value = '';
+                return;
+            }
+
+            // Validar tamaño (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                mostrarToast('⚠️ La imagen no debe superar los 5MB', 'warning');
+                this.value = '';
+                return;
+            }
+
+            imagenSeleccionada = file;
+
+            // Mostrar preview
+            const preview = document.getElementById('imagePreview');
+            const img = document.getElementById('previewImg');
+            const nombre = document.getElementById('previewNombre');
+            const tamaño = document.getElementById('previewTamaño');
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+
+            nombre.textContent = file.name;
+            tamaño.textContent = (file.size / 1024).toFixed(1) + ' KB';
+
+            preview.classList.add('show');
+
+            // Ocultar imagen actual
+            document.getElementById('imagenActualContainer').style.display = 'none';
+            imagenUrlActual = null;
+        });
+
+        /**
+         * Elimina la imagen seleccionada
+         */
+        function eliminarImagenSeleccionada() {
+            imagenSeleccionada = null;
+            document.getElementById('imagePreview').classList.remove('show');
+            document.getElementById('noticiaImagen').value = '';
+        }
+
+        // ============================================================
+        // INICIALIZAR
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function () {
+            // Fecha por defecto
+            document.getElementById('noticiaFecha').value = new Date().toISOString().split('T')[0];
+
+            initQuill();
+            cargarNoticias();
+
+            console.log('🚀 Gestor de Noticias cargado');
+        });
+
+        // Prevenir cierre con Ctrl+W
+        document.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
+                e.preventDefault();
+                mostrarToast('⚠️ Usa el botón "Salir" para cerrar sesión', 'warning');
+                return false;
+            }
+        });
+    </script>
+
+</body>
+
+</html>

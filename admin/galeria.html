@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Galería | Los Hijos de Tencha</title>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="css/admin.css">
+
+    <style>
+        /* ============================================================
+           ESTILOS ESPECÍFICOS DE GALERÍA
+           ============================================================ */
+
+        /* Categorías */
+        .categorias-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .categoria-item {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .categoria-item:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-3px);
+        }
+
+        .categoria-item.active {
+            border-color: var(--color-primary);
+            background: rgba(255, 204, 0, 0.06);
+        }
+
+        .categoria-item .cat-nombre {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .categoria-item .cat-count {
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+        }
+
+        .categoria-item .cat-actions {
+            margin-top: 8px;
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .categoria-item .cat-actions .btn-admin {
+            padding: 2px 10px;
+            font-size: 0.6rem;
+        }
+
+        /* Dropzone */
+        .galeria-dropzone {
+            border: 2px dashed var(--color-border);
+            border-radius: var(--radius);
+            padding: 50px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.02);
+            margin-bottom: 20px;
+        }
+
+        .galeria-dropzone:hover {
+            border-color: var(--color-primary);
+            background: rgba(255, 204, 0, 0.03);
+        }
+
+        .galeria-dropzone.dragover {
+            border-color: var(--color-primary);
+            background: rgba(255, 204, 0, 0.06);
+        }
+
+        .galeria-dropzone i {
+            font-size: 3rem;
+            color: var(--color-text-muted);
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .galeria-dropzone p {
+            color: var(--color-text-muted);
+            font-size: 1rem;
+        }
+
+        .galeria-dropzone .dropzone-hint {
+            font-size: 0.75rem;
+            color: #555;
+            margin-top: 8px;
+        }
+
+        /* Grid de fotos */
+        .fotos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 14px;
+        }
+
+        .foto-item {
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            border: 1px solid var(--color-border);
+            position: relative;
+            aspect-ratio: 1;
+            transition: var(--transition);
+        }
+
+        .foto-item:hover {
+            border-color: var(--color-primary);
+            transform: scale(1.02);
+            z-index: 2;
+        }
+
+        .foto-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .foto-item .foto-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            opacity: 0;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            padding: 10px;
+        }
+
+        .foto-item:hover .foto-overlay {
+            opacity: 1;
+        }
+
+        .foto-item .foto-overlay .btn-admin {
+            font-size: 0.65rem;
+            padding: 4px 12px;
+        }
+
+        .foto-item .foto-badge {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.55rem;
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .foto-item .foto-destacada {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: var(--color-primary);
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.55rem;
+            font-weight: 700;
+        }
+
+        .foto-vacia {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--color-text-muted);
+            grid-column: 1 / -1;
+        }
+
+        .foto-vacia i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.3;
+        }
+
+        /* Barra de progreso */
+        .upload-progress {
+            display: none;
+            margin: 12px 0;
+            padding: 12px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+        }
+
+        .upload-progress.show {
+            display: block;
+        }
+
+        .upload-progress .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--color-bg-hover);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .upload-progress .progress-bar .progress-fill {
+            height: 100%;
+            background: var(--color-primary);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .upload-progress .progress-text {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .categorias-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+
+            .fotos-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .categorias-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .fotos-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ============================================================
+    SIDEBAR
+    ============================================================ -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-brand">
+            <img src="../img/logo.webp" alt="Los Hijos de Tencha">
+            <h2>Panel <span>Admin</span></h2>
+        </div>
+
+        <ul class="sidebar-nav">
+            <li class="nav-label">Menú Principal</li>
+            <li><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+            <li><a href="eventos.html"><i class="fa-solid fa-calendar"></i> Eventos</a></li>
+            <li><a href="noticias.html"><i class="fa-solid fa-newspaper"></i> Noticias</a></li>
+            <li><a href="galeria.html" class="active"><i class="fa-solid fa-images"></i> Galería</a></li>
+
+            <li class="nav-divider"></li>
+            <li class="nav-label">Contenido</li>
+            <li><a href="canciones.html"><i class="fa-solid fa-music"></i> Canciones</a></li>
+            <li><a href="videos.html"><i class="fa-solid fa-video"></i> Videos</a></li>
+            <li><a href="tienda.html"><i class="fa-solid fa-shirt"></i> Tienda</a></li>
+
+            <li class="nav-divider"></li>
+            <li class="nav-label">Sistema</li>
+            <li><a href="asistentes.html"><i class="fa-solid fa-users"></i> Asistentes</a></li>
+            <li><a href="../validador.html" target="_blank"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
+            <li><a href="#" onclick="cerrarSesionAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
+        </ul>
+    </aside>
+
+    <div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ============================================================
+    CONTENIDO PRINCIPAL
+    ============================================================ -->
+    <main class="admin-main">
+
+        <!-- HEADER -->
+        <header class="admin-header">
+            <div class="header-left">
+                <button class="hamburger" id="hamburgerBtn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h1><span>📸</span> Gestión de Galería</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-badge">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Administrador
+                </div>
+                <a href="../galeria.html" target="_blank" class="btn-header btn-secondary">
+                    <i class="fa-solid fa-globe"></i> Ver Galería
+                </a>
+                <button class="btn-header btn-danger" onclick="cerrarSesionAdmin()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Salir
+                </button>
+            </div>
+        </header>
+
+        <!-- ============================================================
+        CATEGORÍAS
+        ============================================================ -->
+        <div class="admin-card">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-tags"></i> Categorías</h3>
+                <div class="card-actions">
+                    <button class="btn-admin btn-primary btn-sm" onclick="mostrarModalCategoria()">
+                        <i class="fa-solid fa-plus"></i> Nueva Categoría
+                    </button>
+                </div>
+            </div>
+            <div class="categorias-grid" id="categoriasGrid">
+                <div style="text-align:center; color:var(--color-text-muted); padding:20px; grid-column:1/-1;">
+                    <i class="fa-solid fa-spinner fa-spin"></i> Cargando categorías...
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        SUBIDA DE FOTOS
+        ============================================================ -->
+        <div class="admin-card" id="seccionFotos">
+            <div class="card-header">
+                <h3 id="categoriaSeleccionadaTitulo"><i class="fa-solid fa-images"></i> Selecciona una categoría</h3>
+                <div class="card-actions">
+                    <span id="fotosCount" style="font-size:0.75rem; color:var(--color-text-muted);"></span>
+                </div>
+            </div>
+
+            <!-- Dropzone -->
+            <div class="galeria-dropzone" id="dropzone">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <p><strong>Arrastra y suelta</strong> tus fotos aquí o haz clic para seleccionar</p>
+                <div class="dropzone-hint">Formatos: JPG, PNG, WEBP | Máximo 5MB por foto</div>
+                <input type="file" id="fileInput" accept="image/*" multiple style="display:none;">
+            </div>
+
+            <!-- Progreso -->
+            <div class="upload-progress" id="uploadProgress">
+                <div class="progress-text" id="progressText">Subiendo 0/0 fotos...</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <!-- Grid de fotos -->
+            <div class="fotos-grid" id="fotosGrid">
+                <div class="foto-vacia">
+                    <i class="fa-regular fa-image"></i>
+                    <p>Selecciona una categoría para ver las fotos</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ============================================================
+    MODAL - NUEVA CATEGORÍA / EDITAR CATEGORÍA
+    ============================================================ -->
+    <div class="admin-modal" id="modalCategoria">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalCategoriaTitulo"><i class="fa-solid fa-tag"></i> Nueva Categoría</h3>
+                <button class="modal-close" onclick="cerrarModalCategoria()">&times;</button>
+            </div>
+            <input type="hidden" id="categoriaIdEdit">
+
+            <div class="admin-form-group">
+                <label for="categoriaNombre">Nombre de la categoría *</label>
+                <input type="text" id="categoriaNombre" class="admin-input" placeholder="Ej: Sesión Vocho" required>
+            </div>
+
+            <div class="admin-form-group">
+                <label for="categoriaDescripcion">Descripción (opcional)</label>
+                <input type="text" id="categoriaDescripcion" class="admin-input"
+                    placeholder="Breve descripción de la categoría">
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-admin btn-secondary" onclick="cerrarModalCategoria()">Cancelar</button>
+                <button class="btn-admin btn-primary" id="btnGuardarCategoria" onclick="guardarCategoria()">
+                    <i class="fa-solid fa-save"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    MODAL - ELIMINAR CATEGORÍA
+    ============================================================ -->
+    <div class="admin-modal" id="modalEliminarCategoria">
+        <div class="modal-content" style="max-width:450px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-triangle-exclamation" style="color:var(--color-danger);"></i> Eliminar
+                    Categoría</h3>
+                <button class="modal-close" onclick="cerrarModalEliminarCategoria()">&times;</button>
+            </div>
+            <p style="color:var(--color-text-muted); margin-bottom:16px;">
+                ¿Estás seguro de eliminar la categoría <strong id="eliminarCategoriaNombre"></strong>?
+                <br><span style="color:var(--color-danger); font-size:0.9rem;">⚠️ Todas las fotos de esta categoría
+                    también se eliminarán.</span>
+            </p>
+            <input type="hidden" id="eliminarCategoriaId">
+            <div class="modal-footer">
+                <button class="btn-admin btn-secondary" onclick="cerrarModalEliminarCategoria()">Cancelar</button>
+                <button class="btn-admin btn-danger" onclick="confirmarEliminarCategoria()">
+                    <i class="fa-solid fa-trash-can"></i> Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    TOAST
+    ============================================================ -->
+    <div id="adminToast" class="admin-toast"></div>
+
+    <!-- ============================================================
+    SCRIPTS
+    ============================================================ -->
+    <script src="js/admin.js"></script>
+
+    <script>
+        // ============================================================
+        // VARIABLES GLOBALES
+        // ============================================================
+        let categorias = [];
+        let fotos = [];
+        let categoriaSeleccionadaId = null;
+        let categoriaSeleccionadaNombre = '';
+        let subiendo = false;
+        let archivosParaSubir = [];
+
+        // ============================================================
+        // SIDEBAR
+        // ============================================================
+        const sidebar = document.getElementById('adminSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        if (hamburger) hamburger.addEventListener('click', toggleSidebar);
+        if (overlay) overlay.addEventListener('click', toggleSidebar);
+
+        document.querySelectorAll('.admin-sidebar .sidebar-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 992) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+
+        // ============================================================
+        // VERIFICAR SESIÓN
+        // ============================================================
+        (function () {
+            if (!verificarSesionAdmin()) {
+                window.location.href = 'login.html';
+            }
+        })();
+
+        // ============================================================
+        // FUNCIONES - CATEGORÍAS
+        // ============================================================
+
+        async function cargarCategorias() {
+            try {
+                const snapshot = await db.collection('galeria_categorias')
+                    .orderBy('nombre', 'asc')
+                    .get();
+
+                categorias = [];
+                snapshot.forEach(doc => {
+                    categorias.push({ id: doc.id, ...doc.data() });
+                });
+
+                renderizarCategorias();
+
+                // Si hay categorías y no hay una seleccionada, seleccionar la primera
+                if (categorias.length > 0 && !categoriaSeleccionadaId) {
+                    seleccionarCategoria(categorias[0].id);
+                }
+
+            } catch (error) {
+                console.error('Error al cargar categorías:', error);
+                mostrarToast('❌ Error al cargar categorías', 'error');
+            }
+        }
+
+        function renderizarCategorias() {
+            const grid = document.getElementById('categoriasGrid');
+
+            if (categorias.length === 0) {
+                grid.innerHTML = `
+                            <div class="foto-vacia" style="grid-column:1/-1;">
+                                <i class="fa-regular fa-folder-open"></i>
+                                <p>No hay categorías. ¡Crea la primera!</p>
+                            </div>
+                        `;
+                return;
+            }
+
+            let html = '';
+            categorias.forEach(cat => {
+                const isActive = cat.id === categoriaSeleccionadaId;
+                const count = fotos.filter(f => f.categoriaId === cat.id).length;
+
+                html += `
+                            <div class="categoria-item ${isActive ? 'active' : ''}" onclick="seleccionarCategoria('${cat.id}')">
+                                <div class="cat-nombre">${sanitizar(cat.nombre)}</div>
+                                <div class="cat-count">${count} fotos</div>
+                                <div class="cat-actions">
+                                    <button class="btn-admin btn-primary btn-sm" onclick="event.stopPropagation(); editarCategoria('${cat.id}')">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <button class="btn-admin btn-danger btn-sm" onclick="event.stopPropagation(); mostrarEliminarCategoria('${cat.id}')">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+            });
+
+            grid.innerHTML = html;
+        }
+
+        async function seleccionarCategoria(id) {
+            categoriaSeleccionadaId = id;
+            const cat = categorias.find(c => c.id === id);
+            categoriaSeleccionadaNombre = cat ? cat.nombre : '';
+
+            document.getElementById('categoriaSeleccionadaTitulo').innerHTML =
+                `<i class="fa-solid fa-folder-open"></i> ${sanitizar(categoriaSeleccionadaNombre)}`;
+
+            renderizarCategorias();
+            await cargarFotos(id);
+        }
+
+        function mostrarModalCategoria() {
+            document.getElementById('categoriaIdEdit').value = '';
+            document.getElementById('categoriaNombre').value = '';
+            document.getElementById('categoriaDescripcion').value = '';
+            document.getElementById('modalCategoriaTitulo').innerHTML = '<i class="fa-solid fa-tag"></i> Nueva Categoría';
+            document.getElementById('btnGuardarCategoria').innerHTML = '<i class="fa-solid fa-save"></i> Guardar';
+            document.getElementById('modalCategoria').classList.add('active');
+            setTimeout(() => document.getElementById('categoriaNombre').focus(), 100);
+        }
+
+        function cerrarModalCategoria() {
+            document.getElementById('modalCategoria').classList.remove('active');
+        }
+
+        async function editarCategoria(id) {
+            const cat = categorias.find(c => c.id === id);
+            if (!cat) return;
+
+            document.getElementById('categoriaIdEdit').value = id;
+            document.getElementById('categoriaNombre').value = cat.nombre || '';
+            document.getElementById('categoriaDescripcion').value = cat.descripcion || '';
+            document.getElementById('modalCategoriaTitulo').innerHTML = '<i class="fa-solid fa-pen"></i> Editar Categoría';
+            document.getElementById('btnGuardarCategoria').innerHTML = '<i class="fa-solid fa-save"></i> Actualizar';
+            document.getElementById('modalCategoria').classList.add('active');
+            setTimeout(() => document.getElementById('categoriaNombre').focus(), 100);
+        }
+
+        async function guardarCategoria() {
+            const id = document.getElementById('categoriaIdEdit').value;
+            const nombre = document.getElementById('categoriaNombre').value.trim();
+            const descripcion = document.getElementById('categoriaDescripcion').value.trim();
+
+            if (!nombre) {
+                mostrarToast('⚠️ Ingresa un nombre para la categoría', 'warning');
+                document.getElementById('categoriaNombre').focus();
+                return;
+            }
+
+            const btn = document.getElementById('btnGuardarCategoria');
+            btn.classList.add('loading');
+            btn.disabled = true;
+
+            try {
+                const datos = {
+                    nombre,
+                    descripcion: descripcion || '',
+                    actualizadoEn: new Date().toISOString()
+                };
+
+                if (id) {
+                    await db.collection('galeria_categorias').doc(id).update(datos);
+                    mostrarToast('✅ Categoría actualizada', 'success');
+                } else {
+                    datos.creadoEn = new Date().toISOString();
+                    const docRef = await db.collection('galeria_categorias').add(datos);
+                    mostrarToast('✅ Categoría creada', 'success');
+                    // Seleccionar la nueva categoría
+                    setTimeout(() => seleccionarCategoria(docRef.id), 300);
+                }
+
+                cerrarModalCategoria();
+                await cargarCategorias();
+
+            } catch (error) {
+                console.error('Error al guardar categoría:', error);
+                mostrarToast('❌ Error: ' + error.message, 'error');
+            }
+
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+
+        function mostrarEliminarCategoria(id) {
+            const cat = categorias.find(c => c.id === id);
+            if (!cat) return;
+            document.getElementById('eliminarCategoriaId').value = id;
+            document.getElementById('eliminarCategoriaNombre').textContent = cat.nombre;
+            document.getElementById('modalEliminarCategoria').classList.add('active');
+        }
+
+        function cerrarModalEliminarCategoria() {
+            document.getElementById('modalEliminarCategoria').classList.remove('active');
+        }
+
+        async function confirmarEliminarCategoria() {
+            const id = document.getElementById('eliminarCategoriaId').value;
+            const cat = categorias.find(c => c.id === id);
+            if (!cat) return;
+
+            const btn = document.querySelector('#modalEliminarCategoria .btn-danger');
+            btn.classList.add('loading');
+            btn.disabled = true;
+
+            try {
+                // Eliminar todas las fotos de la categoría
+                const fotosSnap = await db.collection('galeria_fotos')
+                    .where('categoriaId', '==', id)
+                    .get();
+
+                // Eliminar imágenes de Storage
+                for (const doc of fotosSnap.docs) {
+                    const data = doc.data();
+                    if (data.url) {
+                        try {
+                            await eliminarArchivo(data.url);
+                        } catch (e) {
+                            console.warn('No se pudo eliminar imagen:', e);
+                        }
+                    }
+                    await db.collection('galeria_fotos').doc(doc.id).delete();
+                }
+
+                // Eliminar la categoría
+                await db.collection('galeria_categorias').doc(id).delete();
+
+                cerrarModalEliminarCategoria();
+                mostrarToast('✅ Categoría y fotos eliminadas', 'success');
+
+                if (categoriaSeleccionadaId === id) {
+                    categoriaSeleccionadaId = null;
+                    categoriaSeleccionadaNombre = '';
+                    document.getElementById('categoriaSeleccionadaTitulo').innerHTML =
+                        '<i class="fa-solid fa-images"></i> Selecciona una categoría';
+                    document.getElementById('fotosGrid').innerHTML = `
+                                <div class="foto-vacia">
+                                    <i class="fa-regular fa-image"></i>
+                                    <p>Selecciona una categoría para ver las fotos</p>
+                                </div>
+                            `;
+                    document.getElementById('fotosCount').textContent = '';
+                }
+
+                await cargarCategorias();
+
+            } catch (error) {
+                console.error('Error al eliminar categoría:', error);
+                mostrarToast('❌ Error: ' + error.message, 'error');
+            }
+
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+
+        // ============================================================
+        // FUNCIONES - FOTOS
+        // ============================================================
+
+        async function cargarFotos(categoriaId) {
+            if (!categoriaId) {
+                fotos = [];
+                renderizarFotos();
+                return;
+            }
+
+            try {
+                const snapshot = await db.collection('galeria_fotos')
+                    .where('categoriaId', '==', categoriaId)
+                    .orderBy('orden', 'asc')
+                    .get();
+
+                fotos = [];
+                snapshot.forEach(doc => {
+                    fotos.push({ id: doc.id, ...doc.data() });
+                });
+
+                renderizarFotos();
+                document.getElementById('fotosCount').textContent = `${fotos.length} fotos`;
+
+            } catch (error) {
+                console.error('Error al cargar fotos:', error);
+                mostrarToast('❌ Error al cargar fotos', 'error');
+            }
+        }
+
+        function renderizarFotos() {
+            const grid = document.getElementById('fotosGrid');
+
+            if (fotos.length === 0) {
+                grid.innerHTML = `
+                            <div class="foto-vacia">
+                                <i class="fa-regular fa-image"></i>
+                                <p>No hay fotos en esta categoría</p>
+                                <p style="font-size:0.85rem; color:#555;">Arrastra o selecciona fotos para subirlas</p>
+                            </div>
+                        `;
+                return;
+            }
+
+            let html = '';
+            fotos.forEach((foto, index) => {
+                html += `
+                            <div class="foto-item" data-index="${index}">
+                                <img src="${foto.url}" alt="${sanitizar(foto.titulo || 'Foto')}" loading="lazy">
+                                ${foto.destacada ? '<div class="foto-destacada">⭐ Destacada</div>' : ''}
+                                <div class="foto-overlay">
+                                    <button class="btn-admin btn-primary btn-sm" onclick="toggleDestacada('${foto.id}')">
+                                        <i class="fa-solid fa-star"></i>
+                                    </button>
+                                    <button class="btn-admin btn-danger btn-sm" onclick="eliminarFoto('${foto.id}')">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+            });
+
+            grid.innerHTML = html;
+        }
+
+        async function toggleDestacada(id) {
+            const foto = fotos.find(f => f.id === id);
+            if (!foto) return;
+
+            try {
+                const nuevaDestacada = !foto.destacada;
+
+                // Si se está marcando como destacada, quitar destacada de las demás
+                if (nuevaDestacada) {
+                    const batch = db.batch();
+                    const fotosSnapshot = await db.collection('galeria_fotos')
+                        .where('categoriaId', '==', foto.categoriaId)
+                        .get();
+
+                    fotosSnapshot.forEach(doc => {
+                        if (doc.id !== id && doc.data().destacada) {
+                            batch.update(doc.ref, { destacada: false });
+                        }
+                    });
+
+                    batch.update(db.collection('galeria_fotos').doc(id), { destacada: true });
+                    await batch.commit();
+                } else {
+                    await db.collection('galeria_fotos').doc(id).update({ destacada: false });
+                }
+
+                mostrarToast(nuevaDestacada ? '⭐ Foto destacada' : '⭐ Destacada removida', 'success');
+                await cargarFotos(categoriaSeleccionadaId);
+
+            } catch (error) {
+                console.error('Error al cambiar destacada:', error);
+                mostrarToast('❌ Error: ' + error.message, 'error');
+            }
+        }
+
+        async function eliminarFoto(id) {
+            const foto = fotos.find(f => f.id === id);
+            if (!foto) return;
+
+            if (!confirm('¿Eliminar esta foto?')) return;
+
+            try {
+                if (foto.url) {
+                    try {
+                        await eliminarArchivo(foto.url);
+                    } catch (e) {
+                        console.warn('No se pudo eliminar imagen:', e);
+                    }
+                }
+
+                await db.collection('galeria_fotos').doc(id).delete();
+                mostrarToast('✅ Foto eliminada', 'success');
+                await cargarFotos(categoriaSeleccionadaId);
+
+            } catch (error) {
+                console.error('Error al eliminar foto:', error);
+                mostrarToast('❌ Error: ' + error.message, 'error');
+            }
+        }
+
+        // ============================================================
+        // SUBIDA DE FOTOS - DRAG & DROP
+        // ============================================================
+
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+
+        // Clic en dropzone
+        dropzone.addEventListener('click', function (e) {
+            if (e.target === this || e.target.closest('.galeria-dropzone')) {
+                fileInput.click();
+            }
+        });
+
+        // Drag & Drop
+        dropzone.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+
+        dropzone.addEventListener('dragleave', function (e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+        });
+
+        dropzone.addEventListener('drop', function (e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                procesarArchivos(files);
+            }
+        });
+
+        // Selección de archivos
+        fileInput.addEventListener('change', function (e) {
+            if (this.files.length > 0) {
+                procesarArchivos(this.files);
+                this.value = '';
+            }
+        });
+
+        async function procesarArchivos(files) {
+            if (!categoriaSeleccionadaId) {
+                mostrarToast('⚠️ Selecciona una categoría primero', 'warning');
+                return;
+            }
+
+            if (subiendo) {
+                mostrarToast('⚠️ Espera a que termine la subida actual', 'warning');
+                return;
+            }
+
+            // Validar archivos
+            const archivosValidos = [];
+            for (const file of files) {
+                if (!file.type.startsWith('image/')) {
+                    mostrarToast(`⚠️ "${file.name}" no es una imagen válida`, 'warning');
+                    continue;
+                }
+                if (file.size > 5 * 1024 * 1024) {
+                    mostrarToast(`⚠️ "${file.name}" excede los 5MB`, 'warning');
+                    continue;
+                }
+                archivosValidos.push(file);
+            }
+
+            if (archivosValidos.length === 0) {
+                mostrarToast('⚠️ No hay archivos válidos para subir', 'warning');
+                return;
+            }
+
+            subiendo = true;
+            const progress = document.getElementById('uploadProgress');
+            const progressText = document.getElementById('progressText');
+            const progressFill = document.getElementById('progressFill');
+
+            progress.classList.add('show');
+            progressFill.style.width = '0%';
+
+            let subidos = 0;
+            const total = archivosValidos.length;
+
+            for (let i = 0; i < archivosValidos.length; i++) {
+                const file = archivosValidos[i];
+                progressText.textContent = `Subiendo ${i + 1}/${total}: ${file.name}`;
+
+                try {
+                    const path = `galeria/${categoriaSeleccionadaId}/`;
+                    const url = await subirArchivo(file, path, (progreso) => {
+                        const totalProgress = ((i + (progreso / 100)) / total) * 100;
+                        progressFill.style.width = totalProgress + '%';
+                    });
+
+                    // Guardar en Firestore
+                    await db.collection('galeria_fotos').add({
+                        categoriaId: categoriaSeleccionadaId,
+                        url: url,
+                        titulo: file.name.replace(/\.[^.]+$/, ''),
+                        orden: Date.now(),
+                        destacada: false,
+                        creadoEn: new Date().toISOString()
+                    });
+
+                    subidos++;
+
+                } catch (error) {
+                    console.error('Error al subir archivo:', error);
+                    mostrarToast(`❌ Error al subir "${file.name}"`, 'error');
+                }
+            }
+
+            progress.classList.remove('show');
+            progressFill.style.width = '0%';
+            subiendo = false;
+
+            if (subidos > 0) {
+                mostrarToast(`✅ ${subidos} fotos subidas con éxito`, 'success');
+                await cargarFotos(categoriaSeleccionadaId);
+                await cargarCategorias();
+            }
+        }
+
+        // ============================================================
+        // INICIALIZAR
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function () {
+            cargarCategorias();
+            console.log('🚀 Gestor de Galería cargado');
+        });
+
+        // Prevenir cierre con Ctrl+W
+        document.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
+                e.preventDefault();
+                mostrarToast('⚠️ Usa el botón "Salir" para cerrar sesión', 'warning');
+                return false;
+            }
+        });
+    </script>
+
+</body>
+
+</html>
