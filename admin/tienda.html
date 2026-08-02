@@ -36,6 +36,7 @@
             margin-bottom: 12px;
             transition: var(--transition);
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .producto-item:hover {
@@ -113,7 +114,6 @@
             opacity: 0.3;
         }
 
-        /* Preview de imagen */
         .image-preview {
             margin: 12px 0;
             padding: 12px;
@@ -123,6 +123,7 @@
             display: none;
             align-items: center;
             gap: 16px;
+            flex-wrap: wrap;
         }
 
         .image-preview.show {
@@ -168,22 +169,6 @@
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .producto-item {
-                flex-wrap: wrap;
-            }
-
-            .producto-item .producto-thumb {
-                width: 60px;
-                height: 60px;
-            }
-
-            .producto-item .producto-precio {
-                font-size: 1rem;
-                padding: 0 8px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .producto-item {
                 flex-direction: column;
                 align-items: stretch;
             }
@@ -194,6 +179,7 @@
             }
 
             .producto-item .producto-actions {
+                width: 100%;
                 justify-content: center;
             }
 
@@ -211,6 +197,26 @@
             .image-preview img {
                 width: 120px;
                 height: 120px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .producto-item {
+                padding: 12px !important;
+            }
+
+            .producto-item .producto-thumb {
+                height: 120px !important;
+            }
+
+            .producto-item .producto-actions .btn-admin {
+                padding: 4px 10px !important;
+                font-size: 0.65rem !important;
+            }
+
+            .image-preview img {
+                width: 100px !important;
+                height: 100px !important;
             }
         }
     </style>
@@ -243,7 +249,7 @@
             <li class="nav-divider"></li>
             <li class="nav-label">Sistema</li>
             <li><a href="asistentes.html"><i class="fa-solid fa-users"></i> Asistentes</a></li>
-            <li><a href="../validador.html" target="_blank"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
+            <li><a href="validador.html"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
             <li><a href="#" onclick="cerrarSesionAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
         </ul>
     </aside>
@@ -373,6 +379,8 @@
                     <i class="fa-solid fa-eraser"></i> Limpiar
                 </button>
             </div>
+            <div id="mensajeProducto"
+                style="margin-top:12px; display:none; padding:12px; border-radius:var(--radius-sm);"></div>
         </div>
 
         <!-- ============================================================
@@ -452,6 +460,29 @@
         // FUNCIONES CRUD
         // ============================================================
 
+        function mostrarMensajeProducto(elemento, texto, tipo) {
+            if (!elemento) return;
+            elemento.style.display = 'block';
+            elemento.textContent = texto;
+
+            const colors = {
+                'success': 'var(--color-success)',
+                'error': 'var(--color-danger)',
+                'warning': 'var(--color-warning)',
+                'info': 'var(--color-primary)'
+            };
+
+            elemento.style.color = colors[tipo] || 'var(--color-text)';
+            elemento.style.border = '1px solid ' + (colors[tipo] || 'var(--color-border)');
+            elemento.style.background = 'var(--color-bg)';
+
+            if (tipo === 'success' || tipo === 'error' || tipo === 'warning') {
+                setTimeout(() => {
+                    elemento.style.display = 'none';
+                }, 6000);
+            }
+        }
+
         async function guardarProducto() {
             const id = document.getElementById('productoId').value;
             const nombre = document.getElementById('productoNombre').value.trim();
@@ -462,21 +493,22 @@
             const orden = parseInt(document.getElementById('productoOrden').value) || 0;
             const stock = document.getElementById('productoStock').value;
 
-            // Validaciones
+            const mensajeEl = document.getElementById('mensajeProducto');
+
             if (!nombre) {
-                mostrarToast('⚠️ Ingresa el nombre del producto', 'warning');
+                mostrarMensajeProducto(mensajeEl, '⚠️ Ingresa el nombre del producto', 'error');
                 document.getElementById('productoNombre').focus();
                 return;
             }
 
             if (!precio || isNaN(parseInt(precio)) || parseInt(precio) <= 0) {
-                mostrarToast('⚠️ Ingresa un precio válido (solo números)', 'warning');
+                mostrarMensajeProducto(mensajeEl, '⚠️ Ingresa un precio válido (solo números)', 'error');
                 document.getElementById('productoPrecio').focus();
                 return;
             }
 
             if (!imagenUrlActual && !imagenSeleccionada && !id) {
-                mostrarToast('⚠️ Selecciona una imagen para el producto', 'warning');
+                mostrarMensajeProducto(mensajeEl, '⚠️ Selecciona una imagen para el producto', 'error');
                 return;
             }
 
@@ -485,16 +517,14 @@
             btn.classList.add('loading');
             btn.disabled = true;
             btnText.textContent = id ? 'Actualizando...' : 'Guardando...';
+            mostrarMensajeProducto(mensajeEl, '⏳ Procesando...', 'info');
 
             try {
                 let imagenUrl = imagenUrlActual;
 
-                // Subir imagen si hay una nueva seleccionada
                 if (imagenSeleccionada) {
-                    const path = `tienda/${Date.now()}_${imagenSeleccionada.name.replace(/\s/g, '_')}`;
-                    const ref = storage.ref(path);
-                    await ref.put(imagenSeleccionada);
-                    imagenUrl = await ref.getDownloadURL();
+                    const path = 'tienda/';
+                    imagenUrl = await subirArchivo(imagenSeleccionada, path);
                 }
 
                 const datos = {
@@ -511,11 +541,11 @@
 
                 if (id) {
                     await db.collection('productos').doc(id).update(datos);
-                    mostrarToast('✅ Producto actualizado con éxito', 'success');
+                    mostrarMensajeProducto(mensajeEl, '✅ Producto actualizado con éxito', 'success');
                 } else {
                     datos.creadoEn = new Date().toISOString();
                     await db.collection('productos').add(datos);
-                    mostrarToast('✅ Producto guardado con éxito', 'success');
+                    mostrarMensajeProducto(mensajeEl, '✅ Producto guardado con éxito', 'success');
                 }
 
                 limpiarFormulario();
@@ -523,7 +553,7 @@
 
             } catch (error) {
                 console.error('Error al guardar producto:', error);
-                mostrarToast('❌ Error: ' + error.message, 'error');
+                mostrarMensajeProducto(mensajeEl, '❌ Error: ' + error.message, 'error');
             }
 
             btn.classList.remove('loading');
@@ -535,6 +565,10 @@
             const container = document.getElementById('listaProductos');
 
             try {
+                if (!db) {
+                    throw new Error('Firebase no disponible');
+                }
+
                 const snapshot = await db.collection('productos')
                     .orderBy('orden', 'asc')
                     .orderBy('creadoEn', 'desc')
@@ -545,7 +579,7 @@
                     productos.push({ id: doc.id, ...doc.data() });
                 });
 
-                document.getElementById('productosCount').textContent = `${productos.length} productos`;
+                document.getElementById('productosCount').textContent = productos.length + ' productos';
                 renderizarProductos();
 
             } catch (error) {
@@ -586,9 +620,9 @@
                                     <div class="producto-meta">
                                         <span><i class="fa-regular fa-tag"></i> ${sanitizar(producto.categoria || 'General')}</span>
                                         <span class="badge-admin ${stockBadge}">${stockText}</span>
-                                        ${producto.orden > 0 ? `<span><i class="fa-regular fa-hashtag"></i> #${producto.orden}</span>` : ''}
+                                        ${producto.orden > 0 ? '<span><i class="fa-regular fa-hashtag"></i> #' + producto.orden + '</span>' : ''}
                                     </div>
-                                    ${producto.descripcion ? `<div class="producto-desc">${sanitizar(producto.descripcion)}</div>` : ''}
+                                    ${producto.descripcion ? '<div class="producto-desc">' + sanitizar(producto.descripcion) + '</div>' : ''}
                                 </div>
                                 <div class="producto-precio">${precioFormateado}</div>
                                 <div class="producto-actions">
@@ -626,7 +660,6 @@
                 document.getElementById('productoOrden').value = data.orden || '';
                 document.getElementById('productoStock').value = data.stock || 'disponible';
 
-                // Mostrar imagen actual
                 if (data.imagen) {
                     imagenUrlActual = data.imagen;
                     document.getElementById('imagenActualContainer').style.display = 'block';
@@ -642,10 +675,11 @@
                 document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Editar Producto';
                 document.getElementById('btnGuardarTexto').textContent = 'Actualizar Producto';
                 document.getElementById('btnCancelar').style.display = 'inline-flex';
+                document.getElementById('mensajeProducto').style.display = 'none';
 
                 document.getElementById('formProducto').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-                mostrarToast(`✏️ Editando: ${data.nombre}`, 'info');
+                mostrarToast('✏️ Editando: ' + data.nombre, 'info');
 
             } catch (error) {
                 console.error('Error al editar:', error);
@@ -657,12 +691,11 @@
             const producto = productos.find(p => p.id === id);
             if (!producto) return;
 
-            if (!confirm(`¿Eliminar el producto "${producto.nombre}"?`)) {
+            if (!confirm('¿Eliminar el producto "' + producto.nombre + '"?')) {
                 return;
             }
 
             try {
-                // Eliminar imagen de Storage
                 if (producto.imagen) {
                     try {
                         await eliminarArchivo(producto.imagen);
@@ -701,6 +734,7 @@
             document.getElementById('imagePreview').classList.remove('show');
             document.getElementById('imagenActualContainer').style.display = 'none';
             document.getElementById('productoImagen').value = '';
+            document.getElementById('mensajeProducto').style.display = 'none';
 
             document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-plus-circle"></i> Agregar Producto';
             document.getElementById('btnGuardarTexto').textContent = 'Guardar Producto';

@@ -44,72 +44,6 @@
             margin-top: 4px;
         }
 
-        .admin-stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 25px;
-        }
-
-        .admin-stat-card {
-            background: var(--color-bg-card);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius);
-            padding: 20px 24px;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .admin-stat-card:hover {
-            border-color: rgba(255, 204, 0, 0.15);
-            transform: translateY(-3px);
-        }
-
-        .admin-stat-card .stat-number {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: var(--color-primary);
-            line-height: 1.2;
-        }
-
-        .admin-stat-card .stat-label {
-            font-size: 0.75rem;
-            color: var(--color-text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-            margin-top: 4px;
-        }
-
-        .admin-stat-card .stat-icon {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 2.5rem;
-            color: rgba(255, 204, 0, 0.08);
-        }
-
-        .admin-stat-card .stat-change {
-            font-size: 0.7rem;
-            font-weight: 600;
-            margin-top: 6px;
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 12px;
-        }
-
-        .admin-stat-card .stat-change.up {
-            color: var(--color-success);
-            background: rgba(0, 200, 83, 0.1);
-        }
-
-        .admin-stat-card .stat-change.down {
-            color: var(--color-danger);
-            background: rgba(211, 47, 47, 0.1);
-        }
-
         /* Grid de 2 columnas */
         .dashboard-grid-2 {
             display: grid;
@@ -223,26 +157,51 @@
         }
 
         @media (max-width: 768px) {
-            .admin-stats-grid {
-                grid-template-columns: 1fr 1fr;
+            .dashboard-welcome h1 {
+                font-size: 1.4rem !important;
+            }
+
+            .dashboard-welcome p {
+                font-size: 0.85rem !important;
+            }
+
+            .quick-access-grid {
+                grid-template-columns: 1fr 1fr !important;
+                gap: 8px !important;
+            }
+
+            .quick-access-grid .quick-item {
+                padding: 12px !important;
+            }
+
+            .quick-access-grid .quick-item i {
+                font-size: 1.4rem !important;
+            }
+
+            .quick-access-grid .quick-item span {
+                font-size: 0.7rem !important;
             }
         }
 
         @media (max-width: 480px) {
-            .admin-stats-grid {
-                grid-template-columns: 1fr;
-            }
-
             .quick-access-grid {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 6px !important;
             }
 
-            .dashboard-welcome h1 {
-                font-size: 1.4rem;
+            .quick-access-grid .quick-item {
+                padding: 10px !important;
+            }
+
+            .quick-access-grid .quick-item i {
+                font-size: 1.2rem !important;
+            }
+
+            .quick-access-grid .quick-item span {
+                font-size: 0.65rem !important;
             }
         }
 
-        /* Skeleton loading */
         .skeleton {
             background: linear-gradient(90deg, var(--color-bg) 25%, var(--color-bg-hover) 50%, var(--color-bg) 75%);
             background-size: 200% 100%;
@@ -307,7 +266,7 @@
             <li class="nav-divider"></li>
             <li class="nav-label">Sistema</li>
             <li><a href="asistentes.html"><i class="fa-solid fa-users"></i> Asistentes</a></li>
-            <li><a href="../validador.html" target="_blank"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
+            <li><a href="validador.html"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
             <li><a href="#" onclick="cerrarSesionAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
         </ul>
     </aside>
@@ -430,7 +389,7 @@
                         <i class="fa-solid fa-plus-circle"></i>
                         <span>Agregar Producto</span>
                     </a>
-                    <a href="../validador.html" target="_blank" class="quick-item">
+                    <a href="validador.html" class="quick-item">
                         <i class="fa-solid fa-qrcode"></i>
                         <span>Validador QR</span>
                         <span class="quick-badge">Escáner</span>
@@ -466,8 +425,8 @@
                     Tienda</a>
                 <a href="asistentes.html" class="btn-admin btn-secondary btn-sm"><i class="fa-solid fa-users"></i>
                     Asistentes</a>
-                <a href="../validador.html" target="_blank" class="btn-admin btn-primary btn-sm"><i
-                        class="fa-solid fa-qrcode"></i> Validador</a>
+                <a href="validador.html" class="btn-admin btn-primary btn-sm"><i class="fa-solid fa-qrcode"></i>
+                    Validador</a>
             </div>
         </div>
 
@@ -525,92 +484,129 @@
         })();
 
         // ============================================================
-        // CARGAR ESTADÍSTICAS
+        // CARGAR ESTADÍSTICAS CON MANEJO DE ERRORES
         // ============================================================
         async function cargarDashboard() {
             try {
                 if (!db) {
-                    console.error('Firestore no disponible');
+                    console.warn('Firestore no disponible');
+                    document.getElementById('totalEventos').textContent = '0';
+                    document.getElementById('totalAsistentes').textContent = '0';
+                    document.getElementById('ingresadosHoy').textContent = '0';
+                    document.getElementById('totalNoticias').textContent = '0';
+                    document.getElementById('actividadReciente').innerHTML = `
+                                <li style="color:var(--color-text-muted); padding:20px 0; text-align:center; justify-content:center;">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> Firestore no disponible
+                                </li>
+                            `;
                     return;
                 }
 
                 // 1. Total de eventos
-                const eventosSnap = await db.collection('eventos').get();
-                document.getElementById('totalEventos').textContent = eventosSnap.size;
+                try {
+                    const eventosSnap = await db.collection('eventos').get();
+                    document.getElementById('totalEventos').textContent = eventosSnap.size || 0;
+                } catch (e) {
+                    console.warn('Error al contar eventos:', e);
+                    document.getElementById('totalEventos').textContent = '0';
+                }
 
                 // 2. Total de asistentes
-                const asistentesSnap = await db.collection('asistentes').get();
-                const totalAsistentes = asistentesSnap.size;
-                document.getElementById('totalAsistentes').textContent = totalAsistentes;
+                try {
+                    const asistentesSnap = await db.collection('asistentes').get();
+                    document.getElementById('totalAsistentes').textContent = asistentesSnap.size || 0;
+                } catch (e) {
+                    console.warn('Error al contar asistentes:', e);
+                    document.getElementById('totalAsistentes').textContent = '0';
+                }
 
                 // 3. Ingresados hoy
-                const hoy = new Date();
-                hoy.setHours(0, 0, 0, 0);
-                const manana = new Date(hoy);
-                manana.setDate(manana.getDate() + 1);
+                try {
+                    const hoy = new Date();
+                    hoy.setHours(0, 0, 0, 0);
+                    const manana = new Date(hoy);
+                    manana.setDate(manana.getDate() + 1);
 
-                const ingresadosHoySnap = await db.collection('asistentes')
-                    .where('ingresado', '==', true)
-                    .where('fechaIngreso', '>=', hoy.toISOString())
-                    .where('fechaIngreso', '<', manana.toISOString())
-                    .get();
+                    const ingresadosHoySnap = await db.collection('asistentes')
+                        .where('ingresado', '==', true)
+                        .where('fechaIngreso', '>=', hoy.toISOString())
+                        .where('fechaIngreso', '<', manana.toISOString())
+                        .get();
 
-                document.getElementById('ingresadosHoy').textContent = ingresadosHoySnap.size;
+                    document.getElementById('ingresadosHoy').textContent = ingresadosHoySnap.size || 0;
+                } catch (e) {
+                    console.warn('Error al contar ingresados hoy:', e);
+                    document.getElementById('ingresadosHoy').textContent = '0';
+                }
 
                 // 4. Total de noticias
-                const noticiasSnap = await db.collection('noticias').get();
-                document.getElementById('totalNoticias').textContent = noticiasSnap.size;
+                try {
+                    const noticiasSnap = await db.collection('noticias').get();
+                    document.getElementById('totalNoticias').textContent = noticiasSnap.size || 0;
+                } catch (e) {
+                    console.warn('Error al contar noticias:', e);
+                    document.getElementById('totalNoticias').textContent = '0';
+                }
 
                 // 5. Actividad reciente (últimos 10 ingresos)
-                const actividadSnap = await db.collection('asistentes')
-                    .where('ingresado', '==', true)
-                    .orderBy('fechaIngreso', 'desc')
-                    .limit(10)
-                    .get();
+                try {
+                    const actividadSnap = await db.collection('asistentes')
+                        .where('ingresado', '==', true)
+                        .orderBy('fechaIngreso', 'desc')
+                        .limit(10)
+                        .get();
 
-                const lista = document.getElementById('actividadReciente');
+                    const lista = document.getElementById('actividadReciente');
 
-                if (actividadSnap.empty) {
-                    lista.innerHTML = `
+                    if (actividadSnap.empty) {
+                        lista.innerHTML = `
+                                    <li style="color:var(--color-text-muted); padding:20px 0; text-align:center; justify-content:center;">
+                                        <i class="fa-regular fa-clock"></i> No hay actividad reciente
+                                    </li>
+                                `;
+                    } else {
+                        let html = '';
+                        actividadSnap.forEach(doc => {
+                            const data = doc.data();
+                            const fecha = data.fechaIngreso ? new Date(data.fechaIngreso) : null;
+                            const tiempo = fecha ? formatearFechaHora(fecha) : '-';
+
+                            html += `
+                                        <li>
+                                            <div class="activity-icon">
+                                                <i class="fa-solid fa-check"></i>
+                                            </div>
+                                            <div class="activity-text">
+                                                <div class="activity-title">${sanitizar(data.nombre || 'Desconocido')}</div>
+                                                <div class="activity-meta">Ingresó al evento</div>
+                                            </div>
+                                            <div class="activity-time">${tiempo}</div>
+                                        </li>
+                                    `;
+                        });
+                        lista.innerHTML = html;
+                    }
+                } catch (e) {
+                    console.warn('Error al cargar actividad reciente:', e);
+                    document.getElementById('actividadReciente').innerHTML = `
                                 <li style="color:var(--color-text-muted); padding:20px 0; text-align:center; justify-content:center;">
                                     <i class="fa-regular fa-clock"></i> No hay actividad reciente
                                 </li>
                             `;
-                } else {
-                    let html = '';
-                    actividadSnap.forEach(doc => {
-                        const data = doc.data();
-                        const fecha = data.fechaIngreso ? new Date(data.fechaIngreso) : null;
-                        const tiempo = fecha ? formatearFechaHora(fecha) : '-';
-
-                        html += `
-                                    <li>
-                                        <div class="activity-icon">
-                                            <i class="fa-solid fa-check"></i>
-                                        </div>
-                                        <div class="activity-text">
-                                            <div class="activity-title">${sanitizar(data.nombre || 'Desconocido')}</div>
-                                            <div class="activity-meta">Ingresó al evento</div>
-                                        </div>
-                                        <div class="activity-time">${tiempo}</div>
-                                    </li>
-                                `;
-                    });
-                    lista.innerHTML = html;
                 }
 
                 console.log('✅ Dashboard cargado correctamente');
 
             } catch (error) {
-                console.error('Error al cargar dashboard:', error);
-                mostrarToast('❌ Error al cargar el dashboard', 'error');
+                console.error('Error general al cargar dashboard:', error);
+                mostrarToast('⚠️ Error al cargar algunas estadísticas', 'warning');
 
-                // Mostrar mensaje de error en la actividad
-                document.getElementById('actividadReciente').innerHTML = `
-                            <li style="color:var(--color-text-muted); padding:20px 0; text-align:center; justify-content:center;">
-                                <i class="fa-solid fa-triangle-exclamation"></i> Error al cargar actividad
-                            </li>
-                        `;
+                // Asegurar que los números no queden vacíos
+                ['totalEventos', 'totalAsistentes', 'ingresadosHoy', 'totalNoticias'].forEach(id => {
+                    if (document.getElementById(id).textContent === '') {
+                        document.getElementById(id).textContent = '0';
+                    }
+                });
             }
         }
 
@@ -618,15 +614,14 @@
         // INICIALIZAR
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
-            cargarDashboard();
+            // Pequeño retraso para asegurar que Firebase está listo
+            setTimeout(cargarDashboard, 500);
 
             // Recargar estadísticas cada 60 segundos
             setInterval(cargarDashboard, 60000);
         });
 
-        // ============================================================
-        // PREVENIR CIERRE CON CTRL+W
-        // ============================================================
+        // Prevenir cierre con Ctrl+W
         document.addEventListener('keydown', function (e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
                 e.preventDefault();

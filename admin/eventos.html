@@ -49,6 +49,7 @@
             transition: var(--transition);
             align-items: center;
             cursor: pointer;
+            flex-wrap: wrap;
         }
 
         .evento-item:hover {
@@ -106,7 +107,6 @@
             opacity: 0.3;
         }
 
-        /* Asistentes */
         .asistente-item {
             display: flex;
             gap: 12px;
@@ -117,6 +117,7 @@
             margin-bottom: 8px;
             transition: var(--transition);
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .asistente-item:hover {
@@ -196,11 +197,11 @@
             font-weight: 600;
         }
 
-        /* Tabs dentro de eventos */
         .sub-tabs {
             display: flex;
             gap: 8px;
             margin-bottom: 16px;
+            flex-wrap: wrap;
         }
 
         .sub-tabs button {
@@ -264,12 +265,17 @@
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .evento-item {
-                flex-wrap: wrap;
+                flex-direction: column;
+                align-items: stretch;
             }
 
             .evento-item .evento-actions {
                 width: 100%;
-                justify-content: flex-end;
+                justify-content: center;
+            }
+
+            .evento-item .evento-count {
+                text-align: center;
             }
 
             .stats-eventos {
@@ -279,42 +285,43 @@
             .btn-group-botones .btn-admin {
                 min-width: 100%;
             }
+
+            .sub-tabs button {
+                flex: 1;
+                text-align: center;
+                font-size: 0.7rem !important;
+                padding: 6px 12px !important;
+            }
         }
 
         @media (max-width: 480px) {
             .evento-item {
-                flex-direction: column;
-                align-items: stretch;
+                padding: 12px !important;
             }
 
-            .evento-item .evento-actions {
-                justify-content: center;
-            }
-
-            .evento-item .evento-count {
-                text-align: center;
+            .evento-item .evento-actions .btn-admin {
+                padding: 4px 10px !important;
+                font-size: 0.65rem !important;
             }
 
             .stats-eventos {
                 grid-template-columns: 1fr;
             }
 
-            .sub-tabs {
-                flex-wrap: wrap;
-            }
-
-            .sub-tabs button {
-                flex: 1;
-                text-align: center;
-            }
-
             .asistente-item {
-                flex-wrap: wrap;
+                flex-direction: column;
+                align-items: stretch;
             }
 
             .asistente-item .asistente-actions {
                 width: 100%;
                 justify-content: center;
+            }
+
+            .sub-tabs button {
+                font-size: 0.65rem !important;
+                padding: 5px 8px !important;
+                min-width: 50px !important;
             }
         }
     </style>
@@ -347,7 +354,7 @@
             <li class="nav-divider"></li>
             <li class="nav-label">Sistema</li>
             <li><a href="asistentes.html"><i class="fa-solid fa-users"></i> Asistentes</a></li>
-            <li><a href="../validador.html" target="_blank"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
+            <li><a href="validador.html"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
             <li><a href="#" onclick="cerrarSesionAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
         </ul>
     </aside>
@@ -502,6 +509,8 @@
                 <button class="btn-admin btn-primary btn-lg" onclick="crearEvento()">
                     <i class="fa-solid fa-plus"></i> Crear Evento
                 </button>
+                <div id="mensajeEvento"
+                    style="margin-top:12px; display:none; padding:12px; border-radius:var(--radius-sm);"></div>
             </div>
         </div>
 
@@ -534,7 +543,8 @@
                 <button class="btn-admin btn-success btn-lg" onclick="agregarAsistente()">
                     <i class="fa-solid fa-check"></i> Agregar Asistente
                 </button>
-                <div id="mensajeAgregar" style="margin-top:12px; display:none;"></div>
+                <div id="mensajeAgregar"
+                    style="margin-top:12px; display:none; padding:12px; border-radius:var(--radius-sm);"></div>
             </div>
         </div>
 
@@ -667,11 +677,42 @@
         }
 
         // ============================================================
+        // FUNCIONES - MENSAJES
+        // ============================================================
+
+        function mostrarMensajeEvento(elemento, texto, tipo) {
+            if (!elemento) return;
+            elemento.style.display = 'block';
+            elemento.textContent = texto;
+
+            const colors = {
+                'success': 'var(--color-success)',
+                'error': 'var(--color-danger)',
+                'warning': 'var(--color-warning)',
+                'info': 'var(--color-primary)'
+            };
+
+            elemento.style.color = colors[tipo] || 'var(--color-text)';
+            elemento.style.border = '1px solid ' + (colors[tipo] || 'var(--color-border)');
+            elemento.style.background = 'var(--color-bg)';
+
+            if (tipo === 'success' || tipo === 'error' || tipo === 'warning') {
+                setTimeout(() => {
+                    elemento.style.display = 'none';
+                }, 6000);
+            }
+        }
+
+        // ============================================================
         // FUNCIONES - EVENTOS
         // ============================================================
 
         async function cargarEventos() {
             try {
+                if (!db) {
+                    throw new Error('Firebase no disponible');
+                }
+
                 const snapshot = await db.collection('eventos')
                     .orderBy('creadoEn', 'desc')
                     .get();
@@ -681,7 +722,7 @@
                     eventos.push({ id: doc.id, ...doc.data() });
                 });
 
-                document.getElementById('eventosCount').textContent = `${eventos.length} eventos`;
+                document.getElementById('eventosCount').textContent = eventos.length + ' eventos';
                 renderizarEventos();
 
             } catch (error) {
@@ -719,9 +760,9 @@
                                 <div class="evento-info">
                                     <div class="evento-nombre">${sanitizar(e.nombre)}</div>
                                     <div class="evento-meta">
-                                        ${fecha ? `<span><i class="fa-regular fa-calendar"></i> ${fecha}</span>` : ''}
-                                        ${hora ? `<span><i class="fa-regular fa-clock"></i> ${hora}</span>` : ''}
-                                        ${e.lugar ? `<span><i class="fa-regular fa-location-dot"></i> ${sanitizar(e.lugar)}</span>` : ''}
+                                        ${fecha ? '<span><i class="fa-regular fa-calendar"></i> ' + fecha + '</span>' : ''}
+                                        ${hora ? '<span><i class="fa-regular fa-clock"></i> ' + hora + '</span>' : ''}
+                                        ${e.lugar ? '<span><i class="fa-regular fa-location-dot"></i> ' + sanitizar(e.lugar) + '</span>' : ''}
                                     </div>
                                 </div>
                                 <div class="evento-count">🎫 ${count}</div>
@@ -749,9 +790,10 @@
             const hora = document.getElementById('eventoHora').value;
             const lugar = document.getElementById('eventoLugar').value.trim();
             const descripcion = document.getElementById('eventoDescripcion').value.trim();
+            const mensajeEl = document.getElementById('mensajeEvento');
 
             if (!nombre) {
-                mostrarToast('⚠️ Ingresa el nombre del evento', 'warning');
+                mostrarMensajeEvento(mensajeEl, '⚠️ Ingresa el nombre del evento', 'error');
                 document.getElementById('eventoNombre').focus();
                 return;
             }
@@ -769,7 +811,7 @@
 
                 await db.collection('eventos').add(evento);
 
-                mostrarToast('✅ Evento "' + nombre + '" creado con éxito', 'success');
+                mostrarMensajeEvento(mensajeEl, '✅ Evento "' + nombre + '" creado con éxito', 'success');
 
                 document.getElementById('eventoNombre').value = '';
                 document.getElementById('eventoFecha').value = '';
@@ -782,7 +824,7 @@
 
             } catch (error) {
                 console.error('Error al crear evento:', error);
-                mostrarToast('❌ Error: ' + error.message, 'error');
+                mostrarMensajeEvento(mensajeEl, '❌ Error: ' + error.message, 'error');
             }
         }
 
@@ -790,12 +832,11 @@
             const evento = eventos.find(e => e.id === id);
             if (!evento) return;
 
-            if (!confirm(`¿Eliminar el evento "${evento.nombre}" y todos sus asistentes?`)) {
+            if (!confirm('¿Eliminar el evento "' + evento.nombre + '" y todos sus asistentes?')) {
                 return;
             }
 
             try {
-                // Eliminar asistentes
                 if (evento.asistentes && evento.asistentes.length > 0) {
                     for (const asistenteId of evento.asistentes) {
                         try {
@@ -836,7 +877,7 @@
                 const select2 = document.getElementById('selectEventoAgregar');
 
                 const options = eventosList.map(e =>
-                    `<option value="${e.id}">${sanitizar(e.nombre)}</option>`
+                    '<option value="' + e.id + '">' + sanitizar(e.nombre) + '</option>'
                 ).join('');
 
                 select1.innerHTML = '<option value="">Selecciona un evento</option>' + options;
@@ -855,22 +896,22 @@
             const eventoId = document.getElementById('selectEventoAgregar').value;
             const nombre = document.getElementById('asistenteNombre').value.trim();
             const email = document.getElementById('asistenteEmail').value.trim();
-            const mensaje = document.getElementById('mensajeAgregar');
+            const mensajeEl = document.getElementById('mensajeAgregar');
 
             if (!eventoId) {
-                mostrarMensajeAgregar(mensaje, '⚠️ Selecciona un evento', 'error');
+                mostrarMensajeEvento(mensajeEl, '⚠️ Selecciona un evento', 'error');
                 return;
             }
             if (!nombre) {
-                mostrarMensajeAgregar(mensaje, '⚠️ Ingresa el nombre', 'error');
+                mostrarMensajeEvento(mensajeEl, '⚠️ Ingresa el nombre', 'error');
                 return;
             }
             if (!email || !email.includes('@')) {
-                mostrarMensajeAgregar(mensaje, '⚠️ Ingresa un correo válido', 'error');
+                mostrarMensajeEvento(mensajeEl, '⚠️ Ingresa un correo válido', 'error');
                 return;
             }
 
-            mostrarMensajeAgregar(mensaje, '⏳ Registrando...', 'info');
+            mostrarMensajeEvento(mensajeEl, '⏳ Registrando...', 'info');
 
             try {
                 const eventoDoc = await db.collection('eventos').doc(eventoId).get();
@@ -894,17 +935,16 @@
                     asistentes: firebase.firestore.FieldValue.arrayUnion(docRef.id)
                 });
 
-                // Intentar enviar correo
                 try {
                     await enviarCorreoAsistente(nombre, email, nombreEvento, docRef.id, eventoData);
                     await db.collection('asistentes').doc(docRef.id).update({
                         emailEnviado: true,
                         emailEnviadoEn: new Date().toISOString()
                     });
-                    mostrarMensajeAgregar(mensaje, `✅ ${nombre} agregado y correo enviado a ${email}`, 'success');
+                    mostrarMensajeEvento(mensajeEl, '✅ ' + nombre + ' agregado y correo enviado a ' + email, 'success');
                 } catch (emailError) {
                     console.error('Error al enviar correo:', emailError);
-                    mostrarMensajeAgregar(mensaje, `✅ ${nombre} agregado pero el correo no pudo enviarse`, 'warning');
+                    mostrarMensajeEvento(mensajeEl, '✅ ' + nombre + ' agregado pero el correo no pudo enviarse', 'warning');
                 }
 
                 document.getElementById('asistenteNombre').value = '';
@@ -913,32 +953,8 @@
 
             } catch (error) {
                 console.error('Error al agregar asistente:', error);
-                mostrarMensajeAgregar(mensaje, '❌ Error: ' + error.message, 'error');
+                mostrarMensajeEvento(mensajeEl, '❌ Error: ' + error.message, 'error');
             }
-        }
-
-        function mostrarMensajeAgregar(elemento, texto, tipo) {
-            if (!elemento) return;
-            elemento.style.display = 'block';
-            elemento.textContent = texto;
-            elemento.className = 'admin-form-group';
-
-            const colors = {
-                'success': 'var(--color-success)',
-                'error': 'var(--color-danger)',
-                'warning': 'var(--color-warning)',
-                'info': 'var(--color-primary)'
-            };
-
-            elemento.style.color = colors[tipo] || 'var(--color-text)';
-            elemento.style.border = '1px solid ' + (colors[tipo] || 'var(--color-border)');
-            elemento.style.padding = '12px';
-            elemento.style.borderRadius = 'var(--radius-sm)';
-            elemento.style.background = 'var(--color-bg)';
-
-            setTimeout(() => {
-                elemento.style.display = 'none';
-            }, 6000);
         }
 
         async function cargarAsistentes() {
@@ -993,7 +1009,7 @@
                                             <span class="badge-admin ${a.ingresado ? 'badge-success' : 'badge-warning'}">
                                                 ${a.ingresado ? '✅ Ingresado' : '⏳ Pendiente'}
                                             </span>
-                                            ${a.fechaIngreso ? `<span>${formatearFechaHora(a.fechaIngreso)}</span>` : ''}
+                                            ${a.fechaIngreso ? '<span>' + formatearFechaHora(a.fechaIngreso) + '</span>' : ''}
                                             <span class="badge-admin ${a.emailEnviado ? 'badge-success' : 'badge-warning'}">
                                                 ${a.emailEnviado ? '📧 Enviado' : '📧 Pendiente'}
                                             </span>
@@ -1089,8 +1105,6 @@
                 return;
             }
 
-            // Reutilizar la lógica del QR en el modal para descargar
-            const qrContainer = document.getElementById('qrContainer');
             const contenido = document.getElementById('qrModal').querySelector('.modal-content');
 
             html2canvas(contenido, {
@@ -1101,7 +1115,7 @@
                 logging: false
             }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = `entrada_${asistenteActual.nombre.replace(/\s/g, '_')}.png`;
+                link.download = 'entrada_' + asistenteActual.nombre.replace(/\s/g, '_') + '.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
                 mostrarToast('✅ QR descargado', 'success');
@@ -1161,11 +1175,10 @@
 
             XLSX.utils.book_append_sheet(wb, ws, 'Asistentes');
 
-            const nombreArchivo =
-                `Asistentes_${evento.nombre.replace(/\s/g, '_')}_${new Date().toISOString().split('T')[0]}.xlsx`;
+            const nombreArchivo = 'Asistentes_' + evento.nombre.replace(/\s/g, '_') + '_' + new Date().toISOString().split('T')[0] + '.xlsx';
             XLSX.writeFile(wb, nombreArchivo);
 
-            mostrarToast(`✅ ${asistentesEvento.length} asistentes exportados`, 'success');
+            mostrarToast('✅ ' + asistentesEvento.length + ' asistentes exportados', 'success');
         }
 
         function exportarTodosEventos() {
@@ -1174,7 +1187,6 @@
                 return;
             }
 
-            // Recolectar todos los asistentes
             const todos = [];
             eventos.forEach(e => {
                 const asistentesEvento = asistentes.filter(a => a.eventoId === e.id);
@@ -1215,10 +1227,10 @@
 
             XLSX.utils.book_append_sheet(wb, ws, 'Todos');
 
-            const nombreArchivo = `Todos_los_asistentes_${new Date().toISOString().split('T')[0]}.xlsx`;
+            const nombreArchivo = 'Todos_los_asistentes_' + new Date().toISOString().split('T')[0] + '.xlsx';
             XLSX.writeFile(wb, nombreArchivo);
 
-            mostrarToast(`✅ ${todos.length} asistentes exportados`, 'success');
+            mostrarToast('✅ ' + todos.length + ' asistentes exportados', 'success');
         }
 
         // ============================================================

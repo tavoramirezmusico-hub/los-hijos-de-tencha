@@ -83,7 +83,6 @@
             color: var(--color-text-muted);
         }
 
-        /* Resultado */
         .resultado-validacion {
             background: var(--color-bg);
             padding: 20px;
@@ -146,7 +145,6 @@
             color: #fff;
         }
 
-        /* Validación manual */
         .validacion-manual {
             display: flex;
             gap: 10px;
@@ -162,7 +160,6 @@
             flex-shrink: 0;
         }
 
-        /* Lista de asistentes (mini) */
         .mini-asistente {
             display: flex;
             gap: 12px;
@@ -173,6 +170,7 @@
             margin-bottom: 8px;
             transition: var(--transition);
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .mini-asistente:hover {
@@ -220,7 +218,6 @@
             border-left: 3px solid var(--color-warning);
         }
 
-        /* Stats mini */
         .mini-stats {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -250,6 +247,58 @@
             font-weight: 600;
         }
 
+        .sub-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .sub-tabs button {
+            padding: 8px 18px;
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            color: var(--color-text-muted);
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font);
+        }
+
+        .sub-tabs button:hover {
+            border-color: var(--color-primary);
+            color: var(--color-text);
+        }
+
+        .sub-tabs button.active {
+            background: var(--color-primary);
+            color: #000;
+            border-color: var(--color-primary);
+        }
+
+        .sub-tab-content {
+            display: none;
+        }
+
+        .sub-tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .mini-stats {
@@ -260,6 +309,13 @@
                 min-width: 60px;
                 padding: 10px 14px;
                 font-size: 0.75rem;
+            }
+
+            .sub-tabs button {
+                flex: 1;
+                text-align: center;
+                font-size: 0.7rem !important;
+                padding: 6px 12px !important;
             }
         }
 
@@ -282,6 +338,21 @@
 
             #reader {
                 min-height: 200px;
+            }
+
+            .sub-tabs button {
+                font-size: 0.65rem !important;
+                padding: 5px 8px !important;
+                min-width: 50px !important;
+            }
+
+            .mini-asistente {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .mini-asistente .mini-estado {
+                text-align: center;
             }
         }
     </style>
@@ -647,7 +718,7 @@
                 if (data.ingresado) {
                     const fecha = data.fechaIngreso ? formatearFechaHora(data.fechaIngreso) : '';
                     mostrarResultado(false, '⏳ Ya ingresó',
-                        `${data.nombre} ya registró su ingreso${fecha ? ' el ' + fecha : ''}`,
+                        data.nombre + ' ya registró su ingreso' + (fecha ? ' el ' + fecha : ''),
                         'ya-ingreso'
                     );
                     return;
@@ -659,13 +730,12 @@
                 });
 
                 mostrarResultado(true, '✅ ¡Bienvenido!',
-                    `${data.nombre} ha ingresado al evento`,
+                    data.nombre + ' ha ingresado al evento',
                     'exito'
                 );
 
-                mostrarToast(`✅ ${data.nombre} ingresó con éxito`, 'success');
+                mostrarToast('✅ ' + data.nombre + ' ingresó con éxito', 'success');
 
-                // Actualizar lista si está visible
                 if (document.getElementById('subTab-lista').classList.contains('active')) {
                     cargarListaAsistentes();
                 }
@@ -701,7 +771,6 @@
                         </div>
                     `;
 
-            // Auto limpiar después de 8 segundos si fue exitoso
             if (exito) {
                 setTimeout(() => {
                     container.innerHTML = '';
@@ -715,6 +784,10 @@
 
         async function cargarSelectEventos() {
             try {
+                if (!db) {
+                    throw new Error('Firebase no disponible');
+                }
+
                 const snapshot = await db.collection('eventos')
                     .orderBy('creadoEn', 'desc')
                     .get();
@@ -724,7 +797,7 @@
 
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    options += `<option value="${doc.id}">${sanitizar(data.nombre)}</option>`;
+                    options += '<option value="' + doc.id + '">' + sanitizar(data.nombre) + '</option>';
                 });
 
                 select.innerHTML = options;
@@ -803,14 +876,12 @@
             console.log('🚀 Validador de Entradas cargado');
         });
 
-        // Detener escáner al cerrar
         document.addEventListener('visibilitychange', function () {
             if (document.hidden && isScanning) {
                 stopScanner();
             }
         });
 
-        // Prevenir cierre con Ctrl+W
         document.addEventListener('keydown', function (e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
                 e.preventDefault();

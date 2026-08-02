@@ -26,7 +26,6 @@
            ESTILOS ESPECÍFICOS DE GALERÍA
            ============================================================ */
 
-        /* Categorías */
         .categorias-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -86,6 +85,9 @@
             transition: var(--transition);
             background: rgba(255, 255, 255, 0.02);
             margin-bottom: 20px;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
         .galeria-dropzone:hover {
@@ -116,7 +118,6 @@
             margin-top: 8px;
         }
 
-        /* Grid de fotos */
         .fotos-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -207,7 +208,6 @@
             opacity: 0.3;
         }
 
-        /* Barra de progreso */
         .upload-progress {
             display: none;
             margin: 12px 0;
@@ -252,6 +252,18 @@
             .fotos-grid {
                 grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             }
+
+            .galeria-dropzone {
+                padding: 30px 15px !important;
+            }
+
+            .galeria-dropzone i {
+                font-size: 2rem !important;
+            }
+
+            .galeria-dropzone p {
+                font-size: 0.85rem !important;
+            }
         }
 
         @media (max-width: 480px) {
@@ -261,6 +273,26 @@
 
             .fotos-grid {
                 grid-template-columns: 1fr 1fr;
+            }
+
+            .categoria-item {
+                padding: 10px !important;
+            }
+
+            .categoria-item .cat-nombre {
+                font-size: 0.8rem !important;
+            }
+
+            .galeria-dropzone {
+                padding: 20px 10px !important;
+            }
+
+            .galeria-dropzone i {
+                font-size: 1.5rem !important;
+            }
+
+            .galeria-dropzone p {
+                font-size: 0.8rem !important;
             }
         }
     </style>
@@ -293,7 +325,7 @@
             <li class="nav-divider"></li>
             <li class="nav-label">Sistema</li>
             <li><a href="asistentes.html"><i class="fa-solid fa-users"></i> Asistentes</a></li>
-            <li><a href="../validador.html" target="_blank"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
+            <li><a href="validador.html"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
             <li><a href="#" onclick="cerrarSesionAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
         </ul>
     </aside>
@@ -459,7 +491,6 @@
         let categoriaSeleccionadaId = null;
         let categoriaSeleccionadaNombre = '';
         let subiendo = false;
-        let archivosParaSubir = [];
 
         // ============================================================
         // SIDEBAR
@@ -500,6 +531,10 @@
 
         async function cargarCategorias() {
             try {
+                if (!db) {
+                    throw new Error('Firebase no disponible');
+                }
+
                 const snapshot = await db.collection('galeria_categorias')
                     .orderBy('nombre', 'asc')
                     .get();
@@ -565,7 +600,7 @@
             categoriaSeleccionadaNombre = cat ? cat.nombre : '';
 
             document.getElementById('categoriaSeleccionadaTitulo').innerHTML =
-                `<i class="fa-solid fa-folder-open"></i> ${sanitizar(categoriaSeleccionadaNombre)}`;
+                '<i class="fa-solid fa-folder-open"></i> ' + sanitizar(categoriaSeleccionadaNombre);
 
             renderizarCategorias();
             await cargarFotos(id);
@@ -627,7 +662,6 @@
                     datos.creadoEn = new Date().toISOString();
                     const docRef = await db.collection('galeria_categorias').add(datos);
                     mostrarToast('✅ Categoría creada', 'success');
-                    // Seleccionar la nueva categoría
                     setTimeout(() => seleccionarCategoria(docRef.id), 300);
                 }
 
@@ -665,12 +699,10 @@
             btn.disabled = true;
 
             try {
-                // Eliminar todas las fotos de la categoría
                 const fotosSnap = await db.collection('galeria_fotos')
                     .where('categoriaId', '==', id)
                     .get();
 
-                // Eliminar imágenes de Storage
                 for (const doc of fotosSnap.docs) {
                     const data = doc.data();
                     if (data.url) {
@@ -683,7 +715,6 @@
                     await db.collection('galeria_fotos').doc(doc.id).delete();
                 }
 
-                // Eliminar la categoría
                 await db.collection('galeria_categorias').doc(id).delete();
 
                 cerrarModalEliminarCategoria();
@@ -737,7 +768,7 @@
                 });
 
                 renderizarFotos();
-                document.getElementById('fotosCount').textContent = `${fotos.length} fotos`;
+                document.getElementById('fotosCount').textContent = fotos.length + ' fotos';
 
             } catch (error) {
                 console.error('Error al cargar fotos:', error);
@@ -763,7 +794,7 @@
             fotos.forEach((foto, index) => {
                 html += `
                             <div class="foto-item" data-index="${index}">
-                                <img src="${foto.url}" alt="${sanitizar(foto.titulo || 'Foto')}" loading="lazy">
+                                <img src="${foto.url}" alt="${sanitizar(foto.titulo || 'Foto')}" loading="lazy" onerror="this.style.display='none'">
                                 ${foto.destacada ? '<div class="foto-destacada">⭐ Destacada</div>' : ''}
                                 <div class="foto-overlay">
                                     <button class="btn-admin btn-primary btn-sm" onclick="toggleDestacada('${foto.id}')">
@@ -787,7 +818,6 @@
             try {
                 const nuevaDestacada = !foto.destacada;
 
-                // Si se está marcando como destacada, quitar destacada de las demás
                 if (nuevaDestacada) {
                     const batch = db.batch();
                     const fotosSnapshot = await db.collection('galeria_fotos')
@@ -847,40 +877,41 @@
         const dropzone = document.getElementById('dropzone');
         const fileInput = document.getElementById('fileInput');
 
-        // Clic en dropzone
-        dropzone.addEventListener('click', function (e) {
-            if (e.target === this || e.target.closest('.galeria-dropzone')) {
-                fileInput.click();
-            }
-        });
+        if (dropzone) {
+            dropzone.addEventListener('click', function (e) {
+                if (e.target === this || e.target.closest('.galeria-dropzone')) {
+                    fileInput.click();
+                }
+            });
 
-        // Drag & Drop
-        dropzone.addEventListener('dragover', function (e) {
-            e.preventDefault();
-            this.classList.add('dragover');
-        });
+            dropzone.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
 
-        dropzone.addEventListener('dragleave', function (e) {
-            e.preventDefault();
-            this.classList.remove('dragover');
-        });
+            dropzone.addEventListener('dragleave', function (e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+            });
 
-        dropzone.addEventListener('drop', function (e) {
-            e.preventDefault();
-            this.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                procesarArchivos(files);
-            }
-        });
+            dropzone.addEventListener('drop', function (e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    procesarArchivos(files);
+                }
+            });
+        }
 
-        // Selección de archivos
-        fileInput.addEventListener('change', function (e) {
-            if (this.files.length > 0) {
-                procesarArchivos(this.files);
-                this.value = '';
-            }
-        });
+        if (fileInput) {
+            fileInput.addEventListener('change', function (e) {
+                if (this.files.length > 0) {
+                    procesarArchivos(this.files);
+                    this.value = '';
+                }
+            });
+        }
 
         async function procesarArchivos(files) {
             if (!categoriaSeleccionadaId) {
@@ -893,15 +924,14 @@
                 return;
             }
 
-            // Validar archivos
             const archivosValidos = [];
             for (const file of files) {
                 if (!file.type.startsWith('image/')) {
-                    mostrarToast(`⚠️ "${file.name}" no es una imagen válida`, 'warning');
+                    mostrarToast('⚠️ "' + file.name + '" no es una imagen válida', 'warning');
                     continue;
                 }
                 if (file.size > 5 * 1024 * 1024) {
-                    mostrarToast(`⚠️ "${file.name}" excede los 5MB`, 'warning');
+                    mostrarToast('⚠️ "' + file.name + '" excede los 5MB', 'warning');
                     continue;
                 }
                 archivosValidos.push(file);
@@ -925,16 +955,15 @@
 
             for (let i = 0; i < archivosValidos.length; i++) {
                 const file = archivosValidos[i];
-                progressText.textContent = `Subiendo ${i + 1}/${total}: ${file.name}`;
+                progressText.textContent = 'Subiendo ' + (i + 1) + '/' + total + ': ' + file.name;
 
                 try {
-                    const path = `galeria/${categoriaSeleccionadaId}/`;
+                    const path = 'galeria/' + categoriaSeleccionadaId + '/';
                     const url = await subirArchivo(file, path, (progreso) => {
                         const totalProgress = ((i + (progreso / 100)) / total) * 100;
                         progressFill.style.width = totalProgress + '%';
                     });
 
-                    // Guardar en Firestore
                     await db.collection('galeria_fotos').add({
                         categoriaId: categoriaSeleccionadaId,
                         url: url,
@@ -948,7 +977,7 @@
 
                 } catch (error) {
                     console.error('Error al subir archivo:', error);
-                    mostrarToast(`❌ Error al subir "${file.name}"`, 'error');
+                    mostrarToast('❌ Error al subir "' + file.name + '"', 'error');
                 }
             }
 
@@ -957,7 +986,7 @@
             subiendo = false;
 
             if (subidos > 0) {
-                mostrarToast(`✅ ${subidos} fotos subidas con éxito`, 'success');
+                mostrarToast('✅ ' + subidos + ' fotos subidas con éxito', 'success');
                 await cargarFotos(categoriaSeleccionadaId);
                 await cargarCategorias();
             }

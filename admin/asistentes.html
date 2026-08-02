@@ -55,6 +55,7 @@
             margin-bottom: 8px;
             transition: var(--transition);
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .asistente-row:hover {
@@ -211,12 +212,17 @@
             }
 
             .asistente-row {
-                flex-wrap: wrap;
+                flex-direction: column;
+                align-items: stretch;
             }
 
             .asistente-row .asistente-actions {
                 width: 100%;
                 justify-content: center;
+            }
+
+            .asistente-row .asistente-estado {
+                text-align: center;
             }
 
             .asistentes-stats {
@@ -226,16 +232,21 @@
 
         @media (max-width: 480px) {
             .asistente-row {
-                flex-direction: column;
-                align-items: stretch;
+                padding: 12px !important;
             }
 
-            .asistente-row .asistente-estado {
-                text-align: center;
+            .asistente-row .asistente-actions .btn-admin {
+                padding: 4px 10px !important;
+                font-size: 0.65rem !important;
             }
 
             .asistentes-stats {
                 grid-template-columns: 1fr;
+            }
+
+            .asistentes-paginacion button {
+                padding: 4px 10px !important;
+                font-size: 0.7rem !important;
             }
         }
     </style>
@@ -440,13 +451,15 @@
             const container = document.getElementById('listaAsistentesGlobal');
 
             try {
-                // Cargar eventos para mapear nombres
+                if (!db) {
+                    throw new Error('Firebase no disponible');
+                }
+
                 const eventosSnap = await db.collection('eventos').get();
                 eventosSnap.forEach(doc => {
                     eventosMap[doc.id] = doc.data().nombre || 'Evento sin nombre';
                 });
 
-                // Cargar todos los asistentes
                 const snapshot = await db.collection('asistentes')
                     .orderBy('creadoEn', 'desc')
                     .get();
@@ -461,7 +474,6 @@
                     });
                 });
 
-                // Actualizar estadísticas
                 const total = todosLosAsistentes.length;
                 const ingresados = todosLosAsistentes.filter(a => a.ingresado).length;
                 const pendientes = total - ingresados;
@@ -472,16 +484,15 @@
                 document.getElementById('pendientesGlobal').textContent = pendientes;
                 document.getElementById('eventosGlobal').textContent = eventos;
 
-                // Poblar filtro de eventos
                 const selectEvento = document.getElementById('filtroEvento');
                 let options = '<option value="">Todos los eventos</option>';
                 for (const [id, nombre] of Object.entries(eventosMap)) {
-                    options += `<option value="${id}">${sanitizar(nombre)}</option>`;
+                    options += '<option value="' + id + '">' + sanitizar(nombre) + '</option>';
                 }
                 selectEvento.innerHTML = options;
 
                 asistentesFiltrados = [...todosLosAsistentes];
-                document.getElementById('asistentesCount').textContent = `${todosLosAsistentes.length} asistentes`;
+                document.getElementById('asistentesCount').textContent = todosLosAsistentes.length + ' asistentes';
 
                 renderizarAsistentes();
 
@@ -506,7 +517,6 @@
             const estado = document.getElementById('filtroEstado').value;
 
             asistentesFiltrados = todosLosAsistentes.filter(a => {
-                // Filtro por búsqueda
                 if (busqueda) {
                     const nombre = (a.nombre || '').toLowerCase();
                     const email = (a.email || '').toLowerCase();
@@ -515,12 +525,10 @@
                     }
                 }
 
-                // Filtro por evento
                 if (eventoId && a.eventoId !== eventoId) {
                     return false;
                 }
 
-                // Filtro por estado
                 if (estado === 'ingresado' && !a.ingresado) return false;
                 if (estado === 'pendiente' && a.ingresado) return false;
 
@@ -528,7 +536,7 @@
             });
 
             paginaActual = 1;
-            document.getElementById('asistentesCount').textContent = `${asistentesFiltrados.length} asistentes (filtrados)`;
+            document.getElementById('asistentesCount').textContent = asistentesFiltrados.length + ' asistentes (filtrados)';
             renderizarAsistentes();
         }
 
@@ -538,7 +546,7 @@
             document.getElementById('filtroEstado').value = '';
             asistentesFiltrados = [...todosLosAsistentes];
             paginaActual = 1;
-            document.getElementById('asistentesCount').textContent = `${todosLosAsistentes.length} asistentes`;
+            document.getElementById('asistentesCount').textContent = todosLosAsistentes.length + ' asistentes';
             renderizarAsistentes();
         }
 
@@ -560,7 +568,6 @@
                 return;
             }
 
-            // Paginación
             const totalPaginas = Math.ceil(asistentesFiltrados.length / POR_PAGINA);
             if (paginaActual > totalPaginas) paginaActual = totalPaginas;
             if (paginaActual < 1) paginaActual = 1;
@@ -583,8 +590,8 @@
                                     <div class="email">${sanitizar(a.email || 'Sin email')}</div>
                                     <div class="extra">
                                         <span><i class="fa-regular fa-calendar"></i> ${sanitizar(a.eventoNombre)}</span>
-                                        ${a.creadoEn ? `<span><i class="fa-regular fa-clock"></i> ${formatearFechaHora(a.creadoEn)}</span>` : ''}
-                                        ${a.ingresado ? `<span><i class="fa-regular fa-check-circle"></i> ${fecha}</span>` : ''}
+                                        ${a.creadoEn ? '<span><i class="fa-regular fa-clock"></i> ' + formatearFechaHora(a.creadoEn) + '</span>' : ''}
+                                        ${a.ingresado ? '<span><i class="fa-regular fa-check-circle"></i> ' + fecha + '</span>' : ''}
                                         <span class="badge-admin ${a.emailEnviado ? 'badge-success' : 'badge-warning'}">
                                             ${a.emailEnviado ? '📧 Enviado' : '📧 Pendiente'}
                                         </span>
@@ -601,8 +608,6 @@
             });
 
             container.innerHTML = html;
-
-            // Paginación
             renderizarPaginacion(totalPaginas);
         }
 
@@ -615,21 +620,21 @@
             }
 
             let html = '';
-            html += `<button onclick="irPagina(${paginaActual - 1})" ${paginaActual <= 1 ? 'disabled' : ''}>
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </button>`;
+            html += '<button onclick="irPagina(' + (paginaActual - 1) + ')" ' + (paginaActual <= 1 ? 'disabled' : '') + '>
+                < i class="fa-solid fa-chevron-left" ></i >
+                    </button > ';
 
             for (let i = 1; i <= totalPaginas; i++) {
                 if (i === 1 || i === totalPaginas || Math.abs(i - paginaActual) <= 2) {
-                    html += `<button onclick="irPagina(${i})" class="${i === paginaActual ? 'active' : ''}">${i}</button>`;
+                    html += '<button onclick="irPagina(' + i + ')" class="' + (i === paginaActual ? 'active' : '') + '">' + i + '</button>';
                 } else if (i === paginaActual - 3 || i === paginaActual + 3) {
-                    html += `<button disabled>...</button>`;
+                    html += '<button disabled>...</button>';
                 }
             }
 
-            html += `<button onclick="irPagina(${paginaActual + 1})" ${paginaActual >= totalPaginas ? 'disabled' : ''}>
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </button>`;
+            html += '<button onclick="irPagina(' + (paginaActual + 1) + ')" ' + (paginaActual >= totalPaginas ? 'disabled' : '') + '>
+                < i class="fa-solid fa-chevron-right" ></i >
+                    </button > ';
 
             container.innerHTML = html;
         }
@@ -643,7 +648,7 @@
         }
 
         // ============================================================
-        // VER ASISTENTE (MODAL)
+        // VER ASISTENTE
         // ============================================================
 
         async function verAsistente(id) {
@@ -657,26 +662,17 @@
                 const data = doc.data();
                 const eventoNombre = eventosMap[data.eventoId] || 'Evento eliminado';
 
-                const mensaje = `
-                            🎫 <strong>Detalles del Asistente</strong>
-                            <br><br>
-                            <strong>Nombre:</strong> ${sanitizar(data.nombre || 'Sin nombre')}
-                            <br>
-                            <strong>Email:</strong> ${sanitizar(data.email || 'Sin email')}
-                            <br>
-                            <strong>Evento:</strong> ${sanitizar(eventoNombre)}
-                            <br>
-                            <strong>Estado:</strong> ${data.ingresado ? '✅ Ingresado' : '⏳ Pendiente'}
-                            ${data.fechaIngreso ? `<br><strong>Fecha ingreso:</strong> ${formatearFechaHora(data.fechaIngreso)}` : ''}
-                            <br>
-                            <strong>ID:</strong> <code style="background:var(--color-bg); padding:2px 8px; border-radius:4px; font-size:0.8rem;">${id}</code>
-                            <br>
-                            <strong>Correo enviado:</strong> ${data.emailEnviado ? '✅ Sí' : '❌ No'}
-                            ${data.creadoEn ? `<br><strong>Registrado:</strong> ${formatearFechaHora(data.creadoEn)}` : ''}
-                        `;
+                const mensaje = '🎫 Detalles del Asistente\n\n' +
+                    'Nombre: ' + (data.nombre || 'Sin nombre') + '\n' +
+                    'Email: ' + (data.email || 'Sin email') + '\n' +
+                    'Evento: ' + eventoNombre + '\n' +
+                    'Estado: ' + (data.ingresado ? '✅ Ingresado' : '⏳ Pendiente') +
+                    (data.fechaIngreso ? '\nFecha ingreso: ' + formatearFechaHora(data.fechaIngreso) : '') +
+                    '\nID: ' + id +
+                    '\nCorreo enviado: ' + (data.emailEnviado ? '✅ Sí' : '❌ No') +
+                    (data.creadoEn ? '\nRegistrado: ' + formatearFechaHora(data.creadoEn) : '');
 
-                // Usar toast extendido o modal simple
-                mostrarToast(mensaje.replace(/<br>/g, ' ').replace(/<strong>/g, '').replace(/<\/strong>/g, ''), 'info', 8000);
+                mostrarToast(mensaje.replace(/\n/g, ' | '), 'info', 8000);
 
             } catch (error) {
                 console.error('Error al ver asistente:', error);
@@ -725,10 +721,10 @@
 
             XLSX.utils.book_append_sheet(wb, ws, 'Asistentes');
 
-            const nombreArchivo = `Todos_los_asistentes_${new Date().toISOString().split('T')[0]}.xlsx`;
+            const nombreArchivo = 'Todos_los_asistentes_' + new Date().toISOString().split('T')[0] + '.xlsx';
             XLSX.writeFile(wb, nombreArchivo);
 
-            mostrarToast(`✅ ${asistentesFiltrados.length} asistentes exportados`, 'success');
+            mostrarToast('✅ ' + asistentesFiltrados.length + ' asistentes exportados', 'success');
         }
 
         // ============================================================
@@ -739,7 +735,6 @@
             console.log('🚀 Base de Asistentes cargada');
         });
 
-        // Prevenir cierre con Ctrl+W
         document.addEventListener('keydown', function (e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
                 e.preventDefault();
@@ -748,7 +743,6 @@
             }
         });
 
-        // Enter para buscar
         document.getElementById('buscarAsistente').addEventListener('keydown', function (e) {
             if (e.key === 'Enter') {
                 aplicarFiltros();

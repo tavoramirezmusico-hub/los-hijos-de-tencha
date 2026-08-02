@@ -36,6 +36,7 @@
             margin-bottom: 12px;
             transition: var(--transition);
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .video-item:hover {
@@ -126,7 +127,6 @@
             opacity: 0.3;
         }
 
-        /* Filtros */
         .filtros-videos {
             display: flex;
             gap: 8px;
@@ -147,7 +147,8 @@
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .video-item {
-                flex-wrap: wrap;
+                flex-direction: column;
+                align-items: stretch;
             }
 
             .video-item .video-thumb {
@@ -157,27 +158,33 @@
 
             .video-item .video-actions {
                 width: 100%;
-                justify-content: flex-end;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .video-item {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .video-item .video-actions {
                 justify-content: center;
             }
 
             .video-item .video-play {
                 align-self: center;
             }
+        }
+
+        @media (max-width: 480px) {
+            .video-item {
+                padding: 12px !important;
+            }
+
+            .video-item .video-thumb {
+                height: 140px !important;
+            }
 
             .filtros-videos .btn-admin {
                 flex: 1;
                 justify-content: center;
+                font-size: 0.7rem !important;
+                padding: 6px 12px !important;
+            }
+
+            .video-item .video-actions .btn-admin {
+                padding: 4px 10px !important;
+                font-size: 0.65rem !important;
             }
         }
     </style>
@@ -210,7 +217,7 @@
             <li class="nav-divider"></li>
             <li class="nav-label">Sistema</li>
             <li><a href="asistentes.html"><i class="fa-solid fa-users"></i> Asistentes</a></li>
-            <li><a href="../validador.html" target="_blank"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
+            <li><a href="validador.html"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
             <li><a href="#" onclick="cerrarSesionAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
         </ul>
     </aside>
@@ -313,6 +320,8 @@
                 <button class="btn-admin btn-secondary" onclick="limpiarFormulario()">
                     <i class="fa-solid fa-eraser"></i> Limpiar
                 </button>
+            </div>
+            <div id="mensajeVideo" style="margin-top:12px; display:none; padding:12px; border-radius:var(--radius-sm);">
             </div>
         </div>
 
@@ -432,6 +441,29 @@
         // FUNCIONES CRUD
         // ============================================================
 
+        function mostrarMensajeVideo(elemento, texto, tipo) {
+            if (!elemento) return;
+            elemento.style.display = 'block';
+            elemento.textContent = texto;
+
+            const colors = {
+                'success': 'var(--color-success)',
+                'error': 'var(--color-danger)',
+                'warning': 'var(--color-warning)',
+                'info': 'var(--color-primary)'
+            };
+
+            elemento.style.color = colors[tipo] || 'var(--color-text)';
+            elemento.style.border = '1px solid ' + (colors[tipo] || 'var(--color-border)');
+            elemento.style.background = 'var(--color-bg)';
+
+            if (tipo === 'success' || tipo === 'error' || tipo === 'warning') {
+                setTimeout(() => {
+                    elemento.style.display = 'none';
+                }, 6000);
+            }
+        }
+
         async function guardarVideo() {
             const id = document.getElementById('videoId').value;
             const titulo = document.getElementById('videoTitulo').value.trim();
@@ -442,22 +474,22 @@
             const orden = parseInt(document.getElementById('videoOrden').value) || 0;
             const destacado = document.getElementById('videoDestacado').checked;
 
-            // Validaciones
+            const mensajeEl = document.getElementById('mensajeVideo');
+
             if (!titulo) {
-                mostrarToast('⚠️ Ingresa el título del video', 'warning');
+                mostrarMensajeVideo(mensajeEl, '⚠️ Ingresa el título del video', 'error');
                 document.getElementById('videoTitulo').focus();
                 return;
             }
 
             if (!url) {
-                mostrarToast('⚠️ Ingresa la URL del video', 'warning');
+                mostrarMensajeVideo(mensajeEl, '⚠️ Ingresa la URL del video', 'error');
                 document.getElementById('videoUrl').focus();
                 return;
             }
 
-            // Validar URL
             if (!url.includes('youtube.com') && !url.includes('youtu.be') && !url.includes('cloudinary.com') && !url.includes('player.cloudinary.com')) {
-                mostrarToast('⚠️ URL no válida. Usa YouTube o Cloudinary', 'warning');
+                mostrarMensajeVideo(mensajeEl, '⚠️ URL no válida. Usa YouTube o Cloudinary', 'error');
                 return;
             }
 
@@ -466,6 +498,7 @@
             btn.classList.add('loading');
             btn.disabled = true;
             btnText.textContent = id ? 'Actualizando...' : 'Guardando...';
+            mostrarMensajeVideo(mensajeEl, '⏳ Procesando...', 'info');
 
             try {
                 const datos = {
@@ -479,7 +512,6 @@
                     actualizadoEn: new Date().toISOString()
                 };
 
-                // Si se marca como destacado, quitar destacado de otros en la misma categoría
                 if (destacado) {
                     const snapshot = await db.collection('videos')
                         .where('categoria', '==', categoria)
@@ -498,6 +530,7 @@
                     await batch.commit();
 
                     if (!id) {
+                        datos.creadoEn = new Date().toISOString();
                         await db.collection('videos').add(datos);
                     }
 
@@ -510,13 +543,13 @@
                     }
                 }
 
-                mostrarToast(id ? '✅ Video actualizado con éxito' : '✅ Video guardado con éxito', 'success');
+                mostrarMensajeVideo(mensajeEl, id ? '✅ Video actualizado con éxito' : '✅ Video guardado con éxito', 'success');
                 limpiarFormulario();
                 cargarVideos();
 
             } catch (error) {
                 console.error('Error al guardar video:', error);
-                mostrarToast('❌ Error: ' + error.message, 'error');
+                mostrarMensajeVideo(mensajeEl, '❌ Error: ' + error.message, 'error');
             }
 
             btn.classList.remove('loading');
@@ -528,6 +561,10 @@
             const container = document.getElementById('listaVideos');
 
             try {
+                if (!db) {
+                    throw new Error('Firebase no disponible');
+                }
+
                 const snapshot = await db.collection('videos')
                     .orderBy('orden', 'asc')
                     .orderBy('creadoEn', 'desc')
@@ -538,7 +575,7 @@
                     videos.push({ id: doc.id, ...doc.data() });
                 });
 
-                document.getElementById('videosCount').textContent = `${videos.length} videos`;
+                document.getElementById('videosCount').textContent = videos.length + ' videos';
                 renderizarVideos();
 
             } catch (error) {
@@ -591,9 +628,9 @@
                                     <div class="video-meta">
                                         <span><i class="fa-regular fa-folder"></i> ${catNombre}</span>
                                         <span><i class="fa-regular fa-calendar"></i> ${fecha}</span>
-                                        ${video.orden > 0 ? `<span><i class="fa-regular fa-hashtag"></i> #${video.orden}</span>` : ''}
+                                        ${video.orden > 0 ? '<span><i class="fa-regular fa-hashtag"></i> #' + video.orden + '</span>' : ''}
                                     </div>
-                                    ${video.descripcion ? `<div class="video-desc">${sanitizar(video.descripcion)}</div>` : ''}
+                                    ${video.descripcion ? '<div class="video-desc">' + sanitizar(video.descripcion) + '</div>' : ''}
                                 </div>
                                 <div class="video-actions">
                                     <button class="btn-admin btn-primary btn-sm" onclick="editarVideo('${video.id}')">
@@ -627,7 +664,7 @@
             const iframe = document.getElementById('modalVideoIframe');
             const titulo = document.getElementById('modalVideoTitulo');
 
-            titulo.innerHTML = `<i class="fa-solid fa-play"></i> ${sanitizar(video.titulo)}`;
+            titulo.innerHTML = '<i class="fa-solid fa-play"></i> ' + sanitizar(video.titulo);
             iframe.src = video.url;
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -664,10 +701,11 @@
                 document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Editar Video';
                 document.getElementById('btnGuardarTexto').textContent = 'Actualizar Video';
                 document.getElementById('btnCancelar').style.display = 'inline-flex';
+                document.getElementById('mensajeVideo').style.display = 'none';
 
                 document.getElementById('formVideo').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-                mostrarToast(`✏️ Editando: ${data.titulo}`, 'info');
+                mostrarToast('✏️ Editando: ' + data.titulo, 'info');
 
             } catch (error) {
                 console.error('Error al editar:', error);
@@ -679,7 +717,7 @@
             const video = videos.find(v => v.id === id);
             if (!video) return;
 
-            if (!confirm(`¿Eliminar el video "${video.titulo}"?`)) {
+            if (!confirm('¿Eliminar el video "' + video.titulo + '"?')) {
                 return;
             }
 
@@ -712,6 +750,7 @@
             document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-plus-circle"></i> Agregar Video';
             document.getElementById('btnGuardarTexto').textContent = 'Guardar Video';
             document.getElementById('btnCancelar').style.display = 'none';
+            document.getElementById('mensajeVideo').style.display = 'none';
         }
 
         function cancelarEdicion() {
@@ -720,7 +759,6 @@
             }
         }
 
-        // Cerrar modal con Escape
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 cerrarModalVideo();

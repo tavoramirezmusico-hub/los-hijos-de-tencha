@@ -36,6 +36,7 @@
             margin-bottom: 12px;
             transition: var(--transition);
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .cancion-item:hover {
@@ -114,7 +115,6 @@
             opacity: 0.3;
         }
 
-        /* Letra preview */
         .letra-preview {
             font-size: 0.8rem;
             color: var(--color-text-muted);
@@ -125,35 +125,31 @@
             -webkit-box-orient: vertical;
         }
 
-        .letra-preview.mas {
-            max-height: none;
-            -webkit-line-clamp: unset;
-        }
-
         /* RESPONSIVE */
         @media (max-width: 768px) {
-            .cancion-item {
-                flex-wrap: wrap;
-            }
-
-            .cancion-item .cancion-actions {
-                width: 100%;
-                justify-content: flex-end;
-            }
-        }
-
-        @media (max-width: 480px) {
             .cancion-item {
                 flex-direction: column;
                 align-items: stretch;
             }
 
             .cancion-item .cancion-actions {
+                width: 100%;
                 justify-content: center;
             }
 
             .cancion-item .cancion-spotify {
                 align-self: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cancion-item {
+                padding: 12px !important;
+            }
+
+            .cancion-item .cancion-actions .btn-admin {
+                padding: 4px 10px !important;
+                font-size: 0.65rem !important;
             }
         }
     </style>
@@ -186,7 +182,7 @@
             <li class="nav-divider"></li>
             <li class="nav-label">Sistema</li>
             <li><a href="asistentes.html"><i class="fa-solid fa-users"></i> Asistentes</a></li>
-            <li><a href="../validador.html" target="_blank"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
+            <li><a href="validador.html"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
             <li><a href="#" onclick="cerrarSesionAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
         </ul>
     </aside>
@@ -290,6 +286,8 @@
                     <i class="fa-solid fa-eraser"></i> Limpiar
                 </button>
             </div>
+            <div id="mensajeCancion"
+                style="margin-top:12px; display:none; padding:12px; border-radius:var(--radius-sm);"></div>
         </div>
 
         <!-- ============================================================
@@ -367,6 +365,29 @@
         // FUNCIONES CRUD
         // ============================================================
 
+        function mostrarMensajeCancion(elemento, texto, tipo) {
+            if (!elemento) return;
+            elemento.style.display = 'block';
+            elemento.textContent = texto;
+
+            const colors = {
+                'success': 'var(--color-success)',
+                'error': 'var(--color-danger)',
+                'warning': 'var(--color-warning)',
+                'info': 'var(--color-primary)'
+            };
+
+            elemento.style.color = colors[tipo] || 'var(--color-text)';
+            elemento.style.border = '1px solid ' + (colors[tipo] || 'var(--color-border)');
+            elemento.style.background = 'var(--color-bg)';
+
+            if (tipo === 'success' || tipo === 'error' || tipo === 'warning') {
+                setTimeout(() => {
+                    elemento.style.display = 'none';
+                }, 6000);
+            }
+        }
+
         async function guardarCancion() {
             const id = document.getElementById('cancionId').value;
             const titulo = document.getElementById('cancionTitulo').value.trim();
@@ -378,28 +399,27 @@
             const letra = document.getElementById('cancionLetra').value.trim();
             const orden = parseInt(document.getElementById('cancionOrden').value) || 0;
 
-            // Validaciones
+            const mensajeEl = document.getElementById('mensajeCancion');
+
             if (!titulo) {
-                mostrarToast('⚠️ Ingresa el título de la canción', 'warning');
+                mostrarMensajeCancion(mensajeEl, '⚠️ Ingresa el título de la canción', 'error');
                 document.getElementById('cancionTitulo').focus();
                 return;
             }
 
             if (!letra || letra.length < 10) {
-                mostrarToast('⚠️ Ingresa la letra completa (mínimo 10 caracteres)', 'warning');
+                mostrarMensajeCancion(mensajeEl, '⚠️ Ingresa la letra completa (mínimo 10 caracteres)', 'error');
                 document.getElementById('cancionLetra').focus();
                 return;
             }
 
-            // Validar URL de Spotify si se proporciona
             if (spotify && !spotify.includes('spotify.com')) {
-                mostrarToast('⚠️ La URL de Spotify debe ser de spotify.com', 'warning');
+                mostrarMensajeCancion(mensajeEl, '⚠️ La URL de Spotify debe ser de spotify.com', 'error');
                 return;
             }
 
-            // Validar URL de YouTube si se proporciona
             if (youtube && !youtube.includes('youtube.com') && !youtube.includes('youtu.be')) {
-                mostrarToast('⚠️ La URL de YouTube debe ser de youtube.com', 'warning');
+                mostrarMensajeCancion(mensajeEl, '⚠️ La URL de YouTube debe ser de youtube.com', 'error');
                 return;
             }
 
@@ -408,6 +428,7 @@
             btn.classList.add('loading');
             btn.disabled = true;
             btnText.textContent = id ? 'Actualizando...' : 'Guardando...';
+            mostrarMensajeCancion(mensajeEl, '⏳ Procesando...', 'info');
 
             try {
                 const datos = {
@@ -424,11 +445,11 @@
 
                 if (id) {
                     await db.collection('canciones').doc(id).update(datos);
-                    mostrarToast('✅ Canción actualizada con éxito', 'success');
+                    mostrarMensajeCancion(mensajeEl, '✅ Canción actualizada con éxito', 'success');
                 } else {
                     datos.creadoEn = new Date().toISOString();
                     await db.collection('canciones').add(datos);
-                    mostrarToast('✅ Canción guardada con éxito', 'success');
+                    mostrarMensajeCancion(mensajeEl, '✅ Canción guardada con éxito', 'success');
                 }
 
                 limpiarFormulario();
@@ -436,7 +457,7 @@
 
             } catch (error) {
                 console.error('Error al guardar canción:', error);
-                mostrarToast('❌ Error: ' + error.message, 'error');
+                mostrarMensajeCancion(mensajeEl, '❌ Error: ' + error.message, 'error');
             }
 
             btn.classList.remove('loading');
@@ -448,6 +469,10 @@
             const container = document.getElementById('listaCanciones');
 
             try {
+                if (!db) {
+                    throw new Error('Firebase no disponible');
+                }
+
                 const snapshot = await db.collection('canciones')
                     .orderBy('orden', 'asc')
                     .orderBy('titulo', 'asc')
@@ -458,7 +483,7 @@
                     canciones.push({ id: doc.id, ...doc.data() });
                 });
 
-                document.getElementById('cancionesCount').textContent = `${canciones.length} canciones`;
+                document.getElementById('cancionesCount').textContent = canciones.length + ' canciones';
                 renderizarCanciones();
 
             } catch (error) {
@@ -489,22 +514,22 @@
             canciones.forEach(cancion => {
                 const tieneSpotify = cancion.spotify && cancion.spotify.length > 0;
                 const spotifyId = cancion.spotify ? extraerIdSpotify(cancion.spotify) : '';
-                const spotifyEmbed = spotifyId ? `https://open.spotify.com/embed/track/${spotifyId}` : '';
+                const spotifyEmbed = spotifyId ? 'https://open.spotify.com/embed/track/' + spotifyId : '';
 
                 html += `
                             <div class="cancion-item">
                                 <div class="cancion-info">
                                     <div class="cancion-titulo">${sanitizar(cancion.titulo)}</div>
                                     <div class="cancion-meta">
-                                        ${cancion.album ? `<span><i class="fa-regular fa-cd"></i> ${sanitizar(cancion.album)}</span>` : ''}
-                                        ${cancion.genero ? `<span><i class="fa-regular fa-tag"></i> ${sanitizar(cancion.genero)}</span>` : ''}
-                                        ${cancion.anio ? `<span><i class="fa-regular fa-calendar"></i> ${cancion.anio}</span>` : ''}
-                                        ${cancion.orden > 0 ? `<span><i class="fa-regular fa-hashtag"></i> #${cancion.orden}</span>` : ''}
-                                        ${tieneSpotify ? `<span class="badge-admin badge-success"><i class="fa-brands fa-spotify"></i> Spotify</span>` : '<span class="badge-admin badge-warning">Sin Spotify</span>'}
+                                        ${cancion.album ? '<span><i class="fa-regular fa-cd"></i> ' + sanitizar(cancion.album) + '</span>' : ''}
+                                        ${cancion.genero ? '<span><i class="fa-regular fa-tag"></i> ' + sanitizar(cancion.genero) + '</span>' : ''}
+                                        ${cancion.anio ? '<span><i class="fa-regular fa-calendar"></i> ' + cancion.anio + '</span>' : ''}
+                                        ${cancion.orden > 0 ? '<span><i class="fa-regular fa-hashtag"></i> #' + cancion.orden + '</span>' : ''}
+                                        ${tieneSpotify ? '<span class="badge-admin badge-success"><i class="fa-brands fa-spotify"></i> Spotify</span>' : '<span class="badge-admin badge-warning">Sin Spotify</span>'}
                                     </div>
                                     <div class="letra-preview">${sanitizar(cancion.letra ? cancion.letra.substring(0, 150) : '').replace(/\n/g, ' ')}${cancion.letra && cancion.letra.length > 150 ? '...' : ''}</div>
                                 </div>
-                                ${tieneSpotify ? `<a href="${spotifyEmbed}" target="_blank" class="cancion-spotify" title="Escuchar en Spotify"><i class="fa-brands fa-spotify"></i></a>` : '<div class="cancion-spotify empty" title="Sin Spotify"><i class="fa-solid fa-minus"></i></div>'}
+                                ${tieneSpotify ? '<a href="' + spotifyEmbed + '" target="_blank" class="cancion-spotify" title="Escuchar en Spotify"><i class="fa-brands fa-spotify"></i></a>' : '<div class="cancion-spotify empty" title="Sin Spotify"><i class="fa-solid fa-minus"></i></div>'}
                                 <div class="cancion-actions">
                                     <button class="btn-admin btn-primary btn-sm" onclick="editarCancion('${cancion.id}')">
                                         <i class="fa-solid fa-pen"></i>
@@ -521,7 +546,6 @@
         }
 
         function extraerIdSpotify(url) {
-            // Intentar extraer el ID de una URL de Spotify
             const match = url.match(/track\/([a-zA-Z0-9]+)/);
             if (match) return match[1];
             const match2 = url.match(/embed\/track\/([a-zA-Z0-9]+)/);
@@ -553,10 +577,11 @@
                 document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Editar Canción';
                 document.getElementById('btnGuardarTexto').textContent = 'Actualizar Canción';
                 document.getElementById('btnCancelar').style.display = 'inline-flex';
+                document.getElementById('mensajeCancion').style.display = 'none';
 
                 document.getElementById('formCancion').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-                mostrarToast(`✏️ Editando: ${data.titulo}`, 'info');
+                mostrarToast('✏️ Editando: ' + data.titulo, 'info');
 
             } catch (error) {
                 console.error('Error al editar:', error);
@@ -568,7 +593,7 @@
             const cancion = canciones.find(c => c.id === id);
             if (!cancion) return;
 
-            if (!confirm(`¿Eliminar la canción "${cancion.titulo}"?`)) {
+            if (!confirm('¿Eliminar la canción "' + cancion.titulo + '"?')) {
                 return;
             }
 
@@ -602,6 +627,7 @@
             document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-plus-circle"></i> Agregar Canción';
             document.getElementById('btnGuardarTexto').textContent = 'Guardar Canción';
             document.getElementById('btnCancelar').style.display = 'none';
+            document.getElementById('mensajeCancion').style.display = 'none';
         }
 
         function cancelarEdicion() {

@@ -1,6 +1,6 @@
 // ============================================================
 // ADMIN - LOS HIJOS DE TENCHA
-// LÓGICA COMPARTIDA Y UTILIDADES
+// LÓGICA COMPARTIDA Y UTILIDADES (VERSIÓN CORREGIDA)
 // ============================================================
 
 // ============================================================
@@ -16,23 +16,29 @@ const FIREBASE_CONFIG = {
 };
 
 // Inicializar Firebase
-if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-    firebase.initializeApp(FIREBASE_CONFIG);
-    console.log('✅ Firebase inicializado');
-} else if (typeof firebase === 'undefined') {
-    console.error('❌ Firebase no está cargado');
-}
-
-// Referencias globales
 let db = null;
 let storage = null;
+let firebaseInicializado = false;
 
 try {
-    db = firebase.firestore();
-    storage = firebase.storage();
-    console.log('✅ Firestore y Storage disponibles');
+    if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+        firebase.initializeApp(FIREBASE_CONFIG);
+        console.log('✅ Firebase inicializado');
+        firebaseInicializado = true;
+    } else if (typeof firebase !== 'undefined' && firebase.apps.length) {
+        console.log('✅ Firebase ya estaba inicializado');
+        firebaseInicializado = true;
+    } else {
+        console.warn('⚠️ Firebase no está cargado');
+    }
+
+    if (firebaseInicializado) {
+        db = firebase.firestore();
+        storage = firebase.storage();
+        console.log('✅ Firestore y Storage disponibles');
+    }
 } catch (error) {
-    console.error('❌ Error al obtener Firestore/Storage:', error);
+    console.error('❌ Error al inicializar Firebase:', error);
 }
 
 // ============================================================
@@ -154,7 +160,6 @@ function salirYRedirigir(destino) {
  * @param {number} duracion - Duración en ms (por defecto 4000)
  */
 function mostrarToast(mensaje, tipo = 'info', duracion = 4000) {
-    // Buscar toast existente o crear uno
     let toast = document.getElementById('adminToast');
     if (!toast) {
         toast = document.createElement('div');
@@ -163,7 +168,7 @@ function mostrarToast(mensaje, tipo = 'info', duracion = 4000) {
         document.body.appendChild(toast);
     }
 
-    toast.textContent = mensaje;
+    toast.innerHTML = mensaje;
     toast.className = 'admin-toast show toast-' + tipo;
 
     clearTimeout(toast._timeout);
@@ -332,9 +337,9 @@ async function subirArchivos(files, path, onProgress = null) {
             });
             resultados.push({ file, url });
         } catch (error) {
-            console.error(`Error al subir ${file.name}:`, error);
+            console.error('Error al subir ' + file.name + ':', error);
             if (onProgress) {
-                onProgress(file, -1, i, files.length); // -1 indica error
+                onProgress(file, -1, i, files.length);
             }
             throw error;
         }
@@ -390,7 +395,7 @@ async function cargarColeccion(coleccion, orden = null, direccion = 'asc') {
         });
         return resultados;
     } catch (error) {
-        console.error(`Error al cargar ${coleccion}:`, error);
+        console.error('Error al cargar ' + coleccion + ':', error);
         throw error;
     }
 }
@@ -413,7 +418,7 @@ async function cargarDocumento(coleccion, id) {
         }
         return { id: doc.id, ...doc.data() };
     } catch (error) {
-        console.error(`Error al cargar documento ${id}:`, error);
+        console.error('Error al cargar documento ' + id + ':', error);
         throw error;
     }
 }
@@ -493,7 +498,7 @@ async function cargarEventosEnSelect(selectId) {
         let options = '<option value="">Selecciona un evento</option>';
 
         eventos.forEach(evento => {
-            options += `<option value="${evento.id}">${evento.nombre}</option>`;
+            options += `<option value="${evento.id}">${sanitizar(evento.nombre)}</option>`;
         });
 
         select.innerHTML = options;
@@ -561,10 +566,10 @@ async function registrarAsistentePublico() {
                 emailEnviado: true,
                 emailEnviadoEn: new Date().toISOString()
             });
-            mostrarMensajeRegistro(mensajeEl, `✅ ¡Registro exitoso! Se ha enviado un correo a ${email}`, 'success');
+            mostrarMensajeRegistro(mensajeEl, '✅ ¡Registro exitoso! Se ha enviado un correo a ' + email, 'success');
         } catch (emailError) {
             console.error('Error al enviar correo:', emailError);
-            mostrarMensajeRegistro(mensajeEl, `✅ Registro exitoso, pero no se pudo enviar el correo.`, 'warning');
+            mostrarMensajeRegistro(mensajeEl, '✅ Registro exitoso, pero no se pudo enviar el correo.', 'warning');
         }
 
         // Limpiar formulario
@@ -622,7 +627,7 @@ async function enviarCorreoAsistente(nombre, email, nombreEvento, asistenteId, e
         horaFormateada = eventoData.hora;
     }
 
-    const qrUrl = `https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=${asistenteId}`;
+    const qrUrl = 'https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=' + asistenteId;
 
     const templateParams = {
         to_email: email,
@@ -639,8 +644,8 @@ async function enviarCorreoAsistente(nombre, email, nombreEvento, asistenteId, e
 }
 
 // ============================================================
-// EXPORTAR FUNCIONES (para usar en otros scripts)
+// INICIALIZACIÓN
 // ============================================================
-// Las funciones están disponibles globalmente
 
 console.log('✅ Admin JS cargado correctamente');
+console.log('🔥 Firebase disponible:', firebaseInicializado);

@@ -51,12 +51,15 @@
             background: var(--color-bg);
             border-radius: var(--radius-sm);
             margin-bottom: 16px;
+            width: 100%;
+            max-width: 100%;
         }
 
         #editor-container .ql-editor {
             color: var(--color-text);
             font-family: var(--font);
             font-size: 0.95rem;
+            min-height: 200px;
         }
 
         #editor-container .ql-editor p {
@@ -67,6 +70,7 @@
             background: var(--color-bg-card);
             border-color: var(--color-border);
             border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            flex-wrap: wrap;
         }
 
         #editor-container .ql-container {
@@ -109,6 +113,7 @@
             display: none;
             align-items: center;
             gap: 16px;
+            flex-wrap: wrap;
         }
 
         .image-preview.show {
@@ -162,6 +167,7 @@
             margin-bottom: 12px;
             transition: var(--transition);
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .noticia-item:hover {
@@ -250,6 +256,18 @@
                 width: 120px;
                 height: 120px;
             }
+
+            #editor-container {
+                height: 200px !important;
+            }
+
+            #editor-container .ql-toolbar {
+                flex-wrap: wrap !important;
+            }
+
+            #editor-container .ql-toolbar .ql-formats {
+                margin-right: 4px !important;
+            }
         }
 
         @media (max-width: 480px) {
@@ -260,6 +278,14 @@
             .noticias-toolbar .btn-admin {
                 width: 100%;
                 justify-content: center;
+            }
+
+            #editor-container {
+                height: 150px !important;
+            }
+
+            #editor-container .ql-editor {
+                font-size: 14px !important;
             }
         }
     </style>
@@ -292,7 +318,7 @@
             <li class="nav-divider"></li>
             <li class="nav-label">Sistema</li>
             <li><a href="asistentes.html"><i class="fa-solid fa-users"></i> Asistentes</a></li>
-            <li><a href="../validador.html" target="_blank"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
+            <li><a href="validador.html"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
             <li><a href="#" onclick="cerrarSesionAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
         </ul>
     </aside>
@@ -318,8 +344,8 @@
                     <i class="fa-solid fa-shield-halved"></i>
                     Administrador
                 </div>
-                <a href="../index.html" target="_blank" class="btn-header btn-secondary">
-                    <i class="fa-solid fa-globe"></i> Web
+                <a href="../noticias.html" target="_blank" class="btn-header btn-secondary">
+                    <i class="fa-solid fa-globe"></i> Ver Noticias
                 </a>
                 <button class="btn-header btn-danger" onclick="cerrarSesionAdmin()">
                     <i class="fa-solid fa-right-from-bracket"></i> Salir
@@ -410,6 +436,8 @@
                     <i class="fa-solid fa-eraser"></i> Limpiar
                 </button>
             </div>
+            <div id="mensajeNoticia"
+                style="margin-top:12px; display:none; padding:12px; border-radius:var(--radius-sm);"></div>
         </div>
 
         <!-- ============================================================
@@ -504,7 +532,13 @@
         // INICIALIZAR EDITOR QUILL
         // ============================================================
         function initQuill() {
-            if (document.getElementById('editor-container')) {
+            const container = document.getElementById('editor-container');
+            if (!container) {
+                console.warn('⚠️ No se encontró el contenedor del editor');
+                return;
+            }
+
+            try {
                 quill = new Quill('#editor-container', {
                     theme: 'snow',
                     placeholder: 'Escribe el contenido de la noticia aquí...',
@@ -521,6 +555,9 @@
                     }
                 });
                 console.log('✅ Editor Quill inicializado');
+            } catch (error) {
+                console.error('❌ Error al inicializar Quill:', error);
+                mostrarToast('⚠️ Error al cargar el editor de texto', 'error');
             }
         }
 
@@ -539,27 +576,29 @@
             const estado = document.getElementById('noticiaEstado').value;
             const contenido = quill ? quill.root.innerHTML : '';
 
+            const mensajeEl = document.getElementById('mensajeNoticia');
+
             // Validaciones
             if (!titulo) {
-                mostrarToast('⚠️ Ingresa el título de la noticia', 'warning');
+                mostrarMensajeNoticia(mensajeEl, '⚠️ Ingresa el título de la noticia', 'error');
                 document.getElementById('noticiaTitulo').focus();
                 return;
             }
 
             if (!fecha) {
-                mostrarToast('⚠️ Selecciona una fecha', 'warning');
+                mostrarMensajeNoticia(mensajeEl, '⚠️ Selecciona una fecha', 'error');
                 return;
             }
 
             const textoPlano = quill ? quill.getText().trim() : '';
             if (!textoPlano || textoPlano.length < 10) {
-                mostrarToast('⚠️ El contenido es muy corto o está vacío', 'warning');
+                mostrarMensajeNoticia(mensajeEl, '⚠️ El contenido es muy corto o está vacío', 'error');
                 return;
             }
 
             // Validar imagen
             if (!imagenUrlActual && !imagenSeleccionada && !id) {
-                mostrarToast('⚠️ Selecciona una imagen destacada', 'warning');
+                mostrarMensajeNoticia(mensajeEl, '⚠️ Selecciona una imagen destacada', 'error');
                 return;
             }
 
@@ -568,16 +607,16 @@
             btn.classList.add('loading');
             btn.disabled = true;
             btnText.textContent = id ? 'Actualizando...' : 'Publicando...';
+            mostrarMensajeNoticia(mensajeEl, '⏳ Procesando...', 'info');
 
             try {
                 let imagenUrl = imagenUrlActual;
 
                 // Subir imagen si hay una nueva seleccionada
                 if (imagenSeleccionada) {
-                    const path = `noticias/${Date.now()}_${imagenSeleccionada.name.replace(/\s/g, '_')}`;
-                    const ref = storage.ref(path);
-                    await ref.put(imagenSeleccionada);
-                    imagenUrl = await ref.getDownloadURL();
+                    const path = 'noticias/';
+                    const url = await subirArchivo(imagenSeleccionada, path);
+                    imagenUrl = url;
                 }
 
                 const datos = {
@@ -590,15 +629,15 @@
                     actualizadoEn: new Date().toISOString()
                 };
 
+                let docId = id;
                 if (id) {
-                    // Actualizar
                     await db.collection('noticias').doc(id).update(datos);
-                    mostrarToast('✅ Noticia actualizada con éxito', 'success');
+                    mostrarMensajeNoticia(mensajeEl, '✅ Noticia actualizada con éxito', 'success');
                 } else {
-                    // Crear nueva
                     datos.creadoEn = new Date().toISOString();
                     const docRef = await db.collection('noticias').add(datos);
-                    mostrarToast('✅ Noticia publicada con éxito', 'success');
+                    docId = docRef.id;
+                    mostrarMensajeNoticia(mensajeEl, '✅ Noticia publicada con éxito', 'success');
                 }
 
                 limpiarFormulario();
@@ -606,12 +645,35 @@
 
             } catch (error) {
                 console.error('Error al publicar noticia:', error);
-                mostrarToast('❌ Error: ' + error.message, 'error');
+                mostrarMensajeNoticia(mensajeEl, '❌ Error: ' + error.message, 'error');
             }
 
             btn.classList.remove('loading');
             btn.disabled = false;
             btnText.textContent = id ? 'Actualizar Noticia' : 'Publicar Noticia';
+        }
+
+        function mostrarMensajeNoticia(elemento, texto, tipo) {
+            if (!elemento) return;
+            elemento.style.display = 'block';
+            elemento.textContent = texto;
+
+            const colors = {
+                'success': 'var(--color-success)',
+                'error': 'var(--color-danger)',
+                'warning': 'var(--color-warning)',
+                'info': 'var(--color-primary)'
+            };
+
+            elemento.style.color = colors[tipo] || 'var(--color-text)';
+            elemento.style.border = '1px solid ' + (colors[tipo] || 'var(--color-border)');
+            elemento.style.background = 'var(--color-bg)';
+
+            if (tipo === 'success' || tipo === 'error' || tipo === 'warning') {
+                setTimeout(() => {
+                    elemento.style.display = 'none';
+                }, 6000);
+            }
         }
 
         /**
@@ -621,6 +683,10 @@
             const container = document.getElementById('listaNoticias');
 
             try {
+                if (!db) {
+                    throw new Error('Firebase no disponible');
+                }
+
                 const snapshot = await db.collection('noticias')
                     .orderBy('fecha', 'desc')
                     .get();
@@ -738,6 +804,7 @@
                 document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Editar Noticia';
                 document.getElementById('btnPublicarTexto').textContent = 'Actualizar Noticia';
                 document.getElementById('btnCancelar').style.display = 'inline-flex';
+                document.getElementById('mensajeNoticia').style.display = 'none';
 
                 // Scroll al formulario
                 document.getElementById('formNoticia').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -757,7 +824,7 @@
             const noticia = noticias.find(n => n.id === id);
             if (!noticia) return;
 
-            if (!confirm(`¿Eliminar la noticia "${noticia.titulo}"? Esta acción no se puede deshacer.`)) {
+            if (!confirm('¿Eliminar la noticia "' + noticia.titulo + '"? Esta acción no se puede deshacer.')) {
                 return;
             }
 
@@ -816,6 +883,7 @@
             imagenSeleccionada = null;
             document.getElementById('imagePreview').classList.remove('show');
             document.getElementById('imagenActualContainer').style.display = 'none';
+            document.getElementById('mensajeNoticia').style.display = 'none';
 
             document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Crear Nueva Noticia';
             document.getElementById('btnPublicarTexto').textContent = 'Publicar Noticia';
@@ -894,8 +962,11 @@
             // Fecha por defecto
             document.getElementById('noticiaFecha').value = new Date().toISOString().split('T')[0];
 
-            initQuill();
-            cargarNoticias();
+            // Inicializar editor después de un pequeño retraso
+            setTimeout(initQuill, 300);
+
+            // Cargar noticias
+            setTimeout(cargarNoticias, 500);
 
             console.log('🚀 Gestor de Noticias cargado');
         });
