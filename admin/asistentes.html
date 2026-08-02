@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base de Asistentes | Los Hijos de Tencha</title>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="css/admin.css">
+
+    <style>
+        /* ============================================================
+           ESTILOS ESPECÍFICOS DE ASISTENTES
+           ============================================================ */
+
+        .asistentes-filtros {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+
+        .asistentes-filtros .admin-input,
+        .asistentes-filtros .admin-select {
+            flex: 1;
+            min-width: 150px;
+            margin-bottom: 0;
+        }
+
+        .asistentes-filtros .btn-admin {
+            flex-shrink: 0;
+        }
+
+        .asistente-row {
+            display: flex;
+            gap: 14px;
+            padding: 14px 16px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+            margin-bottom: 8px;
+            transition: var(--transition);
+            align-items: center;
+        }
+
+        .asistente-row:hover {
+            border-color: rgba(255, 204, 0, 0.15);
+        }
+
+        .asistente-row .asistente-data {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .asistente-row .asistente-data .nombre {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .asistente-row .asistente-data .email {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+        }
+
+        .asistente-row .asistente-data .extra {
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 2px;
+        }
+
+        .asistente-row .asistente-estado {
+            font-size: 0.65rem;
+            padding: 2px 14px;
+            border-radius: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .asistente-row .asistente-estado.ingresado {
+            background: rgba(0, 200, 83, 0.15);
+            color: var(--color-success);
+        }
+
+        .asistente-row .asistente-estado.pendiente {
+            background: rgba(255, 152, 0, 0.15);
+            color: var(--color-warning);
+        }
+
+        .asistente-row .asistente-actions {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .asistente-row .asistente-actions .btn-admin {
+            padding: 2px 10px;
+            font-size: 0.65rem;
+        }
+
+        .asistente-row.ingresado {
+            border-left: 3px solid var(--color-success);
+        }
+
+        .asistente-row.pendiente {
+            border-left: 3px solid var(--color-warning);
+        }
+
+        .asistentes-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .asistentes-stats .stat {
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            text-align: center;
+            border: 1px solid var(--color-border);
+        }
+
+        .asistentes-stats .stat .number {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--color-primary);
+        }
+
+        .asistentes-stats .stat .label {
+            font-size: 0.6rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .asistente-vacia {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--color-text-muted);
+        }
+
+        .asistente-vacia i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.3;
+        }
+
+        .asistentes-paginacion {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .asistentes-paginacion button {
+            padding: 6px 14px;
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            color: var(--color-text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font);
+            font-size: 0.8rem;
+        }
+
+        .asistentes-paginacion button:hover {
+            border-color: var(--color-primary);
+            color: var(--color-text);
+        }
+
+        .asistentes-paginacion button.active {
+            background: var(--color-primary);
+            color: #000;
+            border-color: var(--color-primary);
+        }
+
+        .asistentes-paginacion button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .asistentes-filtros {
+                flex-direction: column;
+            }
+
+            .asistentes-filtros .admin-input,
+            .asistentes-filtros .admin-select {
+                min-width: 100%;
+            }
+
+            .asistente-row {
+                flex-wrap: wrap;
+            }
+
+            .asistente-row .asistente-actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .asistentes-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .asistente-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .asistente-row .asistente-estado {
+                text-align: center;
+            }
+
+            .asistentes-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ============================================================
+    SIDEBAR
+    ============================================================ -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-brand">
+            <img src="../img/logo.webp" alt="Los Hijos de Tencha">
+            <h2>Panel <span>Admin</span></h2>
+        </div>
+
+        <ul class="sidebar-nav">
+            <li class="nav-label">Menú Principal</li>
+            <li><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+            <li><a href="eventos.html"><i class="fa-solid fa-calendar"></i> Eventos</a></li>
+            <li><a href="noticias.html"><i class="fa-solid fa-newspaper"></i> Noticias</a></li>
+            <li><a href="galeria.html"><i class="fa-solid fa-images"></i> Galería</a></li>
+
+            <li class="nav-divider"></li>
+            <li class="nav-label">Contenido</li>
+            <li><a href="canciones.html"><i class="fa-solid fa-music"></i> Canciones</a></li>
+            <li><a href="videos.html"><i class="fa-solid fa-video"></i> Videos</a></li>
+            <li><a href="tienda.html"><i class="fa-solid fa-shirt"></i> Tienda</a></li>
+
+            <li class="nav-divider"></li>
+            <li class="nav-label">Sistema</li>
+            <li><a href="asistentes.html" class="active"><i class="fa-solid fa-users"></i> Asistentes</a></li>
+            <li><a href="validador.html"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
+            <li><a href="#" onclick="cerrarSesionAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
+        </ul>
+    </aside>
+
+    <div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ============================================================
+    CONTENIDO PRINCIPAL
+    ============================================================ -->
+    <main class="admin-main">
+
+        <!-- HEADER -->
+        <header class="admin-header">
+            <div class="header-left">
+                <button class="hamburger" id="hamburgerBtn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h1><span>👥</span> Base de Asistentes</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-badge">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Administrador
+                </div>
+                <button class="btn-header btn-danger" onclick="cerrarSesionAdmin()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Salir
+                </button>
+            </div>
+        </header>
+
+        <!-- ============================================================
+        ESTADÍSTICAS
+        ============================================================ -->
+        <div class="admin-card">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-chart-simple"></i> Resumen</h3>
+            </div>
+            <div class="asistentes-stats" id="statsAsistentes">
+                <div class="stat">
+                    <div class="number" id="totalAsistentesGlobal">0</div>
+                    <div class="label">Total Asistentes</div>
+                </div>
+                <div class="stat">
+                    <div class="number" id="ingresadosGlobal">0</div>
+                    <div class="label">Ingresados</div>
+                </div>
+                <div class="stat">
+                    <div class="number" id="pendientesGlobal">0</div>
+                    <div class="label">Pendientes</div>
+                </div>
+                <div class="stat">
+                    <div class="number" id="eventosGlobal">0</div>
+                    <div class="label">Eventos</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        FILTROS Y BÚSQUEDA
+        ============================================================ -->
+        <div class="admin-card">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-filter"></i> Filtros</h3>
+            </div>
+            <div class="asistentes-filtros">
+                <input type="text" id="buscarAsistente" class="admin-input"
+                    placeholder="🔍 Buscar por nombre o email...">
+                <select id="filtroEvento" class="admin-select">
+                    <option value="">Todos los eventos</option>
+                </select>
+                <select id="filtroEstado" class="admin-select">
+                    <option value="">Todos los estados</option>
+                    <option value="ingresado">✅ Ingresados</option>
+                    <option value="pendiente">⏳ Pendientes</option>
+                </select>
+                <button class="btn-admin btn-secondary" onclick="aplicarFiltros()">
+                    <i class="fa-solid fa-magnifying-glass"></i> Buscar
+                </button>
+                <button class="btn-admin btn-secondary" onclick="limpiarFiltros()">
+                    <i class="fa-solid fa-eraser"></i> Limpiar
+                </button>
+                <button class="btn-admin btn-success" onclick="exportarTodosAsistentes()">
+                    <i class="fa-solid fa-file-excel"></i> Exportar
+                </button>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        LISTA DE ASISTENTES
+        ============================================================ -->
+        <div class="admin-card">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-list"></i> Asistentes</h3>
+                <div class="card-actions">
+                    <span id="asistentesCount" style="font-size:0.75rem; color:var(--color-text-muted);"></span>
+                </div>
+            </div>
+
+            <div id="listaAsistentesGlobal">
+                <div class="asistente-vacia">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <p>Cargando asistentes...</p>
+                </div>
+            </div>
+
+            <div class="asistentes-paginacion" id="paginacion"></div>
+        </div>
+
+    </main>
+
+    <!-- ============================================================
+    TOAST
+    ============================================================ -->
+    <div id="adminToast" class="admin-toast"></div>
+
+    <!-- ============================================================
+    SCRIPTS
+    ============================================================ -->
+    <script src="js/admin.js"></script>
+
+    <script>
+        // ============================================================
+        // VARIABLES GLOBALES
+        // ============================================================
+        let todosLosAsistentes = [];
+        let asistentesFiltrados = [];
+        let eventosMap = {};
+        let paginaActual = 1;
+        const POR_PAGINA = 20;
+
+        // ============================================================
+        // SIDEBAR
+        // ============================================================
+        const sidebar = document.getElementById('adminSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        if (hamburger) hamburger.addEventListener('click', toggleSidebar);
+        if (overlay) overlay.addEventListener('click', toggleSidebar);
+
+        document.querySelectorAll('.admin-sidebar .sidebar-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 992) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+
+        // ============================================================
+        // VERIFICAR SESIÓN
+        // ============================================================
+        (function () {
+            if (!verificarSesionAdmin()) {
+                window.location.href = 'login.html';
+            }
+        })();
+
+        // ============================================================
+        // CARGAR DATOS
+        // ============================================================
+
+        async function cargarTodosLosAsistentes() {
+            const container = document.getElementById('listaAsistentesGlobal');
+
+            try {
+                // Cargar eventos para mapear nombres
+                const eventosSnap = await db.collection('eventos').get();
+                eventosSnap.forEach(doc => {
+                    eventosMap[doc.id] = doc.data().nombre || 'Evento sin nombre';
+                });
+
+                // Cargar todos los asistentes
+                const snapshot = await db.collection('asistentes')
+                    .orderBy('creadoEn', 'desc')
+                    .get();
+
+                todosLosAsistentes = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    todosLosAsistentes.push({
+                        id: doc.id,
+                        ...data,
+                        eventoNombre: eventosMap[data.eventoId] || 'Evento eliminado'
+                    });
+                });
+
+                // Actualizar estadísticas
+                const total = todosLosAsistentes.length;
+                const ingresados = todosLosAsistentes.filter(a => a.ingresado).length;
+                const pendientes = total - ingresados;
+                const eventos = Object.keys(eventosMap).length;
+
+                document.getElementById('totalAsistentesGlobal').textContent = total;
+                document.getElementById('ingresadosGlobal').textContent = ingresados;
+                document.getElementById('pendientesGlobal').textContent = pendientes;
+                document.getElementById('eventosGlobal').textContent = eventos;
+
+                // Poblar filtro de eventos
+                const selectEvento = document.getElementById('filtroEvento');
+                let options = '<option value="">Todos los eventos</option>';
+                for (const [id, nombre] of Object.entries(eventosMap)) {
+                    options += `<option value="${id}">${sanitizar(nombre)}</option>`;
+                }
+                selectEvento.innerHTML = options;
+
+                asistentesFiltrados = [...todosLosAsistentes];
+                document.getElementById('asistentesCount').textContent = `${todosLosAsistentes.length} asistentes`;
+
+                renderizarAsistentes();
+
+            } catch (error) {
+                console.error('Error al cargar asistentes:', error);
+                container.innerHTML = `
+                            <div class="asistente-vacia">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <p>Error al cargar asistentes: ${error.message}</p>
+                            </div>
+                        `;
+            }
+        }
+
+        // ============================================================
+        // FILTRAR
+        // ============================================================
+
+        function aplicarFiltros() {
+            const busqueda = document.getElementById('buscarAsistente').value.toLowerCase().trim();
+            const eventoId = document.getElementById('filtroEvento').value;
+            const estado = document.getElementById('filtroEstado').value;
+
+            asistentesFiltrados = todosLosAsistentes.filter(a => {
+                // Filtro por búsqueda
+                if (busqueda) {
+                    const nombre = (a.nombre || '').toLowerCase();
+                    const email = (a.email || '').toLowerCase();
+                    if (!nombre.includes(busqueda) && !email.includes(busqueda)) {
+                        return false;
+                    }
+                }
+
+                // Filtro por evento
+                if (eventoId && a.eventoId !== eventoId) {
+                    return false;
+                }
+
+                // Filtro por estado
+                if (estado === 'ingresado' && !a.ingresado) return false;
+                if (estado === 'pendiente' && a.ingresado) return false;
+
+                return true;
+            });
+
+            paginaActual = 1;
+            document.getElementById('asistentesCount').textContent = `${asistentesFiltrados.length} asistentes (filtrados)`;
+            renderizarAsistentes();
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('buscarAsistente').value = '';
+            document.getElementById('filtroEvento').value = '';
+            document.getElementById('filtroEstado').value = '';
+            asistentesFiltrados = [...todosLosAsistentes];
+            paginaActual = 1;
+            document.getElementById('asistentesCount').textContent = `${todosLosAsistentes.length} asistentes`;
+            renderizarAsistentes();
+        }
+
+        // ============================================================
+        // RENDERIZAR (CON PAGINACIÓN)
+        // ============================================================
+
+        function renderizarAsistentes() {
+            const container = document.getElementById('listaAsistentesGlobal');
+
+            if (asistentesFiltrados.length === 0) {
+                container.innerHTML = `
+                            <div class="asistente-vacia">
+                                <i class="fa-regular fa-user"></i>
+                                <p>No se encontraron asistentes</p>
+                            </div>
+                        `;
+                document.getElementById('paginacion').innerHTML = '';
+                return;
+            }
+
+            // Paginación
+            const totalPaginas = Math.ceil(asistentesFiltrados.length / POR_PAGINA);
+            if (paginaActual > totalPaginas) paginaActual = totalPaginas;
+            if (paginaActual < 1) paginaActual = 1;
+
+            const inicio = (paginaActual - 1) * POR_PAGINA;
+            const fin = Math.min(inicio + POR_PAGINA, asistentesFiltrados.length);
+            const paginaAsistentes = asistentesFiltrados.slice(inicio, fin);
+
+            let html = '';
+            paginaAsistentes.forEach((a, index) => {
+                const num = inicio + index + 1;
+                const estadoClass = a.ingresado ? 'ingresado' : 'pendiente';
+                const estadoText = a.ingresado ? '✅ Ingresado' : '⏳ Pendiente';
+                const fecha = a.fechaIngreso ? formatearFechaHora(a.fechaIngreso) : '-';
+
+                html += `
+                            <div class="asistente-row ${estadoClass}">
+                                <div class="asistente-data">
+                                    <div class="nombre">${num}. ${sanitizar(a.nombre || 'Sin nombre')}</div>
+                                    <div class="email">${sanitizar(a.email || 'Sin email')}</div>
+                                    <div class="extra">
+                                        <span><i class="fa-regular fa-calendar"></i> ${sanitizar(a.eventoNombre)}</span>
+                                        ${a.creadoEn ? `<span><i class="fa-regular fa-clock"></i> ${formatearFechaHora(a.creadoEn)}</span>` : ''}
+                                        ${a.ingresado ? `<span><i class="fa-regular fa-check-circle"></i> ${fecha}</span>` : ''}
+                                        <span class="badge-admin ${a.emailEnviado ? 'badge-success' : 'badge-warning'}">
+                                            ${a.emailEnviado ? '📧 Enviado' : '📧 Pendiente'}
+                                        </span>
+                                    </div>
+                                </div>
+                                <span class="asistente-estado ${estadoClass}">${estadoText}</span>
+                                <div class="asistente-actions">
+                                    <button class="btn-admin btn-primary btn-sm" onclick="verAsistente('${a.id}')" title="Ver detalles">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+            });
+
+            container.innerHTML = html;
+
+            // Paginación
+            renderizarPaginacion(totalPaginas);
+        }
+
+        function renderizarPaginacion(totalPaginas) {
+            const container = document.getElementById('paginacion');
+
+            if (totalPaginas <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            html += `<button onclick="irPagina(${paginaActual - 1})" ${paginaActual <= 1 ? 'disabled' : ''}>
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>`;
+
+            for (let i = 1; i <= totalPaginas; i++) {
+                if (i === 1 || i === totalPaginas || Math.abs(i - paginaActual) <= 2) {
+                    html += `<button onclick="irPagina(${i})" class="${i === paginaActual ? 'active' : ''}">${i}</button>`;
+                } else if (i === paginaActual - 3 || i === paginaActual + 3) {
+                    html += `<button disabled>...</button>`;
+                }
+            }
+
+            html += `<button onclick="irPagina(${paginaActual + 1})" ${paginaActual >= totalPaginas ? 'disabled' : ''}>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>`;
+
+            container.innerHTML = html;
+        }
+
+        function irPagina(pagina) {
+            const totalPaginas = Math.ceil(asistentesFiltrados.length / POR_PAGINA);
+            if (pagina < 1 || pagina > totalPaginas) return;
+            paginaActual = pagina;
+            renderizarAsistentes();
+            document.querySelector('.admin-card:last-child').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ============================================================
+        // VER ASISTENTE (MODAL)
+        // ============================================================
+
+        async function verAsistente(id) {
+            try {
+                const doc = await db.collection('asistentes').doc(id).get();
+                if (!doc.exists) {
+                    mostrarToast('❌ Asistente no encontrado', 'error');
+                    return;
+                }
+
+                const data = doc.data();
+                const eventoNombre = eventosMap[data.eventoId] || 'Evento eliminado';
+
+                const mensaje = `
+                            🎫 <strong>Detalles del Asistente</strong>
+                            <br><br>
+                            <strong>Nombre:</strong> ${sanitizar(data.nombre || 'Sin nombre')}
+                            <br>
+                            <strong>Email:</strong> ${sanitizar(data.email || 'Sin email')}
+                            <br>
+                            <strong>Evento:</strong> ${sanitizar(eventoNombre)}
+                            <br>
+                            <strong>Estado:</strong> ${data.ingresado ? '✅ Ingresado' : '⏳ Pendiente'}
+                            ${data.fechaIngreso ? `<br><strong>Fecha ingreso:</strong> ${formatearFechaHora(data.fechaIngreso)}` : ''}
+                            <br>
+                            <strong>ID:</strong> <code style="background:var(--color-bg); padding:2px 8px; border-radius:4px; font-size:0.8rem;">${id}</code>
+                            <br>
+                            <strong>Correo enviado:</strong> ${data.emailEnviado ? '✅ Sí' : '❌ No'}
+                            ${data.creadoEn ? `<br><strong>Registrado:</strong> ${formatearFechaHora(data.creadoEn)}` : ''}
+                        `;
+
+                // Usar toast extendido o modal simple
+                mostrarToast(mensaje.replace(/<br>/g, ' ').replace(/<strong>/g, '').replace(/<\/strong>/g, ''), 'info', 8000);
+
+            } catch (error) {
+                console.error('Error al ver asistente:', error);
+                mostrarToast('❌ Error al cargar detalles', 'error');
+            }
+        }
+
+        // ============================================================
+        // EXPORTAR TODOS LOS ASISTENTES
+        // ============================================================
+
+        function exportarTodosAsistentes() {
+            if (asistentesFiltrados.length === 0) {
+                mostrarToast('⚠️ No hay asistentes para exportar', 'warning');
+                return;
+            }
+
+            const data = [];
+            const headerRow = ['#', 'Evento', 'Nombre', 'Email', 'Estado', 'Fecha Ingreso', 'ID', 'Correo Enviado'];
+            data.push(headerRow);
+
+            asistentesFiltrados.forEach((a, index) => {
+                const estado = a.ingresado ? 'INGRESADO' : 'PENDIENTE';
+                const fechaIngreso = a.fechaIngreso ? formatearFechaHora(a.fechaIngreso) : '-';
+                const emailEnviado = a.emailEnviado ? 'Sí' : 'No';
+
+                data.push([
+                    index + 1,
+                    a.eventoNombre || 'Evento eliminado',
+                    a.nombre || 'Sin nombre',
+                    a.email || 'Sin email',
+                    estado,
+                    fechaIngreso,
+                    a.id,
+                    emailEnviado
+                ]);
+            });
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(data);
+
+            ws['!cols'] = [
+                { wch: 6 }, { wch: 30 }, { wch: 30 }, { wch: 38 },
+                { wch: 16 }, { wch: 28 }, { wch: 28 }, { wch: 14 }
+            ];
+
+            XLSX.utils.book_append_sheet(wb, ws, 'Asistentes');
+
+            const nombreArchivo = `Todos_los_asistentes_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, nombreArchivo);
+
+            mostrarToast(`✅ ${asistentesFiltrados.length} asistentes exportados`, 'success');
+        }
+
+        // ============================================================
+        // INICIALIZAR
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function () {
+            cargarTodosLosAsistentes();
+            console.log('🚀 Base de Asistentes cargada');
+        });
+
+        // Prevenir cierre con Ctrl+W
+        document.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
+                e.preventDefault();
+                mostrarToast('⚠️ Usa el botón "Salir" para cerrar sesión', 'warning');
+                return false;
+            }
+        });
+
+        // Enter para buscar
+        document.getElementById('buscarAsistente').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                aplicarFiltros();
+            }
+        });
+    </script>
+
+</body>
+
+</html>
