@@ -155,9 +155,6 @@
             margin-bottom: 12px;
         }
 
-        /* ============================================================
-           ESTILOS PARA SUBIDA DE VIDEO
-           ============================================================ */
         .video-upload-options {
             display: flex;
             gap: 12px;
@@ -292,9 +289,6 @@
             transform: scale(1.2);
         }
 
-        /* ============================================================
-           CREACIÓN DE CATEGORÍAS
-           ============================================================ */
         .categorias-videos {
             display: flex;
             flex-wrap: wrap;
@@ -343,6 +337,41 @@
 
         .categoria-input-group .btn-admin {
             flex-shrink: 0;
+        }
+
+        #modalVideo .modal-content {
+            max-width: 850px;
+        }
+
+        #modalVideo .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: var(--radius-sm);
+            background: #000;
+        }
+
+        #modalVideo .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        #modalVideo .video-wrapper video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+        }
+
+        #modalVideo .video-wrapper video::-webkit-media-controls {
+            background: rgba(0, 0, 0, 0.6);
         }
 
         @media (max-width: 768px) {
@@ -498,9 +527,7 @@
                     placeholder="Ej: Bar Starview · 24 Julio 2026">
             </div>
 
-            <!-- ============================================================
-            CREACIÓN DE CATEGORÍAS
-            ============================================================ -->
+            <!-- CREACIÓN DE CATEGORÍAS -->
             <div class="admin-form-group">
                 <label for="videoCategoria">Categoría *</label>
                 <div class="categoria-input-group">
@@ -520,16 +547,13 @@
                     quieras.</div>
             </div>
 
-            <!-- Select de categorías (se actualiza automáticamente) -->
             <select id="videoCategoria" class="admin-select" style="margin-top:8px;">
                 <option value="oficial">🎥 Oficiales</option>
                 <option value="momentos">🎬 Momentos Tencha</option>
                 <option value="en_vivo">🎤 En Vivo</option>
             </select>
 
-            <!-- ============================================================
-            OPCIONES DE SUBIDA: YOUTUBE O CLOUDINARY
-            ============================================================ -->
+            <!-- OPCIONES DE SUBIDA -->
             <div class="admin-form-group" style="margin-top:16px;">
                 <label>¿Cómo quieres agregar el video?</label>
                 <div class="video-upload-options">
@@ -549,8 +573,9 @@
                 <div class="admin-form-group">
                     <label for="videoUrl">URL de YouTube *</label>
                     <input type="url" id="videoUrl" class="admin-input"
-                        placeholder="Ej: https://www.youtube.com/embed/7XbLvFXdjQE">
-                    <div class="form-help">Pega el enlace de YouTube (embed o normal)</div>
+                        placeholder="Pega cualquier URL de YouTube (youtu.be, youtube.com/watch, etc.)">
+                    <div class="form-help">El sistema la convertirá automáticamente al formato correcto. Puedes pegar
+                        cualquier formato.</div>
                 </div>
             </div>
 
@@ -666,16 +691,15 @@
 
     <!-- MODAL - PREVISUALIZAR VIDEO -->
     <div class="admin-modal" id="modalVideo">
-        <div class="modal-content" style="max-width:700px;">
+        <div class="modal-content" style="max-width:850px;">
             <div class="modal-header">
                 <h3 id="modalVideoTitulo"><i class="fa-solid fa-play"></i> Reproduciendo</h3>
                 <button class="modal-close" onclick="cerrarModalVideo()">&times;</button>
             </div>
-            <div
-                style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:var(--radius-sm); background:#000;">
-                <iframe id="modalVideoIframe" src=""
-                    style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"
-                    allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+            <div class="video-wrapper" id="videoWrapper">
+                <div id="videoPlayerContainer">
+                    <!-- Se llena dinámicamente -->
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn-admin btn-secondary" onclick="cerrarModalVideo()">Cerrar</button>
@@ -711,7 +735,7 @@
         let modoSubida = 'youtube';
 
         // ============================================================
-        // CATEGORÍAS PREDEFINIDAS + PERSONALIZADAS
+        // CATEGORÍAS
         // ============================================================
         let categoriasDisponibles = [];
 
@@ -747,7 +771,6 @@
             const select = document.getElementById('videoCategoria');
             const base = getCategoriasBase();
 
-            // Actualizar tags visuales
             let html = '<span style="color:var(--color-text-muted); font-size:0.8rem;">Categorías disponibles:</span>';
             categoriasDisponibles.forEach(cat => {
                 const label = base[cat] || cat;
@@ -762,7 +785,6 @@
             });
             container.innerHTML = html;
 
-            // Actualizar select
             let selectHtml = '';
             categoriasDisponibles.forEach(cat => {
                 const label = base[cat] || cat;
@@ -771,7 +793,6 @@
             });
             select.innerHTML = selectHtml;
 
-            // Si la categoría seleccionada actual ya no existe, seleccionar la primera
             const currentVal = select.value;
             if (!categoriasDisponibles.includes(currentVal) && categoriasDisponibles.length > 0) {
                 select.value = categoriasDisponibles[0];
@@ -788,7 +809,6 @@
                 return;
             }
 
-            // Convertir a slug (para usar como ID)
             const slug = nombre.toLowerCase()
                 .replace(/[^a-z0-9\s]/g, '')
                 .replace(/\s+/g, '_');
@@ -803,16 +823,12 @@
             categoriasDisponibles.push(slug);
             guardarCategorias();
             renderizarCategorias();
-
-            // Seleccionar la nueva categoría en el select
             document.getElementById('videoCategoria').value = slug;
-
             input.value = '';
             mostrarToast('✅ Categoría "' + nombre + '" creada', 'success');
         }
 
         function eliminarCategoria(slug) {
-            // No permitir eliminar categorías base
             if (['oficial', 'momentos', 'en_vivo'].includes(slug)) {
                 mostrarToast('⚠️ No puedes eliminar categorías predeterminadas', 'warning');
                 return;
@@ -825,7 +841,6 @@
             categoriasDisponibles = categoriasDisponibles.filter(c => c !== slug);
             guardarCategorias();
 
-            // Si la categoría seleccionada era la eliminada, cambiar a la primera
             const select = document.getElementById('videoCategoria');
             if (select.value === slug && categoriasDisponibles.length > 0) {
                 select.value = categoriasDisponibles[0];
@@ -833,6 +848,64 @@
 
             renderizarCategorias();
             mostrarToast('✅ Categoría eliminada', 'success');
+        }
+
+        // ============================================================
+        // FUNCIÓN: NORMALIZAR URL DE YOUTUBE (CONVIERTE CUALQUIER FORMATO)
+        // ============================================================
+        function normalizarYoutubeUrl(url) {
+            if (!url) return '';
+
+            // Si ya es embed correcto, devolver tal cual
+            if (url.includes('youtube.com/embed/')) {
+                // Limpiar parámetros extra
+                const match = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/);
+                if (match) {
+                    return 'https://www.youtube.com/embed/' + match[1];
+                }
+                return url;
+            }
+
+            // Si es youtu.be/ (formato corto)
+            if (url.includes('youtu.be/')) {
+                const match = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+                if (match) {
+                    return 'https://www.youtube.com/embed/' + match[1];
+                }
+            }
+
+            // Si es youtube.com/watch?v=
+            if (url.includes('youtube.com/watch')) {
+                try {
+                    const urlObj = new URL(url);
+                    const videoId = urlObj.searchParams.get('v');
+                    if (videoId) {
+                        return 'https://www.youtube.com/embed/' + videoId;
+                    }
+                } catch (e) { }
+            }
+
+            // Si es youtube.com/v/ (formato viejo)
+            if (url.includes('youtube.com/v/')) {
+                const match = url.match(/youtube\.com\/v\/([a-zA-Z0-9_-]+)/);
+                if (match) {
+                    return 'https://www.youtube.com/embed/' + match[1];
+                }
+            }
+
+            // Si es m.youtube.com (móvil)
+            if (url.includes('m.youtube.com')) {
+                try {
+                    const urlObj = new URL(url);
+                    const videoId = urlObj.searchParams.get('v');
+                    if (videoId) {
+                        return 'https://www.youtube.com/embed/' + videoId;
+                    }
+                } catch (e) { }
+            }
+
+            // Si no se pudo convertir, devolver la original
+            return url;
         }
 
         // ============================================================
@@ -874,13 +947,10 @@
 
         function switchUploadOption(opcion) {
             modoSubida = opcion;
-
             document.getElementById('optYoutube').classList.toggle('active-option', opcion === 'youtube');
             document.getElementById('optCloudinary').classList.toggle('active-option', opcion === 'cloudinary');
-
             document.getElementById('uploadYoutube').classList.toggle('active', opcion === 'youtube');
             document.getElementById('uploadCloudinary').classList.toggle('active', opcion === 'cloudinary');
-
             document.getElementById('videoUrl').required = (opcion === 'youtube');
         }
 
@@ -977,8 +1047,10 @@
                     document.getElementById('videoUrl').focus();
                     return;
                 }
-                if (!url.includes('youtube.com') && !url.includes('youtu.be')) {
-                    mostrarMensajeVideo(mensajeEl, '⚠️ URL no válida. Usa YouTube', 'error');
+                // 🔥 CONVERTIR AUTOMÁTICAMENTE
+                url = normalizarYoutubeUrl(url);
+                if (!url.includes('youtube.com/embed/')) {
+                    mostrarMensajeVideo(mensajeEl, '⚠️ No se pudo convertir la URL de YouTube. Asegúrate de que sea válida.', 'error');
                     return;
                 }
             } else {
@@ -1009,6 +1081,20 @@
                     actualizadoEn: new Date().toISOString()
                 };
 
+                // 🔥 VERIFICAR SI EL DOCUMENTO EXISTE ANTES DE ACTUALIZAR
+                if (id) {
+                    const docRef = db.collection('videos').doc(id);
+                    const docSnap = await docRef.get();
+                    if (!docSnap.exists) {
+                        mostrarMensajeVideo(mensajeEl, '❌ El video que intentas actualizar ya no existe. Se creará uno nuevo.', 'warning');
+                        // Limpiar el ID para que se cree uno nuevo
+                        document.getElementById('videoId').value = '';
+                        // Intentar guardar como nuevo
+                        await guardarVideo();
+                        return;
+                    }
+                }
+
                 if (destacado) {
                     const snapshot = await db.collection('videos')
                         .where('categoria', '==', categoria)
@@ -1022,7 +1108,8 @@
                     });
 
                     if (id) {
-                        batch.update(db.collection('videos').doc(id), datos);
+                        const docRef = db.collection('videos').doc(id);
+                        batch.update(docRef, datos);
                     }
                     await batch.commit();
 
@@ -1117,7 +1204,6 @@
             }
 
             const categoriasNombres = getCategoriasBase();
-            // Agregar categorías personalizadas al mapa de nombres
             categoriasDisponibles.forEach(cat => {
                 if (!categoriasNombres[cat]) {
                     categoriasNombres[cat] = cat;
@@ -1169,22 +1255,43 @@
 
         function previsualizarVideo(id) {
             const video = videos.find(v => v.id === id);
-            if (!video) return;
+            if (!video) {
+                mostrarToast('❌ Video no encontrado', 'error');
+                return;
+            }
 
             const modal = document.getElementById('modalVideo');
-            const iframe = document.getElementById('modalVideoIframe');
+            const container = document.getElementById('videoPlayerContainer');
             const titulo = document.getElementById('modalVideoTitulo');
 
             titulo.innerHTML = '<i class="fa-solid fa-play"></i> ' + sanitizar(video.titulo);
-            iframe.src = video.url;
+
+            // Detectar si es YouTube o Cloudinary
+            if (video.url.includes('youtube.com/embed/')) {
+                container.innerHTML = `
+                            <iframe src="${video.url}?autoplay=1&rel=0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen>
+                            </iframe>
+                        `;
+            } else {
+                // Cloudinary - usar video HTML5
+                container.innerHTML = `
+                            <video controls autoplay style="width:100%; height:100%; background:#000;">
+                                <source src="${video.url}" type="video/mp4">
+                                Tu navegador no soporta la reproducción de videos.
+                            </video>
+                        `;
+            }
+
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
         function cerrarModalVideo() {
             const modal = document.getElementById('modalVideo');
-            const iframe = document.getElementById('modalVideoIframe');
-            iframe.src = '';
+            const container = document.getElementById('videoPlayerContainer');
+            container.innerHTML = '';
             modal.classList.remove('active');
             document.body.style.overflow = '';
         }
@@ -1214,6 +1321,7 @@
                     document.getElementById('videoUrl').value = '';
                 } else {
                     switchUploadOption('youtube');
+                    // Mostrar la URL original (la que el usuario pegó)
                     document.getElementById('videoUrl').value = data.url || '';
                     document.getElementById('videoUrlCloudinary').value = '';
                 }
@@ -1286,12 +1394,6 @@
                 limpiarFormulario();
             }
         }
-
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-                cerrarModalVideo();
-            }
-        });
 
         // ============================================================
         // MANEJO DE SUBIDA DE VIDEO (DRAG & DROP)
@@ -1386,6 +1488,13 @@
             document.getElementById('videoUrlCloudinary').value = '';
         }
 
+        // Cerrar modal con Escape
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                cerrarModalVideo();
+            }
+        });
+
         // ============================================================
         // INICIALIZAR
         // ============================================================
@@ -1393,7 +1502,7 @@
             cargarCategoriasGuardadas();
             cargarVideos();
             switchUploadOption('youtube');
-            console.log('🚀 Gestor de Videos cargado con Cloudinary + YouTube + Categorías personalizadas');
+            console.log('🚀 Gestor de Videos cargado con conversión automática de YouTube');
         });
 
         document.addEventListener('keydown', function (e) {
