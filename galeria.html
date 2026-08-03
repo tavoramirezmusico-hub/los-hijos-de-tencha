@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Galería de Fotos | Los Hijos de Tencha</title>
 
     <meta name="description"
@@ -584,7 +583,7 @@
                 <div id="categoriasFirebaseContainer" style="display:inline-flex; gap:10px; flex-wrap:wrap;"></div>
             </div>
 
-            <!-- GALERÍA: FOTOS EXISTENTES + FIREBASE -->
+            <!-- GALERÍA: FOTOS EXISTENTES -->
             <div class="galeria-grid" id="galeriaGrid">
                 <!-- Las fotos se cargan desde JavaScript -->
             </div>
@@ -637,8 +636,9 @@
         const db = firebase.firestore();
 
         // ============================================================
-        // 📸 DATOS EXISTENTES DE LA GALERÍA - RUTAS CORRECTAS
+        // 📸 DATOS DE LA GALERÍA - RUTAS CORRECTAS
         // ============================================================
+        // Usamos rutas relativas desde la raíz del sitio
         const galeriaDatos = {
             'vocho': {
                 titulo: 'Sesión Vocho',
@@ -680,107 +680,40 @@
             }
         };
 
-        let fotosFirebase = [];
         let todasLasFotos = [];
         let categoriaActual = 'todas';
         let indiceActualVisor = 0;
 
         // ============================================================
-        // 🚀 CONSTRUIR LISTA COMPLETA DE FOTOS (INMEDIATAMENTE)
+        // 🚀 CONSTRUIR LISTA COMPLETA DE FOTOS
         // ============================================================
         function construirListaFotos() {
-            const fotosExistentesArray = [];
+            const fotosArray = [];
 
             // Recorrer cada categoría y agregar sus fotos
             for (const [categoria, data] of Object.entries(galeriaDatos)) {
                 if (data.fotos && data.fotos.length > 0) {
                     data.fotos.forEach(foto => {
-                        fotosExistentesArray.push({
+                        fotosArray.push({
                             url: foto,
                             titulo: data.titulo,
                             categoriaId: categoria,
                             esExistente: true
                         });
                     });
-                } else {
-                    console.warn(`⚠️ Categoría "${categoria}" no tiene fotos definidas`);
                 }
             }
 
-            const fotosFirebaseArray = fotosFirebase.map(f => ({
-                url: f.url,
-                titulo: f.titulo || 'Foto',
-                categoriaId: f.categoriaId,
-                esExistente: false,
-                id: f.id
-            }));
-
-            todasLasFotos = [...fotosExistentesArray, ...fotosFirebaseArray];
+            todasLasFotos = fotosArray;
 
             console.log(`📸 Total de fotos cargadas: ${todasLasFotos.length}`);
             console.log('📸 Primeras 3 fotos:', todasLasFotos.slice(0, 3));
 
-            // Si no hay fotos, mostrar mensaje
             if (todasLasFotos.length === 0) {
                 console.warn('⚠️ No se encontraron fotos en la galería');
             }
 
             cambiarCategoria('todas');
-        }
-
-        // ============================================================
-        // 🔄 CARGAR CATEGORÍAS Y FOTOS DE FIREBASE (EN SEGUNDO PLANO)
-        // ============================================================
-        async function cargarGaleriaFirebase() {
-            try {
-                // Cargar categorías de Firebase
-                const categoriasSnap = await db.collection('galeria_categorias')
-                    .orderBy('nombre', 'asc')
-                    .get();
-
-                const categoriasFirebase = [];
-                categoriasSnap.forEach(doc => {
-                    categoriasFirebase.push({ id: doc.id, ...doc.data() });
-                });
-
-                const container = document.getElementById('categoriasFirebaseContainer');
-                if (categoriasFirebase.length > 0) {
-                    let html = '';
-                    categoriasFirebase.forEach(cat => {
-                        html += `<button class="cat-btn cat-firebase" data-categoria="${cat.id}">📁 ${cat.nombre}</button>`;
-                    });
-                    container.innerHTML = html;
-
-                    container.querySelectorAll('.cat-btn').forEach(btn => {
-                        btn.addEventListener('click', function () {
-                            const categoria = this.dataset.categoria;
-                            cambiarCategoria(categoria);
-                        });
-                    });
-                }
-
-                // Cargar fotos de Firebase
-                const fotosSnap = await db.collection('galeria_fotos')
-                    .orderBy('orden', 'asc')
-                    .get();
-
-                fotosFirebase = [];
-                fotosSnap.forEach(doc => {
-                    fotosFirebase.push({ id: doc.id, ...doc.data() });
-                });
-
-                if (fotosFirebase.length > 0) {
-                    console.log(`🔥 ${fotosFirebase.length} fotos cargadas desde Firebase`);
-                }
-
-                // Reconstruir la lista completa y re-renderizar
-                construirListaFotos();
-
-            } catch (error) {
-                console.error('❌ Error al cargar galería de Firebase:', error);
-                // Si falla Firebase, mostramos solo el contenido existente
-                construirListaFotos();
-            }
         }
 
         // ============================================================
@@ -823,15 +756,13 @@
             let html = '';
             fotos.forEach((foto, index) => {
                 const titulo = foto.titulo || 'Foto';
-                const esFirebase = foto.esExistente === false;
-                const badge = esFirebase ? '<span class="badge-firebase">📌 Admin</span>' : '';
 
                 html += `
                             <div class="foto-item" data-index="${index}">
                                 <img src="${foto.url}" alt="${titulo}" loading="lazy" 
                                      onerror="this.parentElement.innerHTML='<div style=\\'color:#666;font-size:0.8rem;padding:10px;text-align:center;\\'>❌<br>${foto.url.split('/').pop()}</div>'; this.parentElement.style.background='#1a1a1a';">
                                 <div class="foto-overlay">
-                                    <span>${titulo} ${badge}</span>
+                                    <span>${titulo}</span>
                                 </div>
                             </div>
                         `;
@@ -918,19 +849,45 @@
         });
 
         // ============================================================
-        // 🚀 INICIALIZAR
+        // 🚀 INICIALIZAR - ¡YA!
         // ============================================================
-        document.addEventListener('DOMContentLoaded', function () {
-            console.log('🚀 Inicializando galería...');
-
-            // 1. PRIMERO: Mostrar el contenido existente (inmediato)
+        // Ejecutar inmediatamente cuando el DOM esté listo
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function () {
+                console.log('🚀 Inicializando galería...');
+                construirListaFotos();
+                console.log('✅ Galería cargada correctamente');
+            });
+        } else {
+            // El DOM ya está listo
+            console.log('🚀 Inicializando galería (DOM ya listo)...');
             construirListaFotos();
+            console.log('✅ Galería cargada correctamente');
+        }
 
-            // 2. LUEGO: Cargar Firebase en segundo plano
-            cargarGaleriaFirebase();
+        // También cargar Firebase en segundo plano (para futuras fotos)
+        async function cargarFirebaseEnSegundoPlano() {
+            try {
+                const fotosSnap = await db.collection('galeria_fotos')
+                    .orderBy('orden', 'asc')
+                    .get();
 
-            console.log('✅ Galería: contenido existente mostrado + Firebase cargando en segundo plano');
-        });
+                const fotosFirebase = [];
+                fotosSnap.forEach(doc => {
+                    fotosFirebase.push({ id: doc.id, ...doc.data() });
+                });
+
+                if (fotosFirebase.length > 0) {
+                    console.log(`🔥 ${fotosFirebase.length} fotos cargadas desde Firebase`);
+                    // Aquí podrías agregar las fotos de Firebase a la galería
+                }
+            } catch (error) {
+                console.log('ℹ️ Firebase no tiene fotos aún o hubo un error:', error.message);
+            }
+        }
+
+        // Cargar Firebase después de 2 segundos (no bloquea la UI)
+        setTimeout(cargarFirebaseEnSegundoPlano, 2000);
     </script>
 
 </body>
