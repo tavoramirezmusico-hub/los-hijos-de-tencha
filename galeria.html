@@ -686,10 +686,11 @@
         let indiceActualVisor = 0;
 
         // ============================================================
-        // CARGAR CATEGORÍAS Y FOTOS DE FIREBASE
+        // CARGAR CATEGORÍAS Y FOTOS DE FIREBASE (SIN BLOQUEAR LA UI)
         // ============================================================
         async function cargarGaleriaFirebase() {
             try {
+                // Cargar categorías de Firebase
                 const categoriasSnap = await db.collection('galeria_categorias')
                     .orderBy('nombre', 'asc')
                     .get();
@@ -715,6 +716,7 @@
                     });
                 }
 
+                // Cargar fotos de Firebase
                 const fotosSnap = await db.collection('galeria_fotos')
                     .orderBy('orden', 'asc')
                     .get();
@@ -724,16 +726,18 @@
                     fotosFirebase.push({ id: doc.id, ...doc.data() });
                 });
 
+                // Reconstruir la lista completa (existentes + Firebase) y re-renderizar
                 construirListaFotos();
 
             } catch (error) {
                 console.error('Error al cargar galería de Firebase:', error);
+                // Si falla Firebase, mostramos solo el contenido existente
                 construirListaFotos();
             }
         }
 
         // ============================================================
-        // CONSTRUIR LISTA COMPLETA DE FOTOS
+        // CONSTRUIR LISTA COMPLETA DE FOTOS (EXISTENTES + FIREBASE)
         // ============================================================
         function construirListaFotos() {
             const fotosExistentesArray = [];
@@ -890,11 +894,16 @@
         });
 
         // ============================================================
-        // INICIALIZAR
+        // INICIALIZAR - PRIMERO MOSTRAR CONTENIDO EXISTENTE
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
+            // 1. Primero mostramos el contenido existente (rápido)
+            construirListaFotos();
+
+            // 2. Luego cargamos Firebase en segundo plano
             cargarGaleriaFirebase();
-            console.log('🚀 Galería: contenido existente + Firebase');
+
+            console.log('🚀 Galería: contenido existente mostrado + Firebase cargando en segundo plano');
         });
     </script>
 

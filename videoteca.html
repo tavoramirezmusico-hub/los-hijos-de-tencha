@@ -806,7 +806,7 @@
         }
 
         // ============================================================
-        // CARGAR VIDEOS DE FIREBASE
+        // CARGAR VIDEOS DE FIREBASE (SIN BLOQUEAR LA UI)
         // ============================================================
         async function cargarVideosFirebase() {
             try {
@@ -834,7 +834,7 @@
                 });
                 categoriasFirebase = Array.from(cats);
 
-                todosLosVideos = [...videosExistentes, ...videosFirebase];
+                todosLosVideos = [...videosExistentes, ...momentosExistentes, ...videosFirebase];
 
                 generarFiltros();
                 renderizarVideos();
@@ -842,7 +842,8 @@
 
             } catch (error) {
                 console.error('Error al cargar videos de Firebase:', error);
-                todosLosVideos = [...videosExistentes];
+                // Si falla Firebase, mostramos solo el contenido existente
+                todosLosVideos = [...videosExistentes, ...momentosExistentes];
                 generarFiltros();
                 renderizarVideos();
                 renderizarMomentos();
@@ -903,6 +904,7 @@
                 filtrados = todosLosVideos.filter(v => v.categoria === filtroActual);
             }
 
+            // Excluir "momentos" de la sección principal de videos
             const videosPrincipales = filtrados.filter(v => v.categoria !== 'momentos');
 
             if (videosPrincipales.length === 0) {
@@ -1046,11 +1048,19 @@
         }
 
         // ============================================================
-        // INICIALIZAR
+        // INICIALIZAR - PRIMERO MOSTRAR CONTENIDO EXISTENTE
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
+            // 1. Primero mostramos el contenido existente (rápido)
+            todosLosVideos = [...videosExistentes, ...momentosExistentes];
+            generarFiltros();
+            renderizarVideos();
+            renderizarMomentos();
+
+            // 2. Luego cargamos Firebase en segundo plano
             cargarVideosFirebase();
-            console.log('🚀 Videoteca: contenido existente + Firebase');
+
+            console.log('🚀 Videoteca: contenido existente mostrado + Firebase cargando en segundo plano');
         });
     </script>
 
