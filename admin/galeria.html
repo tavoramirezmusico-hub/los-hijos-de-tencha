@@ -533,10 +533,7 @@
             const formData = new FormData();
             formData.append('file', file);
             formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
-
-            // Guardar en una carpeta específica de la galería
-            const folderPath = 'galeria/' + categoriaSeleccionadaId;
-            formData.append('folder', folderPath);
+            formData.append('folder', 'galeria/' + categoriaSeleccionadaId);
 
             try {
                 const response = await fetch(CLOUDINARY_CONFIG.uploadUrl, {
@@ -899,7 +896,7 @@
         }
 
         // ============================================================
-        // SUBIDA DE FOTOS - DRAG & DROP (CON CLOUDINARY)
+        // SUBIDA DE FOTOS - DRAG & DROP (CON CLOUDINARY + CONTADOR SEGURO)
         // ============================================================
 
         const dropzone = document.getElementById('dropzone');
@@ -939,6 +936,38 @@
                     this.value = '';
                 }
             });
+        }
+
+        // Función para actualizar el contador de una categoría específica
+        async function actualizarContadorCategoria(categoriaId) {
+            try {
+                const snapshot = await db.collection('galeria_fotos')
+                    .where('categoriaId', '==', categoriaId)
+                    .get();
+                const count = snapshot.size;
+
+                // Actualizar el contador en el DOM
+                const items = document.querySelectorAll('.categoria-item');
+                items.forEach(item => {
+                    const onclickAttr = item.getAttribute('onclick');
+                    if (onclickAttr && onclickAttr.includes("seleccionarCategoria('" + categoriaId + "')")) {
+                        const countSpan = item.querySelector('.cat-count');
+                        if (countSpan) {
+                            countSpan.textContent = count + ' fotos';
+                        }
+                    }
+                });
+
+                // También actualizar la variable global fotos si esta categoría está seleccionada
+                if (categoriaSeleccionadaId === categoriaId) {
+                    document.getElementById('fotosCount').textContent = count + ' fotos';
+                }
+
+                return count;
+            } catch (error) {
+                console.error('Error al actualizar contador:', error);
+                return 0;
+            }
         }
 
         async function procesarArchivos(files) {
@@ -1016,7 +1045,14 @@
 
             if (subidos > 0) {
                 mostrarToast('✅ ' + subidos + ' fotos subidas con éxito', 'success');
+
+                // 🔥 ACTUALIZAR CONTADOR DE FORMA SEGURA
+                await actualizarContadorCategoria(categoriaSeleccionadaId);
+
+                // Recargar fotos para mostrar las nuevas
                 await cargarFotos(categoriaSeleccionadaId);
+
+                // Recargar categorías para mantener sincronizado
                 await cargarCategorias();
             }
         }
@@ -1026,7 +1062,7 @@
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
             cargarCategorias();
-            console.log('🚀 Gestor de Galería cargado con Cloudinary');
+            console.log('🚀 Gestor de Galería cargado con Cloudinary y contador seguro');
         });
 
         document.addEventListener('keydown', function (e) {
