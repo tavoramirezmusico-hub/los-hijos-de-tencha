@@ -74,6 +74,8 @@
             display: block;
             font-weight: 500;
             letter-spacing: 0.3px;
+            color: #fff;
+            transition: all 0.3s ease;
         }
 
         .menu li a:hover {
@@ -102,6 +104,120 @@
             .menu li span {
                 font-size: 0.8rem;
                 padding: 6px 12px;
+            }
+        }
+
+        /* =====================================
+           NAV (igual que index.html)
+           ===================================== */
+        nav {
+            width: 100%;
+            padding: 25px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo img {
+            width: 260px;
+            height: auto;
+            display: block;
+        }
+
+        .menu {
+            display: flex;
+            list-style: none;
+            gap: 18px;
+        }
+
+        .menu li a {
+            color: white;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 30px;
+            transition: .3s;
+        }
+
+        .menu li a:hover {
+            background: #ffcc00;
+            color: #000;
+        }
+
+        /* =====================================
+           BOTON MENU HAMBURGUESA
+           ===================================== */
+        .menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .menu-btn img {
+            width: 66px;
+        }
+
+        #menu-btn span {
+            color: #ffcc00;
+            font-size: 13px;
+            margin-top: 4px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 900px) {
+            .menu-btn {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .menu {
+                position: absolute;
+                top: 90px;
+                right: 20px;
+                width: 230px;
+                padding: 25px;
+                background: rgba(17, 17, 17, .95);
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                border-radius: 20px;
+                flex-direction: column;
+                gap: 15px;
+                display: flex;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, .5);
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-15px);
+                transition: opacity .35s ease, transform .35s ease, visibility .35s ease;
+            }
+
+            .menu.activo {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+
+            .logo img {
+                width: 150px;
+            }
+
+            nav {
+                padding: 20px 25px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo img {
+                width: 130px;
+            }
+
+            .menu-btn img {
+                width: 60px;
             }
         }
 
@@ -552,6 +668,24 @@
             opacity: 1;
             background: white;
         }
+
+        /* =====================================
+           FOOTER
+           ===================================== */
+        footer {
+            background: #000;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        footer img {
+            width: 140px;
+            margin: 0 auto 15px;
+        }
+
+        footer p {
+            color: #ddd;
+        }
     </style>
 </head>
 
@@ -765,12 +899,10 @@
         // FILTRAR GALERÍA POR CATEGORÍA
         // ============================================================
         function filtrarGaleria(categoria) {
-            // Actualizar botones activos
             document.querySelectorAll('.cat-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.categoria === categoria);
             });
 
-            // Mostrar/ocultar fotos
             document.querySelectorAll('.foto-item').forEach(item => {
                 if (categoria === 'todas' || item.dataset.categoria === categoria) {
                     item.style.display = 'flex';
@@ -790,7 +922,6 @@
             const img = elemento.querySelector('img');
             if (!img) return;
 
-            // Obtener todas las fotos visibles
             const todasLasFotos = document.querySelectorAll('.foto-item[style*="display: flex"], .foto-item:not([style*="display: none"])');
             fotosVisor = [];
 
@@ -801,10 +932,8 @@
                 }
             });
 
-            // Si no hay fotos, salir
             if (fotosVisor.length === 0) return;
 
-            // Encontrar el índice de la foto actual
             indiceVisor = fotosVisor.indexOf(img.src);
             if (indiceVisor === -1) indiceVisor = 0;
 
@@ -830,7 +959,6 @@
             document.body.style.overflow = '';
         }
 
-        // Eventos del visor
         document.getElementById('cerrar-galeria').addEventListener('click', cerrarVisor);
         document.getElementById('visor-galeria').addEventListener('click', function (e) {
             if (e.target === this) cerrarVisor();
