@@ -637,7 +637,7 @@
         const db = firebase.firestore();
 
         // ============================================================
-        // DATOS EXISTENTES DE LA GALERÍA
+        // 📸 DATOS EXISTENTES DE LA GALERÍA - RUTAS CORRECTAS
         // ============================================================
         const galeriaDatos = {
             'vocho': {
@@ -686,7 +686,50 @@
         let indiceActualVisor = 0;
 
         // ============================================================
-        // CARGAR CATEGORÍAS Y FOTOS DE FIREBASE (SIN BLOQUEAR LA UI)
+        // 🚀 CONSTRUIR LISTA COMPLETA DE FOTOS (INMEDIATAMENTE)
+        // ============================================================
+        function construirListaFotos() {
+            const fotosExistentesArray = [];
+
+            // Recorrer cada categoría y agregar sus fotos
+            for (const [categoria, data] of Object.entries(galeriaDatos)) {
+                if (data.fotos && data.fotos.length > 0) {
+                    data.fotos.forEach(foto => {
+                        fotosExistentesArray.push({
+                            url: foto,
+                            titulo: data.titulo,
+                            categoriaId: categoria,
+                            esExistente: true
+                        });
+                    });
+                } else {
+                    console.warn(`⚠️ Categoría "${categoria}" no tiene fotos definidas`);
+                }
+            }
+
+            const fotosFirebaseArray = fotosFirebase.map(f => ({
+                url: f.url,
+                titulo: f.titulo || 'Foto',
+                categoriaId: f.categoriaId,
+                esExistente: false,
+                id: f.id
+            }));
+
+            todasLasFotos = [...fotosExistentesArray, ...fotosFirebaseArray];
+
+            console.log(`📸 Total de fotos cargadas: ${todasLasFotos.length}`);
+            console.log('📸 Primeras 3 fotos:', todasLasFotos.slice(0, 3));
+
+            // Si no hay fotos, mostrar mensaje
+            if (todasLasFotos.length === 0) {
+                console.warn('⚠️ No se encontraron fotos en la galería');
+            }
+
+            cambiarCategoria('todas');
+        }
+
+        // ============================================================
+        // 🔄 CARGAR CATEGORÍAS Y FOTOS DE FIREBASE (EN SEGUNDO PLANO)
         // ============================================================
         async function cargarGaleriaFirebase() {
             try {
@@ -726,46 +769,22 @@
                     fotosFirebase.push({ id: doc.id, ...doc.data() });
                 });
 
-                // Reconstruir la lista completa (existentes + Firebase) y re-renderizar
+                if (fotosFirebase.length > 0) {
+                    console.log(`🔥 ${fotosFirebase.length} fotos cargadas desde Firebase`);
+                }
+
+                // Reconstruir la lista completa y re-renderizar
                 construirListaFotos();
 
             } catch (error) {
-                console.error('Error al cargar galería de Firebase:', error);
+                console.error('❌ Error al cargar galería de Firebase:', error);
                 // Si falla Firebase, mostramos solo el contenido existente
                 construirListaFotos();
             }
         }
 
         // ============================================================
-        // CONSTRUIR LISTA COMPLETA DE FOTOS (EXISTENTES + FIREBASE)
-        // ============================================================
-        function construirListaFotos() {
-            const fotosExistentesArray = [];
-            for (const [categoria, data] of Object.entries(galeriaDatos)) {
-                data.fotos.forEach(foto => {
-                    fotosExistentesArray.push({
-                        url: foto,
-                        titulo: data.titulo,
-                        categoriaId: categoria,
-                        esExistente: true
-                    });
-                });
-            }
-
-            const fotosFirebaseArray = fotosFirebase.map(f => ({
-                url: f.url,
-                titulo: f.titulo || 'Foto',
-                categoriaId: f.categoriaId,
-                esExistente: false,
-                id: f.id
-            }));
-
-            todasLasFotos = [...fotosExistentesArray, ...fotosFirebaseArray];
-            cambiarCategoria('todas');
-        }
-
-        // ============================================================
-        // CAMBIAR CATEGORÍA
+        // 🔀 CAMBIAR CATEGORÍA
         // ============================================================
         function cambiarCategoria(categoria) {
             categoriaActual = categoria;
@@ -785,16 +804,17 @@
         }
 
         // ============================================================
-        // RENDERIZAR GALERÍA
+        // 🖼️ RENDERIZAR GALERÍA
         // ============================================================
         function renderizarGaleria(fotos) {
             const grid = document.getElementById('galeriaGrid');
 
-            if (fotos.length === 0) {
+            if (!fotos || fotos.length === 0) {
                 grid.innerHTML = `
                             <div class="galeria-vacia">
                                 <i class="fa-regular fa-image"></i>
-                                <p>No hay fotos en esta categoría.</p>
+                                <p>No hay fotos en esta categoría.<br>
+                                <span style="font-size:0.8rem;color:#555;">Verifica que las imágenes existan en la carpeta img/galeria/</span></p>
                             </div>
                         `;
                 return;
@@ -808,7 +828,8 @@
 
                 html += `
                             <div class="foto-item" data-index="${index}">
-                                <img src="${foto.url}" alt="${titulo}" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='#2a2a2a';">
+                                <img src="${foto.url}" alt="${titulo}" loading="lazy" 
+                                     onerror="this.parentElement.innerHTML='<div style=\\'color:#666;font-size:0.8rem;padding:10px;text-align:center;\\'>❌<br>${foto.url.split('/').pop()}</div>'; this.parentElement.style.background='#1a1a1a';">
                                 <div class="foto-overlay">
                                     <span>${titulo} ${badge}</span>
                                 </div>
@@ -821,10 +842,13 @@
             grid.querySelectorAll('.foto-item').forEach(el => {
                 el.addEventListener('click', function () {
                     const index = parseInt(this.dataset.index);
-                    abrirVisor(index, fotos);
+                    if (!isNaN(index) && fotos[index]) {
+                        abrirVisor(index, fotos);
+                    }
                 });
             });
 
+            // Animación de entrada
             document.querySelectorAll('.galeria-grid .foto-item').forEach((el, i) => {
                 setTimeout(() => {
                     el.classList.add('visible');
@@ -833,12 +857,12 @@
         }
 
         // ============================================================
-        // VISOR DE GALERÍA
+        // 🔍 VISOR DE GALERÍA
         // ============================================================
         let fotosVisorActuales = [];
 
         function abrirVisor(index, fotos) {
-            if (fotos.length === 0) return;
+            if (!fotos || fotos.length === 0) return;
             fotosVisorActuales = fotos;
 
             const imgSrc = fotos[index]?.url;
@@ -894,16 +918,18 @@
         });
 
         // ============================================================
-        // INICIALIZAR - PRIMERO MOSTRAR CONTENIDO EXISTENTE
+        // 🚀 INICIALIZAR
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
-            // 1. Primero mostramos el contenido existente (rápido)
+            console.log('🚀 Inicializando galería...');
+
+            // 1. PRIMERO: Mostrar el contenido existente (inmediato)
             construirListaFotos();
 
-            // 2. Luego cargamos Firebase en segundo plano
+            // 2. LUEGO: Cargar Firebase en segundo plano
             cargarGaleriaFirebase();
 
-            console.log('🚀 Galería: contenido existente mostrado + Firebase cargando en segundo plano');
+            console.log('✅ Galería: contenido existente mostrado + Firebase cargando en segundo plano');
         });
     </script>
 
