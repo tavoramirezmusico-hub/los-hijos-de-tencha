@@ -666,9 +666,7 @@
             }
 
             let html = '';
-            html += '<button onclick="irPagina(' + (paginaActual - 1) + ')" ' + (paginaActual <= 1 ? 'disabled' : '') + '>
-                < i class="fa-solid fa-chevron-left" ></i >
-                    </button > ';
+            html += '<button onclick="irPagina(' + (paginaActual - 1) + ')" ' + (paginaActual <= 1 ? 'disabled' : '') + '><i class="fa-solid fa-chevron-left"></i></button>';
 
             for (let i = 1; i <= totalPaginas; i++) {
                 if (i === 1 || i === totalPaginas || Math.abs(i - paginaActual) <= 2) {
@@ -678,9 +676,7 @@
                 }
             }
 
-            html += '<button onclick="irPagina(' + (paginaActual + 1) + ')" ' + (paginaActual >= totalPaginas ? 'disabled' : '') + '>
-                < i class="fa-solid fa-chevron-right" ></i >
-                    </button > ';
+            html += '<button onclick="irPagina(' + (paginaActual + 1) + ')" ' + (paginaActual >= totalPaginas ? 'disabled' : '') + '><i class="fa-solid fa-chevron-right"></i></button>';
 
             container.innerHTML = html;
         }
