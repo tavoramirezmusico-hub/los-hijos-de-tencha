@@ -199,38 +199,170 @@
             margin-top: 4px;
         }
 
+        /* ============================================================
+           ESTILOS PARA EL MODAL DE VISTA PREVIA
+           ============================================================ */
+        .preview-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .preview-modal.active {
+            display: flex;
+        }
+
+        .preview-modal .preview-content {
+            background: #0a0a0a;
+            border-radius: 20px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 40px;
+            border: 1px solid rgba(255, 204, 0, 0.1);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
+            position: relative;
+        }
+
+        .preview-modal .preview-content .close-preview {
+            position: sticky;
+            top: 0;
+            float: right;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 10;
+            padding: 0 8px;
+        }
+
+        .preview-modal .preview-content .close-preview:hover {
+            color: var(--color-primary);
+            transform: rotate(90deg);
+        }
+
+        .preview-modal .preview-content .preview-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .preview-modal .preview-content .preview-header .preview-badge {
+            display: inline-block;
+            background: var(--color-primary);
+            color: #000;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .preview-modal .preview-content .preview-header h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .preview-modal .preview-content .preview-header .preview-meta {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .preview-modal .preview-content .preview-header .preview-meta i {
+            color: var(--color-primary);
+        }
+
+        .preview-modal .preview-content .preview-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin: 16px 0;
+        }
+
+        .preview-modal .preview-content .preview-body {
+            color: #ddd;
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        .preview-modal .preview-content .preview-body p {
+            margin-bottom: 16px;
+        }
+
+        .preview-modal .preview-content .preview-body h1,
+        .preview-modal .preview-content .preview-body h2,
+        .preview-modal .preview-content .preview-body h3 {
+            color: #fff;
+            margin: 20px 0 12px;
+        }
+
+        .preview-modal .preview-content .preview-body ul,
+        .preview-modal .preview-content .preview-body ol {
+            margin: 12px 0 16px 24px;
+        }
+
+        .preview-modal .preview-content .preview-body blockquote {
+            border-left: 4px solid var(--color-primary);
+            padding-left: 16px;
+            color: #aaa;
+            margin: 16px 0;
+        }
+
+        .preview-modal .preview-content .preview-footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .preview-modal .preview-content .preview-footer .preview-banda {
+            color: var(--color-primary);
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
         @media (max-width: 768px) {
-            .noticia-item {
-                flex-direction: column;
-                align-items: stretch;
+            .preview-modal .preview-content {
+                padding: 20px;
+                margin: 10px;
+                max-height: 95vh;
             }
 
-            .noticia-item .noticia-thumb {
-                width: 100%;
-                height: 120px;
+            .preview-modal .preview-content .preview-header h2 {
+                font-size: 1.5rem;
             }
 
-            .noticia-item .noticia-actions {
-                justify-content: flex-end;
-            }
-
-            #editor-container {
-                height: 200px !important;
+            .preview-modal .preview-content .preview-image {
+                max-height: 250px;
             }
         }
 
         @media (max-width: 480px) {
-            .noticias-toolbar {
-                flex-direction: column;
+            .preview-modal .preview-content {
+                padding: 16px;
+                margin: 6px;
             }
 
-            .noticias-toolbar .btn-admin {
-                width: 100%;
-                justify-content: center;
+            .preview-modal .preview-content .preview-header h2 {
+                font-size: 1.2rem;
             }
 
-            #editor-container {
-                height: 150px !important;
+            .preview-modal .preview-content .preview-image {
+                max-height: 180px;
             }
         }
     </style>
@@ -364,12 +496,16 @@
                 </select>
             </div>
 
-            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
                 <button class="btn-admin btn-primary btn-lg" id="btnPublicar" onclick="publicarNoticia()">
                     <i class="fa-solid fa-cloud-arrow-up"></i> <span id="btnPublicarTexto">Publicar Noticia</span>
                 </button>
                 <button class="btn-admin btn-secondary" onclick="limpiarFormulario()">
                     <i class="fa-solid fa-eraser"></i> Limpiar
+                </button>
+                <button class="btn-admin btn-info btn-lg" onclick="previsualizarNoticia()"
+                    style="background: #1976d2; color:#fff; border-color:#1976d2;">
+                    <i class="fa-regular fa-eye"></i> Vista Previa
                 </button>
             </div>
             <div id="mensajeNoticia"
@@ -407,6 +543,16 @@
         </div>
 
     </main>
+
+    <!-- MODAL DE VISTA PREVIA -->
+    <div class="preview-modal" id="previewModal">
+        <div class="preview-content">
+            <button class="close-preview" onclick="cerrarPreview()">&times;</button>
+            <div id="previewContenido">
+                <!-- El contenido se genera dinámicamente -->
+            </div>
+        </div>
+    </div>
 
     <!-- TOAST -->
     <div id="adminToast" class="admin-toast"></div>
@@ -710,6 +856,9 @@
                                     <button class="btn-admin btn-danger btn-sm" onclick="eliminarNoticia('${noticia.id}')">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
+                                    <button class="btn-admin btn-info btn-sm" onclick="previsualizarNoticiaExistente('${noticia.id}')" style="background:#1976d2; color:#fff; border-color:#1976d2;">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
                                 </div>
                             </div>
                         `;
@@ -855,13 +1004,135 @@
         }
 
         // ============================================================
+        // VISTA PREVIA DE NOTICIA
+        // ============================================================
+
+        function previsualizarNoticia() {
+            const titulo = document.getElementById('noticiaTitulo').value.trim();
+            const fecha = document.getElementById('noticiaFecha').value;
+            const categoria = document.getElementById('noticiaCategoria').value.trim() || 'General';
+            const contenido = quill ? quill.root.innerHTML : '';
+            const imagenPreview = document.getElementById('previewImg').src;
+
+            const modal = document.getElementById('previewModal');
+            const container = document.getElementById('previewContenido');
+
+            // Formatear fecha
+            let fechaFormateada = 'Fecha no definida';
+            if (fecha) {
+                try {
+                    const d = new Date(fecha + 'T00:00:00');
+                    const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                    fechaFormateada = d.getDate() + ' de ' + meses[d.getMonth()] + ' ' + d.getFullYear();
+                } catch (e) {
+                    fechaFormateada = fecha;
+                }
+            }
+
+            // Generar HTML de la vista previa
+            let imagenHTML = '';
+            if (imagenPreview && imagenPreview.startsWith('data:image')) {
+                imagenHTML = `<img src="${imagenPreview}" alt="${sanitizar(titulo)}" class="preview-image">`;
+            }
+
+            container.innerHTML = `
+                        <div class="preview-header">
+                            <div class="preview-badge">📰 ${sanitizar(categoria)}</div>
+                            <h2>${sanitizar(titulo)}</h2>
+                            <div class="preview-meta">
+                                <i class="fa-regular fa-calendar"></i> ${fechaFormateada}
+                            </div>
+                        </div>
+                        ${imagenHTML}
+                        <div class="preview-body">
+                            ${contenido || '<p style="color:#666; text-align:center;">⚠️ Escribe el contenido de la noticia para ver la vista previa.</p>'}
+                        </div>
+                        <div class="preview-footer">
+                            <div class="preview-banda">🎸 Los Hijos de Tencha</div>
+                        </div>
+                    `;
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function previsualizarNoticiaExistente(id) {
+            const noticia = noticias.find(n => n.id === id);
+            if (!noticia) {
+                mostrarToast('❌ Noticia no encontrada', 'error');
+                return;
+            }
+
+            const modal = document.getElementById('previewModal');
+            const container = document.getElementById('previewContenido');
+
+            // Formatear fecha
+            let fechaFormateada = 'Fecha no definida';
+            if (noticia.fecha) {
+                try {
+                    const d = new Date(noticia.fecha + 'T00:00:00');
+                    const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                    fechaFormateada = d.getDate() + ' de ' + meses[d.getMonth()] + ' ' + d.getFullYear();
+                } catch (e) {
+                    fechaFormateada = noticia.fecha;
+                }
+            }
+
+            let imagenHTML = '';
+            if (noticia.imagen) {
+                imagenHTML = `<img src="${noticia.imagen}" alt="${sanitizar(noticia.titulo)}" class="preview-image" onerror="this.style.display='none'">`;
+            }
+
+            container.innerHTML = `
+                        <div class="preview-header">
+                            <div class="preview-badge">📰 ${sanitizar(noticia.categoria || 'General')}</div>
+                            <h2>${sanitizar(noticia.titulo)}</h2>
+                            <div class="preview-meta">
+                                <i class="fa-regular fa-calendar"></i> ${fechaFormateada}
+                            </div>
+                        </div>
+                        ${imagenHTML}
+                        <div class="preview-body">
+                            ${noticia.contenido || '<p style="color:#666; text-align:center;">⚠️ Esta noticia no tiene contenido.</p>'}
+                        </div>
+                        <div class="preview-footer">
+                            <div class="preview-banda">🎸 Los Hijos de Tencha</div>
+                        </div>
+                    `;
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarPreview() {
+            document.getElementById('previewModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Cerrar modal con Escape
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                cerrarPreview();
+            }
+        });
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('previewModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                cerrarPreview();
+            }
+        });
+
+        // ============================================================
         // INICIALIZAR
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('noticiaFecha').value = new Date().toISOString().split('T')[0];
             setTimeout(initQuill, 300);
             setTimeout(cargarNoticias, 500);
-            console.log('🚀 Gestor de Noticias cargado con Cloudinary');
+            console.log('🚀 Gestor de Noticias cargado con Cloudinary y Vista Previa');
         });
     </script>
 
