@@ -193,6 +193,12 @@
             margin-bottom: 12px;
         }
 
+        .form-help {
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+            margin-top: 4px;
+        }
+
         @media (max-width: 768px) {
             .noticia-item {
                 flex-direction: column;
@@ -318,7 +324,7 @@
             </div>
 
             <div class="admin-form-group">
-                <label>Imagen destacada</label>
+                <label>Imagen destacada (opcional)</label>
                 <div style="display:flex; gap:12px; flex-wrap:wrap;">
                     <input type="file" id="noticiaImagen" accept="image/*"
                         style="flex:1; padding:10px; background:var(--color-bg); border:1px solid var(--color-border); border-radius:var(--radius-sm); color:var(--color-text); font-family:var(--font);">
@@ -326,7 +332,7 @@
                         <i class="fa-solid fa-folder-open"></i> Seleccionar
                     </button>
                 </div>
-                <div class="form-help">Formatos: JPG, PNG, WEBP. Máximo 5MB</div>
+                <div class="form-help">Formatos: JPG, PNG, WEBP. Máximo 5MB. No obligatorio.</div>
             </div>
 
             <div class="image-preview" id="imagePreview">
@@ -442,7 +448,6 @@
                     sidebar.classList.remove('open');
                     overlay.classList.remove('active');
                 }
-                // Dejar que el enlace navegue normalmente
             });
         });
 
@@ -504,6 +509,7 @@
             const contenido = quill ? quill.root.innerHTML : '';
             const mensajeEl = document.getElementById('mensajeNoticia');
 
+            // VALIDACIONES
             if (!titulo) {
                 mostrarMensajeNoticia(mensajeEl, '⚠️ Ingresa el título', 'error');
                 document.getElementById('noticiaTitulo').focus();
@@ -517,27 +523,41 @@
 
             const textoPlano = quill ? quill.getText().trim() : '';
             if (!textoPlano || textoPlano.length < 10) {
-                mostrarMensajeNoticia(mensajeEl, '⚠️ El contenido es muy corto', 'error');
+                mostrarMensajeNoticia(mensajeEl, '⚠️ El contenido es muy corto (mínimo 10 caracteres)', 'error');
                 return;
             }
 
-            if (!id && !imagenSeleccionada) {
-                mostrarMensajeNoticia(mensajeEl, '⚠️ Selecciona una imagen', 'error');
-                return;
-            }
+            // 🔥 IMAGEN AHORA ES OPCIONAL - Solo validamos si es nueva noticia y no hay imagen, pero no es obligatorio
 
             const btn = document.getElementById('btnPublicar');
             const btnText = document.getElementById('btnPublicarTexto');
             btn.classList.add('loading');
             btn.disabled = true;
             btnText.textContent = 'Publicando...';
+            mostrarMensajeNoticia(mensajeEl, '⏳ Procesando...', 'info');
 
             try {
                 let imagenUrl = imagenUrlActual || '';
 
+                // Subir imagen SOLO si hay una seleccionada
                 if (imagenSeleccionada) {
-                    const path = 'noticias/';
-                    imagenUrl = await subirArchivo(imagenSeleccionada, path);
+                    try {
+                        const path = 'noticias/';
+                        imagenUrl = await subirArchivo(imagenSeleccionada, path);
+                        console.log('✅ Imagen subida:', imagenUrl);
+                    } catch (uploadError) {
+                        console.error('Error al subir imagen:', uploadError);
+                        mostrarMensajeNoticia(mensajeEl, '❌ Error al subir la imagen: ' + uploadError.message, 'error');
+                        btn.classList.remove('loading');
+                        btn.disabled = false;
+                        btnText.textContent = id ? 'Actualizar Noticia' : 'Publicar Noticia';
+                        return;
+                    }
+                }
+
+                // Si es edición y no hay imagen nueva, mantener la existente
+                if (id && !imagenSeleccionada && imagenUrlActual) {
+                    imagenUrl = imagenUrlActual;
                 }
 
                 const datos = {
@@ -552,18 +572,19 @@
 
                 if (id) {
                     await db.collection('noticias').doc(id).update(datos);
-                    mostrarMensajeNoticia(mensajeEl, '✅ Noticia actualizada', 'success');
+                    mostrarMensajeNoticia(mensajeEl, '✅ Noticia actualizada con éxito', 'success');
                 } else {
                     datos.creadoEn = new Date().toISOString();
-                    await db.collection('noticias').add(datos);
-                    mostrarMensajeNoticia(mensajeEl, '✅ Noticia publicada', 'success');
+                    const docRef = await db.collection('noticias').add(datos);
+                    console.log('✅ Noticia creada con ID:', docRef.id);
+                    mostrarMensajeNoticia(mensajeEl, '✅ Noticia publicada con éxito', 'success');
                 }
 
                 limpiarFormulario();
                 cargarNoticias();
 
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error al publicar noticia:', error);
                 mostrarMensajeNoticia(mensajeEl, '❌ Error: ' + error.message, 'error');
             }
 
