@@ -4,25 +4,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Videos y Presentaciones en Vivo | Los Hijos de Tencha</title>
 
     <meta name="description"
         content="Disfruta los videos oficiales, videoclips, sesiones en vivo y presentaciones de Los Hijos de Tencha, agrupación musical de Costa Rica.">
+
     <link rel="canonical" href="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/videoteca.html">
 
     <meta property="og:title" content="Videos y Presentaciones en Vivo | Los Hijos de Tencha">
+
     <meta property="og:description"
         content="Videoclips, sesiones en vivo y contenido audiovisual de Los Hijos de Tencha, agrupación musical de Costa Rica.">
+
     <meta property="og:image" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/img/hero.webp">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
+
     <meta property="og:url" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/videoteca.html">
+
     <meta property="og:type" content="website">
+
     <meta property="og:locale" content="es_CR">
+
     <meta property="og:site_name" content="Los Hijos de Tencha">
 
     <link rel="stylesheet" href="css/styles.css">
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <!-- Firebase SDKs -->
@@ -33,7 +41,9 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YNRK4G09LN"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
+        function gtag() {
+            dataLayer.push(arguments);
+        }
         gtag('js', new Date());
         gtag('config', 'G-YNRK4G09LN');
     </script>
@@ -191,7 +201,7 @@
         }
 
         /* =====================================
-           VIDEOTECA - DESDE FIREBASE
+           VIDEOTECA - CONTENIDO EXISTENTE + FIREBASE
            ===================================== */
         .videos-grid {
             display: grid;
@@ -248,6 +258,7 @@
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .video-card .video-meta .badge-categoria {
@@ -256,6 +267,15 @@
             padding: 2px 10px;
             border-radius: 12px;
             font-size: 0.65rem;
+            font-weight: 600;
+        }
+
+        .video-card .video-meta .badge-firebase {
+            background: rgba(255, 204, 0, 0.2);
+            color: #ffcc00;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.6rem;
             font-weight: 600;
         }
 
@@ -268,38 +288,27 @@
 
         .video-vacia {
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px;
             color: #666;
-            grid-column: 1 / -1;
         }
 
         .video-vacia i {
-            font-size: 3rem;
+            font-size: 2.5rem;
             display: block;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             opacity: 0.3;
         }
 
-        .video-vacia p {
-            font-size: 1.1rem;
+        .video-firebase {
+            border: 1px solid rgba(255, 204, 0, 0.15);
         }
 
-        .video-loading {
-            text-align: center;
-            padding: 60px 20px;
-            color: #888;
-            grid-column: 1 / -1;
-        }
-
-        .video-loading i {
-            font-size: 2.5rem;
-            display: block;
-            margin-bottom: 16px;
-            color: #ffcc00;
+        .video-firebase:hover {
+            border-color: rgba(255, 204, 0, 0.4);
         }
 
         /* =====================================
-           MOMENTOS TENCHA - DESDE FIREBASE
+           MOMENTOS TENCHA - CONTENIDO EXISTENTE + FIREBASE
            ===================================== */
         .momentos-grid {
             display: grid;
@@ -355,6 +364,7 @@
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .momento-card .momento-meta .badge-categoria {
@@ -366,28 +376,44 @@
             font-weight: 600;
         }
 
+        .momento-card .momento-meta .badge-firebase {
+            background: rgba(255, 204, 0, 0.2);
+            color: #ffcc00;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.6rem;
+            font-weight: 600;
+        }
+
         .momento-card p {
             padding: 0 20px 22px;
             color: #bdbdbd;
             font-size: .95rem;
         }
 
+        .momento-firebase {
+            border: 1px solid rgba(255, 204, 0, 0.15);
+        }
+
+        .momento-firebase:hover {
+            border-color: rgba(255, 204, 0, 0.4);
+        }
+
         .momento-vacia {
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px;
             color: #666;
-            grid-column: 1 / -1;
         }
 
         .momento-vacia i {
-            font-size: 3rem;
+            font-size: 2.5rem;
             display: block;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             opacity: 0.3;
         }
 
         /* =====================================
-           FILTROS DINÁMICOS
+           FILTROS - CONTENIDO EXISTENTE + FIREBASE
            ===================================== */
         .filtros-videos {
             display: flex;
@@ -420,6 +446,16 @@
             background: #ffcc00;
             color: #000;
             border-color: #ffcc00;
+        }
+
+        .filtros-videos .filtro-btn.filtro-firebase {
+            border-color: #ffcc00;
+            color: #ffcc00;
+        }
+
+        .filtros-videos .filtro-btn.filtro-firebase.active {
+            background: #ffcc00;
+            color: #000;
         }
 
         @media (max-width: 768px) {
@@ -533,9 +569,6 @@
             }
         }
 
-        /* =====================================
-           ANIMACIONES
-           ===================================== */
         .animar {
             opacity: 0;
             transform: translateY(50px) scale(0.95);
@@ -578,14 +611,17 @@
 <body>
 
     <header class="hero-videoteca">
+
         <nav>
             <a href="index.html" class="logo">
                 <img src="img/logo.webp" alt="Los Hijos de Tencha">
             </a>
+
             <button id="menu-btn" class="menu-btn">
                 <img src="img/menu-icono.webp" alt="Menú">
                 <span>Menú</span>
             </button>
+
             <ul class="menu">
                 <li><a href="index.html">Inicio</a></li>
                 <li><a href="index.html#banda">La Banda</a></li>
@@ -600,70 +636,98 @@
                 <li><a href="index.html#contacto">Contacto</a></li>
                 <li><a href="admin/" style="color: #ffcc00; font-weight: 700;">⚙️ Admin</a></li>
             </ul>
+
         </nav>
+
         <div class="titulo-videoteca">
+
             <span>LOS HIJOS DE TENCHA</span>
             <h1>VIDEOS OFICIALES</h1>
-            <p>Videoclips, sesiones en vivo y presentaciones de la agrupación musical costarricense Los Hijos de Tencha.
+            <p>
+                Videoclips, sesiones en vivo y presentaciones de la agrupación musical costarricense Los Hijos de
+                Tencha.
             </p>
+
         </div>
+
     </header>
 
-    <!-- =====================================
-    VIDEOS OFICIALES - DESDE FIREBASE
-    ===================================== -->
     <section class="canciones animar">
+
         <div class="contenedor">
+
             <div class="titulo-seccion">
                 <span>Contenido audiovisual</span>
                 <h2>Galería de Videos</h2>
             </div>
 
-            <!-- Filtros (se generan dinámicamente) -->
+            <!-- Filtros: EXISTENTES + FIREBASE -->
             <div class="filtros-videos" id="filtrosVideos">
-                <!-- Se llena desde JavaScript -->
+                <button class="filtro-btn active" data-filtro="todas">📹 Todas</button>
+                <button class="filtro-btn" data-filtro="oficial">🎥 Oficiales</button>
+                <button class="filtro-btn" data-filtro="momentos">🎬 Momentos Tencha</button>
+                <button class="filtro-btn" data-filtro="en_vivo">🎤 En Vivo</button>
+                <!-- Las categorías de Firebase se agregan aquí -->
+                <div id="filtrosFirebaseContainer" style="display:inline-flex; gap:10px; flex-wrap:wrap;"></div>
             </div>
 
+            <!-- VIDEOS: EXISTENTES + FIREBASE -->
             <div class="videos-grid" id="videosGrid">
-                <div class="video-loading">
-                    <i class="fa-solid fa-spinner fa-spin"></i>
-                    <p>Cargando videos...</p>
-                </div>
+                <!-- Los videos se cargan desde JavaScript (existentes + Firebase) -->
             </div>
+
         </div>
+
     </section>
 
     <!-- =====================================
-    MOMENTOS TENCHA - DESDE FIREBASE
+    MOMENTOS TENCHA - EXISTENTES + FIREBASE
     ===================================== -->
+
     <section id="momentos-tencha" class="momentos-tencha animar">
+
         <div class="contenedor">
+
             <div class="titulo-seccion">
+
                 <span>EXCLUSIVO</span>
                 <h2>Momentos Tencha</h2>
-                <p>Revive conciertos, momentos especiales y escenas detrás del escenario que forman parte de la historia
-                    de Los Hijos de Tencha.</p>
+                <p>
+                    Revive conciertos, momentos especiales y escenas detrás del escenario que forman parte de la
+                    historia de Los Hijos de Tencha.
+                </p>
+
             </div>
 
             <div class="momentos-grid" id="momentosGrid">
-                <div class="video-loading">
-                    <i class="fa-solid fa-spinner fa-spin"></i>
-                    <p>Cargando momentos...</p>
-                </div>
+                <!-- Los Momentos Tencha se cargan desde JavaScript (existentes + Firebase) -->
             </div>
+
         </div>
+
     </section>
 
     <footer>
-        <img src="img/logo.webp" alt="Logo Los Hijos de Tencha">
-        <p>Los Hijos de Tencha © 2026</p>
-        <p class="credito-web">Diseñado por <a href="https://www.instagram.com/tavo_musico" target="_blank"
-                rel="noopener noreferrer">Tavo Músico</a></p>
+
+        <img src="img/logo.webp" alt="Los Hijos de Tencha">
+
+        <p>
+            Los Hijos de Tencha © 2026
+        </p>
+
+        <p class="credito-web">
+            Diseñado por
+            <a href="https://www.instagram.com/tavo_musico" target="_blank" rel="noopener noreferrer">
+                Tavo Músico
+            </a>
+        </p>
+
     </footer>
 
-    <button id="subir"><i class="fa-solid fa-arrow-up"></i></button>
+    <button id="subir">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
 
-    <!-- Pantalla de transición (desactivada) -->
     <div id="transicion">
         <img src="img/transicion.gif" alt="Transición">
     </div>
@@ -688,257 +752,87 @@
         const db = firebase.firestore();
 
         // ============================================================
-        // VARIABLES GLOBALES
+        // VIDEOS EXISTENTES (HTML FIJO)
         // ============================================================
+        const videosExistentes = [{
+            id: 'existente-1',
+            titulo: 'No estamos solos ft. Gonín & MigueLion',
+            descripcion: 'Videoclip oficial de la colaboración entre Los Hijos de Tencha, Gonín y MigueLion.',
+            categoria: 'oficial',
+            url: 'https://www.youtube.com/embed/7XbLvFXdjQE',
+            fuente: 'youtube'
+        }, {
+            id: 'existente-2',
+            titulo: 'Un Sentimiento',
+            descripcion: 'Videoclip oficial de la canción grabado en Casa de Jimmy Studio',
+            categoria: 'oficial',
+            url: 'https://www.youtube.com/embed/ccbOePBayEg',
+            fuente: 'youtube'
+        }, {
+            id: 'existente-3',
+            titulo: 'Sesiones del Templo - En Vivo',
+            descripcion: 'Sesión grabada el 12 de octubre del 2025 con tres temas: La Cumbia Del Diablo, Hijos Del Campo & Mantequita Cacao',
+            categoria: 'oficial',
+            url: 'https://www.youtube.com/embed/NUpwUT9DPfA',
+            fuente: 'youtube'
+        }];
+
+        const momentosExistentes = [{
+            id: 'momento-1',
+            titulo: 'Lanzamiento de Cumbia Salvaje',
+            descripcion: 'Bar Starview · 24 Julio 2026',
+            categoria: 'momentos',
+            url: 'https://player.cloudinary.com/embed/?cloud_name=ldiiqgdp&public_id=Cumbia_Salvaje1_owfcue',
+            fuente: 'cloudinary'
+        }, {
+            id: 'momento-2',
+            titulo: 'Lanzamiento de Cumbia Salvaje',
+            descripcion: 'Bar Starview · 24 Julio 2026',
+            categoria: 'momentos',
+            url: 'https://player.cloudinary.com/embed/?cloud_name=ldiiqgdp&public_id=Cumbia_Salvaje_3_fc5gkn',
+            fuente: 'cloudinary'
+        }, {
+            id: 'momento-3',
+            titulo: 'Lanzamiento de Cumbia Salvaje',
+            descripcion: 'Bar Starview · 24 Julio 2026',
+            categoria: 'momentos',
+            url: 'https://player.cloudinary.com/embed/?cloud_name=ldiiqgdp&public_id=Cumbia_Salvaje_2_nekncb',
+            fuente: 'cloudinary'
+        }, {
+            id: 'momento-4',
+            titulo: 'Los Hijos del Campo - En Vivo',
+            descripcion: 'Sesión en vivo desde el Templo',
+            categoria: 'momentos',
+            url: 'https://player.cloudinary.com/embed/?cloud_name=ldiiqgdp&public_id=Los_Hijos_del_Campo_ll5j1r',
+            fuente: 'cloudinary'
+        }, {
+            id: 'momento-5',
+            titulo: 'Bendita - En Vivo',
+            descripcion: 'Sesión en vivo desde el Templo',
+            categoria: 'momentos',
+            url: 'https://player.cloudinary.com/embed/?cloud_name=ldiiqgdp&public_id=Bendita_jraogx',
+            fuente: 'cloudinary'
+        }, {
+            id: 'momento-6',
+            titulo: 'El Vocho - Desde Arriba',
+            descripcion: 'Videoclip oficial',
+            categoria: 'momentos',
+            url: 'https://player.cloudinary.com/embed/?cloud_name=ldiiqgdp&public_id=Vocho_desde_arriba_c7xma6',
+            fuente: 'cloudinary'
+        }];
+
         let todosLosVideos = [];
         let filtroActual = 'todas';
+        let categoriasFirebase = [];
 
-        // Mapeo de categorías a nombres legibles
+        // ============================================================
+        // MAPEO DE CATEGORÍAS
+        // ============================================================
         const CATEGORIAS_NOMBRES = {
             'oficial': '🎥 Oficiales',
             'momentos': '🎬 Momentos Tencha',
             'en_vivo': '🎤 En Vivo'
         };
-
-        // ============================================================
-        // CARGAR VIDEOS DESDE FIREBASE
-        // ============================================================
-        async function cargarVideos() {
-            try {
-                const snapshot = await db.collection('videos')
-                    .orderBy('orden', 'asc')
-                    .get();
-
-                todosLosVideos = [];
-                snapshot.forEach(doc => {
-                    todosLosVideos.push({ id: doc.id, ...doc.data() });
-                });
-
-                // Ordenar: primero por orden, luego por fecha
-                todosLosVideos.sort((a, b) => {
-                    const ordenA = a.orden || 999;
-                    const ordenB = b.orden || 999;
-                    if (ordenA !== ordenB) return ordenA - ordenB;
-                    const fechaA = a.creadoEn ? new Date(a.creadoEn) : new Date(0);
-                    const fechaB = b.creadoEn ? new Date(b.creadoEn) : new Date(0);
-                    return fechaB - fechaA;
-                });
-
-                // Generar filtros dinámicamente
-                generarFiltros();
-
-                // Renderizar videos según filtro
-                renderizarVideos();
-
-                // Renderizar Momentos Tencha
-                renderizarMomentos();
-
-            } catch (error) {
-                console.error('Error al cargar videos:', error);
-                document.getElementById('videosGrid').innerHTML = `
-                            <div class="video-vacia">
-                                <i class="fa-solid fa-triangle-exclamation"></i>
-                                <p>Error al cargar los videos. Por favor, intenta más tarde.</p>
-                            </div>
-                        `;
-                document.getElementById('momentosGrid').innerHTML = `
-                            <div class="momento-vacia">
-                                <i class="fa-solid fa-triangle-exclamation"></i>
-                                <p>Error al cargar los momentos.</p>
-                            </div>
-                        `;
-            }
-        }
-
-        // ============================================================
-        // GENERAR FILTROS DINÁMICOS
-        // ============================================================
-        function generarFiltros() {
-            const container = document.getElementById('filtrosVideos');
-
-            // Obtener categorías únicas de los videos
-            const categoriasUnicas = [...new Set(todosLosVideos.map(v => v.categoria))];
-
-            let html = `<button class="filtro-btn active" data-filtro="todas" onclick="cambiarFiltro('todas', this)">📹 Todas</button>`;
-
-            categoriasUnicas.forEach(cat => {
-                const nombre = CATEGORIAS_NOMBRES[cat] || cat;
-                html += `<button class="filtro-btn" data-filtro="${cat}" onclick="cambiarFiltro('${cat}', this)">${nombre}</button>`;
-            });
-
-            container.innerHTML = html;
-        }
-
-        // ============================================================
-        // CAMBIAR FILTRO
-        // ============================================================
-        function cambiarFiltro(filtro, btn) {
-            filtroActual = filtro;
-
-            // Actualizar botones
-            document.querySelectorAll('.filtro-btn').forEach(b => {
-                b.classList.toggle('active', b === btn);
-            });
-
-            renderizarVideos();
-        }
-
-        // ============================================================
-        // RENDERIZAR VIDEOS (con filtro)
-        // ============================================================
-        function renderizarVideos() {
-            const grid = document.getElementById('videosGrid');
-
-            let filtrados = todosLosVideos;
-            if (filtroActual !== 'todas') {
-                filtrados = todosLosVideos.filter(v => v.categoria === filtroActual);
-            }
-
-            // Filtrar solo los que NO son "momentos" (para la sección principal)
-            const videosPrincipales = filtrados.filter(v => v.categoria !== 'momentos');
-
-            if (videosPrincipales.length === 0) {
-                grid.innerHTML = `
-                            <div class="video-vacia">
-                                <i class="fa-regular fa-circle-play"></i>
-                                <p>${todosLosVideos.length === 0 ? 'No hay videos disponibles aún.' : 'No hay videos en esta categoría.'}</p>
-                            </div>
-                        `;
-                return;
-            }
-
-            let html = '';
-            videosPrincipales.forEach(video => {
-                const titulo = video.titulo || 'Sin título';
-                const descripcion = video.descripcion || '';
-                const url = video.url || '';
-                const fecha = video.fecha ? formatearFecha(video.fecha) : '';
-                const categoriaNombre = CATEGORIAS_NOMBRES[video.categoria] || video.categoria;
-
-                // Determinar si es YouTube o Cloudinary
-                const esYoutube = url.includes('youtube.com/embed/') || url.includes('youtu.be/');
-
-                let playerHTML = '';
-                if (esYoutube) {
-                    // YouTube
-                    let youtubeUrl = url;
-                    if (!youtubeUrl.includes('youtube.com/embed/')) {
-                        youtubeUrl = normalizarYoutubeUrl(youtubeUrl);
-                    }
-                    playerHTML = `
-                                <div class="youtube-player">
-                                    <iframe src="${youtubeUrl}" title="${titulo}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                                </div>
-                            `;
-                } else {
-                    // Cloudinary - usar video HTML5
-                    playerHTML = `
-                                <div class="youtube-player">
-                                    <video controls preload="metadata">
-                                        <source src="${url}" type="video/mp4">
-                                        Tu navegador no soporta la reproducción de videos.
-                                    </video>
-                                </div>
-                            `;
-                }
-
-                html += `
-                            <div class="video-card">
-                                ${playerHTML}
-                                <div class="video-meta">
-                                    <span class="badge-categoria">${categoriaNombre}</span>
-                                    ${fecha ? `<span><i class="fa-regular fa-calendar"></i> ${fecha}</span>` : ''}
-                                    ${video.destacado ? '<span style="color:#ffcc00;">⭐ Destacado</span>' : ''}
-                                </div>
-                                <h3>${titulo}</h3>
-                                ${descripcion ? `<p>${descripcion}</p>` : ''}
-                            </div>
-                        `;
-            });
-
-            grid.innerHTML = html;
-
-            // Activar animaciones
-            document.querySelectorAll('.video-card').forEach((el, i) => {
-                setTimeout(() => {
-                    el.classList.add('visible');
-                }, 100 + (i * 80));
-            });
-        }
-
-        // ============================================================
-        // RENDERIZAR MOMENTOS TENCHA
-        // ============================================================
-        function renderizarMomentos() {
-            const grid = document.getElementById('momentosGrid');
-
-            // Filtrar solo los de categoría "momentos"
-            const momentos = todosLosVideos.filter(v => v.categoria === 'momentos');
-
-            if (momentos.length === 0) {
-                grid.innerHTML = `
-                            <div class="momento-vacia">
-                                <i class="fa-regular fa-clock"></i>
-                                <p>No hay momentos disponibles aún.</p>
-                            </div>
-                        `;
-                return;
-            }
-
-            let html = '';
-            momentos.forEach(video => {
-                const titulo = video.titulo || 'Sin título';
-                const descripcion = video.descripcion || '';
-                const url = video.url || '';
-                const fecha = video.fecha ? formatearFecha(video.fecha) : '';
-
-                // Determinar si es YouTube o Cloudinary
-                const esYoutube = url.includes('youtube.com/embed/') || url.includes('youtu.be/');
-
-                let playerHTML = '';
-                if (esYoutube) {
-                    let youtubeUrl = url;
-                    if (!youtubeUrl.includes('youtube.com/embed/')) {
-                        youtubeUrl = normalizarYoutubeUrl(youtubeUrl);
-                    }
-                    playerHTML = `
-                                <div class="youtube-player">
-                                    <iframe src="${youtubeUrl}" title="${titulo}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                                </div>
-                            `;
-                } else {
-                    playerHTML = `
-                                <div class="youtube-player">
-                                    <video controls preload="metadata">
-                                        <source src="${url}" type="video/mp4">
-                                        Tu navegador no soporta la reproducción de videos.
-                                    </video>
-                                </div>
-                            `;
-                }
-
-                html += `
-                            <div class="momento-card">
-                                ${playerHTML}
-                                <div class="momento-meta">
-                                    ${fecha ? `<span><i class="fa-regular fa-calendar"></i> ${fecha}</span>` : ''}
-                                    ${video.destacado ? '<span style="color:#ffcc00;">⭐ Destacado</span>' : ''}
-                                </div>
-                                <h3>${titulo}</h3>
-                                ${descripcion ? `<p>${descripcion}</p>` : ''}
-                            </div>
-                        `;
-            });
-
-            grid.innerHTML = html;
-
-            // Activar animaciones
-            document.querySelectorAll('.momento-card').forEach((el, i) => {
-                setTimeout(() => {
-                    el.classList.add('visible');
-                }, 100 + (i * 80));
-            });
-        }
 
         // ============================================================
         // FUNCIÓN: NORMALIZAR URL DE YOUTUBE
@@ -978,27 +872,267 @@
         }
 
         // ============================================================
-        // FUNCIÓN: FORMATEAR FECHA
+        // CARGAR VIDEOS DE FIREBASE
         // ============================================================
-        function formatearFecha(fecha) {
-            if (!fecha) return '';
+        async function cargarVideosFirebase() {
             try {
-                const d = new Date(fecha + 'T00:00:00');
-                const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-                ];
-                return d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear();
-            } catch (e) {
-                return fecha;
+                const snapshot = await db.collection('videos')
+                    .orderBy('orden', 'asc')
+                    .get();
+
+                const videosFirebase = [];
+                snapshot.forEach(doc => {
+                    videosFirebase.push({ id: doc.id, ...doc.data(), esFirebase: true });
+                });
+
+                // Ordenar
+                videosFirebase.sort((a, b) => {
+                    const ordenA = a.orden || 999;
+                    const ordenB = b.orden || 999;
+                    if (ordenA !== ordenB) return ordenA - ordenB;
+                    const fechaA = a.creadoEn ? new Date(a.creadoEn) : new Date(0);
+                    const fechaB = b.creadoEn ? new Date(b.creadoEn) : new Date(0);
+                    return fechaB - fechaA;
+                });
+
+                // Obtener categorías únicas de Firebase
+                const cats = new Set();
+                videosFirebase.forEach(v => {
+                    if (v.categoria) cats.add(v.categoria);
+                });
+                categoriasFirebase = Array.from(cats);
+
+                // Combinar: existentes + Firebase (Firebase después)
+                todosLosVideos = [...videosExistentes, ...videosFirebase];
+
+                // Generar filtros
+                generarFiltros();
+
+                // Renderizar videos
+                renderizarVideos();
+
+                // Renderizar Momentos Tencha (existentes + Firebase)
+                renderizarMomentos();
+
+            } catch (error) {
+                console.error('Error al cargar videos de Firebase:', error);
+                // Si hay error, mostrar solo los existentes
+                todosLosVideos = [...videosExistentes];
+                generarFiltros();
+                renderizarVideos();
+                renderizarMomentos();
             }
+        }
+
+        // ============================================================
+        // GENERAR FILTROS DINÁMICOS
+        // ============================================================
+        function generarFiltros() {
+            const container = document.getElementById('filtrosFirebaseContainer');
+
+            // Obtener categorías únicas de todos los videos
+            const categoriasUnicas = [...new Set(todosLosVideos.map(v => v.categoria))];
+            const categoriasFiltro = categoriasUnicas.filter(c => c !== 'oficial' && c !== 'momentos' && c !== 'en_vivo');
+
+            if (categoriasFiltro.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            categoriasFiltro.forEach(cat => {
+                const nombre = CATEGORIAS_NOMBRES[cat] || cat;
+                html += `<button class="filtro-btn filtro-firebase" data-filtro="${cat}">${nombre}</button>`;
+            });
+
+            container.innerHTML = html;
+
+            // Eventos a los botones de Firebase
+            container.querySelectorAll('.filtro-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const filtro = this.dataset.filtro;
+                    cambiarFiltro(filtro, this);
+                });
+            });
+        }
+
+        // ============================================================
+        // CAMBIAR FILTRO
+        // ============================================================
+        function cambiarFiltro(filtro, btn) {
+            filtroActual = filtro;
+
+            document.querySelectorAll('.filtro-btn').forEach(b => {
+                b.classList.toggle('active', b === btn);
+            });
+
+            renderizarVideos();
+        }
+
+        // ============================================================
+        // RENDERIZAR VIDEOS (EXISTENTES + FIREBASE)
+        // ============================================================
+        function renderizarVideos() {
+            const grid = document.getElementById('videosGrid');
+
+            let filtrados = todosLosVideos;
+            if (filtroActual !== 'todas') {
+                filtrados = todosLosVideos.filter(v => v.categoria === filtroActual);
+            }
+
+            // Filtrar Momentos (van en la otra sección)
+            const videosPrincipales = filtrados.filter(v => v.categoria !== 'momentos');
+
+            if (videosPrincipales.length === 0) {
+                grid.innerHTML = `
+                            <div class="video-vacia">
+                                <i class="fa-regular fa-circle-play"></i>
+                                <p>${todosLosVideos.length === 0 ? 'No hay videos disponibles aún.' : 'No hay videos en esta categoría.'}</p>
+                            </div>
+                        `;
+                return;
+            }
+
+            let html = '';
+            videosPrincipales.forEach(video => {
+                const titulo = video.titulo || 'Sin título';
+                const descripcion = video.descripcion || '';
+                const url = video.url || '';
+                const esFirebase = video.esFirebase || false;
+                const categoriaNombre = CATEGORIAS_NOMBRES[video.categoria] || video.categoria;
+                const badgeFirebase = esFirebase ? '<span class="badge-firebase">📌 Admin</span>' : '';
+                const claseFirebase = esFirebase ? 'video-firebase' : '';
+
+                // Determinar si es YouTube o Cloudinary
+                const esYoutube = url.includes('youtube.com/embed/') || url.includes('youtu.be/');
+
+                let playerHTML = '';
+                if (esYoutube) {
+                    let youtubeUrl = url;
+                    if (!youtubeUrl.includes('youtube.com/embed/')) {
+                        youtubeUrl = normalizarYoutubeUrl(youtubeUrl);
+                    }
+                    playerHTML = `
+                                <div class="youtube-player">
+                                    <iframe src="${youtubeUrl}" title="${titulo}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                </div>
+                            `;
+                } else {
+                    playerHTML = `
+                                <div class="youtube-player">
+                                    <video controls preload="metadata">
+                                        <source src="${url}" type="video/mp4">
+                                        Tu navegador no soporta la reproducción de videos.
+                                    </video>
+                                </div>
+                            `;
+                }
+
+                html += `
+                            <div class="video-card ${claseFirebase}">
+                                ${playerHTML}
+                                <div class="video-meta">
+                                    <span class="badge-categoria">${categoriaNombre}</span>
+                                    ${badgeFirebase}
+                                    ${video.destacado ? '<span style="color:#ffcc00;">⭐ Destacado</span>' : ''}
+                                </div>
+                                <h3>${titulo}</h3>
+                                ${descripcion ? `<p>${descripcion}</p>` : ''}
+                            </div>
+                        `;
+            });
+
+            grid.innerHTML = html;
+
+            // Activar animaciones
+            document.querySelectorAll('.videos-grid .video-card').forEach((el, i) => {
+                setTimeout(() => {
+                    el.classList.add('visible');
+                }, 100 + (i * 80));
+            });
+        }
+
+        // ============================================================
+        // RENDERIZAR MOMENTOS TENCHA (EXISTENTES + FIREBASE)
+        // ============================================================
+        function renderizarMomentos() {
+            const grid = document.getElementById('momentosGrid');
+
+            // Todos los videos de categoría "momentos" (existentes + Firebase)
+            const momentos = todosLosVideos.filter(v => v.categoria === 'momentos');
+
+            if (momentos.length === 0) {
+                grid.innerHTML = `
+                            <div class="momento-vacia">
+                                <i class="fa-regular fa-clock"></i>
+                                <p>No hay momentos disponibles aún.</p>
+                            </div>
+                        `;
+                return;
+            }
+
+            let html = '';
+            momentos.forEach(video => {
+                const titulo = video.titulo || 'Sin título';
+                const descripcion = video.descripcion || '';
+                const url = video.url || '';
+                const esFirebase = video.esFirebase || false;
+                const badgeFirebase = esFirebase ? '<span class="badge-firebase">📌 Admin</span>' : '';
+                const claseFirebase = esFirebase ? 'momento-firebase' : '';
+
+                const esYoutube = url.includes('youtube.com/embed/') || url.includes('youtu.be/');
+
+                let playerHTML = '';
+                if (esYoutube) {
+                    let youtubeUrl = url;
+                    if (!youtubeUrl.includes('youtube.com/embed/')) {
+                        youtubeUrl = normalizarYoutubeUrl(youtubeUrl);
+                    }
+                    playerHTML = `
+                                <div class="youtube-player">
+                                    <iframe src="${youtubeUrl}" title="${titulo}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                </div>
+                            `;
+                } else {
+                    playerHTML = `
+                                <div class="youtube-player">
+                                    <video controls preload="metadata">
+                                        <source src="${url}" type="video/mp4">
+                                        Tu navegador no soporta la reproducción de videos.
+                                    </video>
+                                </div>
+                            `;
+                }
+
+                html += `
+                            <div class="momento-card ${claseFirebase}">
+                                ${playerHTML}
+                                <div class="momento-meta">
+                                    ${badgeFirebase}
+                                    ${video.destacado ? '<span style="color:#ffcc00;">⭐ Destacado</span>' : ''}
+                                </div>
+                                <h3>${titulo}</h3>
+                                ${descripcion ? `<p>${descripcion}</p>` : ''}
+                            </div>
+                        `;
+            });
+
+            grid.innerHTML = html;
+
+            // Activar animaciones
+            document.querySelectorAll('.momentos-grid .momento-card').forEach((el, i) => {
+                setTimeout(() => {
+                    el.classList.add('visible');
+                }, 100 + (i * 80));
+            });
         }
 
         // ============================================================
         // INICIALIZAR
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
-            cargarVideos();
-            console.log('🚀 Videoteca conectada a Firebase');
+            cargarVideosFirebase();
+            console.log('🚀 Videoteca: contenido existente + Firebase');
         });
     </script>
 
