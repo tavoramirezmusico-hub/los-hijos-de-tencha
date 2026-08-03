@@ -574,8 +574,7 @@
                     <label for="videoUrl">URL de YouTube *</label>
                     <input type="url" id="videoUrl" class="admin-input"
                         placeholder="Pega cualquier URL de YouTube (youtu.be, youtube.com/watch, etc.)">
-                    <div class="form-help">El sistema la convertirá automáticamente al formato correcto. Puedes pegar
-                        cualquier formato.</div>
+                    <div class="form-help">El sistema la convertirá automáticamente al formato correcto.</div>
                 </div>
             </div>
 
@@ -614,8 +613,7 @@
                         <label for="videoPublicId">ID Público (metadato personalizado)</label>
                         <input type="text" id="videoPublicId" class="admin-input"
                             placeholder="Ej: cumbia-salvaje-lanzamiento">
-                        <div class="form-help">Identificador único para el video en Cloudinary. Solo letras, números y
-                            guiones.</div>
+                        <div class="form-help">Identificador único para el video en Cloudinary.</div>
                     </div>
                 </div>
             </div>
@@ -851,60 +849,50 @@
         }
 
         // ============================================================
-        // FUNCIÓN: NORMALIZAR URL DE YOUTUBE (CONVIERTE CUALQUIER FORMATO)
+        // FUNCIÓN: NORMALIZAR URL DE YOUTUBE
         // ============================================================
         function normalizarYoutubeUrl(url) {
             if (!url) return '';
 
-            // Si ya es embed correcto, devolver tal cual
+            url = url.trim();
+
+            // Ya es embed correcto
             if (url.includes('youtube.com/embed/')) {
-                // Limpiar parámetros extra
                 const match = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/);
-                if (match) {
-                    return 'https://www.youtube.com/embed/' + match[1];
-                }
+                if (match) return 'https://www.youtube.com/embed/' + match[1];
                 return url;
             }
 
-            // Si es youtu.be/ (formato corto)
+            // youtu.be/ID
             if (url.includes('youtu.be/')) {
                 const match = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
-                if (match) {
-                    return 'https://www.youtube.com/embed/' + match[1];
-                }
+                if (match) return 'https://www.youtube.com/embed/' + match[1];
             }
 
-            // Si es youtube.com/watch?v=
+            // youtube.com/watch?v=ID
             if (url.includes('youtube.com/watch')) {
                 try {
                     const urlObj = new URL(url);
                     const videoId = urlObj.searchParams.get('v');
-                    if (videoId) {
-                        return 'https://www.youtube.com/embed/' + videoId;
-                    }
-                } catch (e) { }
-            }
-
-            // Si es youtube.com/v/ (formato viejo)
-            if (url.includes('youtube.com/v/')) {
-                const match = url.match(/youtube\.com\/v\/([a-zA-Z0-9_-]+)/);
-                if (match) {
-                    return 'https://www.youtube.com/embed/' + match[1];
+                    if (videoId) return 'https://www.youtube.com/embed/' + videoId;
+                } catch (e) {
+                    const match = url.match(/[?&]v=([a-zA-Z0-9_-]+)/);
+                    if (match) return 'https://www.youtube.com/embed/' + match[1];
                 }
             }
 
-            // Si es m.youtube.com (móvil)
-            if (url.includes('m.youtube.com')) {
-                try {
-                    const urlObj = new URL(url);
-                    const videoId = urlObj.searchParams.get('v');
-                    if (videoId) {
-                        return 'https://www.youtube.com/embed/' + videoId;
-                    }
-                } catch (e) { }
+            // youtube.com/shorts/ID
+            if (url.includes('youtube.com/shorts/')) {
+                const match = url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/);
+                if (match) return 'https://www.youtube.com/embed/' + match[1];
             }
 
-            // Si no se pudo convertir, devolver la original
+            // youtube.com/embed/ con parámetros extra
+            if (url.includes('youtube.com/embed/')) {
+                const match = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/);
+                if (match) return 'https://www.youtube.com/embed/' + match[1];
+            }
+
             return url;
         }
 
@@ -951,7 +939,6 @@
             document.getElementById('optCloudinary').classList.toggle('active-option', opcion === 'cloudinary');
             document.getElementById('uploadYoutube').classList.toggle('active', opcion === 'youtube');
             document.getElementById('uploadCloudinary').classList.toggle('active', opcion === 'cloudinary');
-            document.getElementById('videoUrl').required = (opcion === 'youtube');
         }
 
         // ============================================================
@@ -1018,7 +1005,7 @@
         }
 
         // ============================================================
-        // FUNCIONES CRUD
+        // FUNCIONES CRUD - CORREGIDAS
         // ============================================================
 
         async function guardarVideo() {
@@ -1081,20 +1068,25 @@
                     actualizadoEn: new Date().toISOString()
                 };
 
-                // 🔥 VERIFICAR SI EL DOCUMENTO EXISTE ANTES DE ACTUALIZAR
+                // Si es edición, verificar que el documento existe
                 if (id) {
                     const docRef = db.collection('videos').doc(id);
                     const docSnap = await docRef.get();
                     if (!docSnap.exists) {
-                        mostrarMensajeVideo(mensajeEl, '❌ El video que intentas actualizar ya no existe. Se creará uno nuevo.', 'warning');
-                        // Limpiar el ID para que se cree uno nuevo
-                        document.getElementById('videoId').value = '';
-                        // Intentar guardar como nuevo
-                        await guardarVideo();
+                        // El documento no existe, crear uno nuevo
+                        datos.creadoEn = new Date().toISOString();
+                        await db.collection('videos').add(datos);
+                        mostrarMensajeVideo(mensajeEl, '✅ Video guardado como nuevo (el anterior no existía)', 'success');
+                        limpiarFormulario();
+                        cargarVideos();
+                        btn.classList.remove('loading');
+                        btn.disabled = false;
+                        btnText.textContent = 'Guardar Video';
                         return;
                     }
                 }
 
+                // Gestionar destacado
                 if (destacado) {
                     const snapshot = await db.collection('videos')
                         .where('categoria', '==', categoria)
@@ -1132,7 +1124,7 @@
                 cargarVideos();
 
             } catch (error) {
-                console.error('Error al guardar video:', error);
+                console.error('❌ Error al guardar video:', error);
                 mostrarMensajeVideo(mensajeEl, '❌ Error: ' + error.message, 'error');
             }
 
@@ -1266,7 +1258,6 @@
 
             titulo.innerHTML = '<i class="fa-solid fa-play"></i> ' + sanitizar(video.titulo);
 
-            // Detectar si es YouTube o Cloudinary
             if (video.url.includes('youtube.com/embed/')) {
                 container.innerHTML = `
                             <iframe src="${video.url}?autoplay=1&rel=0" 
@@ -1275,7 +1266,6 @@
                             </iframe>
                         `;
             } else {
-                // Cloudinary - usar video HTML5
                 container.innerHTML = `
                             <video controls autoplay style="width:100%; height:100%; background:#000;">
                                 <source src="${video.url}" type="video/mp4">
@@ -1321,7 +1311,6 @@
                     document.getElementById('videoUrl').value = '';
                 } else {
                     switchUploadOption('youtube');
-                    // Mostrar la URL original (la que el usuario pegó)
                     document.getElementById('videoUrl').value = data.url || '';
                     document.getElementById('videoUrlCloudinary').value = '';
                 }
