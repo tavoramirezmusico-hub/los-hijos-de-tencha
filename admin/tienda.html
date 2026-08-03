@@ -177,6 +177,18 @@
             margin-bottom: 12px;
         }
 
+        .recargar-btn {
+            margin-left: 8px;
+            background: var(--color-bg-hover);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+        }
+
+        .recargar-btn:hover {
+            background: #2a2a2a;
+            transform: rotate(180deg);
+        }
+
         @media (max-width: 768px) {
             .producto-item {
                 flex-direction: column;
@@ -342,7 +354,8 @@
                         <i class="fa-solid fa-folder-open"></i> Seleccionar
                     </button>
                 </div>
-                <div class="form-help">Formatos permitidos: JPG, PNG, WEBP. Tamaño recomendado: 800x800px</div>
+                <div class="form-help">Formatos: JPG, PNG, WEBP. Máximo 5MB. Se subirá a Cloudinary automáticamente.
+                </div>
             </div>
 
             <div class="image-preview" id="imagePreview">
@@ -393,6 +406,10 @@
                 <h3><i class="fa-solid fa-list"></i> Productos</h3>
                 <div class="card-actions">
                     <span id="productosCount" style="font-size:0.75rem; color:var(--color-text-muted);"></span>
+                    <button class="btn-admin btn-secondary btn-sm recargar-btn" onclick="recargarTienda()"
+                        title="Recargar lista de productos">
+                        <i class="fa-solid fa-rotate"></i>
+                    </button>
                 </div>
             </div>
 
@@ -416,12 +433,63 @@
 
     <script>
         // ============================================================
+        // CONFIGURACIÓN DE CLOUDINARY
+        // ============================================================
+        const CLOUDINARY_CONFIG = {
+            cloudName: 'ldiiqgdp',
+            uploadPreset: 'tencha_uploads',
+            uploadUrl: 'https://api.cloudinary.com/v1_1/ldiiqgdp/image/upload'
+        };
+
+        // ============================================================
         // VARIABLES GLOBALES
         // ============================================================
         let productos = [];
         let editandoId = null;
         let imagenSeleccionada = null;
         let imagenUrlActual = null;
+
+        // ============================================================
+        // FUNCIÓN: RECARGAR TIENDA
+        // ============================================================
+        function recargarTienda() {
+            mostrarToast('🔄 Recargando tienda...', 'info');
+            cargarProductos().then(() => {
+                mostrarToast('✅ Tienda recargada', 'success');
+            }).catch(() => {
+                mostrarToast('❌ Error al recargar tienda', 'error');
+            });
+        }
+
+        // ============================================================
+        // FUNCIÓN: SUBIR IMAGEN A CLOUDINARY
+        // ============================================================
+        async function subirImagenCloudinary(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
+            formData.append('folder', 'tienda');
+
+            try {
+                const response = await fetch(CLOUDINARY_CONFIG.uploadUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('❌ Error Cloudinary:', errorData);
+                    throw new Error(errorData.error?.message || 'Error al subir a Cloudinary');
+                }
+
+                const data = await response.json();
+                console.log('✅ Imagen subida a Cloudinary:', data.secure_url);
+                return data.secure_url;
+            } catch (error) {
+                console.error('❌ Error en subirImagenCloudinary:', error);
+                throw error;
+            }
+        }
 
         // ============================================================
         // SIDEBAR
@@ -464,6 +532,7 @@
             if (!elemento) return;
             elemento.style.display = 'block';
             elemento.textContent = texto;
+            elemento.className = 'admin-form-group ' + tipo;
 
             const colors = {
                 'success': 'var(--color-success)',
@@ -526,9 +595,25 @@
             try {
                 let imagenUrl = imagenUrlActual;
 
+                // Subir imagen a Cloudinary en lugar de Firebase Storage
                 if (imagenSeleccionada) {
-                    const path = 'tienda/';
-                    imagenUrl = await subirArchivo(imagenSeleccionada, path);
+                    try {
+                        console.log('📤 Subiendo imagen a Cloudinary:', imagenSeleccionada.name);
+                        imagenUrl = await subirImagenCloudinary(imagenSeleccionada);
+                        console.log('✅ Imagen subida a Cloudinary:', imagenUrl);
+                    } catch (uploadError) {
+                        console.error('❌ Error al subir imagen a Cloudinary:', uploadError);
+                        mostrarMensajeProducto(mensajeEl, '❌ Error al subir la imagen: ' + uploadError.message, 'error');
+                        btn.classList.remove('loading');
+                        btn.disabled = false;
+                        btnText.textContent = id ? 'Actualizar Producto' : 'Guardar Producto';
+                        return;
+                    }
+                }
+
+                // Si es edición y no hay imagen nueva, mantener la existente
+                if (id && !imagenSeleccionada && imagenUrlActual) {
+                    imagenUrl = imagenUrlActual;
                 }
 
                 const datos = {
@@ -556,7 +641,7 @@
                 cargarProductos();
 
             } catch (error) {
-                console.error('Error al guardar producto:', error);
+                console.error('❌ Error al guardar producto:', error);
                 mostrarMensajeProducto(mensajeEl, '❌ Error: ' + error.message, 'error');
             }
 
@@ -573,7 +658,6 @@
                     throw new Error('Firebase no disponible');
                 }
 
-                // 🔥 SIN orderBy compuestos - SOLO UN CAMPO
                 const snapshot = await db.collection('productos')
                     .orderBy('creadoEn', 'desc')
                     .get();
@@ -583,7 +667,6 @@
                     productos.push({ id: doc.id, ...doc.data() });
                 });
 
-                // Ordenar en memoria por 'orden' si existe
                 productos.sort((a, b) => {
                     const ordenA = a.orden || 999;
                     const ordenB = b.orden || 999;
@@ -714,16 +797,10 @@
             }
 
             try {
-                if (producto.imagen) {
-                    try {
-                        await eliminarArchivo(producto.imagen);
-                    } catch (e) {
-                        console.warn('No se pudo eliminar la imagen:', e);
-                    }
-                }
-
+                // La imagen está en Cloudinary, no podemos eliminarla fácilmente
+                // La dejamos en Cloudinary pero la eliminamos de Firestore
                 await db.collection('productos').doc(id).delete();
-                mostrarToast('✅ Producto eliminado', 'success');
+                mostrarToast('✅ Producto eliminado de la tienda', 'success');
                 cargarProductos();
 
                 if (editandoId === id) {
@@ -817,7 +894,7 @@
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
             cargarProductos();
-            console.log('🚀 Gestor de Tienda cargado');
+            console.log('🚀 Gestor de Tienda cargado con Cloudinary');
         });
 
         document.addEventListener('keydown', function (e) {
