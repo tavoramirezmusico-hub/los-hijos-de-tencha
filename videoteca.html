@@ -4,33 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Videos y Presentaciones en Vivo | Los Hijos de Tencha</title>
 
     <meta name="description"
         content="Disfruta los videos oficiales, videoclips, sesiones en vivo y presentaciones de Los Hijos de Tencha, agrupación musical de Costa Rica.">
-
     <link rel="canonical" href="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/videoteca.html">
 
     <meta property="og:title" content="Videos y Presentaciones en Vivo | Los Hijos de Tencha">
-
     <meta property="og:description"
         content="Videoclips, sesiones en vivo y contenido audiovisual de Los Hijos de Tencha, agrupación musical de Costa Rica.">
-
     <meta property="og:image" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/img/hero.webp">
-
     <meta property="og:url" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/videoteca.html">
-
     <meta property="og:type" content="website">
-
     <meta property="og:locale" content="es_CR">
-
     <meta property="og:site_name" content="Los Hijos de Tencha">
 
     <link rel="stylesheet" href="css/styles.css">
-
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <!-- Firebase SDKs -->
@@ -41,17 +31,12 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YNRK4G09LN"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag() {
-            dataLayer.push(arguments);
-        }
+        function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
         gtag('config', 'G-YNRK4G09LN');
     </script>
 
     <style>
-        /* =====================================
-           MENÚ CON SCROLL HORIZONTAL
-           ===================================== */
         .menu {
             display: flex;
             gap: 8px;
@@ -120,9 +105,6 @@
             }
         }
 
-        /* =====================================
-           HERO VIDEOTECA
-           ===================================== */
         .hero-videoteca {
             min-height: 50vh;
             background:
@@ -200,9 +182,6 @@
             }
         }
 
-        /* =====================================
-           VIDEOTECA - CONTENIDO EXISTENTE + FIREBASE
-           ===================================== */
         .videos-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -307,9 +286,6 @@
             border-color: rgba(255, 204, 0, 0.4);
         }
 
-        /* =====================================
-           MOMENTOS TENCHA - CONTENIDO EXISTENTE + FIREBASE
-           ===================================== */
         .momentos-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
@@ -412,9 +388,6 @@
             opacity: 0.3;
         }
 
-        /* =====================================
-           FILTROS - CONTENIDO EXISTENTE + FIREBASE
-           ===================================== */
         .filtros-videos {
             display: flex;
             gap: 10px;
@@ -611,17 +584,14 @@
 <body>
 
     <header class="hero-videoteca">
-
         <nav>
             <a href="index.html" class="logo">
                 <img src="img/logo.webp" alt="Los Hijos de Tencha">
             </a>
-
             <button id="menu-btn" class="menu-btn">
                 <img src="img/menu-icono.webp" alt="Menú">
                 <span>Menú</span>
             </button>
-
             <ul class="menu">
                 <li><a href="index.html">Inicio</a></li>
                 <li><a href="index.html#banda">La Banda</a></li>
@@ -634,99 +604,63 @@
                 <li><a href="index.html#integrantes">Integrantes</a></li>
                 <li><a href="index.html#tienda">Tienda</a></li>
                 <li><a href="index.html#contacto">Contacto</a></li>
-                <li><a href="admin/" style="color: #ffcc00; font-weight: 700;">⚙️ Admin</a></li>
+                <li><a href="admin/dashboard.html" style="color: #ffcc00; font-weight: 700;">⚙️ Admin</a></li>
             </ul>
-
         </nav>
-
         <div class="titulo-videoteca">
-
             <span>LOS HIJOS DE TENCHA</span>
             <h1>VIDEOS OFICIALES</h1>
-            <p>
-                Videoclips, sesiones en vivo y presentaciones de la agrupación musical costarricense Los Hijos de
-                Tencha.
+            <p>Videoclips, sesiones en vivo y presentaciones de la agrupación musical costarricense Los Hijos de Tencha.
             </p>
-
         </div>
-
     </header>
 
     <section class="canciones animar">
-
         <div class="contenedor">
-
             <div class="titulo-seccion">
                 <span>Contenido audiovisual</span>
                 <h2>Galería de Videos</h2>
             </div>
 
-            <!-- Filtros: EXISTENTES + FIREBASE -->
+            <!-- Filtros -->
             <div class="filtros-videos" id="filtrosVideos">
                 <button class="filtro-btn active" data-filtro="todas">📹 Todas</button>
                 <button class="filtro-btn" data-filtro="oficial">🎥 Oficiales</button>
                 <button class="filtro-btn" data-filtro="momentos">🎬 Momentos Tencha</button>
                 <button class="filtro-btn" data-filtro="en_vivo">🎤 En Vivo</button>
-                <!-- Las categorías de Firebase se agregan aquí -->
                 <div id="filtrosFirebaseContainer" style="display:inline-flex; gap:10px; flex-wrap:wrap;"></div>
             </div>
 
-            <!-- VIDEOS: EXISTENTES + FIREBASE -->
+            <!-- VIDEOS -->
             <div class="videos-grid" id="videosGrid">
-                <!-- Los videos se cargan desde JavaScript (existentes + Firebase) -->
+                <!-- Se carga desde JavaScript -->
             </div>
-
         </div>
-
     </section>
 
-    <!-- =====================================
-    MOMENTOS TENCHA - EXISTENTES + FIREBASE
-    ===================================== -->
-
+    <!-- MOMENTOS TENCHA -->
     <section id="momentos-tencha" class="momentos-tencha animar">
-
         <div class="contenedor">
-
             <div class="titulo-seccion">
-
                 <span>EXCLUSIVO</span>
                 <h2>Momentos Tencha</h2>
-                <p>
-                    Revive conciertos, momentos especiales y escenas detrás del escenario que forman parte de la
-                    historia de Los Hijos de Tencha.
-                </p>
-
+                <p>Revive conciertos, momentos especiales y escenas detrás del escenario que forman parte de la historia
+                    de Los Hijos de Tencha.</p>
             </div>
-
             <div class="momentos-grid" id="momentosGrid">
-                <!-- Los Momentos Tencha se cargan desde JavaScript (existentes + Firebase) -->
+                <!-- Se carga desde JavaScript -->
             </div>
-
         </div>
-
     </section>
 
     <footer>
-
-        <img src="img/logo.webp" alt="Los Hijos de Tencha">
-
-        <p>
-            Los Hijos de Tencha © 2026
-        </p>
-
-        <p class="credito-web">
-            Diseñado por
-            <a href="https://www.instagram.com/tavo_musico" target="_blank" rel="noopener noreferrer">
-                Tavo Músico
-            </a>
-        </p>
-
+        <img src="img/logo.webp" alt="Logo Los Hijos de Tencha">
+        <p>Los Hijos de Tencha © 2026</p>
+        <p class="credito-web">Diseñado por <a href="https://www.instagram.com/tavo_musico" target="_blank"
+                rel="noopener noreferrer">Tavo Músico</a></p>
     </footer>
 
-    <button id="subir">
-        <i class="fa-solid fa-arrow-up"></i>
-    </button>
+    <button id="subir"><i class="fa-solid fa-arrow-up"></i></button>
 
     <div id="transicion">
         <img src="img/transicion.gif" alt="Transición">
@@ -752,7 +686,7 @@
         const db = firebase.firestore();
 
         // ============================================================
-        // VIDEOS EXISTENTES (HTML FIJO)
+        // VIDEOS EXISTENTES
         // ============================================================
         const videosExistentes = [{
             id: 'existente-1',
@@ -885,7 +819,6 @@
                     videosFirebase.push({ id: doc.id, ...doc.data(), esFirebase: true });
                 });
 
-                // Ordenar
                 videosFirebase.sort((a, b) => {
                     const ordenA = a.orden || 999;
                     const ordenB = b.orden || 999;
@@ -895,28 +828,20 @@
                     return fechaB - fechaA;
                 });
 
-                // Obtener categorías únicas de Firebase
                 const cats = new Set();
                 videosFirebase.forEach(v => {
                     if (v.categoria) cats.add(v.categoria);
                 });
                 categoriasFirebase = Array.from(cats);
 
-                // Combinar: existentes + Firebase (Firebase después)
                 todosLosVideos = [...videosExistentes, ...videosFirebase];
 
-                // Generar filtros
                 generarFiltros();
-
-                // Renderizar videos
                 renderizarVideos();
-
-                // Renderizar Momentos Tencha (existentes + Firebase)
                 renderizarMomentos();
 
             } catch (error) {
                 console.error('Error al cargar videos de Firebase:', error);
-                // Si hay error, mostrar solo los existentes
                 todosLosVideos = [...videosExistentes];
                 generarFiltros();
                 renderizarVideos();
@@ -930,7 +855,6 @@
         function generarFiltros() {
             const container = document.getElementById('filtrosFirebaseContainer');
 
-            // Obtener categorías únicas de todos los videos
             const categoriasUnicas = [...new Set(todosLosVideos.map(v => v.categoria))];
             const categoriasFiltro = categoriasUnicas.filter(c => c !== 'oficial' && c !== 'momentos' && c !== 'en_vivo');
 
@@ -947,7 +871,6 @@
 
             container.innerHTML = html;
 
-            // Eventos a los botones de Firebase
             container.querySelectorAll('.filtro-btn').forEach(btn => {
                 btn.addEventListener('click', function () {
                     const filtro = this.dataset.filtro;
@@ -970,7 +893,7 @@
         }
 
         // ============================================================
-        // RENDERIZAR VIDEOS (EXISTENTES + FIREBASE)
+        // RENDERIZAR VIDEOS
         // ============================================================
         function renderizarVideos() {
             const grid = document.getElementById('videosGrid');
@@ -980,7 +903,6 @@
                 filtrados = todosLosVideos.filter(v => v.categoria === filtroActual);
             }
 
-            // Filtrar Momentos (van en la otra sección)
             const videosPrincipales = filtrados.filter(v => v.categoria !== 'momentos');
 
             if (videosPrincipales.length === 0) {
@@ -1003,7 +925,6 @@
                 const badgeFirebase = esFirebase ? '<span class="badge-firebase">📌 Admin</span>' : '';
                 const claseFirebase = esFirebase ? 'video-firebase' : '';
 
-                // Determinar si es YouTube o Cloudinary
                 const esYoutube = url.includes('youtube.com/embed/') || url.includes('youtu.be/');
 
                 let playerHTML = '';
@@ -1044,7 +965,6 @@
 
             grid.innerHTML = html;
 
-            // Activar animaciones
             document.querySelectorAll('.videos-grid .video-card').forEach((el, i) => {
                 setTimeout(() => {
                     el.classList.add('visible');
@@ -1053,12 +973,11 @@
         }
 
         // ============================================================
-        // RENDERIZAR MOMENTOS TENCHA (EXISTENTES + FIREBASE)
+        // RENDERIZAR MOMENTOS TENCHA
         // ============================================================
         function renderizarMomentos() {
             const grid = document.getElementById('momentosGrid');
 
-            // Todos los videos de categoría "momentos" (existentes + Firebase)
             const momentos = todosLosVideos.filter(v => v.categoria === 'momentos');
 
             if (momentos.length === 0) {
@@ -1119,7 +1038,6 @@
 
             grid.innerHTML = html;
 
-            // Activar animaciones
             document.querySelectorAll('.momentos-grid .momento-card').forEach((el, i) => {
                 setTimeout(() => {
                     el.classList.add('visible');

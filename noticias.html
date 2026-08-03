@@ -38,9 +38,6 @@
     </script>
 
     <style>
-        /* =====================================
-           MENÚ CON SCROLL HORIZONTAL
-           ===================================== */
         .menu {
             display: flex;
             gap: 8px;
@@ -109,9 +106,6 @@
             }
         }
 
-        /* =====================================
-           HERO NOTICIAS
-           ===================================== */
         .hero-noticias {
             min-height: 50vh;
             background:
@@ -189,9 +183,6 @@
             }
         }
 
-        /* =====================================
-           NOTICIAS - CONTENIDO EXISTENTE + FIREBASE
-           ===================================== */
         .noticia {
             max-width: 900px;
             margin: 0 auto 30px;
@@ -498,7 +489,7 @@
                 <li><a href="index.html#integrantes">Integrantes</a></li>
                 <li><a href="index.html#tienda">Tienda</a></li>
                 <li><a href="index.html#contacto">Contacto</a></li>
-                <li><a href="admin/" style="color: #ffcc00; font-weight: 700;">⚙️ Admin</a></li>
+                <li><a href="admin/dashboard.html" style="color: #ffcc00; font-weight: 700;">⚙️ Admin</a></li>
             </ul>
         </nav>
         <div class="titulo-noticias">
@@ -678,9 +669,7 @@
                 <!-- =====================================
                 NOTICIAS DESDE FIREBASE (se agregan aquí)
                 ===================================== -->
-                <div id="noticiasFirebaseContainer">
-                    <!-- Las noticias de Firebase se cargan aquí -->
-                </div>
+                <div id="noticiasFirebaseContainer"></div>
 
             </div>
         </div>
@@ -719,7 +708,7 @@
         const db = firebase.firestore();
 
         // ============================================================
-        // CARGAR NOTICIAS DESDE FIREBASE (se agregan debajo de las existentes)
+        // CARGAR NOTICIAS DESDE FIREBASE
         // ============================================================
         async function cargarNoticiasFirebase() {
             const container = document.getElementById('noticiasFirebaseContainer');

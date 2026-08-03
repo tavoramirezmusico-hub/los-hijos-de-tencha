@@ -20,7 +20,6 @@
     <meta name="theme-color" content="#000000">
     <link rel="canonical" href="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/">
 
-    <!-- OPEN GRAPH FACEBOOK / WHATSAPP -->
     <meta property="og:title" content="Los Hijos de Tencha | Banda Costarricense">
     <meta property="og:description"
         content="Cumbia, rock, reggae y ritmos latinoamericanos con sabor costarricense. Música en vivo, eventos y contrataciones oficiales.">
@@ -32,26 +31,21 @@
     <meta property="og:locale" content="es_CR">
     <meta property="og:site_name" content="Los Hijos de Tencha">
 
-    <!-- TWITTER / X CARD -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Los Hijos de Tencha | Banda Costarricense">
     <meta name="twitter:description"
         content="Agrupación musical costarricense de cumbia, rock, reggae y ritmos latinoamericanos.">
     <meta name="twitter:image" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/img/hero.webp">
 
-    <!-- FAVICON -->
     <link rel="icon" type="image/webp" href="img/logo.webp">
 
-    <!-- CSS -->
     <link rel="stylesheet" href="css/styles.css">
 
-    <!-- GOOGLE FONTS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
-    <!-- FONT AWESOME -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <!-- Firebase SDKs -->
@@ -61,7 +55,6 @@
     <!-- EmailJS -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
-    <!-- DATOS ESTRUCTURADOS GOOGLE -->
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -87,7 +80,6 @@
         }
     </script>
 
-    <!-- GOOGLE ANALYTICS -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YNRK4G09LN"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -97,9 +89,6 @@
     </script>
 
     <style>
-        /* =====================================
-           MENÚ CON SCROLL HORIZONTAL
-           ===================================== */
         .menu {
             display: flex;
             gap: 8px;
@@ -168,9 +157,6 @@
             }
         }
 
-        /* =====================================
-           HERO INDEX
-           ===================================== */
         .hero {
             min-height: 100vh;
             background:
@@ -250,9 +236,6 @@
             }
         }
 
-        /* =====================================
-           ANIMACIONES
-           ===================================== */
         .animar {
             opacity: 0;
             transform: translateY(50px) scale(0.95);
@@ -265,9 +248,6 @@
             transform: translateY(0) scale(1);
         }
 
-        /* =====================================
-           BOTÓN COMUNIDAD WHATSAPP
-           ===================================== */
         .btn-comunidad {
             display: inline-flex;
             align-items: center;
@@ -352,9 +332,6 @@
             }
         }
 
-        /* =====================================
-           SECCIÓN LANZAMIENTOS
-           ===================================== */
         .lanzamientos-wrapper {
             display: flex;
             flex-direction: column;
@@ -462,9 +439,6 @@
             }
         }
 
-        /* =====================================
-           EVENTOS - FIJOS + FIREBASE
-           ===================================== */
         .card-evento {
             max-width: 1200px;
             margin: auto;
@@ -614,10 +588,6 @@
             color: #ffcc00;
         }
 
-        .oculto {
-            display: none !important;
-        }
-
         .card-evento.evento-firebase .fecha {
             background: #2a2a2a;
             color: #ffcc00;
@@ -628,9 +598,6 @@
             color: #fff;
         }
 
-        /* =====================================
-           TIENDA - DESDE FIREBASE
-           ===================================== */
         .producto-principal {
             display: flex;
             flex-direction: column;
@@ -762,9 +729,6 @@
             color: #ffcc00;
         }
 
-        /* =====================================
-           VISOR CAMISETAS
-           ===================================== */
         .visor-camiseta {
             display: none;
             position: fixed;
@@ -793,9 +757,6 @@
             cursor: pointer;
         }
 
-        /* =====================================
-           FORMULARIO DE REGISTRO
-           ===================================== */
         #registro-eventos .formulario-registro {
             max-width: 500px;
             margin: 0 auto;
@@ -914,6 +875,95 @@
             font-weight: 600;
             margin-left: 8px;
         }
+
+        .integrantes h2 {
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: #fff;
+            text-align: center;
+        }
+
+        .grid-integrantes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 30px;
+        }
+
+        .grid-integrantes img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: .6s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, .45);
+            display: block;
+        }
+
+        .grid-integrantes img:hover {
+            box-shadow: 0 0 15px rgba(255, 204, 0, .8), 0 0 35px rgba(255, 204, 0, .5);
+        }
+
+        .redes {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .redes a {
+            width: 65px;
+            height: 65px;
+            background: #ffcc00;
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            transition: .3s;
+        }
+
+        .redes a:hover {
+            transform: scale(1.1);
+            background: white;
+        }
+
+        .texto-banda p {
+            text-align: justify;
+        }
+
+        .oculto {
+            display: none !important;
+        }
+
+        .tienda {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .tienda h2 {
+            font-size: 35px;
+            margin-bottom: 40px;
+        }
+
+        #menu-btn span {
+            color: #ffcc00;
+            font-size: 13px;
+            margin-top: 4px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 900px) {
+            #menu-btn {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 
@@ -946,20 +996,13 @@
         </nav>
 
         <div class="hero-contenido">
-
             <span class="hero-etiqueta">Sitio Oficial</span>
-
             <h1>¡La Música se Vive!</h1>
-
-            <p>
-                Cumbia, rock, reggae y ritmos latinoamericanos con la energía y el sabor de Costa Rica.
-            </p>
-
+            <p>Cumbia, rock, reggae y ritmos latinoamericanos con la energía y el sabor de Costa Rica.</p>
             <div class="hero-botones">
                 <a href="#contacto" class="boton principal">Contrataciones</a>
                 <a href="#eventos" class="boton secundario">Agenda</a>
             </div>
-
         </div>
 
     </header>
@@ -972,74 +1015,48 @@
             </div>
             <div class="banda-grid">
                 <div class="texto-banda">
-                    <p>
-                        Los Hijos de Tencha somos una banda orgullosamente de Costa Rica que nació para armar la fiesta.
+                    <p>Los Hijos de Tencha somos una banda orgullosamente de Costa Rica que nació para armar la fiesta.
                     </p>
-                    <p>
-                        Tomamos la cumbia latinoamericana, la revolvemos con reggae, rock, folclore y otros ritmos
-                        psicodélicos, y le metemos nuestro propio sazón para que el resultado sea pura gozadera.
-                    </p>
-                    <p>
-                        Nuestras canciones hablan de la vida del barrio, de los compas, de los personajes que todos
+                    <p>Tomamos la cumbia latinoamericana, la revolvemos con reggae, rock, folclore y otros ritmos
+                        psicodélicos, y le metemos nuestro propio sazón para que el resultado sea pura gozadera.</p>
+                    <p>Nuestras canciones hablan de la vida del barrio, de los compas, de los personajes que todos
                         conocemos y de esas historias que solo pasan en Costa Rica. Nos gusta ponerle humor, picardía y
                         buena vibra a cada tema, porque la música también es para vacilar y olvidarse de las broncas por
-                        un rato.
-                    </p>
-                    <p>
-                        En tarima creemos en hacer un fiestón donde todo el mundo cante, baile y termine sudando la
+                        un rato.</p>
+                    <p>En tarima creemos en hacer un fiestón donde todo el mundo cante, baile y termine sudando la
                         camiseta. Al final, esa es la esencia de Los Hijos de Tencha: hacer música con el corazón, con
-                        sabor a barrio y con una buena cumbia que ponga a brincar hasta al más serio.
-                    </p>
+                        sabor a barrio y con una buena cumbia que ponga a brincar hasta al más serio.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- =====================================
-    SECCIÓN EVENTOS - FIJOS + FIREBASE
+    SECCIÓN EVENTOS
     ===================================== -->
     <section id="eventos" class="animar">
-
         <div class="contenedor">
-
             <div class="titulo-seccion">
-
                 <span>Agenda</span>
-
                 <h2>Eventos</h2>
-
             </div>
 
-            <!-- EVENTO FIJO 1: Último concierto -->
+            <!-- EVENTO FIJO: Último concierto -->
             <div class="card-evento">
-
                 <div class="imagen-evento">
                     <img src="img/noticias/chivo-24-julio.webp" alt="Reportaje lanzamiento Cumbia Salvaje">
                 </div>
-
                 <div class="fecha">
                     <h3>24</h3>
                     <span>Julio</span>
                 </div>
-
                 <div class="info-evento">
                     <h3>Último concierto</h3>
-                    <p>
-                        🎸 Mira el reportaje del lanzamiento de
-                        <strong>Cumbia Salvaje</strong> en Bar Starview.
-                    </p>
-                    <p>
-                        🔥 Una noche llena de música, invitados y mucha cumbia.
-                    </p>
+                    <p>🎸 Mira el reportaje del lanzamiento de <strong>Cumbia Salvaje</strong> en Bar Starview.</p>
+                    <p>🔥 Una noche llena de música, invitados y mucha cumbia.</p>
                 </div>
-
-                <a href="noticias.html#noticia-25-julio" class="boton principal">
-                    Ver reportaje
-                </a>
-                <a href="videoteca.html#momentos-tencha" class="boton secundario">
-                    Ver videos
-                </a>
-
+                <a href="noticias.html#noticia-25-julio" class="boton principal">Ver reportaje</a>
+                <a href="videoteca.html#momentos-tencha" class="boton secundario">Ver videos</a>
             </div>
 
             <!-- EVENTOS DESDE FIREBASE -->
@@ -1059,24 +1076,19 @@
                         Completa el formulario y recibirás tu entrada digital con código QR.
                     </p>
                 </div>
-
                 <div style="max-width: 500px; margin: 0 auto;">
                     <select id="selectEventoRegistro"
                         style="width:100%; padding:14px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#fff; font-size:1rem; margin-bottom:12px; font-family:'Poppins',sans-serif;">
                         <option value="">Cargando eventos...</option>
                     </select>
-
                     <input type="text" id="nombreRegistro" placeholder="Tu nombre completo"
                         style="width:100%; padding:14px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#fff; font-size:1rem; margin-bottom:12px; font-family:'Poppins',sans-serif;">
-
                     <input type="email" id="emailRegistro" placeholder="Tu correo electrónico"
                         style="width:100%; padding:14px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#fff; font-size:1rem; margin-bottom:12px; font-family:'Poppins',sans-serif;">
-
                     <button onclick="registrarAsistentePublico()"
                         style="width:100%; padding:16px; background:#ffcc00; color:#000; border:none; border-radius:8px; font-size:1.1rem; font-weight:700; cursor:pointer; transition:.3s; font-family:'Poppins',sans-serif;">
                         ✅ Registrarme
                     </button>
-
                     <div id="mensajeRegistro"
                         style="margin-top:15px; text-align:center; display:none; font-family:'Poppins',sans-serif;">
                     </div>
@@ -1084,130 +1096,92 @@
             </div>
 
         </div>
-
     </section>
 
-    <!-- SECCIÓN LANZAMIENTOS -->
+    <!-- =====================================
+    SECCIÓN LANZAMIENTOS
+    ===================================== -->
     <section id="musica" class="animar">
-
         <div class="contenedor">
-
             <div class="titulo-seccion">
-
                 <span>Últimos estrenos</span>
-
                 <h2>Nuevos Lanzamientos</h2>
-
             </div>
-
             <div class="lanzamientos-wrapper">
-
                 <div class="lanzamiento-principal">
                     <span class="badge-lanzamiento">🎵 Nuevo Álbum</span>
                     <iframe
                         src="https://www.youtube.com/embed/videoseries?list=OLAK5uy_nYf3WKfcoDAn9eH_UkjMJR3nxTpwsAvoA"
                         title="Los Hijos de Tencha - Cumbia Salvaje" frameborder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen>
-                    </iframe>
+                        allowfullscreen></iframe>
                 </div>
-                <p class="lanzamiento-titulo">
-                    <strong>Cumbia Salvaje</strong> — Álbum completo disponible en YouTube
-                </p>
-
+                <p class="lanzamiento-titulo"><strong>Cumbia Salvaje</strong> — Álbum completo disponible en YouTube</p>
                 <div class="lanzamiento-secundario">
                     <iframe src="https://www.youtube.com/embed/Ktf96bekedA"
                         title="Los Hijos de Tencha - Nuevo lanzamiento" frameborder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen>
-                    </iframe>
+                        allowfullscreen></iframe>
                 </div>
-                <p class="lanzamiento-titulo">
-                    <strong>El Vocho</strong> — Nuevo sencillo disponible en todas las plataformas
-                </p>
-
+                <p class="lanzamiento-titulo"><strong>El Vocho</strong> — Nuevo sencillo disponible en todas las
+                    plataformas</p>
             </div>
-
         </div>
-
     </section>
 
-    <!-- INTEGRANTES -->
+    <!-- ==========================
+    INTEGRANTES
+    =========================== -->
     <section id="integrantes" class="integrantes animar">
-
         <h2>Integrantes</h2>
-
         <div class="grid-integrantes">
-
             <img src="img/integrantes/integrante1.webp" alt="Integrante 1" class="zoom-integrante">
             <img src="img/integrantes/integrante2.webp" alt="Integrante 2" class="zoom-integrante">
             <img src="img/integrantes/integrante3.webp" alt="Integrante 3" class="zoom-integrante">
             <img src="img/integrantes/integrante4.webp" alt="Integrante 4" class="zoom-integrante">
             <img src="img/integrantes/integrante5.webp" alt="Integrante 5" class="zoom-integrante">
-
         </div>
-
     </section>
 
-    <!-- TIENDA - DESDE FIREBASE -->
+    <!-- ==========================
+    TIENDA - DESDE FIREBASE
+    =========================== -->
     <section id="tienda" class="tienda animar">
-
         <h2>Tienda Oficial</h2>
-
         <div id="tiendaContainer">
             <div class="tienda-loading">
                 <i class="fa-solid fa-spinner fa-spin"></i>
                 <p>Cargando productos...</p>
             </div>
         </div>
-
     </section>
 
-    <!-- CONTACTO -->
+    <!-- ==========================
+    CONTACTO
+    =========================== -->
     <section id="contacto">
-
         <div class="contenedor">
-
             <div class="titulo-seccion">
-
                 <span>Contáctanos</span>
-
                 <h2>Redes Sociales</h2>
-
             </div>
-
             <div class="redes">
-
                 <a href="https://wa.me/50688636047" target="_blank" onclick="gtag('event','click_whatsapp');">
-
                     <i class="fa-brands fa-whatsapp"></i>
-
                 </a>
-
                 <a href="https://www.facebook.com/profile.php?id=100090956211932" target="_blank"
                     onclick="gtag('event','click_facebook');">
-
                     <i class="fa-brands fa-facebook-f"></i>
-
                 </a>
-
                 <a href="https://www.instagram.com/loshijosdetencha/" target="_blank"
                     onclick="gtag('event','click_instagram');">
-
                     <i class="fa-brands fa-instagram"></i>
-
                 </a>
-
                 <a href="mailto:loshijosdetencha@gmail.com" target="_blank" rel="noopener noreferrer"
                     onclick="gtag('event','click_email');">
-
                     <i class="fa-solid fa-envelope"></i>
-
                 </a>
-
             </div>
-
-            <!-- BOTÓN COMUNIDAD WHATSAPP -->
             <div style="text-align: center; margin-top: 30px;">
                 <a href="https://chat.whatsapp.com/H2ry6GFbBDe8Q5UsNMcDdu?s=cl&p=i&ilr=2" target="_blank"
                     onclick="gtag('event','click_comunidad_whatsapp');" class="btn-comunidad">
@@ -1220,9 +1194,7 @@
                     📱 Conéctate con otros fans en nuestro grupo de WhatsApp
                 </p>
             </div>
-
         </div>
-
     </section>
 
     <footer>
@@ -1245,7 +1217,6 @@
         <img id="imagen-ampliada" src="" alt="Camiseta ampliada">
     </div>
 
-    <!-- Pantalla de transición -->
     <div id="transicion">
         <img src="img/transicion.gif" alt="Transición">
     </div>
@@ -1434,13 +1405,13 @@
                                 <h3>${principal.nombre || 'Producto'}</h3>
                                 ${principal.descripcion ? `<p style="font-size:1rem; color:#aaa; font-weight:400;">${principal.descripcion}</p>` : ''}
                                 <p>₡${principal.precio ? principal.precio.toLocaleString() : '0'}</p>
-                                <button onclick="document.getElementById('abrir-tienda').click()">Ver diseños</button>
+                                <button onclick="mostrarCamisetas()">Ver diseños</button>
                             </div>
                         `;
 
                 if (resto.length > 0) {
                     html += `
-                                <div class="galeria-camisetas mostrar" id="galeria-camisetas">
+                                <div class="galeria-camisetas" id="galeria-camisetas">
                             `;
 
                     resto.forEach(producto => {
@@ -1465,8 +1436,7 @@
 
                 container.innerHTML = html;
 
-                document.querySelectorAll('#tiendaContainer .producto-principal, #tiendaContainer .camiseta').forEach((el,
-                    i) => {
+                document.querySelectorAll('#tiendaContainer .producto-principal, #tiendaContainer .camiseta').forEach((el, i) => {
                     setTimeout(() => {
                         el.classList.add('visible');
                     }, 100 + (i * 80));
@@ -1587,8 +1557,7 @@
                         const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
                             'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
                         ];
-                        fechaFormateada = fechaObj.getDate() + ' de ' + meses[fechaObj.getMonth()] + ' ' + fechaObj
-                            .getFullYear();
+                        fechaFormateada = fechaObj.getDate() + ' de ' + meses[fechaObj.getMonth()] + ' ' + fechaObj.getFullYear();
                     } catch (e) {
                         fechaFormateada = eventoData.fecha;
                     }
@@ -1619,8 +1588,7 @@
 
                 try {
                     if (typeof emailjs !== 'undefined') {
-                        const qrUrl = 'https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=' +
-                            docRef.id;
+                        const qrUrl = 'https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=' + docRef.id;
 
                         const templateParams = {
                             to_email: email,
@@ -1638,8 +1606,7 @@
                             emailEnviado: true,
                             emailEnviadoEn: new Date().toISOString()
                         });
-                        mensajeEl.textContent = '✅ ¡Registro exitoso! Se ha enviado un correo a ' + email +
-                            ' con tu entrada digital.';
+                        mensajeEl.textContent = '✅ ¡Registro exitoso! Se ha enviado un correo a ' + email + ' con tu entrada digital.';
                         mensajeEl.className = 'mensaje-registro success';
                     } else {
                         mensajeEl.textContent = '✅ Registro exitoso, pero no se pudo enviar el correo.';

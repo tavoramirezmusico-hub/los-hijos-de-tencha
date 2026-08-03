@@ -2,56 +2,27 @@
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
     <title>Canciones y Letras Oficiales | Los Hijos de Tencha</title>
-
 
     <meta name="description"
         content="Letras oficiales, canciones y música de Los Hijos de Tencha, agrupación costarricense de cumbia y fusiones latinoamericanas.">
-
-
     <link rel="canonical" href="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/canciones.html">
 
-
     <meta property="og:title" content="Canciones y Letras Oficiales | Los Hijos de Tencha">
-
-
     <meta property="og:description"
         content="Descubre las canciones, letras oficiales y música de Los Hijos de Tencha, agrupación musical de Costa Rica.">
-
-
     <meta property="og:image" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/img/hero.webp">
-
-
     <meta property="og:image:width" content="1200">
-
-
     <meta property="og:image:height" content="630">
-
-
     <meta property="og:url" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/canciones.html">
-
-
     <meta property="og:type" content="website">
-
-
     <meta property="og:locale" content="es_CR">
-
-
     <meta property="og:site_name" content="Los Hijos de Tencha">
 
-
     <link rel="stylesheet" href="css/styles.css">
-
-
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <!-- Firebase SDKs -->
@@ -62,17 +33,12 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YNRK4G09LN"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag() {
-            dataLayer.push(arguments);
-        }
+        function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
         gtag('config', 'G-YNRK4G09LN');
     </script>
 
     <style>
-        /* =====================================
-           MENÚ CON SCROLL HORIZONTAL
-           ===================================== */
         .menu {
             display: flex;
             gap: 8px;
@@ -141,9 +107,6 @@
             }
         }
 
-        /* =====================================
-           HERO CANCIONES
-           ===================================== */
         .hero-canciones {
             min-height: 50vh;
             background:
@@ -221,9 +184,6 @@
             }
         }
 
-        /* =====================================
-           CANCIONERO - CONTENIDO EXISTENTE + FIREBASE
-           ===================================== */
         .cancion {
             max-width: 900px;
             margin: 0 auto 25px;
@@ -357,13 +317,6 @@
             color: #666;
         }
 
-        .cancion-vacia i {
-            font-size: 2.5rem;
-            display: block;
-            margin-bottom: 12px;
-            opacity: 0.3;
-        }
-
         @media (max-width: 600px) {
             .cancion summary {
                 font-size: 1.2rem;
@@ -454,17 +407,14 @@
 <body>
 
     <header class="hero-canciones">
-
         <nav>
             <a href="index.html" class="logo">
                 <img src="img/logo.webp" alt="Los Hijos de Tencha">
             </a>
-
             <button id="menu-btn" class="menu-btn">
                 <img src="img/menu-icono.webp" alt="Menú">
                 <span>Menú</span>
             </button>
-
             <ul class="menu">
                 <li><a href="index.html">Inicio</a></li>
                 <li><a href="index.html#banda">La Banda</a></li>
@@ -477,27 +427,18 @@
                 <li><a href="index.html#integrantes">Integrantes</a></li>
                 <li><a href="index.html#tienda">Tienda</a></li>
                 <li><a href="index.html#contacto">Contacto</a></li>
-                <li><a href="admin/" style="color: #ffcc00; font-weight: 700;">⚙️ Admin</a></li>
+                <li><a href="admin/dashboard.html" style="color: #ffcc00; font-weight: 700;">⚙️ Admin</a></li>
             </ul>
-
         </nav>
-
         <div class="titulo-canciones">
-
             <span>LOS HIJOS DE TENCHA</span>
             <h1>Nuestro Cancionero Oficial</h1>
-            <p>
-                Letras oficiales y música de nuestra historia.
-            </p>
-
+            <p>Letras oficiales y música de nuestra historia.</p>
         </div>
-
     </header>
 
     <section class="canciones animar">
-
         <div class="contenedor">
-
             <div class="titulo-seccion">
                 <span>Repertorio</span>
                 <h2>Letras de Nuestras Canciones</h2>
@@ -505,315 +446,253 @@
 
             <div class="lista-canciones" id="cancionero">
 
-                <!-- =====================================
-                CANCION 1 - EXISTENTE (HTML FIJO)
-                ===================================== -->
+                <!-- CANCION 1 - EXISTENTE -->
                 <details class="cancion">
-                    <summary>
-                        LA COLMENA
-                    </summary>
+                    <summary>LA COLMENA</summary>
                     <div class="contenido-cancion">
-                        <p class="escuchar-cancion">
-                            Escuchar canción
-                        </p>
+                        <p class="escuchar-cancion">Escuchar canción</p>
                         <div class="spotify">
                             <iframe style="border-radius:12px"
                                 src="https://open.spotify.com/embed/track/2uS52IfYXQVSuTj3sSJyB6" width="100%"
                                 height="152" frameBorder="0" allowfullscreen=""
                                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                loading="lazy">
-                            </iframe>
+                                loading="lazy"></iframe>
                         </div>
                         <div class="letra-cancion">
-                            <p>
-                                Vuelvo a pasar por donde siempre asustan
-                                Vuelvo a caerme y a levantar
-                                Vuelvo a escuchar la voz que llevo adentro
-                                Vuelvo a transformarme en un animal
-                                <br><br>
-                                Y nunca sigo la corriente / siempre tengo que luchar
-                                Y siempre vuelvo a mi colmena / donde me van a cuidar
-                                El guaro agita las caderas / esta noche es pa' bailar
-                                Y que se sientan los de Tencha / Los hijos te cantaran
-                                <br><br>
-                                Y se también que este vaivén te cae muy bien
-                                Al ritmo de esta noche te bailare
-                                Enséname tus pasos prohibidos ven
-                                La noche esta joven arráncate
-                                Y no puedo decirte que pasara
-                                Pero esta noche juro te comerá
-                                Conmigo estoy seguro que acabarás
-                                Al ritmo de esta cumbia me atraparas
-                                <br><br>
-                                Y nunca sigo la corriente / siempre tengo que luchar
-                                Y siempre vuelvo a mi colmena / donde me van a cuidar
-                                El guaro agita las caderas / esta noche es pa' bailar
-                                Y que se sientan los de Tencha / Los hijos te cantaran
-                            </p>
+                            Vuelvo a pasar por donde siempre asustan<br>
+                            Vuelvo a caerme y a levantar<br>
+                            Vuelvo a escuchar la voz que llevo adentro<br>
+                            Vuelvo a transformarme en un animal<br>
+                            <br>
+                            Y nunca sigo la corriente / siempre tengo que luchar<br>
+                            Y siempre vuelvo a mi colmena / donde me van a cuidar<br>
+                            El guaro agita las caderas / esta noche es pa' bailar<br>
+                            Y que se sientan los de Tencha / Los hijos te cantaran<br>
+                            <br>
+                            Y se también que este vaivén te cae muy bien<br>
+                            Al ritmo de esta noche te bailare<br>
+                            Enséname tus pasos prohibidos ven<br>
+                            La noche esta joven arráncate<br>
+                            Y no puedo decirte que pasara<br>
+                            Pero esta noche juro te comerá<br>
+                            Conmigo estoy seguro que acabarás<br>
+                            Al ritmo de esta cumbia me atraparas<br>
+                            <br>
+                            Y nunca sigo la corriente / siempre tengo que luchar<br>
+                            Y siempre vuelvo a mi colmena / donde me van a cuidar<br>
+                            El guaro agita las caderas / esta noche es pa' bailar<br>
+                            Y que se sientan los de Tencha / Los hijos te cantaran
                         </div>
-                        <a href="#cancionero" class="volver-cancionero">
-                            ↑ Volver al cancionero
-                        </a>
+                        <button class="volver-cancionero" onclick="cerrarTodas()">↑ Volver al cancionero</button>
                     </div>
                 </details>
 
-                <!-- =====================================
-                CANCION 2 - EXISTENTE (HTML FIJO)
-                ===================================== -->
+                <!-- CANCION 2 - EXISTENTE -->
                 <details class="cancion">
-                    <summary>
-                        QUISIERA VOLVER
-                    </summary>
+                    <summary>QUISIERA VOLVER</summary>
                     <div class="contenido-cancion">
-                        <p class="escuchar-cancion">
-                            Escuchar canción
-                        </p>
+                        <p class="escuchar-cancion">Escuchar canción</p>
                         <div class="spotify">
                             <iframe style="border-radius:12px"
                                 src="https://open.spotify.com/embed/track/6oQfeZsZz1J0y0KQh4G0j4" width="100%"
                                 height="152" frameBorder="0" allowfullscreen=""
                                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                loading="lazy">
-                            </iframe>
+                                loading="lazy"></iframe>
                         </div>
                         <div class="letra-cancion">
-                            <p>
-                                Esa mirada de niña idiota, esa locura que no se fue
-                                La situación que un día dejamos sin saberlo bien
-                                Aquel silencio que me engañaba, aquel murmullo que ya no está
-                                Esa ilusión que nos deja ciegos quisiera volver, quisiera volver
-                                <br><br>
-                                Quisiera volver a donde fui
-                                Quisiera volver, pero volverme a venir
-                                Quisiera entrar a donde entré una vez
-                                Pero volverme a salir
-                                <br><br>
-                                Esa mirada de gas nocivo, la valentía de un maricón
-                                Te quiero muerto te quiero vivo y te digo adiós
-                                <br><br>
-                                Y si al final ya no resucitan
-                                Aquellas ganas de un mundo mejor
-                                Me quedo muerto me quedo vivo
-                                Y te digo adiós y te digo adiós
-                                <br><br>
-                                Quisiera volver a donde fui
-                                Quisiera volver, pero volverme a venir
-                                Quisiera entrar a donde entré una vez
-                                Pero volverme a salir
-                            </p>
+                            Esa mirada de niña idiota, esa locura que no se fue<br>
+                            La situación que un día dejamos sin saberlo bien<br>
+                            Aquel silencio que me engañaba, aquel murmullo que ya no está<br>
+                            Esa ilusión que nos deja ciegos quisiera volver, quisiera volver<br>
+                            <br>
+                            Quisiera volver a donde fui<br>
+                            Quisiera volver, pero volverme a venir<br>
+                            Quisiera entrar a donde entré una vez<br>
+                            Pero volverme a salir<br>
+                            <br>
+                            Esa mirada de gas nocivo, la valentía de un maricón<br>
+                            Te quiero muerto te quiero vivo y te digo adiós<br>
+                            <br>
+                            Y si al final ya no resucitan<br>
+                            Aquellas ganas de un mundo mejor<br>
+                            Me quedo muerto me quedo vivo<br>
+                            Y te digo adiós y te digo adiós<br>
+                            <br>
+                            Quisiera volver a donde fui<br>
+                            Quisiera volver, pero volverme a venir<br>
+                            Quisiera entrar a donde entré una vez<br>
+                            Pero volverme a salir
                         </div>
-                        <a href="#cancionero" class="volver-cancionero">
-                            ↑ Volver al cancionero
-                        </a>
+                        <button class="volver-cancionero" onclick="cerrarTodas()">↑ Volver al cancionero</button>
                     </div>
                 </details>
 
-                <!-- =====================================
-                CANCION 3 - EXISTENTE (HTML FIJO)
-                ===================================== -->
+                <!-- CANCION 3 - EXISTENTE -->
                 <details class="cancion">
-                    <summary>
-                        LAPAS
-                    </summary>
+                    <summary>LAPAS</summary>
                     <div class="contenido-cancion">
-                        <p class="escuchar-cancion">
-                            Escuchar canción
-                        </p>
+                        <p class="escuchar-cancion">Escuchar canción</p>
                         <div class="spotify">
                             <iframe style="border-radius:12px"
                                 src="https://open.spotify.com/embed/track/42B8kbGcGjYJ6Lmublu9bb" width="100%"
                                 height="152" frameBorder="0" allowfullscreen=""
                                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                loading="lazy">
-                            </iframe>
+                                loading="lazy"></iframe>
                         </div>
                         <div class="letra-cancion">
-                            <p>
-                                Somos historias, lágrimas y desafíos
-                                Somos sueños humildes y perdidos
-                                Aprendimos a sanarnos las heridas con cerveza
-                                Una mente que hace que se vuele tu cabeza
-                                <br><br>
-                                Cultivando la esperanza que tenemos
-                                Unos viejillos sinceros
-                                No somos famosos, pero somos de los buenos
-                                Malditos viejos cumbiancheros
-                                <br><br>
-                                Empezamos a ser libres y a mejorar
-                                Cuando dejamos de esperar algo de los demás
-                                El puño arriba y el grito fuerte
-                                Que viva la música por siempre
-                                <br><br>
-                                Y cuidadito ya estamos presentes
-                                Acá llegó el más loco de este poco de dementes
-                                Tercos como mula sin dientes, el cuero nos aguanta fuerte
-                                <br><br>
-                                Avanzaremos como un huracán con rumbo
-                                Que se extiende que se siente que te hace vibrar
-                                La mala vibra no cabe no acá
-                                Somos un cuento sin terminar
-                                <br><br>
-                                Aprendimos a curarnos las heridas con cerveza
-                                Una mente que hace que se cuele tu cabeza
-                                Cultivando la esperanza que tenemos
-                                Unos viejillos sinceros…
-                                <br><br>
-                                Esto comienza sencillo como baba de chiquillo
-                                Como darle a tus nalgas con chilillo
-                                Contagioso, bondadoso en ese culo hermoso reposo
-                                <br><br>
-                                Pa adelante constante
-                                Camaleón cambiante, dominante
-                                <br><br>
-                                Cada cual para su saco jala
-                                Cada cual a su gallada ampara
-                                <br><br>
-                                Estamos perdidos en el mismo norte
-                                Somos parte del mismo corte
-                                <br><br>
-                                Y me vale verga lo que piensen de mí
-                                Me vale verga lo que hablen de mí
-                                <br><br>
-                                Yo soy el mismo sencillo bolsillo, corrido
-                                Calabaza cada quien para su casa
-                                <br><br>
-                                Los perros ladran porque uno avanza
-                                <br><br>
-                                ¿Lapa roja, lapa verde, lapa qué?
-                                <br><br>
-                                La panocha
-                                <br><br>
-                                Más corriente que un eructo de salchichón
-                                Pa' que me invitan si saben cómo soy huevón
-                                <br><br>
-                                Cada cual para su saco jala
-                                Cada cual a su gallada ampara
-                                <br><br>
-                                Estamos perdidos en el mismo norte
-                                Somos parte del mismo corte
-                                <br><br>
-                                Me vale verga lo que piensen de mí
-                                Me vale verga lo que hablen de mí
-                                <br><br>
-                                Yo soy el mismo sencillo bolsillo, corrido
-                                <br><br>
-                                Calabaza cada quien para su casa
-                                <br><br>
-                                Los perros ladran porque uno avanza
-                                <br><br>
-                                ¿Lapa roja, lapa verde, lapa qué?
-                                <br><br>
-                                La panocha
-                            </p>
+                            Somos historias, lágrimas y desafíos<br>
+                            Somos sueños humildes y perdidos<br>
+                            Aprendimos a sanarnos las heridas con cerveza<br>
+                            Una mente que hace que se vuele tu cabeza<br>
+                            <br>
+                            Cultivando la esperanza que tenemos<br>
+                            Unos viejillos sinceros<br>
+                            No somos famosos, pero somos de los buenos<br>
+                            Malditos viejos cumbiancheros<br>
+                            <br>
+                            Empezamos a ser libres y a mejorar<br>
+                            Cuando dejamos de esperar algo de los demás<br>
+                            El puño arriba y el grito fuerte<br>
+                            Que viva la música por siempre<br>
+                            <br>
+                            Y cuidadito ya estamos presentes<br>
+                            Acá llegó el más loco de este poco de dementes<br>
+                            Tercos como mula sin dientes, el cuero nos aguanta fuerte<br>
+                            <br>
+                            Avanzaremos como un huracán con rumbo<br>
+                            Que se extiende que se siente que te hace vibrar<br>
+                            La mala vibra no cabe no acá<br>
+                            Somos un cuento sin terminar<br>
+                            <br>
+                            Aprendimos a curarnos las heridas con cerveza<br>
+                            Una mente que hace que se cuele tu cabeza<br>
+                            Cultivando la esperanza que tenemos<br>
+                            Unos viejillos sinceros…<br>
+                            <br>
+                            Esto comienza sencillo como baba de chiquillo<br>
+                            Como darle a tus nalgas con chilillo<br>
+                            Contagioso, bondadoso en ese culo hermoso reposo<br>
+                            <br>
+                            Pa adelante constante<br>
+                            Camaleón cambiante, dominante<br>
+                            <br>
+                            Cada cual para su saco jala<br>
+                            Cada cual a su gallada ampara<br>
+                            <br>
+                            Estamos perdidos en el mismo norte<br>
+                            Somos parte del mismo corte<br>
+                            <br>
+                            Y me vale verga lo que piensen de mí<br>
+                            Me vale verga lo que hablen de mí<br>
+                            <br>
+                            Yo soy el mismo sencillo bolsillo, corrido<br>
+                            Calabaza cada quien para su casa<br>
+                            <br>
+                            Los perros ladran porque uno avanza<br>
+                            <br>
+                            ¿Lapa roja, lapa verde, lapa qué?<br>
+                            <br>
+                            La panocha<br>
+                            <br>
+                            Más corriente que un eructo de salchichón<br>
+                            Pa' que me invitan si saben cómo soy huevón<br>
+                            <br>
+                            Cada cual para su saco jala<br>
+                            Cada cual a su gallada ampara<br>
+                            <br>
+                            Estamos perdidos en el mismo norte<br>
+                            Somos parte del mismo corte<br>
+                            <br>
+                            Me vale verga lo que piensen de mí<br>
+                            Me vale verga lo que hablen de mí<br>
+                            <br>
+                            Yo soy el mismo sencillo bolsillo, corrido<br>
+                            <br>
+                            Calabaza cada quien para su casa<br>
+                            <br>
+                            Los perros ladran porque uno avanza<br>
+                            <br>
+                            ¿Lapa roja, lapa verde, lapa qué?<br>
+                            <br>
+                            La panocha
                         </div>
-                        <a href="#cancionero" class="volver-cancionero">
-                            ↑ Volver al cancionero
-                        </a>
+                        <button class="volver-cancionero" onclick="cerrarTodas()">↑ Volver al cancionero</button>
                     </div>
                 </details>
 
-                <!-- =====================================
-                CANCION 4 - EXISTENTE (HTML FIJO)
-                ===================================== -->
+                <!-- CANCION 4 - EXISTENTE -->
                 <details class="cancion">
-                    <summary>
-                        LA CUMBIA DEL DIABLO
-                    </summary>
+                    <summary>LA CUMBIA DEL DIABLO</summary>
                     <div class="contenido-cancion">
-                        <p class="escuchar-cancion">
-                            Escuchar canción
-                        </p>
+                        <p class="escuchar-cancion">Escuchar canción</p>
                         <div class="spotify">
                             <iframe style="border-radius:12px"
                                 src="https://open.spotify.com/embed/track/7k9m5C75TJPzk24FTtBHUo" width="100%"
                                 height="152" frameBorder="0" allowfullscreen=""
                                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                loading="lazy">
-                            </iframe>
+                                loading="lazy"></iframe>
                         </div>
                         <div class="letra-cancion">
-                            <p>
-                                Ya se escuchan sus pasos
-                                El chilillo está caliente
-                                El toro ya llegó
-                                <br><br>
-                                El baile de los diablitos arrancó
-                                <br><br>
-                                Atrápalo que se come tu alma
-                                Mátalo que se come tu calma
-                                <br><br>
-                                Somos aquellos sentenciados, olvidados, masacrados y perdidos al olvido
-                                <br><br>
-                                Llenos de nada, rabia y convicción
-                                <br><br>
-                                La cumbia del diablo, la cumbia del diablo
-                                <br><br>
-                                Mamá alcánzame la lanza
-                                Que hoy la máscara se ensangra
-                                <br><br>
-                                Las Biritecas llamaron a formación
-                                <br><br>
-                                Hoy cae el palenque de los malditos
-                                <br><br>
-                                Y bailaremos en los cuernos del animal
-                                <br><br>
-                                La cumbia del diablo, la cumbia del diablo
-                                <br><br>
-                                Dame la chicha que me hierven las manos
-                                Que nuestros sueños han sido masacrados
-                                El baile de los diablitos arrancó
-                                <br><br>
-                                Dame la chicha que me hierven las manos
-                                Que nuestros sueños han sido masacrados
-                                El juego de los diablitos comenzó
-                                <br><br>
-                                La cumbia del diablo, la cumbia del diablo
-                                <br><br>
-                                No hubo héroes solo asesinos
-                                No hubo héroes solo asesinos
-                                No hubo héroes solo asesinos
-                                No hubo héroes solo bandidos
-                            </p>
+                            Ya se escuchan sus pasos<br>
+                            El chilillo está caliente<br>
+                            El toro ya llegó<br>
+                            <br>
+                            El baile de los diablitos arrancó<br>
+                            <br>
+                            Atrápalo que se come tu alma<br>
+                            Mátalo que se come tu calma<br>
+                            <br>
+                            Somos aquellos sentenciados, olvidados, masacrados y perdidos al olvido<br>
+                            <br>
+                            Llenos de nada, rabia y convicción<br>
+                            <br>
+                            La cumbia del diablo, la cumbia del diablo<br>
+                            <br>
+                            Mamá alcánzame la lanza<br>
+                            Que hoy la máscara se ensangra<br>
+                            <br>
+                            Las Biritecas llamaron a formación<br>
+                            <br>
+                            Hoy cae el palenque de los malditos<br>
+                            <br>
+                            Y bailaremos en los cuernos del animal<br>
+                            <br>
+                            La cumbia del diablo, la cumbia del diablo<br>
+                            <br>
+                            Dame la chicha que me hierven las manos<br>
+                            Que nuestros sueños han sido masacrados<br>
+                            El baile de los diablitos arrancó<br>
+                            <br>
+                            Dame la chicha que me hierven las manos<br>
+                            Que nuestros sueños han sido masacrados<br>
+                            El juego de los diablitos comenzó<br>
+                            <br>
+                            La cumbia del diablo, la cumbia del diablo<br>
+                            <br>
+                            No hubo héroes solo asesinos<br>
+                            No hubo héroes solo asesinos<br>
+                            No hubo héroes solo asesinos<br>
+                            No hubo héroes solo bandidos
                         </div>
-                        <a href="#cancionero" class="volver-cancionero">
-                            ↑ Volver al cancionero
-                        </a>
+                        <button class="volver-cancionero" onclick="cerrarTodas()">↑ Volver al cancionero</button>
                     </div>
                 </details>
 
-                <!-- =====================================
-                CANCIONES DESDE FIREBASE (se agregan aquí)
-                ===================================== -->
-                <div id="cancionesFirebaseContainer">
-                    <!-- Las canciones de Firebase se cargan aquí -->
-                </div>
+                <!-- CANCIONES DESDE FIREBASE -->
+                <div id="cancionesFirebaseContainer"></div>
 
             </div>
-
         </div>
-
     </section>
 
     <footer>
-
         <img src="img/logo.webp" alt="Logo Los Hijos de Tencha">
-
-        <p>
-            Los Hijos de Tencha © 2026
-        </p>
-
-        <p class="credito-web">
-            Diseñado por
-            <a href="https://www.instagram.com/tavo_musico" target="_blank" rel="noopener noreferrer">
-                Tavo Músico
-            </a>
-        </p>
-
+        <p>Los Hijos de Tencha © 2026</p>
+        <p class="credito-web">Diseñado por <a href="https://www.instagram.com/tavo_musico" target="_blank"
+                rel="noopener noreferrer">Tavo Músico</a></p>
     </footer>
 
-    <button id="subir">
-        <i class="fa-solid fa-arrow-up"></i>
-    </button>
+    <button id="subir"><i class="fa-solid fa-arrow-up"></i></button>
 
     <div id="transicion">
         <img src="img/transicion.gif" alt="Transición">
@@ -933,7 +812,6 @@
 
                 container.innerHTML = html;
 
-                // Activar animaciones
                 document.querySelectorAll('#cancionesFirebaseContainer .cancion').forEach((el, i) => {
                     setTimeout(() => {
                         el.classList.add('visible');
