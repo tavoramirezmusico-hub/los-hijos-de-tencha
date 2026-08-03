@@ -674,23 +674,8 @@
                 </div>
             </div>
 
-            <div class="filtros-videos">
-                <button class="btn-admin btn-secondary btn-sm active" data-filtro="todas"
-                    onclick="filtrarVideos('todas', this)">
-                    <i class="fa-solid fa-list"></i> Todas
-                </button>
-                <button class="btn-admin btn-secondary btn-sm" data-filtro="oficial"
-                    onclick="filtrarVideos('oficial', this)">
-                    <i class="fa-solid fa-film"></i> Oficiales
-                </button>
-                <button class="btn-admin btn-secondary btn-sm" data-filtro="momentos"
-                    onclick="filtrarVideos('momentos', this)">
-                    <i class="fa-solid fa-clock-rotate-left"></i> Momentos
-                </button>
-                <button class="btn-admin btn-secondary btn-sm" data-filtro="en_vivo"
-                    onclick="filtrarVideos('en_vivo', this)">
-                    <i class="fa-solid fa-microphone"></i> En Vivo
-                </button>
+            <div class="filtros-videos" id="filtrosContainer">
+                <!-- Los filtros se generan dinámicamente desde JavaScript -->
             </div>
 
             <div id="listaVideos">
@@ -761,6 +746,39 @@
         }
 
         // ============================================================
+        // FUNCIÓN: RENDERIZAR FILTROS DINÁMICOS
+        // ============================================================
+        function renderizarFiltros() {
+            const container = document.getElementById('filtrosContainer');
+            const base = getCategoriasBase();
+
+            // Construir mapa de nombres
+            const nombres = {};
+            categoriasDisponibles.forEach(cat => {
+                nombres[cat] = base[cat] || cat;
+            });
+
+            let html = '';
+
+            // Botón "Todas" siempre presente
+            html += `<button class="btn-admin btn-secondary btn-sm ${filtroActual === 'todas' ? 'active' : ''}" data-filtro="todas" onclick="filtrarVideos('todas', this)">
+                        <i class="fa-solid fa-list"></i> Todas
+                    </button>`;
+
+            // Botones para cada categoría
+            categoriasDisponibles.forEach(cat => {
+                const label = nombres[cat] || cat;
+                const emoji = cat === 'oficial' ? '🎥' : cat === 'momentos' ? '🎬' : cat === 'en_vivo' ? '🎤' : '📁';
+                const isActive = filtroActual === cat;
+                html += `<button class="btn-admin btn-secondary btn-sm ${isActive ? 'active' : ''}" data-filtro="${cat}" onclick="filtrarVideos('${cat}', this)">
+                            ${emoji} ${label}
+                        </button>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ============================================================
         // CATEGORÍAS
         // ============================================================
         let categoriasDisponibles = [];
@@ -786,6 +804,7 @@
                 categoriasDisponibles = Object.keys(getCategoriasBase());
             }
             renderizarCategorias();
+            renderizarFiltros();
         }
 
         function guardarCategorias() {
@@ -849,6 +868,7 @@
             categoriasDisponibles.push(slug);
             guardarCategorias();
             renderizarCategorias();
+            renderizarFiltros(); // 🔥 ACTUALIZAR FILTROS
             document.getElementById('videoCategoria').value = slug;
             input.value = '';
             mostrarToast('✅ Categoría "' + nombre + '" creada', 'success');
@@ -873,6 +893,15 @@
             }
 
             renderizarCategorias();
+            renderizarFiltros(); // 🔥 ACTUALIZAR FILTROS
+
+            // Si el filtro actual era la categoría eliminada, cambiar a "todas"
+            if (filtroActual === slug) {
+                filtroActual = 'todas';
+                renderizarFiltros();
+                renderizarVideos();
+            }
+
             mostrarToast('✅ Categoría eliminada', 'success');
         }
 
@@ -1510,7 +1539,7 @@
             cargarCategoriasGuardadas();
             cargarVideos();
             switchUploadOption('youtube');
-            console.log('🚀 Gestor de Videos cargado con conversión automática de YouTube');
+            console.log('🚀 Gestor de Videos cargado con filtros dinámicos');
         });
 
         document.addEventListener('keydown', function (e) {
