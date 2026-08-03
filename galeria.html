@@ -24,10 +24,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
     <!-- GOOGLE ANALYTICS -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YNRK4G09LN"></script>
     <script>
@@ -190,12 +186,19 @@
         }
 
         /* =====================================
-           GALERÍA - CONTENIDO EXISTENTE + FIREBASE
+           GALERÍA - GRID
            ===================================== */
+        .galeria-seccion {
+            padding: 90px 20px;
+            background: #111;
+        }
+
         .galeria-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .foto-item {
@@ -253,23 +256,21 @@
             text-align: center;
         }
 
-        .foto-item .foto-overlay .badge-firebase {
-            display: inline-block;
-            background: rgba(255, 204, 0, 0.2);
-            color: #ffcc00;
-            padding: 2px 10px;
-            border-radius: 10px;
-            font-size: 0.6rem;
-            font-weight: 600;
-            margin-top: 4px;
+        .galeria-titulo-seccion {
+            text-align: center;
+            margin-bottom: 50px;
         }
 
-        .galeria-vacia {
-            text-align: center;
-            color: #666;
-            padding: 60px 20px;
-            font-size: 1.1rem;
-            grid-column: 1 / -1;
+        .galeria-titulo-seccion span {
+            color: #ffcc00;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .galeria-titulo-seccion h2 {
+            font-size: 2.5rem;
+            margin-top: 10px;
         }
 
         .galeria-categorias {
@@ -305,18 +306,8 @@
             border-color: #ffcc00;
         }
 
-        .galeria-categorias .cat-btn.cat-firebase {
-            border-color: #ffcc00;
-            color: #ffcc00;
-        }
-
-        .galeria-categorias .cat-btn.cat-firebase.active {
-            background: #ffcc00;
-            color: #000;
-        }
-
         /* =====================================
-           VISOR DE GALERÍA
+           VISOR DE GALERÍA (MODAL)
            ===================================== */
         .visor {
             position: fixed;
@@ -488,11 +479,6 @@
                 height: 100%;
                 object-fit: cover;
             }
-
-            .galeria-categorias .cat-btn {
-                padding: 8px 16px;
-                font-size: 0.8rem;
-            }
         }
 
         .animar {
@@ -531,6 +517,41 @@
             transform: translateY(-2px) scale(1.08);
             text-shadow: 0 0 8px rgba(255, 204, 0, .8), 0 0 15px rgba(255, 204, 0, .5);
         }
+
+        /* =====================================
+           BOTON SUBIR
+           ===================================== */
+        #subir {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 50%;
+            background: #ffcc00;
+            color: #000;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: .3s;
+            z-index: 999;
+        }
+
+        #subir.visible {
+            opacity: .85;
+            visibility: visible;
+        }
+
+        #subir:hover {
+            transform: translateY(-4px);
+            opacity: 1;
+            background: white;
+        }
     </style>
 </head>
 
@@ -567,25 +588,145 @@
         </div>
     </header>
 
-    <section class="galeria-seccion animar">
+    <section class="galeria-seccion">
         <div class="contenedor">
-            <div class="titulo-seccion">
+            <div class="galeria-titulo-seccion">
                 <span>MOMENTOS</span>
                 <h2>Nuestra Galería</h2>
             </div>
 
-            <!-- Categorías: EXISTENTES + FIREBASE -->
-            <div class="galeria-categorias" id="galeriaCategorias">
-                <button class="cat-btn active" data-categoria="todas">📸 Todas</button>
-                <button class="cat-btn" data-categoria="vocho">🚗 Sesión Vocho</button>
-                <button class="cat-btn" data-categoria="disco">🎵 Sesión Disco Cumbias</button>
-                <button class="cat-btn" data-categoria="lanzamiento">🎸 Cumbia Salvaje</button>
-                <div id="categoriasFirebaseContainer" style="display:inline-flex; gap:10px; flex-wrap:wrap;"></div>
+            <div class="galeria-categorias">
+                <button class="cat-btn active" data-categoria="todas" onclick="filtrarGaleria('todas')">📸
+                    Todas</button>
+                <button class="cat-btn" data-categoria="vocho" onclick="filtrarGaleria('vocho')">🚗 Sesión
+                    Vocho</button>
+                <button class="cat-btn" data-categoria="disco" onclick="filtrarGaleria('disco')">🎵 Sesión Disco
+                    Cumbias</button>
+                <button class="cat-btn" data-categoria="lanzamiento" onclick="filtrarGaleria('lanzamiento')">🎸 Cumbia
+                    Salvaje</button>
             </div>
 
-            <!-- GALERÍA: FOTOS EXISTENTES -->
             <div class="galeria-grid" id="galeriaGrid">
-                <!-- Las fotos se cargan desde JavaScript -->
+                <!-- SESIÓN VOCHO -->
+                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
+                    <img src="img/galeria/vocho/foto1.webp" alt="Sesión Vocho 1" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
+                </div>
+                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
+                    <img src="img/galeria/vocho/foto2.webp" alt="Sesión Vocho 2" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
+                </div>
+                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
+                    <img src="img/galeria/vocho/foto7.webp" alt="Sesión Vocho 7" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
+                </div>
+                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
+                    <img src="img/galeria/vocho/foto8.webp" alt="Sesión Vocho 8" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
+                </div>
+                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
+                    <img src="img/galeria/vocho/foto9.webp" alt="Sesión Vocho 9" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
+                </div>
+                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
+                    <img src="img/galeria/vocho/foto10.webp" alt="Sesión Vocho 10" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
+                </div>
+                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
+                    <img src="img/galeria/vocho/foto11.webp" alt="Sesión Vocho 11" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
+                </div>
+                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
+                    <img src="img/galeria/vocho/foto12.webp" alt="Sesión Vocho 12" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
+                </div>
+                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
+                    <img src="img/galeria/vocho/foto13.webp" alt="Sesión Vocho 13" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
+                </div>
+                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
+                    <img src="img/galeria/vocho/foto14.webp" alt="Sesión Vocho 14" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
+                </div>
+                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
+                    <img src="img/galeria/vocho/foto15.webp" alt="Sesión Vocho 15" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
+                </div>
+                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
+                    <img src="img/galeria/vocho/foto16.webp" alt="Sesión Vocho 16" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
+                </div>
+
+                <!-- SESIÓN DISCO CUMBIAS -->
+                <div class="foto-item" data-categoria="disco" onclick="abrirVisor(this)">
+                    <img src="img/galeria/cumbias/foto3.webp" alt="Disco Cumbias 3" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Sesión Disco Cumbias</span></div>
+                </div>
+                <div class="foto-item" data-categoria="disco" onclick="abrirVisor(this)">
+                    <img src="img/galeria/cumbias/foto4.webp" alt="Disco Cumbias 4" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Sesión Disco Cumbias</span></div>
+                </div>
+                <div class="foto-item" data-categoria="disco" onclick="abrirVisor(this)">
+                    <img src="img/galeria/cumbias/foto5.webp" alt="Disco Cumbias 5" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Sesión Disco Cumbias</span></div>
+                </div>
+                <div class="foto-item" data-categoria="disco" onclick="abrirVisor(this)">
+                    <img src="img/galeria/cumbias/foto6.webp" alt="Disco Cumbias 6" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Sesión Disco Cumbias</span></div>
+                </div>
+
+                <!-- LANZAMIENTO CUMBIA SALVAJE -->
+                <div class="foto-item" data-categoria="lanzamiento" onclick="abrirVisor(this)">
+                    <img src="img/galeria/lanzamiento/foto1.webp" alt="Cumbia Salvaje 1" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Cumbia Salvaje - Lanzamiento</span></div>
+                </div>
+                <div class="foto-item" data-categoria="lanzamiento" onclick="abrirVisor(this)">
+                    <img src="img/galeria/lanzamiento/foto2.webp" alt="Cumbia Salvaje 2" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Cumbia Salvaje - Lanzamiento</span></div>
+                </div>
+                <div class="foto-item" data-categoria="lanzamiento" onclick="abrirVisor(this)">
+                    <img src="img/galeria/lanzamiento/foto3.webp" alt="Cumbia Salvaje 3" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Cumbia Salvaje - Lanzamiento</span></div>
+                </div>
+                <div class="foto-item" data-categoria="lanzamiento" onclick="abrirVisor(this)">
+                    <img src="img/galeria/lanzamiento/foto17.webp" alt="Cumbia Salvaje 17" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Cumbia Salvaje - Lanzamiento</span></div>
+                </div>
+                <div class="foto-item" data-categoria="lanzamiento" onclick="abrirVisor(this)">
+                    <img src="img/galeria/lanzamiento/foto18.webp" alt="Cumbia Salvaje 18" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Cumbia Salvaje - Lanzamiento</span></div>
+                </div>
+                <div class="foto-item" data-categoria="lanzamiento" onclick="abrirVisor(this)">
+                    <img src="img/galeria/lanzamiento/foto19.webp" alt="Cumbia Salvaje 19" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Cumbia Salvaje - Lanzamiento</span></div>
+                </div>
+                <div class="foto-item" data-categoria="lanzamiento" onclick="abrirVisor(this)">
+                    <img src="img/galeria/lanzamiento/foto20.webp" alt="Cumbia Salvaje 20" loading="lazy"
+                        onerror="this.style.display='none'">
+                    <div class="foto-overlay"><span>Cumbia Salvaje - Lanzamiento</span></div>
+                </div>
             </div>
         </div>
     </section>
@@ -621,206 +762,67 @@
 
     <script>
         // ============================================================
-        // CONFIGURACIÓN DE FIREBASE
+        // FILTRAR GALERÍA POR CATEGORÍA
         // ============================================================
-        const firebaseConfig = {
-            apiKey: "AIzaSyDvp_6UFymZZnqxMyL6yobJ3twLMvVkThw",
-            authDomain: "base-entradas-tenchos.firebaseapp.com",
-            projectId: "base-entradas-tenchos",
-            storageBucket: "base-entradas-tenchos.firebasestorage.app",
-            messagingSenderId: "273676503007",
-            appId: "1:273676503007:web:56180c485b648ef076a66a"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        // ============================================================
-        // 📸 DATOS DE LA GALERÍA - RUTAS CORRECTAS
-        // ============================================================
-        // Usamos rutas relativas desde la raíz del sitio
-        const galeriaDatos = {
-            'vocho': {
-                titulo: 'Sesión Vocho',
-                fotos: [
-                    'img/galeria/vocho/foto1.webp',
-                    'img/galeria/vocho/foto2.webp',
-                    'img/galeria/vocho/foto7.webp',
-                    'img/galeria/vocho/foto8.webp',
-                    'img/galeria/vocho/foto9.webp',
-                    'img/galeria/vocho/foto10.webp',
-                    'img/galeria/vocho/foto11.webp',
-                    'img/galeria/vocho/foto12.webp',
-                    'img/galeria/vocho/foto13.webp',
-                    'img/galeria/vocho/foto14.webp',
-                    'img/galeria/vocho/foto15.webp',
-                    'img/galeria/vocho/foto16.webp'
-                ]
-            },
-            'disco': {
-                titulo: 'Sesión Disco Cumbias',
-                fotos: [
-                    'img/galeria/cumbias/foto3.webp',
-                    'img/galeria/cumbias/foto4.webp',
-                    'img/galeria/cumbias/foto5.webp',
-                    'img/galeria/cumbias/foto6.webp'
-                ]
-            },
-            'lanzamiento': {
-                titulo: 'Cumbia Salvaje - Lanzamiento',
-                fotos: [
-                    'img/galeria/lanzamiento/foto1.webp',
-                    'img/galeria/lanzamiento/foto2.webp',
-                    'img/galeria/lanzamiento/foto3.webp',
-                    'img/galeria/lanzamiento/foto17.webp',
-                    'img/galeria/lanzamiento/foto18.webp',
-                    'img/galeria/lanzamiento/foto19.webp',
-                    'img/galeria/lanzamiento/foto20.webp'
-                ]
-            }
-        };
-
-        let todasLasFotos = [];
-        let categoriaActual = 'todas';
-        let indiceActualVisor = 0;
-
-        // ============================================================
-        // 🚀 CONSTRUIR LISTA COMPLETA DE FOTOS
-        // ============================================================
-        function construirListaFotos() {
-            const fotosArray = [];
-
-            // Recorrer cada categoría y agregar sus fotos
-            for (const [categoria, data] of Object.entries(galeriaDatos)) {
-                if (data.fotos && data.fotos.length > 0) {
-                    data.fotos.forEach(foto => {
-                        fotosArray.push({
-                            url: foto,
-                            titulo: data.titulo,
-                            categoriaId: categoria,
-                            esExistente: true
-                        });
-                    });
-                }
-            }
-
-            todasLasFotos = fotosArray;
-
-            console.log(`📸 Total de fotos cargadas: ${todasLasFotos.length}`);
-            console.log('📸 Primeras 3 fotos:', todasLasFotos.slice(0, 3));
-
-            if (todasLasFotos.length === 0) {
-                console.warn('⚠️ No se encontraron fotos en la galería');
-            }
-
-            cambiarCategoria('todas');
-        }
-
-        // ============================================================
-        // 🔀 CAMBIAR CATEGORÍA
-        // ============================================================
-        function cambiarCategoria(categoria) {
-            categoriaActual = categoria;
-
+        function filtrarGaleria(categoria) {
+            // Actualizar botones activos
             document.querySelectorAll('.cat-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.categoria === categoria);
             });
 
-            let filtradas;
-            if (categoria === 'todas') {
-                filtradas = todasLasFotos;
-            } else {
-                filtradas = todasLasFotos.filter(f => f.categoriaId === categoria);
-            }
-
-            renderizarGaleria(filtradas);
-        }
-
-        // ============================================================
-        // 🖼️ RENDERIZAR GALERÍA
-        // ============================================================
-        function renderizarGaleria(fotos) {
-            const grid = document.getElementById('galeriaGrid');
-
-            if (!fotos || fotos.length === 0) {
-                grid.innerHTML = `
-                            <div class="galeria-vacia">
-                                <i class="fa-regular fa-image"></i>
-                                <p>No hay fotos en esta categoría.<br>
-                                <span style="font-size:0.8rem;color:#555;">Verifica que las imágenes existan en la carpeta img/galeria/</span></p>
-                            </div>
-                        `;
-                return;
-            }
-
-            let html = '';
-            fotos.forEach((foto, index) => {
-                const titulo = foto.titulo || 'Foto';
-
-                html += `
-                            <div class="foto-item" data-index="${index}">
-                                <img src="${foto.url}" alt="${titulo}" loading="lazy" 
-                                     onerror="this.parentElement.innerHTML='<div style=\\'color:#666;font-size:0.8rem;padding:10px;text-align:center;\\'>❌<br>${foto.url.split('/').pop()}</div>'; this.parentElement.style.background='#1a1a1a';">
-                                <div class="foto-overlay">
-                                    <span>${titulo}</span>
-                                </div>
-                            </div>
-                        `;
-            });
-
-            grid.innerHTML = html;
-
-            grid.querySelectorAll('.foto-item').forEach(el => {
-                el.addEventListener('click', function () {
-                    const index = parseInt(this.dataset.index);
-                    if (!isNaN(index) && fotos[index]) {
-                        abrirVisor(index, fotos);
-                    }
-                });
-            });
-
-            // Animación de entrada
-            document.querySelectorAll('.galeria-grid .foto-item').forEach((el, i) => {
-                setTimeout(() => {
-                    el.classList.add('visible');
-                }, 100 + (i * 50));
+            // Mostrar/ocultar fotos
+            document.querySelectorAll('.foto-item').forEach(item => {
+                if (categoria === 'todas' || item.dataset.categoria === categoria) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
             });
         }
 
         // ============================================================
-        // 🔍 VISOR DE GALERÍA
+        // VISOR DE GALERÍA
         // ============================================================
-        let fotosVisorActuales = [];
+        let fotosVisor = [];
+        let indiceVisor = 0;
 
-        function abrirVisor(index, fotos) {
-            if (!fotos || fotos.length === 0) return;
-            fotosVisorActuales = fotos;
+        function abrirVisor(elemento) {
+            const img = elemento.querySelector('img');
+            if (!img) return;
 
-            const imgSrc = fotos[index]?.url;
-            if (!imgSrc) return;
+            // Obtener todas las fotos visibles
+            const todasLasFotos = document.querySelectorAll('.foto-item[style*="display: flex"], .foto-item:not([style*="display: none"])');
+            fotosVisor = [];
 
-            indiceActualVisor = index;
-            mostrarFotoVisor(indiceActualVisor);
+            todasLasFotos.forEach(el => {
+                const imgEl = el.querySelector('img');
+                if (imgEl && imgEl.src) {
+                    fotosVisor.push(imgEl.src);
+                }
+            });
+
+            // Si no hay fotos, salir
+            if (fotosVisor.length === 0) return;
+
+            // Encontrar el índice de la foto actual
+            indiceVisor = fotosVisor.indexOf(img.src);
+            if (indiceVisor === -1) indiceVisor = 0;
+
+            mostrarVisor(indiceVisor);
+        }
+
+        function mostrarVisor(indice) {
+            if (fotosVisor.length === 0) return;
+            if (indice < 0) indice = fotosVisor.length - 1;
+            if (indice >= fotosVisor.length) indice = 0;
+
+            indiceVisor = indice;
+            document.getElementById('imagen-galeria').src = fotosVisor[indiceVisor];
+            document.getElementById('foto-actual').textContent = indiceVisor + 1;
+            document.getElementById('total-fotos').textContent = fotosVisor.length;
+
             document.getElementById('visor-galeria').classList.add('active');
             document.body.style.overflow = 'hidden';
-        }
-
-        function mostrarFotoVisor(indice) {
-            if (fotosVisorActuales.length === 0) return;
-
-            if (indice < 0) indice = fotosVisorActuales.length - 1;
-            if (indice >= fotosVisorActuales.length) indice = 0;
-
-            indiceActualVisor = indice;
-            document.getElementById('imagen-galeria').src = fotosVisorActuales[indice].url;
-            document.getElementById('foto-actual').textContent = indice + 1;
-            document.getElementById('total-fotos').textContent = fotosVisorActuales.length;
-
-            const img = document.getElementById('imagen-galeria');
-            img.style.animation = 'none';
-            setTimeout(() => {
-                img.style.animation = 'zoomEntrada .35s ease';
-            }, 50);
         }
 
         function cerrarVisor() {
@@ -828,66 +830,53 @@
             document.body.style.overflow = '';
         }
 
+        // Eventos del visor
         document.getElementById('cerrar-galeria').addEventListener('click', cerrarVisor);
         document.getElementById('visor-galeria').addEventListener('click', function (e) {
             if (e.target === this) cerrarVisor();
         });
+
         document.getElementById('foto-anterior').addEventListener('click', function (e) {
             e.stopPropagation();
-            mostrarFotoVisor(indiceActualVisor - 1);
+            mostrarVisor(indiceVisor - 1);
         });
+
         document.getElementById('foto-siguiente').addEventListener('click', function (e) {
             e.stopPropagation();
-            mostrarFotoVisor(indiceActualVisor + 1);
+            mostrarVisor(indiceVisor + 1);
         });
 
         document.addEventListener('keydown', function (e) {
             if (!document.getElementById('visor-galeria').classList.contains('active')) return;
             if (e.key === 'Escape') cerrarVisor();
-            if (e.key === 'ArrowRight') mostrarFotoVisor(indiceActualVisor + 1);
-            if (e.key === 'ArrowLeft') mostrarFotoVisor(indiceActualVisor - 1);
+            if (e.key === 'ArrowRight') mostrarVisor(indiceVisor + 1);
+            if (e.key === 'ArrowLeft') mostrarVisor(indiceVisor - 1);
         });
 
         // ============================================================
-        // 🚀 INICIALIZAR - ¡YA!
+        // BOTÓN SUBIR
         // ============================================================
-        // Ejecutar inmediatamente cuando el DOM esté listo
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function () {
-                console.log('🚀 Inicializando galería...');
-                construirListaFotos();
-                console.log('✅ Galería cargada correctamente');
-            });
-        } else {
-            // El DOM ya está listo
-            console.log('🚀 Inicializando galería (DOM ya listo)...');
-            construirListaFotos();
-            console.log('✅ Galería cargada correctamente');
-        }
-
-        // También cargar Firebase en segundo plano (para futuras fotos)
-        async function cargarFirebaseEnSegundoPlano() {
-            try {
-                const fotosSnap = await db.collection('galeria_fotos')
-                    .orderBy('orden', 'asc')
-                    .get();
-
-                const fotosFirebase = [];
-                fotosSnap.forEach(doc => {
-                    fotosFirebase.push({ id: doc.id, ...doc.data() });
-                });
-
-                if (fotosFirebase.length > 0) {
-                    console.log(`🔥 ${fotosFirebase.length} fotos cargadas desde Firebase`);
-                    // Aquí podrías agregar las fotos de Firebase a la galería
-                }
-            } catch (error) {
-                console.log('ℹ️ Firebase no tiene fotos aún o hubo un error:', error.message);
+        window.addEventListener('scroll', function () {
+            const btn = document.getElementById('subir');
+            if (window.scrollY > 300) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
             }
-        }
+        });
 
-        // Cargar Firebase después de 2 segundos (no bloquea la UI)
-        setTimeout(cargarFirebaseEnSegundoPlano, 2000);
+        document.getElementById('subir').addEventListener('click', function () {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ============================================================
+        // MENÚ HAMBURGUESA
+        // ============================================================
+        document.getElementById('menu-btn').addEventListener('click', function () {
+            document.querySelector('.menu').classList.toggle('activo');
+        });
+
+        console.log('✅ Galería cargada correctamente - ' + document.querySelectorAll('.foto-item').length + ' fotos');
     </script>
 
 </body>
