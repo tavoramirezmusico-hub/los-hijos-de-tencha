@@ -22,10 +22,6 @@
     <link rel="stylesheet" href="css/admin.css">
 
     <style>
-        /* ============================================================
-           ESTILOS ESPECÍFICOS DE GALERÍA
-           ============================================================ */
-
         .categorias-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -75,7 +71,6 @@
             font-size: 0.6rem;
         }
 
-        /* Dropzone */
         .galeria-dropzone {
             border: 2px dashed var(--color-border);
             border-radius: var(--radius);
@@ -243,7 +238,21 @@
             color: var(--color-text-muted);
         }
 
-        /* RESPONSIVE */
+        .error-box {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--color-danger);
+            border: 1px solid var(--color-danger);
+            border-radius: var(--radius-sm);
+            background: rgba(211, 47, 47, 0.05);
+        }
+
+        .error-box i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 12px;
+        }
+
         @media (max-width: 768px) {
             .categorias-grid {
                 grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -300,9 +309,7 @@
 
 <body>
 
-    <!-- ============================================================
-    SIDEBAR
-    ============================================================ -->
+    <!-- SIDEBAR -->
     <aside class="admin-sidebar" id="adminSidebar">
         <div class="sidebar-brand">
             <img src="../img/logo.webp" alt="Los Hijos de Tencha">
@@ -332,9 +339,7 @@
 
     <div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- ============================================================
-    CONTENIDO PRINCIPAL
-    ============================================================ -->
+    <!-- CONTENIDO PRINCIPAL -->
     <main class="admin-main">
 
         <!-- HEADER -->
@@ -359,9 +364,7 @@
             </div>
         </header>
 
-        <!-- ============================================================
-        CATEGORÍAS
-        ============================================================ -->
+        <!-- CATEGORÍAS -->
         <div class="admin-card">
             <div class="card-header">
                 <h3><i class="fa-solid fa-tags"></i> Categorías</h3>
@@ -378,9 +381,7 @@
             </div>
         </div>
 
-        <!-- ============================================================
-        SUBIDA DE FOTOS
-        ============================================================ -->
+        <!-- SUBIDA DE FOTOS -->
         <div class="admin-card" id="seccionFotos">
             <div class="card-header">
                 <h3 id="categoriaSeleccionadaTitulo"><i class="fa-solid fa-images"></i> Selecciona una categoría</h3>
@@ -389,7 +390,6 @@
                 </div>
             </div>
 
-            <!-- Dropzone -->
             <div class="galeria-dropzone" id="dropzone">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
                 <p><strong>Arrastra y suelta</strong> tus fotos aquí o haz clic para seleccionar</p>
@@ -397,7 +397,6 @@
                 <input type="file" id="fileInput" accept="image/*" multiple style="display:none;">
             </div>
 
-            <!-- Progreso -->
             <div class="upload-progress" id="uploadProgress">
                 <div class="progress-text" id="progressText">Subiendo 0/0 fotos...</div>
                 <div class="progress-bar">
@@ -405,7 +404,6 @@
                 </div>
             </div>
 
-            <!-- Grid de fotos -->
             <div class="fotos-grid" id="fotosGrid">
                 <div class="foto-vacia">
                     <i class="fa-regular fa-image"></i>
@@ -416,9 +414,7 @@
 
     </main>
 
-    <!-- ============================================================
-    MODAL - NUEVA CATEGORÍA / EDITAR CATEGORÍA
-    ============================================================ -->
+    <!-- MODAL - NUEVA CATEGORÍA / EDITAR CATEGORÍA -->
     <div class="admin-modal" id="modalCategoria">
         <div class="modal-content">
             <div class="modal-header">
@@ -447,9 +443,7 @@
         </div>
     </div>
 
-    <!-- ============================================================
-    MODAL - ELIMINAR CATEGORÍA
-    ============================================================ -->
+    <!-- MODAL - ELIMINAR CATEGORÍA -->
     <div class="admin-modal" id="modalEliminarCategoria">
         <div class="modal-content" style="max-width:450px;">
             <div class="modal-header">
@@ -472,9 +466,7 @@
         </div>
     </div>
 
-    <!-- ============================================================
-    TOAST
-    ============================================================ -->
+    <!-- TOAST -->
     <div id="adminToast" class="admin-toast"></div>
 
     <!-- ============================================================
@@ -526,7 +518,7 @@
         })();
 
         // ============================================================
-        // FUNCIONES - CATEGORÍAS
+        // FUNCIONES - CATEGORÍAS (SIN orderBy)
         // ============================================================
 
         async function cargarCategorias() {
@@ -535,18 +527,20 @@
                     throw new Error('Firebase no disponible');
                 }
 
-                const snapshot = await db.collection('galeria_categorias')
-                    .orderBy('nombre', 'asc')
-                    .get();
+                const snapshot = await db.collection('galeria_categorias').get();
 
                 categorias = [];
                 snapshot.forEach(doc => {
                     categorias.push({ id: doc.id, ...doc.data() });
                 });
 
+                // Ordenar en memoria por nombre
+                categorias.sort((a, b) => {
+                    return (a.nombre || '').localeCompare(b.nombre || '');
+                });
+
                 renderizarCategorias();
 
-                // Si hay categorías y no hay una seleccionada, seleccionar la primera
                 if (categorias.length > 0 && !categoriaSeleccionadaId) {
                     seleccionarCategoria(categorias[0].id);
                 }
@@ -746,7 +740,7 @@
         }
 
         // ============================================================
-        // FUNCIONES - FOTOS
+        // FUNCIONES - FOTOS (SIN orderBy)
         // ============================================================
 
         async function cargarFotos(categoriaId) {
@@ -759,12 +753,18 @@
             try {
                 const snapshot = await db.collection('galeria_fotos')
                     .where('categoriaId', '==', categoriaId)
-                    .orderBy('orden', 'asc')
                     .get();
 
                 fotos = [];
                 snapshot.forEach(doc => {
                     fotos.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Ordenar en memoria por orden
+                fotos.sort((a, b) => {
+                    const ordenA = a.orden || 0;
+                    const ordenB = b.orden || 0;
+                    return ordenA - ordenB;
                 });
 
                 renderizarFotos();
@@ -1000,7 +1000,6 @@
             console.log('🚀 Gestor de Galería cargado');
         });
 
-        // Prevenir cierre con Ctrl+W
         document.addEventListener('keydown', function (e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
                 e.preventDefault();
