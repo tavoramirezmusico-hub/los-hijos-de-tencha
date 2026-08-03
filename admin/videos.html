@@ -374,6 +374,18 @@
             background: rgba(0, 0, 0, 0.6);
         }
 
+        .recargar-btn {
+            margin-left: 8px;
+            background: var(--color-bg-hover);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+        }
+
+        .recargar-btn:hover {
+            background: #2a2a2a;
+            transform: rotate(180deg);
+        }
+
         @media (max-width: 768px) {
             .video-item {
                 flex-direction: column;
@@ -655,6 +667,10 @@
                 <h3><i class="fa-solid fa-list"></i> Videoteca</h3>
                 <div class="card-actions">
                     <span id="videosCount" style="font-size:0.75rem; color:var(--color-text-muted);"></span>
+                    <button class="btn-admin btn-secondary btn-sm recargar-btn" onclick="recargarVideoteca()"
+                        title="Recargar lista de videos">
+                        <i class="fa-solid fa-rotate"></i>
+                    </button>
                 </div>
             </div>
 
@@ -731,6 +747,18 @@
         let filtroActual = 'todas';
         let videoSeleccionado = null;
         let modoSubida = 'youtube';
+
+        // ============================================================
+        // FUNCIÓN: RECARGAR VIDEOTECA
+        // ============================================================
+        function recargarVideoteca() {
+            mostrarToast('🔄 Recargando videoteca...', 'info');
+            cargarVideos().then(() => {
+                mostrarToast('✅ Videoteca recargada', 'success');
+            }).catch(() => {
+                mostrarToast('❌ Error al recargar videoteca', 'error');
+            });
+        }
 
         // ============================================================
         // CATEGORÍAS
@@ -856,20 +884,17 @@
 
             url = url.trim();
 
-            // Ya es embed correcto
             if (url.includes('youtube.com/embed/')) {
                 const match = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/);
                 if (match) return 'https://www.youtube.com/embed/' + match[1];
                 return url;
             }
 
-            // youtu.be/ID
             if (url.includes('youtu.be/')) {
                 const match = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
                 if (match) return 'https://www.youtube.com/embed/' + match[1];
             }
 
-            // youtube.com/watch?v=ID
             if (url.includes('youtube.com/watch')) {
                 try {
                     const urlObj = new URL(url);
@@ -881,13 +906,11 @@
                 }
             }
 
-            // youtube.com/shorts/ID
             if (url.includes('youtube.com/shorts/')) {
                 const match = url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/);
                 if (match) return 'https://www.youtube.com/embed/' + match[1];
             }
 
-            // youtube.com/embed/ con parámetros extra
             if (url.includes('youtube.com/embed/')) {
                 const match = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/);
                 if (match) return 'https://www.youtube.com/embed/' + match[1];
@@ -1005,7 +1028,7 @@
         }
 
         // ============================================================
-        // FUNCIONES CRUD - CORREGIDAS
+        // FUNCIONES CRUD
         // ============================================================
 
         async function guardarVideo() {
@@ -1034,7 +1057,6 @@
                     document.getElementById('videoUrl').focus();
                     return;
                 }
-                // 🔥 CONVERTIR AUTOMÁTICAMENTE
                 url = normalizarYoutubeUrl(url);
                 if (!url.includes('youtube.com/embed/')) {
                     mostrarMensajeVideo(mensajeEl, '⚠️ No se pudo convertir la URL de YouTube. Asegúrate de que sea válida.', 'error');
@@ -1068,12 +1090,10 @@
                     actualizadoEn: new Date().toISOString()
                 };
 
-                // Si es edición, verificar que el documento existe
                 if (id) {
                     const docRef = db.collection('videos').doc(id);
                     const docSnap = await docRef.get();
                     if (!docSnap.exists) {
-                        // El documento no existe, crear uno nuevo
                         datos.creadoEn = new Date().toISOString();
                         await db.collection('videos').add(datos);
                         mostrarMensajeVideo(mensajeEl, '✅ Video guardado como nuevo (el anterior no existía)', 'success');
@@ -1086,7 +1106,6 @@
                     }
                 }
 
-                // Gestionar destacado
                 if (destacado) {
                     const snapshot = await db.collection('videos')
                         .where('categoria', '==', categoria)
