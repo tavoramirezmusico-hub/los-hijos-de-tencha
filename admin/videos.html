@@ -155,6 +155,143 @@
             margin-bottom: 12px;
         }
 
+        /* ============================================================
+           ESTILOS PARA SUBIDA DE VIDEO
+           ============================================================ */
+        .video-upload-options {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .video-upload-options .btn-admin {
+            flex: 1;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .video-upload-options .btn-admin.active-option {
+            background: var(--color-primary);
+            color: #000;
+            border-color: var(--color-primary);
+        }
+
+        .upload-option-content {
+            display: none;
+        }
+
+        .upload-option-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .video-dropzone {
+            border: 2px dashed var(--color-border);
+            border-radius: var(--radius);
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.02);
+            margin-bottom: 16px;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .video-dropzone:hover {
+            border-color: var(--color-primary);
+            background: rgba(255, 204, 0, 0.03);
+        }
+
+        .video-dropzone.dragover {
+            border-color: var(--color-primary);
+            background: rgba(255, 204, 0, 0.06);
+        }
+
+        .video-dropzone i {
+            font-size: 3rem;
+            color: var(--color-text-muted);
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .video-dropzone p {
+            color: var(--color-text-muted);
+            font-size: 1rem;
+        }
+
+        .video-dropzone .dropzone-hint {
+            font-size: 0.75rem;
+            color: #555;
+            margin-top: 8px;
+        }
+
+        .video-preview {
+            margin: 12px 0;
+            padding: 12px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+            display: none;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .video-preview.show {
+            display: flex;
+        }
+
+        .video-preview .video-icon {
+            font-size: 2.5rem;
+            color: var(--color-primary);
+            width: 60px;
+            text-align: center;
+        }
+
+        .video-preview .video-info {
+            flex: 1;
+            font-size: 0.85rem;
+        }
+
+        .video-preview .video-info .filename {
+            color: var(--color-text);
+            font-weight: 500;
+        }
+
+        .video-preview .video-info .filesize {
+            color: var(--color-text-muted);
+            font-size: 0.75rem;
+        }
+
+        .video-preview .video-remove {
+            background: none;
+            border: none;
+            color: var(--color-danger);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 4px 8px;
+            transition: var(--transition);
+        }
+
+        .video-preview .video-remove:hover {
+            transform: scale(1.2);
+        }
+
         @media (max-width: 768px) {
             .video-item {
                 flex-direction: column;
@@ -173,6 +310,10 @@
 
             .video-item .video-play {
                 align-self: center;
+            }
+
+            .video-upload-options .btn-admin {
+                min-width: 100%;
             }
         }
 
@@ -195,6 +336,14 @@
             .video-item .video-actions .btn-admin {
                 padding: 4px 10px !important;
                 font-size: 0.65rem !important;
+            }
+
+            .video-dropzone {
+                padding: 25px 10px !important;
+            }
+
+            .video-dropzone i {
+                font-size: 2rem !important;
             }
         }
     </style>
@@ -292,13 +441,75 @@
                 </select>
             </div>
 
+            <!-- ============================================================
+            OPCIONES DE SUBIDA: YOUTUBE O CLOUDINARY
+            ============================================================ -->
             <div class="admin-form-group">
-                <label for="videoUrl">URL del video *</label>
-                <input type="url" id="videoUrl" class="admin-input"
-                    placeholder="Ej: https://www.youtube.com/embed/7XbLvFXdjQE">
-                <div class="form-help">Soporta YouTube (embed) y Cloudinary</div>
+                <label>¿Cómo quieres agregar el video?</label>
+                <div class="video-upload-options">
+                    <button class="btn-admin btn-secondary active-option" id="optYoutube"
+                        onclick="switchUploadOption('youtube')">
+                        <i class="fa-brands fa-youtube"></i> YouTube
+                    </button>
+                    <button class="btn-admin btn-secondary" id="optCloudinary"
+                        onclick="switchUploadOption('cloudinary')">
+                        <i class="fa-solid fa-cloud"></i> Subir a Cloudinary
+                    </button>
+                </div>
             </div>
 
+            <!-- OPCIÓN 1: YOUTUBE -->
+            <div id="uploadYoutube" class="upload-option-content active">
+                <div class="admin-form-group">
+                    <label for="videoUrl">URL de YouTube *</label>
+                    <input type="url" id="videoUrl" class="admin-input"
+                        placeholder="Ej: https://www.youtube.com/embed/7XbLvFXdjQE">
+                    <div class="form-help">Pega el enlace de YouTube (embed o normal)</div>
+                </div>
+            </div>
+
+            <!-- OPCIÓN 2: CLOUDINARY -->
+            <div id="uploadCloudinary" class="upload-option-content">
+                <div class="admin-form-group">
+                    <label>Subir video a Cloudinary</label>
+                    <div class="video-dropzone" id="videoDropzone">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <p><strong>Arrastra y suelta</strong> tu video aquí o haz clic para seleccionar</p>
+                        <div class="dropzone-hint">Formatos: MP4, MOV, AVI, WEBM | Máximo 100MB</div>
+                        <input type="file" id="videoFileInput" accept="video/*" style="display:none;">
+                    </div>
+
+                    <div class="video-preview" id="videoPreview">
+                        <div class="video-icon">
+                            <i class="fa-solid fa-file-video"></i>
+                        </div>
+                        <div class="video-info">
+                            <div class="filename" id="videoPreviewNombre">video.mp4</div>
+                            <div class="filesize" id="videoPreviewTamaño">0 MB</div>
+                        </div>
+                        <button class="video-remove" onclick="eliminarVideoSeleccionado()">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label for="videoUrlCloudinary">URL del video en Cloudinary (se genera automáticamente)</label>
+                        <input type="url" id="videoUrlCloudinary" class="admin-input"
+                            placeholder="La URL se generará al subir" readonly>
+                        <div class="form-help">Sube el video y la URL se completará automáticamente</div>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label for="videoPublicId">ID Público (metadato personalizado)</label>
+                        <input type="text" id="videoPublicId" class="admin-input"
+                            placeholder="Ej: cumbia-salvaje-lanzamiento">
+                        <div class="form-help">Identificador único para el video en Cloudinary. Solo letras, números y
+                            guiones.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campos comunes -->
             <div class="admin-form-group">
                 <label for="videoFecha">Fecha (opcional)</label>
                 <input type="date" id="videoFecha" class="admin-input">
@@ -396,11 +607,22 @@
 
     <script>
         // ============================================================
+        // CONFIGURACIÓN DE CLOUDINARY
+        // ============================================================
+        const CLOUDINARY_CONFIG = {
+            cloudName: 'ldiiqgdp',
+            uploadPreset: 'tencha_uploads',
+            uploadUrl: 'https://api.cloudinary.com/v1_1/ldiiqgdp/video/upload'
+        };
+
+        // ============================================================
         // VARIABLES GLOBALES
         // ============================================================
         let videos = [];
         let editandoId = null;
         let filtroActual = 'todas';
+        let videoSeleccionado = null;
+        let modoSubida = 'youtube'; // 'youtube' o 'cloudinary'
 
         // ============================================================
         // SIDEBAR
@@ -436,6 +658,60 @@
         })();
 
         // ============================================================
+        // FUNCIONES - CAMBIAR OPCIÓN DE SUBIDA
+        // ============================================================
+
+        function switchUploadOption(opcion) {
+            modoSubida = opcion;
+
+            // Actualizar botones
+            document.getElementById('optYoutube').classList.toggle('active-option', opcion === 'youtube');
+            document.getElementById('optCloudinary').classList.toggle('active-option', opcion === 'cloudinary');
+
+            // Mostrar/ocultar paneles
+            document.getElementById('uploadYoutube').classList.toggle('active', opcion === 'youtube');
+            document.getElementById('uploadCloudinary').classList.toggle('active', opcion === 'cloudinary');
+
+            // Limpiar validaciones
+            document.getElementById('videoUrl').required = (opcion === 'youtube');
+        }
+
+        // ============================================================
+        // FUNCIONES - SUBIR VIDEO A CLOUDINARY
+        // ============================================================
+
+        async function subirVideoCloudinary(file, publicId) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
+            formData.append('folder', 'videos');
+
+            if (publicId && publicId.trim()) {
+                formData.append('public_id', publicId.trim().replace(/\s+/g, '-'));
+            }
+
+            try {
+                const response = await fetch(CLOUDINARY_CONFIG.uploadUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('❌ Error Cloudinary:', errorData);
+                    throw new Error(errorData.error?.message || 'Error al subir a Cloudinary');
+                }
+
+                const data = await response.json();
+                console.log('✅ Video subido a Cloudinary:', data.secure_url);
+                return data.secure_url;
+            } catch (error) {
+                console.error('❌ Error en subirVideoCloudinary:', error);
+                throw error;
+            }
+        }
+
+        // ============================================================
         // FUNCIONES - MENSAJES
         // ============================================================
 
@@ -443,6 +719,7 @@
             if (!elemento) return;
             elemento.style.display = 'block';
             elemento.textContent = texto;
+            elemento.className = 'admin-form-group ' + tipo;
 
             const colors = {
                 'success': 'var(--color-success)',
@@ -471,28 +748,38 @@
             const titulo = document.getElementById('videoTitulo').value.trim();
             const descripcion = document.getElementById('videoDescripcion').value.trim();
             const categoria = document.getElementById('videoCategoria').value;
-            const url = document.getElementById('videoUrl').value.trim();
             const fecha = document.getElementById('videoFecha').value;
             const orden = parseInt(document.getElementById('videoOrden').value) || 0;
             const destacado = document.getElementById('videoDestacado').checked;
 
             const mensajeEl = document.getElementById('mensajeVideo');
 
+            // Validaciones
             if (!titulo) {
                 mostrarMensajeVideo(mensajeEl, '⚠️ Ingresa el título del video', 'error');
                 document.getElementById('videoTitulo').focus();
                 return;
             }
 
-            if (!url) {
-                mostrarMensajeVideo(mensajeEl, '⚠️ Ingresa la URL del video', 'error');
-                document.getElementById('videoUrl').focus();
-                return;
-            }
+            let url = '';
 
-            if (!url.includes('youtube.com') && !url.includes('youtu.be') && !url.includes('cloudinary.com') && !url.includes('player.cloudinary.com')) {
-                mostrarMensajeVideo(mensajeEl, '⚠️ URL no válida. Usa YouTube o Cloudinary', 'error');
-                return;
+            if (modoSubida === 'youtube') {
+                url = document.getElementById('videoUrl').value.trim();
+                if (!url) {
+                    mostrarMensajeVideo(mensajeEl, '⚠️ Ingresa la URL de YouTube', 'error');
+                    document.getElementById('videoUrl').focus();
+                    return;
+                }
+                if (!url.includes('youtube.com') && !url.includes('youtu.be')) {
+                    mostrarMensajeVideo(mensajeEl, '⚠️ URL no válida. Usa YouTube', 'error');
+                    return;
+                }
+            } else {
+                url = document.getElementById('videoUrlCloudinary').value.trim();
+                if (!url) {
+                    mostrarMensajeVideo(mensajeEl, '⚠️ Sube un video a Cloudinary primero', 'error');
+                    return;
+                }
             }
 
             const btn = document.getElementById('btnGuardar');
@@ -507,10 +794,11 @@
                     titulo,
                     descripcion: descripcion || '',
                     categoria,
-                    url,
+                    url: url,
                     fecha: fecha || '',
                     orden: orden,
                     destacado: destacado,
+                    fuente: modoSubida,
                     actualizadoEn: new Date().toISOString()
                 };
 
@@ -567,7 +855,6 @@
                     throw new Error('Firebase no disponible');
                 }
 
-                // 🔥 SIN orderBy compuestos - SOLO UN CAMPO
                 const snapshot = await db.collection('videos')
                     .orderBy('creadoEn', 'desc')
                     .get();
@@ -577,7 +864,6 @@
                     videos.push({ id: doc.id, ...doc.data() });
                 });
 
-                // Ordenar en memoria por 'orden' si existe
                 videos.sort((a, b) => {
                     const ordenA = a.orden || 999;
                     const ordenB = b.orden || 999;
@@ -633,6 +919,7 @@
             filtrados.forEach(video => {
                 const fecha = video.fecha ? formatearFecha(video.fecha) : 'Sin fecha';
                 const catNombre = categoriasNombres[video.categoria] || video.categoria;
+                const fuenteIcon = video.fuente === 'cloudinary' ? '☁️' : '▶️';
 
                 html += `
                             <div class="video-item">
@@ -644,6 +931,7 @@
                                     <div class="video-meta">
                                         <span><i class="fa-regular fa-folder"></i> ${catNombre}</span>
                                         <span><i class="fa-regular fa-calendar"></i> ${fecha}</span>
+                                        <span>${fuenteIcon} ${video.fuente === 'cloudinary' ? 'Cloudinary' : 'YouTube'}</span>
                                         ${video.orden > 0 ? '<span><i class="fa-regular fa-hashtag"></i> #' + video.orden + '</span>' : ''}
                                     </div>
                                     ${video.descripcion ? '<div class="video-desc">' + sanitizar(video.descripcion) + '</div>' : ''}
@@ -665,10 +953,8 @@
 
         function filtrarVideos(filtro, btn) {
             filtroActual = filtro;
-
             document.querySelectorAll('.filtros-videos .btn-admin').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
-
             renderizarVideos();
         }
 
@@ -709,10 +995,20 @@
                 document.getElementById('videoTitulo').value = data.titulo || '';
                 document.getElementById('videoDescripcion').value = data.descripcion || '';
                 document.getElementById('videoCategoria').value = data.categoria || 'oficial';
-                document.getElementById('videoUrl').value = data.url || '';
                 document.getElementById('videoFecha').value = data.fecha || '';
                 document.getElementById('videoOrden').value = data.orden || '';
                 document.getElementById('videoDestacado').checked = data.destacado || false;
+
+                // Determinar modo de subida
+                if (data.fuente === 'cloudinary' || (data.url && data.url.includes('cloudinary.com'))) {
+                    switchUploadOption('cloudinary');
+                    document.getElementById('videoUrlCloudinary').value = data.url || '';
+                    document.getElementById('videoUrl').value = '';
+                } else {
+                    switchUploadOption('youtube');
+                    document.getElementById('videoUrl').value = data.url || '';
+                    document.getElementById('videoUrlCloudinary').value = '';
+                }
 
                 document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Editar Video';
                 document.getElementById('btnGuardarTexto').textContent = 'Actualizar Video';
@@ -759,9 +1055,18 @@
             document.getElementById('videoDescripcion').value = '';
             document.getElementById('videoCategoria').value = 'oficial';
             document.getElementById('videoUrl').value = '';
+            document.getElementById('videoUrlCloudinary').value = '';
+            document.getElementById('videoPublicId').value = '';
             document.getElementById('videoFecha').value = '';
             document.getElementById('videoOrden').value = '';
             document.getElementById('videoDestacado').checked = false;
+
+            // Resetear subida
+            videoSeleccionado = null;
+            document.getElementById('videoPreview').classList.remove('show');
+            document.getElementById('videoFileInput').value = '';
+
+            switchUploadOption('youtube');
 
             document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-plus-circle"></i> Agregar Video';
             document.getElementById('btnGuardarTexto').textContent = 'Guardar Video';
@@ -782,11 +1087,110 @@
         });
 
         // ============================================================
+        // MANEJO DE SUBIDA DE VIDEO (DRAG & DROP)
+        // ============================================================
+
+        const videoDropzone = document.getElementById('videoDropzone');
+        const videoFileInput = document.getElementById('videoFileInput');
+
+        if (videoDropzone) {
+            videoDropzone.addEventListener('click', function (e) {
+                if (e.target === this || e.target.closest('.video-dropzone')) {
+                    videoFileInput.click();
+                }
+            });
+
+            videoDropzone.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+
+            videoDropzone.addEventListener('dragleave', function (e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+            });
+
+            videoDropzone.addEventListener('drop', function (e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    procesarVideo(files[0]);
+                }
+            });
+        }
+
+        if (videoFileInput) {
+            videoFileInput.addEventListener('change', function (e) {
+                if (this.files.length > 0) {
+                    procesarVideo(this.files[0]);
+                    this.value = '';
+                }
+            });
+        }
+
+        async function procesarVideo(file) {
+            // Validar tipo
+            if (!file.type.startsWith('video/')) {
+                mostrarToast('⚠️ Selecciona un archivo de video válido', 'warning');
+                return;
+            }
+
+            // Validar tamaño (max 100MB)
+            if (file.size > 100 * 1024 * 1024) {
+                mostrarToast('⚠️ El video no debe superar los 100MB', 'warning');
+                return;
+            }
+
+            videoSeleccionado = file;
+
+            // Mostrar preview
+            const preview = document.getElementById('videoPreview');
+            const nombre = document.getElementById('videoPreviewNombre');
+            const tamaño = document.getElementById('videoPreviewTamaño');
+
+            nombre.textContent = file.name;
+            tamaño.textContent = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
+            preview.classList.add('show');
+
+            // Generar public_id automático
+            const publicIdInput = document.getElementById('videoPublicId');
+            if (!publicIdInput.value) {
+                const nombreBase = file.name.replace(/\.[^.]+$/, '').toLowerCase()
+                    .replace(/[^a-z0-9]/g, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/^-|-$/g, '');
+                publicIdInput.value = nombreBase + '-' + Date.now().toString(36);
+            }
+
+            // Subir a Cloudinary automáticamente
+            try {
+                mostrarToast('📤 Subiendo video a Cloudinary...', 'info');
+                const publicId = document.getElementById('videoPublicId').value.trim() || undefined;
+                const url = await subirVideoCloudinary(file, publicId);
+                document.getElementById('videoUrlCloudinary').value = url;
+                mostrarToast('✅ Video subido a Cloudinary con éxito', 'success');
+            } catch (error) {
+                console.error('Error al subir video:', error);
+                mostrarToast('❌ Error al subir video: ' + error.message, 'error');
+                document.getElementById('videoUrlCloudinary').value = '';
+            }
+        }
+
+        function eliminarVideoSeleccionado() {
+            videoSeleccionado = null;
+            document.getElementById('videoPreview').classList.remove('show');
+            document.getElementById('videoFileInput').value = '';
+            document.getElementById('videoUrlCloudinary').value = '';
+        }
+
+        // ============================================================
         // INICIALIZAR
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
             cargarVideos();
-            console.log('🚀 Gestor de Videos cargado');
+            switchUploadOption('youtube');
+            console.log('🚀 Gestor de Videos cargado con Cloudinary + YouTube');
         });
 
         document.addEventListener('keydown', function (e) {
