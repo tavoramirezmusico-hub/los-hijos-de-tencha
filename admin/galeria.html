@@ -560,9 +560,6 @@
         // FUNCIONES - CATEGORÍAS
         // ============================================================
 
-        // Variable para guardar el ID de la categoría activa antes de recargar
-        let categoriaActivaAntes = null;
-
         async function cargarCategorias() {
             try {
                 if (!db) {
@@ -582,7 +579,6 @@
 
                 renderizarCategorias();
 
-                // Si hay categorías y no hay una seleccionada, seleccionar la primera
                 if (categorias.length > 0 && !categoriaSeleccionadaId) {
                     seleccionarCategoria(categorias[0].id);
                 }
@@ -608,15 +604,13 @@
 
             let html = '';
             categorias.forEach(cat => {
-                // Determinar si esta categoría es la seleccionada
                 const isActive = cat.id === categoriaSeleccionadaId;
-                // Obtener el conteo de fotos para esta categoría
                 const count = fotos.filter(f => f.categoriaId === cat.id).length;
 
                 html += `
                             <div class="categoria-item ${isActive ? 'active' : ''}" onclick="seleccionarCategoria('${cat.id}')">
                                 <div class="cat-nombre">${sanitizar(cat.nombre)}</div>
-                                <div class="cat-count">${count} fotos</div>
+                                <div class="cat-count">${count} ${count === 1 ? 'foto' : 'fotos'}</div>
                                 <div class="cat-actions">
                                     <button class="btn-admin btn-primary btn-sm" onclick="event.stopPropagation(); editarCategoria('${cat.id}')">
                                         <i class="fa-solid fa-pen"></i>
@@ -630,6 +624,48 @@
             });
 
             grid.innerHTML = html;
+        }
+
+        // ============================================================
+        // FUNCIÓN: ACTUALIZAR SOLO LOS CONTADORES (SIN RECARGAR TODO)
+        // ============================================================
+        async function actualizarContadores() {
+            try {
+                // Obtener conteos actualizados para todas las categorías
+                const snapshot = await db.collection('galeria_fotos').get();
+                const fotosData = [];
+                snapshot.forEach(doc => {
+                    fotosData.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Actualizar cada categoría en el DOM
+                const items = document.querySelectorAll('.categoria-item');
+                items.forEach(item => {
+                    const onclickAttr = item.getAttribute('onclick');
+                    if (onclickAttr) {
+                        // Extraer el ID de la categoría del onclick
+                        const match = onclickAttr.match(/seleccionarCategoria\('([^']+)'\)/);
+                        if (match) {
+                            const catId = match[1];
+                            const count = fotosData.filter(f => f.categoriaId === catId).length;
+                            const countSpan = item.querySelector('.cat-count');
+                            if (countSpan) {
+                                countSpan.textContent = count + ' ' + (count === 1 ? 'foto' : 'fotos');
+                            }
+                        }
+                    }
+                });
+
+                // Actualizar el contador de la categoría seleccionada
+                if (categoriaSeleccionadaId) {
+                    const count = fotosData.filter(f => f.categoriaId === categoriaSeleccionadaId).length;
+                    document.getElementById('fotosCount').textContent = count + ' ' + (count === 1 ? 'foto' : 'fotos');
+                }
+
+                console.log('✅ Contadores actualizados');
+            } catch (error) {
+                console.error('Error al actualizar contadores:', error);
+            }
         }
 
         async function seleccionarCategoria(id) {
@@ -807,7 +843,8 @@
                 });
 
                 renderizarFotos();
-                document.getElementById('fotosCount').textContent = fotos.length + ' fotos';
+                const count = fotos.length;
+                document.getElementById('fotosCount').textContent = count + ' ' + (count === 1 ? 'foto' : 'fotos');
 
             } catch (error) {
                 console.error('Error al cargar fotos:', error);
@@ -894,6 +931,7 @@
                 await db.collection('galeria_fotos').doc(id).delete();
                 mostrarToast('✅ Foto eliminada de la galería', 'success');
                 await cargarFotos(categoriaSeleccionadaId);
+                await actualizarContadores();
 
             } catch (error) {
                 console.error('Error al eliminar foto:', error);
@@ -902,7 +940,7 @@
         }
 
         // ============================================================
-        // SUBIDA DE FOTOS - DRAG & DROP (CON CLOUDINARY + CONTADOR FIJO)
+        // SUBIDA DE FOTOS - DRAG & DROP
         // ============================================================
 
         const dropzone = document.getElementById('dropzone');
@@ -1022,14 +1060,9 @@
 
                 // Recargar fotos para mostrar las nuevas
                 await cargarFotos(categoriaSeleccionadaId);
-                // Recargar categorías para mantener sincronizado (esto llama a renderizarCategorias)
-                await cargarCategorias();
-                // Actualizar el título con el nombre de la categoría seleccionada
-                const cat = categorias.find(c => c.id === categoriaSeleccionadaId);
-                if (cat) {
-                    document.getElementById('categoriaSeleccionadaTitulo').innerHTML =
-                        '<i class="fa-solid fa-folder-open"></i> ' + sanitizar(cat.nombre);
-                }
+
+                // Actualizar SOLO los contadores (sin recargar todo el grid)
+                await actualizarContadores();
             }
         }
 
@@ -1038,7 +1071,7 @@
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
             cargarCategorias();
-            console.log('🚀 Gestor de Galería cargado con Cloudinary y contador fijo');
+            console.log('🚀 Gestor de Galería cargado con actualización de contadores');
         });
 
         document.addEventListener('keydown', function (e) {
