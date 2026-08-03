@@ -4,30 +4,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Videos y Presentaciones en Vivo | Los Hijos de Tencha</title>
 
     <meta name="description"
         content="Disfruta los videos oficiales, videoclips, sesiones en vivo y presentaciones de Los Hijos de Tencha, agrupación musical de Costa Rica.">
+
     <link rel="canonical" href="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/videoteca.html">
 
     <meta property="og:title" content="Videos y Presentaciones en Vivo | Los Hijos de Tencha">
+
     <meta property="og:description"
         content="Videoclips, sesiones en vivo y contenido audiovisual de Los Hijos de Tencha, agrupación musical de Costa Rica.">
+
     <meta property="og:image" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/img/hero.webp">
+
     <meta property="og:url" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/videoteca.html">
+
     <meta property="og:type" content="website">
+
     <meta property="og:locale" content="es_CR">
+
     <meta property="og:site_name" content="Los Hijos de Tencha">
 
     <link rel="stylesheet" href="css/styles.css">
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <!-- GOOGLE ANALYTICS -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YNRK4G09LN"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
+        function gtag() {
+            dataLayer.push(arguments);
+        }
         gtag('js', new Date());
         gtag('config', 'G-YNRK4G09LN');
     </script>
@@ -105,7 +117,7 @@
         }
 
         /* =====================================
-           HERO VIDEOTECA
+           HERO VIDEOTECA - MEJORADO (MISMA PROPORCIÓN QUE GALERÍA)
            ===================================== */
         .hero-videoteca {
             min-height: 50vh;
@@ -185,216 +197,7 @@
         }
 
         /* =====================================
-           VIDEOS - GRID
-           ===================================== */
-        .videoteca-seccion {
-            padding: 90px 20px;
-            background: #111;
-        }
-
-        .videos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 35px;
-            margin-top: 50px;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .video-card {
-            background: #1b1b1b;
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, .35);
-            transition: all 0.3s ease;
-        }
-
-        .video-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 18px 40px rgba(0, 0, 0, .45);
-        }
-
-        .video-card .youtube-player {
-            width: 100%;
-            aspect-ratio: 16/9;
-            overflow: hidden;
-            background: #000;
-            position: relative;
-        }
-
-        .video-card .youtube-player iframe {
-            width: 100%;
-            height: 100%;
-            border: 0;
-            display: block;
-        }
-
-        .video-card h3 {
-            color: #fff;
-            font-size: 1.3rem;
-            padding: 20px 20px 10px;
-            font-weight: 600;
-        }
-
-        .video-card .video-meta {
-            padding: 0 20px 5px;
-            font-size: 0.75rem;
-            color: #888;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .video-card .video-meta .badge-categoria {
-            background: rgba(255, 204, 0, 0.12);
-            color: #ffcc00;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 0.65rem;
-            font-weight: 600;
-        }
-
-        .video-card p {
-            color: #d5d5d5;
-            padding: 0 20px 25px;
-            line-height: 1.7;
-            font-size: 0.95rem;
-        }
-
-        /* =====================================
-           MOMENTOS TENCHA
-           ===================================== */
-        .momentos-tencha {
-            padding: 90px 20px;
-            background: #111;
-        }
-
-        .momentos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-            gap: 40px;
-            margin-top: 50px;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .momento-card {
-            background: #1a1a1a;
-            border-radius: 18px;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, .08);
-            transition: all .35s ease;
-        }
-
-        .momento-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, .35);
-        }
-
-        .momento-card .youtube-player {
-            width: 100%;
-            aspect-ratio: 16/9;
-            overflow: hidden;
-            background: #000;
-            position: relative;
-        }
-
-        .momento-card .youtube-player iframe {
-            width: 100%;
-            height: 100%;
-            border: 0;
-            display: block;
-        }
-
-        .momento-card h3 {
-            padding: 20px 20px 8px;
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-
-        .momento-card .momento-meta {
-            padding: 0 20px 5px;
-            font-size: 0.75rem;
-            color: #888;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .momento-card p {
-            padding: 0 20px 22px;
-            color: #bdbdbd;
-            font-size: .95rem;
-        }
-
-        /* =====================================
-           FILTROS
-           ===================================== */
-        .filtros-videos {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 35px;
-        }
-
-        .filtros-videos .filtro-btn {
-            padding: 10px 24px;
-            background: #1c1c1c;
-            border: 2px solid #333;
-            border-radius: 30px;
-            color: #aaa;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .filtros-videos .filtro-btn:hover {
-            border-color: #ffcc00;
-            color: #fff;
-            transform: translateY(-2px);
-        }
-
-        .filtros-videos .filtro-btn.active {
-            background: #ffcc00;
-            color: #000;
-            border-color: #ffcc00;
-        }
-
-        /* =====================================
-           TITULOS
-           ===================================== */
-        .titulo-seccion {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .titulo-seccion span {
-            color: #ffcc00;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .titulo-seccion h2 {
-            font-size: 2.5rem;
-            margin-top: 10px;
-        }
-
-        .titulo-seccion p {
-            color: #aaa;
-            max-width: 700px;
-            margin: 10px auto 0;
-        }
-
-        /* =====================================
-           RESPONSIVE
+           FIX VIDEOTECA - RESPONSIVE
            ===================================== */
         @media (max-width: 768px) {
             .videos-grid {
@@ -406,6 +209,7 @@
             .video-card {
                 width: 100% !important;
                 max-width: 100% !important;
+                overflow: hidden !important;
             }
 
             .video-card .youtube-player {
@@ -413,6 +217,13 @@
                 max-width: 100% !important;
                 border-radius: 12px !important;
                 margin: 0 !important;
+            }
+
+            .video-card .youtube-player iframe {
+                width: 100% !important;
+                height: 100% !important;
+                aspect-ratio: 16/9 !important;
+                display: block !important;
             }
 
             .video-card h3 {
@@ -443,6 +254,12 @@
                 border-radius: 12px !important;
             }
 
+            .momento-card iframe {
+                aspect-ratio: 16/9 !important;
+                width: 100% !important;
+                height: auto !important;
+            }
+
             .momento-card h3 {
                 font-size: 1rem !important;
                 padding: 15px 15px 5px !important;
@@ -451,15 +268,6 @@
             .momento-card p {
                 font-size: 0.85rem !important;
                 padding: 0 15px 18px !important;
-            }
-
-            .filtros-videos {
-                gap: 6px;
-            }
-
-            .filtros-videos .filtro-btn {
-                padding: 6px 14px;
-                font-size: 0.75rem;
             }
         }
 
@@ -500,227 +308,25 @@
             .momento-card p {
                 font-size: 0.8rem !important;
             }
-
-            .filtros-videos .filtro-btn {
-                padding: 4px 10px;
-                font-size: 0.7rem;
-            }
-        }
-
-        /* =====================================
-           ANIMACIONES
-           ===================================== */
-        .animar {
-            opacity: 0;
-            transform: translateY(50px) scale(0.95);
-            transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
-                transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        .animar.visible {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-
-        #transicion {
-            display: none !important;
-        }
-
-        .credito-web {
-            margin-top: 15px;
-            font-size: .9rem;
-            color: #999;
-            letter-spacing: .5px;
-            text-align: center;
-        }
-
-        .credito-web a {
-            color: #ffcc00;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color .3s ease, transform .3s ease, text-shadow .3s ease;
-        }
-
-        .credito-web a:hover {
-            color: #ffffff;
-            transform: translateY(-2px) scale(1.08);
-            text-shadow: 0 0 8px rgba(255, 204, 0, .8), 0 0 15px rgba(255, 204, 0, .5);
-        }
-
-        /* =====================================
-           BOTON SUBIR
-           ===================================== */
-        #subir {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 42px;
-            height: 42px;
-            border: none;
-            border-radius: 50%;
-            background: #ffcc00;
-            color: #000;
-            font-size: 1.1rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: .3s;
-            z-index: 999;
-        }
-
-        #subir.visible {
-            opacity: .85;
-            visibility: visible;
-        }
-
-        #subir:hover {
-            transform: translateY(-4px);
-            opacity: 1;
-            background: white;
-        }
-
-        /* =====================================
-           BOTON MENU HAMBURGUESA
-           ===================================== */
-        .menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-
-        .menu-btn img {
-            width: 66px;
-        }
-
-        #menu-btn span {
-            color: #ffcc00;
-            font-size: 13px;
-            margin-top: 4px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        @media (max-width: 900px) {
-            .menu-btn {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .menu {
-                position: absolute;
-                top: 90px;
-                right: 20px;
-                width: 230px;
-                padding: 25px;
-                background: rgba(17, 17, 17, .85);
-                backdrop-filter: blur(8px);
-                -webkit-backdrop-filter: blur(8px);
-                border-radius: 20px;
-                flex-direction: column;
-                gap: 15px;
-                display: flex;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, .5);
-                opacity: 0;
-                visibility: hidden;
-                transform: translateY(-15px);
-                transition: opacity .35s ease, transform .35s ease, visibility .35s ease;
-            }
-
-            .menu.activo {
-                opacity: 1;
-                visibility: visible;
-                transform: translateY(0);
-            }
-
-            .logo img {
-                width: 150px;
-            }
-
-            nav {
-                padding: 20px 25px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .logo img {
-                width: 130px;
-            }
-
-            .menu-btn img {
-                width: 60px;
-            }
-        }
-
-        nav {
-            width: 100%;
-            padding: 25px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            z-index: 10;
-        }
-
-        .logo img {
-            width: 260px;
-            height: auto;
-            display: block;
-        }
-
-        .menu {
-            display: flex;
-            list-style: none;
-            gap: 18px;
-        }
-
-        .menu li a {
-            color: white;
-            font-weight: 500;
-            padding: 8px 15px;
-            border-radius: 30px;
-            transition: .3s;
-        }
-
-        .menu li a:hover {
-            background: #ffcc00;
-            color: #000;
-        }
-
-        footer {
-            background: #000;
-            text-align: center;
-            padding: 40px 20px;
-        }
-
-        footer img {
-            width: 140px;
-            margin: 0 auto 15px;
-        }
-
-        footer p {
-            color: #ddd;
         }
     </style>
+
 </head>
 
 <body>
 
     <header class="hero-videoteca">
+
         <nav>
             <a href="index.html" class="logo">
                 <img src="img/logo.webp" alt="Los Hijos de Tencha">
             </a>
+
             <button id="menu-btn" class="menu-btn">
                 <img src="img/menu-icono.webp" alt="Menú">
                 <span>Menú</span>
             </button>
+
             <ul class="menu">
                 <li><a href="index.html">Inicio</a></li>
                 <li><a href="index.html#banda">La Banda</a></li>
@@ -733,263 +339,273 @@
                 <li><a href="index.html#integrantes">Integrantes</a></li>
                 <li><a href="index.html#tienda">Tienda</a></li>
                 <li><a href="index.html#contacto">Contacto</a></li>
-                <li><a href="admin/dashboard.html" style="color: #ffcc00; font-weight: 700;">⚙️ Admin</a></li>
+                <li><a href="admin/" style="color: #ffcc00; font-weight: 700;">⚙️ Admin</a></li>
             </ul>
+
         </nav>
+
         <div class="titulo-videoteca">
+
             <span>LOS HIJOS DE TENCHA</span>
             <h1>VIDEOS OFICIALES</h1>
-            <p>Videoclips, sesiones en vivo y presentaciones de la agrupación musical costarricense Los Hijos de Tencha.
+            <p>
+                Videoclips, sesiones en vivo y presentaciones de la agrupación musical costarricense Los Hijos de
+                Tencha.
             </p>
+
         </div>
+
     </header>
 
-    <!-- ============================================================
-    SECCIÓN DE VIDEOS
-    ============================================================ -->
-    <section class="videoteca-seccion animar">
+    <section class="canciones animar">
+
         <div class="contenedor">
+
             <div class="titulo-seccion">
                 <span>Contenido audiovisual</span>
                 <h2>Galería de Videos</h2>
             </div>
 
-            <!-- Filtros -->
-            <div class="filtros-videos" id="filtrosVideos">
-                <button class="filtro-btn active" data-filtro="todas" onclick="filtrarVideos('todas')">📹 Todas</button>
-                <button class="filtro-btn" data-filtro="oficial" onclick="filtrarVideos('oficial')">🎥
-                    Oficiales</button>
-                <button class="filtro-btn" data-filtro="en_vivo" onclick="filtrarVideos('en_vivo')">🎤 En Vivo</button>
-            </div>
+            <div class="videos-grid animar">
 
-            <!-- VIDEOS -->
-            <div class="videos-grid" id="videosGrid">
-                <!-- Video 1: No estamos solos -->
-                <div class="video-card" data-categoria="oficial">
+                <!-- VIDEO 1 -->
+                <div class="video-card">
                     <div class="youtube-player">
                         <iframe src="https://www.youtube.com/embed/7XbLvFXdjQE"
                             title="No estamos solos ft. Gonín & MigueLion"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            allowfullscreen></iframe>
-                    </div>
-                    <div class="video-meta">
-                        <span class="badge-categoria">🎥 Oficiales</span>
+                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+                        </iframe>
                     </div>
                     <h3>No estamos solos ft. Gonín & MigueLion</h3>
-                    <p>Videoclip oficial de la colaboración entre Los Hijos de Tencha, Gonín y MigueLion.</p>
+                    <p>
+                        Videoclip oficial de la colaboración entre Los Hijos de Tencha, Gonín y MigueLion.
+                    </p>
                 </div>
 
-                <!-- Video 2: Un Sentimiento -->
-                <div class="video-card" data-categoria="oficial">
+                <!-- VIDEO 2 -->
+                <div class="video-card">
                     <div class="youtube-player">
-                        <iframe src="https://www.youtube.com/embed/ccbOePBayEg" title="Un Sentimiento"
+                        <iframe src="https://www.youtube.com/embed/ccbOePBayEg?si=TE_MNudgxnUNdWB_"
+                            title="Un Sentimiento"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            allowfullscreen></iframe>
-                    </div>
-                    <div class="video-meta">
-                        <span class="badge-categoria">🎥 Oficiales</span>
+                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+                        </iframe>
                     </div>
                     <h3>Un Sentimiento</h3>
-                    <p>Videoclip oficial de la canción grabado en Casa de Jimmy Studio</p>
+                    <p>
+                        Videoclip oficial de la canción grabado en Casa de Jimmy Studio
+                    </p>
                 </div>
 
-                <!-- Video 3: Sesiones del Templo -->
-                <div class="video-card" data-categoria="oficial">
+                <!-- VIDEO 3 -->
+                <div class="video-card">
                     <div class="youtube-player">
-                        <iframe src="https://www.youtube.com/embed/NUpwUT9DPfA" title="Sesiones del Templo - En Vivo"
+                        <iframe src="https://www.youtube.com/embed/NUpwUT9DPfA?si=4PbBOdANi9MWbqg9"
+                            title="Sesiones del Templo"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            allowfullscreen></iframe>
-                    </div>
-                    <div class="video-meta">
-                        <span class="badge-categoria">🎥 Oficiales</span>
+                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+                        </iframe>
                     </div>
                     <h3>Sesiones del Templo - En Vivo</h3>
-                    <p>Sesión grabada el 12 de octubre del 2025 con tres temas: La Cumbia Del Diablo, Hijos Del Campo &
-                        Mantequita Cacao</p>
+                    <p>
+                        Sesión grabada el 12 de octubre del 2025 con tres temas: La Cumbia Del Diablo, Hijos Del Campo
+                        & Mantequita Cacao
+                    </p>
                 </div>
 
-                <!-- Video 4: En Vivo - adicional -->
-                <div class="video-card" data-categoria="en_vivo">
-                    <div class="youtube-player">
-                        <iframe src="https://www.youtube.com/embed/NUpwUT9DPfA" title="Los Hijos de Tencha - En Vivo"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            allowfullscreen></iframe>
-                    </div>
-                    <div class="video-meta">
-                        <span class="badge-categoria">🎤 En Vivo</span>
-                    </div>
-                    <h3>Los Hijos de Tencha - En Vivo</h3>
-                    <p>Presentación en vivo desde el Templo - 2025</p>
-                </div>
             </div>
+
         </div>
+
     </section>
 
-    <!-- ============================================================
-    SECCIÓN MOMENTOS TENCHA
-    ============================================================ -->
+    <!-- =====================================
+         MOMENTOS TENCHA
+    ===================================== -->
+
     <section id="momentos-tencha" class="momentos-tencha animar">
+
         <div class="contenedor">
+
             <div class="titulo-seccion">
+
                 <span>EXCLUSIVO</span>
                 <h2>Momentos Tencha</h2>
-                <p>Revive conciertos, momentos especiales y escenas detrás del escenario que forman parte de la historia
-                    de Los Hijos de Tencha.</p>
+                <p>
+                    Revive conciertos, momentos especiales y escenas detrás del escenario que forman parte de la
+                    historia de Los Hijos de Tencha.
+                </p>
+
             </div>
 
-            <div class="momentos-grid" id="momentosGrid">
-                <!-- Momento 1: Cumbia Salvaje 1 -->
-                <div class="momento-card" data-categoria="momentos">
+            <div class="momentos-grid animar">
+
+                <!-- VIDEO 1 - Cumbia Salvaje Lanzamiento -->
+                <article class="momento-card">
+
                     <div class="youtube-player">
+
                         <iframe
                             src="https://player.cloudinary.com/embed/?cloud_name=ldiiqgdp&public_id=Cumbia_Salvaje1_owfcue"
-                            title="Lanzamiento de Cumbia Salvaje" allowfullscreen></iframe>
-                    </div>
-                    <div class="momento-meta"></div>
-                    <h3>Lanzamiento de Cumbia Salvaje</h3>
-                    <p>Bar Starview · 24 Julio 2026</p>
-                </div>
+                            width="640" height="360" style="height:auto;width:100%;aspect-ratio:640/360;"
+                            allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen
+                            frameborder="0">
+                        </iframe>
 
-                <!-- Momento 2: Cumbia Salvaje 2 -->
-                <div class="momento-card" data-categoria="momentos">
+                    </div>
+
+                    <h3>Lanzamiento de Cumbia Salvaje</h3>
+
+                    <p>
+                        Bar Starview · 24 Julio 2026
+                    </p>
+
+                </article>
+
+                <!-- VIDEO 2 - Cumbia Salvaje Lanzamiento -->
+                <article class="momento-card">
+
                     <div class="youtube-player">
+
                         <iframe
                             src="https://player.cloudinary.com/embed/?cloud_name=ldiiqgdp&public_id=Cumbia_Salvaje_3_fc5gkn"
-                            title="Lanzamiento de Cumbia Salvaje" allowfullscreen></iframe>
-                    </div>
-                    <div class="momento-meta"></div>
-                    <h3>Lanzamiento de Cumbia Salvaje</h3>
-                    <p>Bar Starview · 24 Julio 2026</p>
-                </div>
+                            width="640" height="360" style="height:auto;width:100%;aspect-ratio:640/360;"
+                            allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen
+                            frameborder="0">
+                        </iframe>
 
-                <!-- Momento 3: Cumbia Salvaje 3 -->
-                <div class="momento-card" data-categoria="momentos">
+                    </div>
+
+                    <h3>Lanzamiento de Cumbia Salvaje</h3>
+
+                    <p>
+                        Bar Starview · 24 Julio 2026
+                    </p>
+
+                </article>
+
+                <!-- VIDEO 3 - Cumbia Salvaje Lanzamiento -->
+                <article class="momento-card">
+
                     <div class="youtube-player">
+
                         <iframe
                             src="https://player.cloudinary.com/embed/?cloud_name=ldiiqgdp&public_id=Cumbia_Salvaje_2_nekncb"
-                            title="Lanzamiento de Cumbia Salvaje" allowfullscreen></iframe>
-                    </div>
-                    <div class="momento-meta"></div>
-                    <h3>Lanzamiento de Cumbia Salvaje</h3>
-                    <p>Bar Starview · 24 Julio 2026</p>
-                </div>
+                            width="640" height="360" style="height:auto;width:100%;aspect-ratio:640/360;"
+                            allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen
+                            frameborder="0">
+                        </iframe>
 
-                <!-- Momento 4: Los Hijos del Campo -->
-                <div class="momento-card" data-categoria="momentos">
+                    </div>
+
+                    <h3>Lanzamiento de Cumbia Salvaje</h3>
+
+                    <p>
+                        Bar Starview · 24 Julio 2026
+                    </p>
+
+                </article>
+
+                <!-- VIDEO 4 - NUEVO: Los Hijos del Campo -->
+                <article class="momento-card">
+
                     <div class="youtube-player">
+
                         <iframe
                             src="https://player.cloudinary.com/embed/?cloud_name=ldiiqgdp&public_id=Los_Hijos_del_Campo_ll5j1r"
-                            title="Los Hijos del Campo - En Vivo" allowfullscreen></iframe>
+                            width="640" height="360" style="height:auto;width:100%;aspect-ratio:640/360;"
+                            allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen
+                            frameborder="0">
+                        </iframe>
+
                     </div>
-                    <div class="momento-meta"></div>
+
                     <h3>Los Hijos del Campo - En Vivo</h3>
-                    <p>Sesión en vivo desde el Templo</p>
-                </div>
 
-                <!-- Momento 5: Bendita -->
-                <div class="momento-card" data-categoria="momentos">
+                    <p>
+                        Sesión en vivo desde el Templo
+                    </p>
+
+                </article>
+
+                <!-- VIDEO 5 - NUEVO: Bendita -->
+                <article class="momento-card">
+
                     <div class="youtube-player">
+
                         <iframe src="https://player.cloudinary.com/embed/?cloud_name=ldiiqgdp&public_id=Bendita_jraogx"
-                            title="Bendita - En Vivo" allowfullscreen></iframe>
-                    </div>
-                    <div class="momento-meta"></div>
-                    <h3>Bendita - En Vivo</h3>
-                    <p>Sesión en vivo desde el Templo</p>
-                </div>
+                            width="640" height="360" style="height:auto;width:100%;aspect-ratio:640/360;"
+                            allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen
+                            frameborder="0">
+                        </iframe>
 
-                <!-- Momento 6: El Vocho -->
-                <div class="momento-card" data-categoria="momentos">
+                    </div>
+
+                    <h3>Bendita - En Vivo</h3>
+
+                    <p>
+                        Sesión en vivo desde el Templo
+                    </p>
+
+                </article>
+
+                <!-- VIDEO 6 - NUEVO: Vocho desde arriba -->
+                <article class="momento-card">
+
                     <div class="youtube-player">
+
                         <iframe
                             src="https://player.cloudinary.com/embed/?cloud_name=ldiiqgdp&public_id=Vocho_desde_arriba_c7xma6"
-                            title="El Vocho - Desde Arriba" allowfullscreen></iframe>
+                            width="640" height="360" style="height:auto;width:100%;aspect-ratio:640/360;"
+                            allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen
+                            frameborder="0">
+                        </iframe>
+
                     </div>
-                    <div class="momento-meta"></div>
+
                     <h3>El Vocho - Desde Arriba</h3>
-                    <p>Videoclip oficial</p>
-                </div>
+
+                    <p>
+                        Videoclip oficial
+                    </p>
+
+                </article>
+
             </div>
+
         </div>
+
     </section>
 
     <footer>
-        <img src="img/logo.webp" alt="Logo Los Hijos de Tencha">
-        <p>Los Hijos de Tencha © 2026</p>
-        <p class="credito-web">Diseñado por <a href="https://www.instagram.com/tavo_musico" target="_blank"
-                rel="noopener noreferrer">Tavo Músico</a></p>
+
+        <img src="img/logo.webp" alt="Los Hijos de Tencha">
+
+        <p>
+            Los Hijos de Tencha © 2026
+        </p>
+
+        <p class="credito-web">
+            Diseñado por
+            <a href="https://www.instagram.com/tavo_musico" target="_blank" rel="noopener noreferrer">
+                Tavo Músico
+            </a>
+        </p>
+
     </footer>
 
-    <button id="subir"><i class="fa-solid fa-arrow-up"></i></button>
+    <button id="subir">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
 
+    <!-- Pantalla de transición -->
     <div id="transicion">
         <img src="img/transicion.gif" alt="Transición">
     </div>
 
     <script src="js/script.js"></script>
     <script src="js/eventos.js"></script>
-
-    <script>
-        // ============================================================
-        // FILTRAR VIDEOS POR CATEGORÍA
-        // ============================================================
-        function filtrarVideos(categoria) {
-            // Actualizar botones activos
-            document.querySelectorAll('.filtro-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.filtro === categoria);
-            });
-
-            // Mostrar/ocultar videos
-            document.querySelectorAll('.video-card').forEach(item => {
-                if (categoria === 'todas' || item.dataset.categoria === categoria) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-
-        // ============================================================
-        // MENÚ HAMBURGUESA
-        // ============================================================
-        document.getElementById('menu-btn').addEventListener('click', function () {
-            document.querySelector('.menu').classList.toggle('activo');
-        });
-
-        // ============================================================
-        // BOTÓN SUBIR
-        // ============================================================
-        window.addEventListener('scroll', function () {
-            const btn = document.getElementById('subir');
-            if (window.scrollY > 300) {
-                btn.classList.add('visible');
-            } else {
-                btn.classList.remove('visible');
-            }
-        });
-
-        document.getElementById('subir').addEventListener('click', function () {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-
-        // ============================================================
-        // ANIMACIONES AL SCROLL
-        // ============================================================
-        document.addEventListener('DOMContentLoaded', function () {
-            const elementos = document.querySelectorAll('.animar');
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.1 });
-
-            elementos.forEach(el => observer.observe(el));
-
-            console.log('✅ Videoteca cargada correctamente - ' + document.querySelectorAll('.video-card').length + ' videos, ' + document.querySelectorAll('.momento-card').length + ' momentos');
-        });
-    </script>
 
 </body>
 

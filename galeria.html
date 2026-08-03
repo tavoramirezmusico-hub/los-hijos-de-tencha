@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Galería de Fotos | Los Hijos de Tencha</title>
 
     <meta name="description"
@@ -28,7 +29,9 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YNRK4G09LN"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
+        function gtag() {
+            dataLayer.push(arguments);
+        }
         gtag('js', new Date());
         gtag('config', 'G-YNRK4G09LN');
     </script>
@@ -74,8 +77,6 @@
             display: block;
             font-weight: 500;
             letter-spacing: 0.3px;
-            color: #fff;
-            transition: all 0.3s ease;
         }
 
         .menu li a:hover {
@@ -108,121 +109,7 @@
         }
 
         /* =====================================
-           NAV (igual que index.html)
-           ===================================== */
-        nav {
-            width: 100%;
-            padding: 25px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            z-index: 10;
-        }
-
-        .logo img {
-            width: 260px;
-            height: auto;
-            display: block;
-        }
-
-        .menu {
-            display: flex;
-            list-style: none;
-            gap: 18px;
-        }
-
-        .menu li a {
-            color: white;
-            font-weight: 500;
-            padding: 8px 15px;
-            border-radius: 30px;
-            transition: .3s;
-        }
-
-        .menu li a:hover {
-            background: #ffcc00;
-            color: #000;
-        }
-
-        /* =====================================
-           BOTON MENU HAMBURGUESA
-           ===================================== */
-        .menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-
-        .menu-btn img {
-            width: 66px;
-        }
-
-        #menu-btn span {
-            color: #ffcc00;
-            font-size: 13px;
-            margin-top: 4px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        @media (max-width: 900px) {
-            .menu-btn {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .menu {
-                position: absolute;
-                top: 90px;
-                right: 20px;
-                width: 230px;
-                padding: 25px;
-                background: rgba(17, 17, 17, .95);
-                backdrop-filter: blur(8px);
-                -webkit-backdrop-filter: blur(8px);
-                border-radius: 20px;
-                flex-direction: column;
-                gap: 15px;
-                display: flex;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, .5);
-                opacity: 0;
-                visibility: hidden;
-                transform: translateY(-15px);
-                transition: opacity .35s ease, transform .35s ease, visibility .35s ease;
-            }
-
-            .menu.activo {
-                opacity: 1;
-                visibility: visible;
-                transform: translateY(0);
-            }
-
-            .logo img {
-                width: 150px;
-            }
-
-            nav {
-                padding: 20px 25px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .logo img {
-                width: 130px;
-            }
-
-            .menu-btn img {
-                width: 60px;
-            }
-        }
-
-        /* =====================================
-           HERO GALERÍA
+           HERO GALERÍA - UNIFICADO CON LAS DEMÁS PÁGINAS
            ===================================== */
         .hero-galeria {
             min-height: 50vh;
@@ -302,19 +189,12 @@
         }
 
         /* =====================================
-           GALERÍA - GRID
+           GALERÍA - ESTILOS PROPIOS
            ===================================== */
-        .galeria-seccion {
-            padding: 90px 20px;
-            background: #111;
-        }
-
         .galeria-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
         }
 
         .foto-item {
@@ -372,21 +252,12 @@
             text-align: center;
         }
 
-        .galeria-titulo-seccion {
+        .galeria-vacia {
             text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .galeria-titulo-seccion span {
-            color: #ffcc00;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .galeria-titulo-seccion h2 {
-            font-size: 2.5rem;
-            margin-top: 10px;
+            color: #666;
+            padding: 60px 20px;
+            font-size: 1.1rem;
+            grid-column: 1 / -1;
         }
 
         .galeria-categorias {
@@ -422,8 +293,47 @@
             border-color: #ffcc00;
         }
 
+        /* RESPONSIVE GALERÍA */
+        @media (max-width: 900px) {
+            .galeria-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .foto-item {
+                height: 240px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .galeria-grid {
+                display: flex !important;
+                flex-direction: column;
+                gap: 16px;
+                padding: 0 4px;
+            }
+
+            .foto-item {
+                height: 280px !important;
+                width: 100% !important;
+                border-radius: 14px;
+                min-height: 280px;
+            }
+
+            .foto-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .galeria-categorias .cat-btn {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+            }
+        }
+
         /* =====================================
-           VISOR DE GALERÍA (MODAL)
+           VISOR DE GALERÍA MEJORADO
            ===================================== */
         .visor {
             position: fixed;
@@ -564,39 +474,6 @@
             }
         }
 
-        @media (max-width: 900px) {
-            .galeria-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 16px;
-            }
-
-            .foto-item {
-                height: 240px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .galeria-grid {
-                display: flex !important;
-                flex-direction: column;
-                gap: 16px;
-                padding: 0 4px;
-            }
-
-            .foto-item {
-                height: 280px !important;
-                width: 100% !important;
-                border-radius: 14px;
-                min-height: 280px;
-            }
-
-            .foto-item img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-        }
-
         .animar {
             opacity: 0;
             transform: translateY(50px) scale(0.95);
@@ -607,84 +484,6 @@
         .animar.visible {
             opacity: 1;
             transform: translateY(0) scale(1);
-        }
-
-        #transicion {
-            display: none !important;
-        }
-
-        .credito-web {
-            margin-top: 15px;
-            font-size: .9rem;
-            color: #999;
-            letter-spacing: .5px;
-            text-align: center;
-        }
-
-        .credito-web a {
-            color: #ffcc00;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color .3s ease, transform .3s ease, text-shadow .3s ease;
-        }
-
-        .credito-web a:hover {
-            color: #ffffff;
-            transform: translateY(-2px) scale(1.08);
-            text-shadow: 0 0 8px rgba(255, 204, 0, .8), 0 0 15px rgba(255, 204, 0, .5);
-        }
-
-        /* =====================================
-           BOTON SUBIR
-           ===================================== */
-        #subir {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 42px;
-            height: 42px;
-            border: none;
-            border-radius: 50%;
-            background: #ffcc00;
-            color: #000;
-            font-size: 1.1rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: .3s;
-            z-index: 999;
-        }
-
-        #subir.visible {
-            opacity: .85;
-            visibility: visible;
-        }
-
-        #subir:hover {
-            transform: translateY(-4px);
-            opacity: 1;
-            background: white;
-        }
-
-        /* =====================================
-           FOOTER
-           ===================================== */
-        footer {
-            background: #000;
-            text-align: center;
-            padding: 40px 20px;
-        }
-
-        footer img {
-            width: 140px;
-            margin: 0 auto 15px;
-        }
-
-        footer p {
-            color: #ddd;
         }
     </style>
 </head>
@@ -712,7 +511,7 @@
                 <li><a href="index.html#integrantes">Integrantes</a></li>
                 <li><a href="index.html#tienda">Tienda</a></li>
                 <li><a href="index.html#contacto">Contacto</a></li>
-                <li><a href="admin/dashboard.html" style="color: #ffcc00; font-weight: 700;">⚙️ Admin</a></li>
+                <li><a href="admin/" style="color: #ffcc00; font-weight: 700;">⚙️ Admin</a></li>
             </ul>
         </nav>
         <div class="titulo-galeria">
@@ -722,145 +521,23 @@
         </div>
     </header>
 
-    <section class="galeria-seccion">
+    <section class="galeria-seccion animar">
         <div class="contenedor">
-            <div class="galeria-titulo-seccion">
+            <div class="titulo-seccion">
                 <span>MOMENTOS</span>
                 <h2>Nuestra Galería</h2>
             </div>
 
-            <div class="galeria-categorias">
-                <button class="cat-btn active" data-categoria="todas" onclick="filtrarGaleria('todas')">📸
-                    Todas</button>
-                <button class="cat-btn" data-categoria="vocho" onclick="filtrarGaleria('vocho')">🚗 Sesión
-                    Vocho</button>
-                <button class="cat-btn" data-categoria="disco" onclick="filtrarGaleria('disco')">🎵 Sesión Disco
-                    Cumbias</button>
-                <button class="cat-btn" data-categoria="lanzamiento" onclick="filtrarGaleria('lanzamiento')">🎸 Cumbia
-                    Salvaje</button>
+            <!-- Categorías -->
+            <div class="galeria-categorias" id="galeriaCategorias">
+                <button class="cat-btn active" data-categoria="todas">📸 Todas</button>
+                <button class="cat-btn" data-categoria="vocho">🚗 Sesión Vocho</button>
+                <button class="cat-btn" data-categoria="disco">🎵 Sesión Disco Cumbias</button>
+                <button class="cat-btn" data-categoria="lanzamiento">🎸 Cumbia Salvaje</button>
             </div>
 
             <div class="galeria-grid" id="galeriaGrid">
-                <!-- SESIÓN VOCHO -->
-                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
-                    <img src="img/galeria/vocho/foto1.webp" alt="Sesión Vocho 1" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
-                </div>
-                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
-                    <img src="img/galeria/vocho/foto2.webp" alt="Sesión Vocho 2" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
-                </div>
-                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
-                    <img src="img/galeria/vocho/foto7.webp" alt="Sesión Vocho 7" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
-                </div>
-                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
-                    <img src="img/galeria/vocho/foto8.webp" alt="Sesión Vocho 8" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
-                </div>
-                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
-                    <img src="img/galeria/vocho/foto9.webp" alt="Sesión Vocho 9" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
-                </div>
-                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
-                    <img src="img/galeria/vocho/foto10.webp" alt="Sesión Vocho 10" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
-                </div>
-                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
-                    <img src="img/galeria/vocho/foto11.webp" alt="Sesión Vocho 11" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
-                </div>
-                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
-                    <img src="img/galeria/vocho/foto12.webp" alt="Sesión Vocho 12" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
-                </div>
-                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
-                    <img src="img/galeria/vocho/foto13.webp" alt="Sesión Vocho 13" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
-                </div>
-                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
-                    <img src="img/galeria/vocho/foto14.webp" alt="Sesión Vocho 14" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
-                </div>
-                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
-                    <img src="img/galeria/vocho/foto15.webp" alt="Sesión Vocho 15" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
-                </div>
-                <div class="foto-item" data-categoria="vocho" onclick="abrirVisor(this)">
-                    <img src="img/galeria/vocho/foto16.webp" alt="Sesión Vocho 16" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Sesión Vocho</span></div>
-                </div>
-
-                <!-- SESIÓN DISCO CUMBIAS -->
-                <div class="foto-item" data-categoria="disco" onclick="abrirVisor(this)">
-                    <img src="img/galeria/cumbias/foto3.webp" alt="Disco Cumbias 3" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Sesión Disco Cumbias</span></div>
-                </div>
-                <div class="foto-item" data-categoria="disco" onclick="abrirVisor(this)">
-                    <img src="img/galeria/cumbias/foto4.webp" alt="Disco Cumbias 4" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Sesión Disco Cumbias</span></div>
-                </div>
-                <div class="foto-item" data-categoria="disco" onclick="abrirVisor(this)">
-                    <img src="img/galeria/cumbias/foto5.webp" alt="Disco Cumbias 5" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Sesión Disco Cumbias</span></div>
-                </div>
-                <div class="foto-item" data-categoria="disco" onclick="abrirVisor(this)">
-                    <img src="img/galeria/cumbias/foto6.webp" alt="Disco Cumbias 6" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Sesión Disco Cumbias</span></div>
-                </div>
-
-                <!-- LANZAMIENTO CUMBIA SALVAJE -->
-                <div class="foto-item" data-categoria="lanzamiento" onclick="abrirVisor(this)">
-                    <img src="img/galeria/lanzamiento/foto1.webp" alt="Cumbia Salvaje 1" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Cumbia Salvaje - Lanzamiento</span></div>
-                </div>
-                <div class="foto-item" data-categoria="lanzamiento" onclick="abrirVisor(this)">
-                    <img src="img/galeria/lanzamiento/foto2.webp" alt="Cumbia Salvaje 2" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Cumbia Salvaje - Lanzamiento</span></div>
-                </div>
-                <div class="foto-item" data-categoria="lanzamiento" onclick="abrirVisor(this)">
-                    <img src="img/galeria/lanzamiento/foto3.webp" alt="Cumbia Salvaje 3" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Cumbia Salvaje - Lanzamiento</span></div>
-                </div>
-                <div class="foto-item" data-categoria="lanzamiento" onclick="abrirVisor(this)">
-                    <img src="img/galeria/lanzamiento/foto17.webp" alt="Cumbia Salvaje 17" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Cumbia Salvaje - Lanzamiento</span></div>
-                </div>
-                <div class="foto-item" data-categoria="lanzamiento" onclick="abrirVisor(this)">
-                    <img src="img/galeria/lanzamiento/foto18.webp" alt="Cumbia Salvaje 18" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Cumbia Salvaje - Lanzamiento</span></div>
-                </div>
-                <div class="foto-item" data-categoria="lanzamiento" onclick="abrirVisor(this)">
-                    <img src="img/galeria/lanzamiento/foto19.webp" alt="Cumbia Salvaje 19" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Cumbia Salvaje - Lanzamiento</span></div>
-                </div>
-                <div class="foto-item" data-categoria="lanzamiento" onclick="abrirVisor(this)">
-                    <img src="img/galeria/lanzamiento/foto20.webp" alt="Cumbia Salvaje 20" loading="lazy"
-                        onerror="this.style.display='none'">
-                    <div class="foto-overlay"><span>Cumbia Salvaje - Lanzamiento</span></div>
-                </div>
+                <!-- Las fotos se cargan desde JavaScript -->
             </div>
         </div>
     </section>
@@ -874,7 +551,9 @@
 
     <button id="subir"><i class="fa-solid fa-arrow-up"></i></button>
 
-    <!-- VISOR DE GALERÍA -->
+    <!-- ==========================
+         VISOR DE GALERÍA
+    ========================== -->
     <div id="visor-galeria" class="visor">
         <button id="cerrar-galeria" class="cerrar-visor">&times;</button>
         <button id="foto-anterior" class="flecha flecha-izq">&#10094;</button>
@@ -887,124 +566,270 @@
         </div>
     </div>
 
+    <!-- Pantalla de transición -->
     <div id="transicion">
         <img src="img/transicion.gif" alt="Transición">
     </div>
 
+    <!-- ============================================= -->
+    <!-- FIREBASE SDKs                                -->
+    <!-- ============================================= -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
     <script src="js/script.js"></script>
     <script src="js/eventos.js"></script>
 
+    <!-- ============================================= -->
+    <!-- SCRIPT ESPECÍFICO PARA GALERÍA               -->
+    <!-- ============================================= -->
     <script>
-        // ============================================================
-        // FILTRAR GALERÍA POR CATEGORÍA
-        // ============================================================
-        function filtrarGaleria(categoria) {
+        // =====================================
+        // GALERÍA CON CATEGORÍAS - DATOS
+        // =====================================
+
+        const galeriaDatos = {
+            'vocho': {
+                titulo: 'Sesión Vocho',
+                fotos: [
+                    'img/galeria/vocho/foto1.webp',
+                    'img/galeria/vocho/foto2.webp',
+                    'img/galeria/vocho/foto7.webp',
+                    'img/galeria/vocho/foto8.webp',
+                    'img/galeria/vocho/foto9.webp',
+                    'img/galeria/vocho/foto10.webp',
+                    'img/galeria/vocho/foto11.webp',
+                    'img/galeria/vocho/foto12.webp',
+                    'img/galeria/vocho/foto13.webp',
+                    'img/galeria/vocho/foto14.webp',
+                    'img/galeria/vocho/foto15.webp',
+                    'img/galeria/vocho/foto16.webp'
+                ]
+            },
+            'disco': {
+                titulo: 'Sesión Disco Cumbias',
+                fotos: [
+                    'img/galeria/cumbias/foto3.webp',
+                    'img/galeria/cumbias/foto4.webp',
+                    'img/galeria/cumbias/foto5.webp',
+                    'img/galeria/cumbias/foto6.webp'
+                ]
+            },
+            'lanzamiento': {
+                titulo: 'Cumbia Salvaje - Lanzamiento',
+                fotos: [
+                    'img/galeria/lanzamiento/foto1.webp',
+                    'img/galeria/lanzamiento/foto2.webp',
+                    'img/galeria/lanzamiento/foto3.webp',
+                    'img/galeria/lanzamiento/foto17.webp',
+                    'img/galeria/lanzamiento/foto18.webp',
+                    'img/galeria/lanzamiento/foto19.webp',
+                    'img/galeria/lanzamiento/foto20.webp'
+                ]
+            }
+        };
+
+        let categoriaActual = 'todas';
+        let fotosActuales = [];
+        let indiceActualVisor = 0;
+
+        function cargarGaleria(categoria) {
+            const grid = document.getElementById('galeriaGrid');
+            if (!grid) {
+                console.warn('⚠️ No se encontró el contenedor de la galería');
+                return;
+            }
+
+            categoriaActual = categoria;
+
+            let fotos = [];
+            if (categoria === 'todas') {
+                Object.keys(galeriaDatos).forEach(key => {
+                    fotos = fotos.concat(galeriaDatos[key].fotos);
+                });
+            } else if (galeriaDatos[categoria]) {
+                fotos = galeriaDatos[categoria].fotos;
+            }
+
+            fotosActuales = fotos;
+
+            // Actualizar botones de categorías
             document.querySelectorAll('.cat-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.categoria === categoria);
             });
 
-            document.querySelectorAll('.foto-item').forEach(item => {
-                if (categoria === 'todas' || item.dataset.categoria === categoria) {
-                    item.style.display = 'flex';
+            if (fotos.length === 0) {
+                grid.innerHTML = `<div class="galeria-vacia">📸 No hay fotos en esta categoría aún.</div>`;
+                return;
+            }
+
+            // Generar HTML de la galería
+            grid.innerHTML = fotos.map((foto, index) => {
+                let titulo = '';
+                if (categoria === 'todas') {
+                    for (let key in galeriaDatos) {
+                        if (galeriaDatos[key].fotos.includes(foto)) {
+                            titulo = galeriaDatos[key].titulo;
+                            break;
+                        }
+                    }
                 } else {
-                    item.style.display = 'none';
+                    titulo = galeriaDatos[categoria]?.titulo || 'Evento';
                 }
+                return `
+                <div class="foto-item" data-index="${index}">
+                    <img src="${foto}" alt="${titulo}" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='#2a2a2a';">
+                    <div class="foto-overlay">
+                        <span>${titulo}</span>
+                    </div>
+                </div>
+            `}).join('');
+
+            // Agregar eventos de click a las fotos
+            grid.querySelectorAll('.foto-item').forEach(el => {
+                el.addEventListener('click', function () {
+                    const index = parseInt(this.dataset.index);
+                    const img = this.querySelector('img');
+                    if (img && img.src && img.src !== '') {
+                        abrirVisor(index);
+                    }
+                });
             });
+
+            // Activar animaciones escalonadas
+            document.querySelectorAll('.galeria-grid .foto-item').forEach((el, i) => {
+                setTimeout(() => {
+                    el.classList.add('visible');
+                }, 100 + (i * 50));
+            });
+
+            console.log(`✅ Galería cargada: ${fotos.length} fotos en categoría "${categoria}"`);
         }
 
-        // ============================================================
+        // =====================================
         // VISOR DE GALERÍA
-        // ============================================================
-        let fotosVisor = [];
-        let indiceVisor = 0;
+        // =====================================
 
-        function abrirVisor(elemento) {
-            const img = elemento.querySelector('img');
-            if (!img) return;
+        const visorGaleria = document.getElementById('visor-galeria');
+        const imagenGaleria = document.getElementById('imagen-galeria');
+        const cerrarGaleria = document.getElementById('cerrar-galeria');
+        const anterior = document.getElementById('foto-anterior');
+        const siguiente = document.getElementById('foto-siguiente');
+        const fotoActual = document.getElementById('foto-actual');
+        const totalFotos = document.getElementById('total-fotos');
 
-            const todasLasFotos = document.querySelectorAll('.foto-item[style*="display: flex"], .foto-item:not([style*="display: none"])');
-            fotosVisor = [];
+        function abrirVisor(index) {
+            if (!visorGaleria || !imagenGaleria) return;
+            if (fotosActuales.length === 0) return;
 
-            todasLasFotos.forEach(el => {
-                const imgEl = el.querySelector('img');
-                if (imgEl && imgEl.src) {
-                    fotosVisor.push(imgEl.src);
-                }
-            });
+            const imgSrc = fotosActuales[index];
+            if (!imgSrc) return;
 
-            if (fotosVisor.length === 0) return;
-
-            indiceVisor = fotosVisor.indexOf(img.src);
-            if (indiceVisor === -1) indiceVisor = 0;
-
-            mostrarVisor(indiceVisor);
-        }
-
-        function mostrarVisor(indice) {
-            if (fotosVisor.length === 0) return;
-            if (indice < 0) indice = fotosVisor.length - 1;
-            if (indice >= fotosVisor.length) indice = 0;
-
-            indiceVisor = indice;
-            document.getElementById('imagen-galeria').src = fotosVisor[indiceVisor];
-            document.getElementById('foto-actual').textContent = indiceVisor + 1;
-            document.getElementById('total-fotos').textContent = fotosVisor.length;
-
-            document.getElementById('visor-galeria').classList.add('active');
+            indiceActualVisor = index;
+            mostrarFotoVisor(indiceActualVisor);
+            visorGaleria.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
-        function cerrarVisor() {
-            document.getElementById('visor-galeria').classList.remove('active');
-            document.body.style.overflow = '';
+        function mostrarFotoVisor(indice) {
+            if (!imagenGaleria || !fotoActual || !totalFotos) return;
+            if (fotosActuales.length === 0) return;
+
+            if (indice < 0) indice = fotosActuales.length - 1;
+            if (indice >= fotosActuales.length) indice = 0;
+
+            indiceActualVisor = indice;
+            imagenGaleria.src = fotosActuales[indice];
+            fotoActual.textContent = indice + 1;
+            totalFotos.textContent = fotosActuales.length;
+
+            imagenGaleria.style.animation = 'none';
+            setTimeout(() => {
+                imagenGaleria.style.animation = 'zoomEntrada .35s ease';
+            }, 50);
         }
 
-        document.getElementById('cerrar-galeria').addEventListener('click', cerrarVisor);
-        document.getElementById('visor-galeria').addEventListener('click', function (e) {
-            if (e.target === this) cerrarVisor();
-        });
-
-        document.getElementById('foto-anterior').addEventListener('click', function (e) {
-            e.stopPropagation();
-            mostrarVisor(indiceVisor - 1);
-        });
-
-        document.getElementById('foto-siguiente').addEventListener('click', function (e) {
-            e.stopPropagation();
-            mostrarVisor(indiceVisor + 1);
-        });
-
-        document.addEventListener('keydown', function (e) {
-            if (!document.getElementById('visor-galeria').classList.contains('active')) return;
-            if (e.key === 'Escape') cerrarVisor();
-            if (e.key === 'ArrowRight') mostrarVisor(indiceVisor + 1);
-            if (e.key === 'ArrowLeft') mostrarVisor(indiceVisor - 1);
-        });
-
-        // ============================================================
-        // BOTÓN SUBIR
-        // ============================================================
-        window.addEventListener('scroll', function () {
-            const btn = document.getElementById('subir');
-            if (window.scrollY > 300) {
-                btn.classList.add('visible');
-            } else {
-                btn.classList.remove('visible');
+        function cerrarVisor() {
+            if (visorGaleria) {
+                visorGaleria.classList.remove('active');
+                document.body.style.overflow = '';
             }
+        }
+
+        if (cerrarGaleria) {
+            cerrarGaleria.addEventListener('click', cerrarVisor);
+        }
+
+        if (visorGaleria) {
+            visorGaleria.addEventListener('click', (e) => {
+                if (e.target === visorGaleria) {
+                    cerrarVisor();
+                }
+            });
+        }
+
+        if (anterior) {
+            anterior.addEventListener('click', (e) => {
+                e.stopPropagation();
+                mostrarFotoVisor(indiceActualVisor - 1);
+            });
+        }
+
+        if (siguiente) {
+            siguiente.addEventListener('click', (e) => {
+                e.stopPropagation();
+                mostrarFotoVisor(indiceActualVisor + 1);
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (!visorGaleria || !visorGaleria.classList.contains('active')) return;
+            if (e.key === 'Escape') cerrarVisor();
+            if (e.key === 'ArrowRight') mostrarFotoVisor(indiceActualVisor + 1);
+            if (e.key === 'ArrowLeft') mostrarFotoVisor(indiceActualVisor - 1);
         });
 
-        document.getElementById('subir').addEventListener('click', function () {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
+        // =====================================
+        // INICIALIZAR GALERÍA - CON FORZADO PARA MÓVIL
+        // =====================================
 
-        // ============================================================
-        // MENÚ HAMBURGUESA
-        // ============================================================
-        document.getElementById('menu-btn').addEventListener('click', function () {
-            document.querySelector('.menu').classList.toggle('activo');
-        });
+        function inicializarGaleria() {
+            console.log('🔄 Inicializando galería...');
 
-        console.log('✅ Galería cargada correctamente - ' + document.querySelectorAll('.foto-item').length + ' fotos');
+            if (document.getElementById('galeriaGrid')) {
+                console.log('✅ Galería encontrada, cargando...');
+                cargarGaleria('todas');
+
+                document.querySelectorAll('.cat-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const categoria = this.dataset.categoria;
+                        cargarGaleria(categoria);
+                    });
+                });
+            } else {
+                console.warn('⚠️ No se encontró la galería, reintentando...');
+                setTimeout(inicializarGaleria, 500);
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function () {
+                setTimeout(inicializarGaleria, 300);
+            });
+        } else {
+            setTimeout(inicializarGaleria, 300);
+        }
+
+        if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            console.log('📱 Dispositivo móvil detectado, forzando carga...');
+            setTimeout(function () {
+                const grid = document.getElementById('galeriaGrid');
+                if (grid && grid.children.length === 0) {
+                    console.log('🔄 Reintentando carga en móvil...');
+                    inicializarGaleria();
+                }
+            }, 2000);
+        }
     </script>
 
 </body>
