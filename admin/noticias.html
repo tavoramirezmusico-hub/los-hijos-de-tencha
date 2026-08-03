@@ -527,8 +527,6 @@
                 return;
             }
 
-            // 🔥 IMAGEN AHORA ES OPCIONAL - Solo validamos si es nueva noticia y no hay imagen, pero no es obligatorio
-
             const btn = document.getElementById('btnPublicar');
             const btnText = document.getElementById('btnPublicarTexto');
             btn.classList.add('loading');
@@ -542,11 +540,12 @@
                 // Subir imagen SOLO si hay una seleccionada
                 if (imagenSeleccionada) {
                     try {
+                        console.log('📤 Subiendo imagen:', imagenSeleccionada.name);
                         const path = 'noticias/';
                         imagenUrl = await subirArchivo(imagenSeleccionada, path);
-                        console.log('✅ Imagen subida:', imagenUrl);
+                        console.log('✅ Imagen subida exitosamente:', imagenUrl);
                     } catch (uploadError) {
-                        console.error('Error al subir imagen:', uploadError);
+                        console.error('❌ Error detallado al subir imagen:', uploadError);
                         mostrarMensajeNoticia(mensajeEl, '❌ Error al subir la imagen: ' + uploadError.message, 'error');
                         btn.classList.remove('loading');
                         btn.disabled = false;
@@ -570,6 +569,8 @@
                     actualizadoEn: new Date().toISOString()
                 };
 
+                console.log('📝 Guardando noticia en Firestore...', datos);
+
                 if (id) {
                     await db.collection('noticias').doc(id).update(datos);
                     mostrarMensajeNoticia(mensajeEl, '✅ Noticia actualizada con éxito', 'success');
@@ -584,7 +585,7 @@
                 cargarNoticias();
 
             } catch (error) {
-                console.error('Error al publicar noticia:', error);
+                console.error('❌ Error completo al publicar noticia:', error);
                 mostrarMensajeNoticia(mensajeEl, '❌ Error: ' + error.message, 'error');
             }
 
