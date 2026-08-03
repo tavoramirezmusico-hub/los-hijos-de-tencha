@@ -527,13 +527,16 @@
         })();
 
         // ============================================================
-        // FUNCIÓN: SUBIR IMAGEN A CLOUDINARY (MÚLTIPLES)
+        // FUNCIÓN: SUBIR IMAGEN A CLOUDINARY
         // ============================================================
         async function subirImagenCloudinary(file) {
             const formData = new FormData();
             formData.append('file', file);
             formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
-            formData.append('folder', 'galeria/' + categoriaSeleccionadaId);
+
+            // Guardar en una carpeta específica de la galería
+            const folderPath = 'galeria/' + categoriaSeleccionadaId;
+            formData.append('folder', folderPath);
 
             try {
                 const response = await fetch(CLOUDINARY_CONFIG.uploadUrl, {
@@ -557,7 +560,7 @@
         }
 
         // ============================================================
-        // FUNCIONES - CATEGORÍAS (SIN orderBy)
+        // FUNCIONES - CATEGORÍAS
         // ============================================================
 
         async function cargarCategorias() {
@@ -738,13 +741,7 @@
                 for (const doc of fotosSnap.docs) {
                     const data = doc.data();
                     if (data.url) {
-                        try {
-                            // Intentar eliminar de Cloudinary (opcional)
-                            // Cloudinary no tiene una API simple para eliminar por URL, lo dejamos pasar
-                            console.log('ℹ️ Foto eliminada de Firestore, URL:', data.url);
-                        } catch (e) {
-                            console.warn('No se pudo eliminar imagen de Cloudinary:', e);
-                        }
+                        console.log('ℹ️ Eliminando referencia de Firestore para:', data.url);
                     }
                     await db.collection('galeria_fotos').doc(doc.id).delete();
                 }
@@ -780,7 +777,7 @@
         }
 
         // ============================================================
-        // FUNCIONES - FOTOS (SIN orderBy)
+        // FUNCIONES - FOTOS
         // ============================================================
 
         async function cargarFotos(categoriaId) {
@@ -891,8 +888,6 @@
             if (!confirm('¿Eliminar esta foto?')) return;
 
             try {
-                // La imagen está en Cloudinary, no podemos eliminarla fácilmente sin la API
-                // La dejamos en Cloudinary pero la eliminamos de Firestore
                 await db.collection('galeria_fotos').doc(id).delete();
                 mostrarToast('✅ Foto eliminada de la galería', 'success');
                 await cargarFotos(categoriaSeleccionadaId);
@@ -986,15 +981,16 @@
             let subidos = 0;
             const total = archivosValidos.length;
 
+            console.log('📤 Subiendo ' + total + ' fotos a la categoría:', categoriaSeleccionadaId);
+
             for (let i = 0; i < archivosValidos.length; i++) {
                 const file = archivosValidos[i];
                 progressText.textContent = 'Subiendo ' + (i + 1) + '/' + total + ': ' + file.name;
 
                 try {
-                    // Subir a Cloudinary en lugar de Firebase Storage
                     const url = await subirImagenCloudinary(file);
+                    console.log('✅ Foto subida a Cloudinary:', url);
 
-                    // Guardar en Firestore con la URL de Cloudinary
                     await db.collection('galeria_fotos').add({
                         categoriaId: categoriaSeleccionadaId,
                         url: url,
@@ -1005,13 +1001,11 @@
                     });
 
                     subidos++;
-
-                    // Actualizar progreso
                     const totalProgress = ((i + 1) / total) * 100;
                     progressFill.style.width = totalProgress + '%';
 
                 } catch (error) {
-                    console.error('Error al subir archivo:', error);
+                    console.error('❌ Error al subir archivo:', error);
                     mostrarToast('❌ Error al subir "' + file.name + '"', 'error');
                 }
             }
