@@ -938,7 +938,9 @@
             });
         }
 
-        // Función para actualizar el contador de una categoría específica
+        // ============================================================
+        // FUNCIÓN: ACTUALIZAR CONTADOR DE CATEGORÍA (CORREGIDA)
+        // ============================================================
         async function actualizarContadorCategoria(categoriaId) {
             try {
                 const snapshot = await db.collection('galeria_fotos')
@@ -946,7 +948,9 @@
                     .get();
                 const count = snapshot.size;
 
-                // Actualizar el contador en el DOM
+                console.log('📊 Actualizando contador para categoría:', categoriaId, '→', count, 'fotos');
+
+                // Buscar TODOS los elementos de categoría
                 const items = document.querySelectorAll('.categoria-item');
                 items.forEach(item => {
                     const onclickAttr = item.getAttribute('onclick');
@@ -954,13 +958,26 @@
                         const countSpan = item.querySelector('.cat-count');
                         if (countSpan) {
                             countSpan.textContent = count + ' fotos';
+                            console.log('✅ Contador actualizado para:', categoriaId);
                         }
                     }
                 });
 
-                // También actualizar la variable global fotos si esta categoría está seleccionada
+                // Actualizar el contador de la categoría seleccionada
                 if (categoriaSeleccionadaId === categoriaId) {
                     document.getElementById('fotosCount').textContent = count + ' fotos';
+                }
+
+                // 🔥 FORZAR ACTUALIZACIÓN DE LA CATEGORÍA ACTIVA
+                const activeItem = document.querySelector('.categoria-item.active');
+                if (activeItem) {
+                    const activeOnclick = activeItem.getAttribute('onclick');
+                    if (activeOnclick && activeOnclick.includes("seleccionarCategoria('" + categoriaId + "')")) {
+                        const countSpan = activeItem.querySelector('.cat-count');
+                        if (countSpan) {
+                            countSpan.textContent = count + ' fotos';
+                        }
+                    }
                 }
 
                 return count;
@@ -970,6 +987,9 @@
             }
         }
 
+        // ============================================================
+        // FUNCIÓN: PROCESAR ARCHIVOS (CON ACTUALIZACIÓN DE CONTADOR)
+        // ============================================================
         async function procesarArchivos(files) {
             if (!categoriaSeleccionadaId) {
                 mostrarToast('⚠️ Selecciona una categoría primero', 'warning');
