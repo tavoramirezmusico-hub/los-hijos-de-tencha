@@ -560,6 +560,9 @@
         // FUNCIONES - CATEGORÍAS
         // ============================================================
 
+        // Variable para guardar el ID de la categoría activa antes de recargar
+        let categoriaActivaAntes = null;
+
         async function cargarCategorias() {
             try {
                 if (!db) {
@@ -579,6 +582,7 @@
 
                 renderizarCategorias();
 
+                // Si hay categorías y no hay una seleccionada, seleccionar la primera
                 if (categorias.length > 0 && !categoriaSeleccionadaId) {
                     seleccionarCategoria(categorias[0].id);
                 }
@@ -604,7 +608,9 @@
 
             let html = '';
             categorias.forEach(cat => {
+                // Determinar si esta categoría es la seleccionada
                 const isActive = cat.id === categoriaSeleccionadaId;
+                // Obtener el conteo de fotos para esta categoría
                 const count = fotos.filter(f => f.categoriaId === cat.id).length;
 
                 html += `
@@ -896,7 +902,7 @@
         }
 
         // ============================================================
-        // SUBIDA DE FOTOS - DRAG & DROP (CON CLOUDINARY + CONTADOR SEGURO)
+        // SUBIDA DE FOTOS - DRAG & DROP (CON CLOUDINARY + CONTADOR FIJO)
         // ============================================================
 
         const dropzone = document.getElementById('dropzone');
@@ -938,58 +944,6 @@
             });
         }
 
-        // ============================================================
-        // FUNCIÓN: ACTUALIZAR CONTADOR DE CATEGORÍA (CORREGIDA)
-        // ============================================================
-        async function actualizarContadorCategoria(categoriaId) {
-            try {
-                const snapshot = await db.collection('galeria_fotos')
-                    .where('categoriaId', '==', categoriaId)
-                    .get();
-                const count = snapshot.size;
-
-                console.log('📊 Actualizando contador para categoría:', categoriaId, '→', count, 'fotos');
-
-                // Buscar TODOS los elementos de categoría
-                const items = document.querySelectorAll('.categoria-item');
-                items.forEach(item => {
-                    const onclickAttr = item.getAttribute('onclick');
-                    if (onclickAttr && onclickAttr.includes("seleccionarCategoria('" + categoriaId + "')")) {
-                        const countSpan = item.querySelector('.cat-count');
-                        if (countSpan) {
-                            countSpan.textContent = count + ' fotos';
-                            console.log('✅ Contador actualizado para:', categoriaId);
-                        }
-                    }
-                });
-
-                // Actualizar el contador de la categoría seleccionada
-                if (categoriaSeleccionadaId === categoriaId) {
-                    document.getElementById('fotosCount').textContent = count + ' fotos';
-                }
-
-                // 🔥 FORZAR ACTUALIZACIÓN DE LA CATEGORÍA ACTIVA
-                const activeItem = document.querySelector('.categoria-item.active');
-                if (activeItem) {
-                    const activeOnclick = activeItem.getAttribute('onclick');
-                    if (activeOnclick && activeOnclick.includes("seleccionarCategoria('" + categoriaId + "')")) {
-                        const countSpan = activeItem.querySelector('.cat-count');
-                        if (countSpan) {
-                            countSpan.textContent = count + ' fotos';
-                        }
-                    }
-                }
-
-                return count;
-            } catch (error) {
-                console.error('Error al actualizar contador:', error);
-                return 0;
-            }
-        }
-
-        // ============================================================
-        // FUNCIÓN: PROCESAR ARCHIVOS (CON ACTUALIZACIÓN DE CONTADOR)
-        // ============================================================
         async function procesarArchivos(files) {
             if (!categoriaSeleccionadaId) {
                 mostrarToast('⚠️ Selecciona una categoría primero', 'warning');
@@ -1066,14 +1020,16 @@
             if (subidos > 0) {
                 mostrarToast('✅ ' + subidos + ' fotos subidas con éxito', 'success');
 
-                // 🔥 ACTUALIZAR CONTADOR DE FORMA SEGURA
-                await actualizarContadorCategoria(categoriaSeleccionadaId);
-
                 // Recargar fotos para mostrar las nuevas
                 await cargarFotos(categoriaSeleccionadaId);
-
-                // Recargar categorías para mantener sincronizado
+                // Recargar categorías para mantener sincronizado (esto llama a renderizarCategorias)
                 await cargarCategorias();
+                // Actualizar el título con el nombre de la categoría seleccionada
+                const cat = categorias.find(c => c.id === categoriaSeleccionadaId);
+                if (cat) {
+                    document.getElementById('categoriaSeleccionadaTitulo').innerHTML =
+                        '<i class="fa-solid fa-folder-open"></i> ' + sanitizar(cat.nombre);
+                }
             }
         }
 
@@ -1082,7 +1038,7 @@
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
             cargarCategorias();
-            console.log('🚀 Gestor de Galería cargado con Cloudinary y contador seguro');
+            console.log('🚀 Gestor de Galería cargado con Cloudinary y contador fijo');
         });
 
         document.addEventListener('keydown', function (e) {
