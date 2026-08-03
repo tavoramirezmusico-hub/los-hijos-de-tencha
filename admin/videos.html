@@ -292,6 +292,59 @@
             transform: scale(1.2);
         }
 
+        /* ============================================================
+           CREACIÓN DE CATEGORÍAS
+           ============================================================ */
+        .categorias-videos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
+        .categorias-videos .cat-tag {
+            background: var(--color-bg);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            border: 1px solid var(--color-border);
+            color: var(--color-text-muted);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .categorias-videos .cat-tag .cat-remove {
+            background: none;
+            border: none;
+            color: var(--color-danger);
+            cursor: pointer;
+            font-size: 0.7rem;
+            padding: 0 2px;
+        }
+
+        .categorias-videos .cat-tag .cat-remove:hover {
+            transform: scale(1.2);
+        }
+
+        .categoria-input-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .categoria-input-group .admin-input {
+            flex: 1;
+            min-width: 150px;
+            margin-bottom: 0;
+        }
+
+        .categoria-input-group .btn-admin {
+            flex-shrink: 0;
+        }
+
         @media (max-width: 768px) {
             .video-item {
                 flex-direction: column;
@@ -314,6 +367,19 @@
 
             .video-upload-options .btn-admin {
                 min-width: 100%;
+            }
+
+            .categoria-input-group {
+                flex-direction: column;
+            }
+
+            .categoria-input-group .admin-input {
+                min-width: 100%;
+            }
+
+            .categoria-input-group .btn-admin {
+                width: 100%;
+                justify-content: center;
             }
         }
 
@@ -432,19 +498,39 @@
                     placeholder="Ej: Bar Starview · 24 Julio 2026">
             </div>
 
+            <!-- ============================================================
+            CREACIÓN DE CATEGORÍAS
+            ============================================================ -->
             <div class="admin-form-group">
                 <label for="videoCategoria">Categoría *</label>
-                <select id="videoCategoria" class="admin-select">
-                    <option value="oficial">🎥 Oficiales</option>
-                    <option value="momentos">🎬 Momentos Tencha</option>
-                    <option value="en_vivo">🎤 En Vivo</option>
-                </select>
+                <div class="categoria-input-group">
+                    <input type="text" id="nuevaCategoriaInput" class="admin-input"
+                        placeholder="Nueva categoría (ej: Entrevistas)">
+                    <button class="btn-admin btn-primary btn-sm" onclick="agregarCategoria()">
+                        <i class="fa-solid fa-plus"></i> Agregar
+                    </button>
+                </div>
+                <div class="categorias-videos" id="categoriasContainer">
+                    <span style="color:var(--color-text-muted); font-size:0.8rem;">Categorías disponibles:</span>
+                    <span class="cat-tag" data-categoria="oficial">🎥 Oficiales</span>
+                    <span class="cat-tag" data-categoria="momentos">🎬 Momentos Tencha</span>
+                    <span class="cat-tag" data-categoria="en_vivo">🎤 En Vivo</span>
+                </div>
+                <div class="form-help">Las categorías se guardan automáticamente. Puedes crear nuevas cuantas veces
+                    quieras.</div>
             </div>
+
+            <!-- Select de categorías (se actualiza automáticamente) -->
+            <select id="videoCategoria" class="admin-select" style="margin-top:8px;">
+                <option value="oficial">🎥 Oficiales</option>
+                <option value="momentos">🎬 Momentos Tencha</option>
+                <option value="en_vivo">🎤 En Vivo</option>
+            </select>
 
             <!-- ============================================================
             OPCIONES DE SUBIDA: YOUTUBE O CLOUDINARY
             ============================================================ -->
-            <div class="admin-form-group">
+            <div class="admin-form-group" style="margin-top:16px;">
                 <label>¿Cómo quieres agregar el video?</label>
                 <div class="video-upload-options">
                     <button class="btn-admin btn-secondary active-option" id="optYoutube"
@@ -622,7 +708,132 @@
         let editandoId = null;
         let filtroActual = 'todas';
         let videoSeleccionado = null;
-        let modoSubida = 'youtube'; // 'youtube' o 'cloudinary'
+        let modoSubida = 'youtube';
+
+        // ============================================================
+        // CATEGORÍAS PREDEFINIDAS + PERSONALIZADAS
+        // ============================================================
+        let categoriasDisponibles = [];
+
+        function getCategoriasBase() {
+            return {
+                'oficial': '🎥 Oficiales',
+                'momentos': '🎬 Momentos Tencha',
+                'en_vivo': '🎤 En Vivo'
+            };
+        }
+
+        function cargarCategoriasGuardadas() {
+            try {
+                const guardadas = localStorage.getItem('videoCategorias');
+                if (guardadas) {
+                    const parsed = JSON.parse(guardadas);
+                    categoriasDisponibles = parsed;
+                } else {
+                    categoriasDisponibles = Object.keys(getCategoriasBase());
+                }
+            } catch (e) {
+                categoriasDisponibles = Object.keys(getCategoriasBase());
+            }
+            renderizarCategorias();
+        }
+
+        function guardarCategorias() {
+            localStorage.setItem('videoCategorias', JSON.stringify(categoriasDisponibles));
+        }
+
+        function renderizarCategorias() {
+            const container = document.getElementById('categoriasContainer');
+            const select = document.getElementById('videoCategoria');
+            const base = getCategoriasBase();
+
+            // Actualizar tags visuales
+            let html = '<span style="color:var(--color-text-muted); font-size:0.8rem;">Categorías disponibles:</span>';
+            categoriasDisponibles.forEach(cat => {
+                const label = base[cat] || cat;
+                const emoji = cat === 'oficial' ? '🎥' : cat === 'momentos' ? '🎬' : cat === 'en_vivo' ? '🎤' : '📁';
+                const isBase = ['oficial', 'momentos', 'en_vivo'].includes(cat);
+                html += `
+                            <span class="cat-tag" data-categoria="${cat}">
+                                ${emoji} ${label}
+                                ${!isBase ? `<button class="cat-remove" onclick="eliminarCategoria('${cat}')" title="Eliminar categoría">×</button>` : ''}
+                            </span>
+                        `;
+            });
+            container.innerHTML = html;
+
+            // Actualizar select
+            let selectHtml = '';
+            categoriasDisponibles.forEach(cat => {
+                const label = base[cat] || cat;
+                const emoji = cat === 'oficial' ? '🎥' : cat === 'momentos' ? '🎬' : cat === 'en_vivo' ? '🎤' : '📁';
+                selectHtml += `<option value="${cat}">${emoji} ${label}</option>`;
+            });
+            select.innerHTML = selectHtml;
+
+            // Si la categoría seleccionada actual ya no existe, seleccionar la primera
+            const currentVal = select.value;
+            if (!categoriasDisponibles.includes(currentVal) && categoriasDisponibles.length > 0) {
+                select.value = categoriasDisponibles[0];
+            }
+        }
+
+        function agregarCategoria() {
+            const input = document.getElementById('nuevaCategoriaInput');
+            const nombre = input.value.trim();
+
+            if (!nombre) {
+                mostrarToast('⚠️ Ingresa un nombre para la categoría', 'warning');
+                input.focus();
+                return;
+            }
+
+            // Convertir a slug (para usar como ID)
+            const slug = nombre.toLowerCase()
+                .replace(/[^a-z0-9\s]/g, '')
+                .replace(/\s+/g, '_');
+
+            if (categoriasDisponibles.includes(slug)) {
+                mostrarToast('⚠️ La categoría "' + nombre + '" ya existe', 'warning');
+                input.value = '';
+                input.focus();
+                return;
+            }
+
+            categoriasDisponibles.push(slug);
+            guardarCategorias();
+            renderizarCategorias();
+
+            // Seleccionar la nueva categoría en el select
+            document.getElementById('videoCategoria').value = slug;
+
+            input.value = '';
+            mostrarToast('✅ Categoría "' + nombre + '" creada', 'success');
+        }
+
+        function eliminarCategoria(slug) {
+            // No permitir eliminar categorías base
+            if (['oficial', 'momentos', 'en_vivo'].includes(slug)) {
+                mostrarToast('⚠️ No puedes eliminar categorías predeterminadas', 'warning');
+                return;
+            }
+
+            if (!confirm('¿Eliminar la categoría "' + slug + '"? Los videos no se eliminarán, solo la categoría.')) {
+                return;
+            }
+
+            categoriasDisponibles = categoriasDisponibles.filter(c => c !== slug);
+            guardarCategorias();
+
+            // Si la categoría seleccionada era la eliminada, cambiar a la primera
+            const select = document.getElementById('videoCategoria');
+            if (select.value === slug && categoriasDisponibles.length > 0) {
+                select.value = categoriasDisponibles[0];
+            }
+
+            renderizarCategorias();
+            mostrarToast('✅ Categoría eliminada', 'success');
+        }
 
         // ============================================================
         // SIDEBAR
@@ -664,15 +875,12 @@
         function switchUploadOption(opcion) {
             modoSubida = opcion;
 
-            // Actualizar botones
             document.getElementById('optYoutube').classList.toggle('active-option', opcion === 'youtube');
             document.getElementById('optCloudinary').classList.toggle('active-option', opcion === 'cloudinary');
 
-            // Mostrar/ocultar paneles
             document.getElementById('uploadYoutube').classList.toggle('active', opcion === 'youtube');
             document.getElementById('uploadCloudinary').classList.toggle('active', opcion === 'cloudinary');
 
-            // Limpiar validaciones
             document.getElementById('videoUrl').required = (opcion === 'youtube');
         }
 
@@ -754,7 +962,6 @@
 
             const mensajeEl = document.getElementById('mensajeVideo');
 
-            // Validaciones
             if (!titulo) {
                 mostrarMensajeVideo(mensajeEl, '⚠️ Ingresa el título del video', 'error');
                 document.getElementById('videoTitulo').focus();
@@ -793,7 +1000,7 @@
                 const datos = {
                     titulo,
                     descripcion: descripcion || '',
-                    categoria,
+                    categoria: categoria,
                     url: url,
                     fecha: fecha || '',
                     orden: orden,
@@ -909,11 +1116,13 @@
                 return;
             }
 
-            const categoriasNombres = {
-                'oficial': '🎥 Oficial',
-                'momentos': '🎬 Momentos Tencha',
-                'en_vivo': '🎤 En Vivo'
-            };
+            const categoriasNombres = getCategoriasBase();
+            // Agregar categorías personalizadas al mapa de nombres
+            categoriasDisponibles.forEach(cat => {
+                if (!categoriasNombres[cat]) {
+                    categoriasNombres[cat] = cat;
+                }
+            });
 
             let html = '';
             filtrados.forEach(video => {
@@ -999,7 +1208,6 @@
                 document.getElementById('videoOrden').value = data.orden || '';
                 document.getElementById('videoDestacado').checked = data.destacado || false;
 
-                // Determinar modo de subida
                 if (data.fuente === 'cloudinary' || (data.url && data.url.includes('cloudinary.com'))) {
                     switchUploadOption('cloudinary');
                     document.getElementById('videoUrlCloudinary').value = data.url || '';
@@ -1053,7 +1261,7 @@
             document.getElementById('videoId').value = '';
             document.getElementById('videoTitulo').value = '';
             document.getElementById('videoDescripcion').value = '';
-            document.getElementById('videoCategoria').value = 'oficial';
+            document.getElementById('videoCategoria').value = categoriasDisponibles[0] || 'oficial';
             document.getElementById('videoUrl').value = '';
             document.getElementById('videoUrlCloudinary').value = '';
             document.getElementById('videoPublicId').value = '';
@@ -1061,7 +1269,6 @@
             document.getElementById('videoOrden').value = '';
             document.getElementById('videoDestacado').checked = false;
 
-            // Resetear subida
             videoSeleccionado = null;
             document.getElementById('videoPreview').classList.remove('show');
             document.getElementById('videoFileInput').value = '';
@@ -1130,13 +1337,11 @@
         }
 
         async function procesarVideo(file) {
-            // Validar tipo
             if (!file.type.startsWith('video/')) {
                 mostrarToast('⚠️ Selecciona un archivo de video válido', 'warning');
                 return;
             }
 
-            // Validar tamaño (max 100MB)
             if (file.size > 100 * 1024 * 1024) {
                 mostrarToast('⚠️ El video no debe superar los 100MB', 'warning');
                 return;
@@ -1144,7 +1349,6 @@
 
             videoSeleccionado = file;
 
-            // Mostrar preview
             const preview = document.getElementById('videoPreview');
             const nombre = document.getElementById('videoPreviewNombre');
             const tamaño = document.getElementById('videoPreviewTamaño');
@@ -1153,7 +1357,6 @@
             tamaño.textContent = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
             preview.classList.add('show');
 
-            // Generar public_id automático
             const publicIdInput = document.getElementById('videoPublicId');
             if (!publicIdInput.value) {
                 const nombreBase = file.name.replace(/\.[^.]+$/, '').toLowerCase()
@@ -1163,7 +1366,6 @@
                 publicIdInput.value = nombreBase + '-' + Date.now().toString(36);
             }
 
-            // Subir a Cloudinary automáticamente
             try {
                 mostrarToast('📤 Subiendo video a Cloudinary...', 'info');
                 const publicId = document.getElementById('videoPublicId').value.trim() || undefined;
@@ -1188,9 +1390,10 @@
         // INICIALIZAR
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
+            cargarCategoriasGuardadas();
             cargarVideos();
             switchUploadOption('youtube');
-            console.log('🚀 Gestor de Videos cargado con Cloudinary + YouTube');
+            console.log('🚀 Gestor de Videos cargado con Cloudinary + YouTube + Categorías personalizadas');
         });
 
         document.addEventListener('keydown', function (e) {
