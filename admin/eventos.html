@@ -34,10 +34,6 @@
     <link rel="stylesheet" href="css/admin.css">
 
     <style>
-        /* ============================================================
-           ESTILOS ESPECÍFICOS DE EVENTOS
-           ============================================================ */
-
         .evento-item {
             display: flex;
             gap: 16px;
@@ -262,7 +258,21 @@
             justify-content: center;
         }
 
-        /* RESPONSIVE */
+        .error-box {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--color-danger);
+            border: 1px solid var(--color-danger);
+            border-radius: var(--radius-sm);
+            background: rgba(211, 47, 47, 0.05);
+        }
+
+        .error-box i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 12px;
+        }
+
         @media (max-width: 768px) {
             .evento-item {
                 flex-direction: column;
@@ -329,9 +339,7 @@
 
 <body>
 
-    <!-- ============================================================
-    SIDEBAR
-    ============================================================ -->
+    <!-- SIDEBAR -->
     <aside class="admin-sidebar" id="adminSidebar">
         <div class="sidebar-brand">
             <img src="../img/logo.webp" alt="Los Hijos de Tencha">
@@ -361,9 +369,7 @@
 
     <div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- ============================================================
-    CONTENIDO PRINCIPAL
-    ============================================================ -->
+    <!-- CONTENIDO PRINCIPAL -->
     <main class="admin-main">
 
         <!-- HEADER -->
@@ -388,9 +394,7 @@
             </div>
         </header>
 
-        <!-- ============================================================
-        TABS PRINCIPALES
-        ============================================================ -->
+        <!-- TABS PRINCIPALES -->
         <div class="sub-tabs">
             <button class="active" onclick="switchSubTab('eventos', this)"><i class="fa-solid fa-list"></i>
                 Eventos</button>
@@ -400,9 +404,7 @@
                 Asistente</button>
         </div>
 
-        <!-- ============================================================
-        TAB 1: LISTA DE EVENTOS
-        ============================================================ -->
+        <!-- TAB 1: LISTA DE EVENTOS -->
         <div id="subTab-eventos" class="sub-tab-content active">
             <div class="admin-card">
                 <div class="card-header">
@@ -420,9 +422,7 @@
             </div>
         </div>
 
-        <!-- ============================================================
-        TAB 2: ASISTENTES POR EVENTO
-        ============================================================ -->
+        <!-- TAB 2: ASISTENTES POR EVENTO -->
         <div id="subTab-asistentes" class="sub-tab-content">
             <div class="admin-card">
                 <div class="card-header">
@@ -470,9 +470,7 @@
             </div>
         </div>
 
-        <!-- ============================================================
-        TAB 3: CREAR EVENTO
-        ============================================================ -->
+        <!-- TAB 3: CREAR EVENTO -->
         <div id="subTab-crear" class="sub-tab-content">
             <div class="admin-card">
                 <div class="card-header">
@@ -514,9 +512,7 @@
             </div>
         </div>
 
-        <!-- ============================================================
-        TAB 4: AGREGAR ASISTENTE
-        ============================================================ -->
+        <!-- TAB 4: AGREGAR ASISTENTE -->
         <div id="subTab-agregar" class="sub-tab-content">
             <div class="admin-card">
                 <div class="card-header">
@@ -550,9 +546,7 @@
 
     </main>
 
-    <!-- ============================================================
-    MODAL QR
-    ============================================================ -->
+    <!-- MODAL QR -->
     <div class="admin-modal" id="qrModal">
         <div class="modal-content" style="max-width:500px;">
             <div class="modal-header">
@@ -610,9 +604,7 @@
         </div>
     </div>
 
-    <!-- ============================================================
-    TOAST
-    ============================================================ -->
+    <!-- TOAST -->
     <div id="adminToast" class="admin-toast"></div>
 
     <!-- ============================================================
@@ -713,13 +705,19 @@
                     throw new Error('Firebase no disponible');
                 }
 
-                const snapshot = await db.collection('eventos')
-                    .orderBy('creadoEn', 'desc')
-                    .get();
+                // SIN orderBy - traemos todos y ordenamos en memoria
+                const snapshot = await db.collection('eventos').get();
 
                 eventos = [];
                 snapshot.forEach(doc => {
                     eventos.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Ordenar en memoria por fecha de creación (más reciente primero)
+                eventos.sort((a, b) => {
+                    const fechaA = a.creadoEn ? new Date(a.creadoEn) : new Date(0);
+                    const fechaB = b.creadoEn ? new Date(b.creadoEn) : new Date(0);
+                    return fechaB - fechaA;
                 });
 
                 document.getElementById('eventosCount').textContent = eventos.length + ' eventos';
@@ -728,9 +726,13 @@
             } catch (error) {
                 console.error('Error al cargar eventos:', error);
                 document.getElementById('listaEventos').innerHTML = `
-                            <div class="evento-vacia">
+                            <div class="error-box">
                                 <i class="fa-solid fa-triangle-exclamation"></i>
-                                <p>Error al cargar eventos: ${error.message}</p>
+                                <p><strong>Error al cargar eventos</strong></p>
+                                <p style="font-size:0.9rem; color:var(--color-text-muted);">${error.message}</p>
+                                <button class="btn-admin btn-primary" onclick="cargarEventos()" style="margin-top:12px;">
+                                    <i class="fa-solid fa-rotate"></i> Reintentar
+                                </button>
                             </div>
                         `;
             }
@@ -864,13 +866,18 @@
 
         async function cargarSelects() {
             try {
-                const snapshot = await db.collection('eventos')
-                    .orderBy('creadoEn', 'desc')
-                    .get();
+                const snapshot = await db.collection('eventos').get();
 
                 const eventosList = [];
                 snapshot.forEach(doc => {
                     eventosList.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Ordenar en memoria
+                eventosList.sort((a, b) => {
+                    const fechaA = a.creadoEn ? new Date(a.creadoEn) : new Date(0);
+                    const fechaB = b.creadoEn ? new Date(b.creadoEn) : new Date(0);
+                    return fechaB - fechaA;
                 });
 
                 const select1 = document.getElementById('selectEventoAsistentes');

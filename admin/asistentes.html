@@ -411,7 +411,6 @@
         let eventosMap = {};
         let paginaActual = 1;
         const POR_PAGINA = 20;
-        let cargando = false;
 
         // ============================================================
         // SIDEBAR
@@ -447,19 +446,18 @@
         })();
 
         // ============================================================
-        // CARGAR DATOS CON MANEJO DE ERRORES
+        // CARGAR DATOS - SIN orderBy
         // ============================================================
 
         async function cargarTodosLosAsistentes() {
             const container = document.getElementById('listaAsistentesGlobal');
 
-            // Verificar Firebase
             if (!db) {
                 container.innerHTML = `
                             <div class="error-box">
                                 <i class="fa-solid fa-triangle-exclamation"></i>
                                 <p><strong>Error de conexión</strong></p>
-                                <p style="font-size:0.9rem; color:var(--color-text-muted);">Firebase no está disponible. Verifica tu conexión.</p>
+                                <p style="font-size:0.9rem; color:var(--color-text-muted);">Firebase no está disponible.</p>
                                 <button class="btn-admin btn-primary" onclick="cargarTodosLosAsistentes()" style="margin-top:12px;">
                                     <i class="fa-solid fa-rotate"></i> Reintentar
                                 </button>
@@ -469,7 +467,7 @@
             }
 
             try {
-                // 1. Cargar eventos
+                // 1. Cargar eventos (sin orderBy)
                 let eventosSnap;
                 try {
                     eventosSnap = await db.collection('eventos').get();
@@ -485,12 +483,10 @@
                     });
                 }
 
-                // 2. Cargar asistentes
+                // 2. Cargar asistentes (SIN orderBy)
                 let snapshot;
                 try {
-                    snapshot = await db.collection('asistentes')
-                        .orderBy('creadoEn', 'desc')
-                        .get();
+                    snapshot = await db.collection('asistentes').get();
                 } catch (e) {
                     console.warn('Error al cargar asistentes:', e);
                     snapshot = { empty: true, forEach: () => { } };
@@ -508,7 +504,14 @@
                     });
                 }
 
-                // 3. Actualizar estadísticas
+                // 3. Ordenar en memoria por fecha (más reciente primero)
+                todosLosAsistentes.sort((a, b) => {
+                    const fechaA = a.creadoEn ? new Date(a.creadoEn) : new Date(0);
+                    const fechaB = b.creadoEn ? new Date(b.creadoEn) : new Date(0);
+                    return fechaB - fechaA;
+                });
+
+                // 4. Actualizar estadísticas
                 const total = todosLosAsistentes.length;
                 const ingresados = todosLosAsistentes.filter(a => a.ingresado).length;
                 const pendientes = total - ingresados;
@@ -519,7 +522,7 @@
                 document.getElementById('pendientesGlobal').textContent = pendientes;
                 document.getElementById('eventosGlobal').textContent = eventos;
 
-                // 4. Poblar filtro de eventos
+                // 5. Poblar filtro de eventos
                 const selectEvento = document.getElementById('filtroEvento');
                 let options = '<option value="">Todos los eventos</option>';
                 for (const [id, nombre] of Object.entries(eventosMap)) {
@@ -527,7 +530,7 @@
                 }
                 selectEvento.innerHTML = options;
 
-                // 5. Mostrar datos
+                // 6. Mostrar datos
                 asistentesFiltrados = [...todosLosAsistentes];
                 document.getElementById('asistentesCount').textContent = todosLosAsistentes.length + ' asistentes';
 

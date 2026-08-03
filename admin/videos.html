@@ -22,10 +22,6 @@
     <link rel="stylesheet" href="css/admin.css">
 
     <style>
-        /* ============================================================
-           ESTILOS ESPECÍFICOS DE VIDEOS
-           ============================================================ */
-
         .video-item {
             display: flex;
             gap: 16px;
@@ -144,7 +140,21 @@
             color: #000;
         }
 
-        /* RESPONSIVE */
+        .error-box {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--color-danger);
+            border: 1px solid var(--color-danger);
+            border-radius: var(--radius-sm);
+            background: rgba(211, 47, 47, 0.05);
+        }
+
+        .error-box i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 12px;
+        }
+
         @media (max-width: 768px) {
             .video-item {
                 flex-direction: column;
@@ -192,9 +202,7 @@
 
 <body>
 
-    <!-- ============================================================
-    SIDEBAR
-    ============================================================ -->
+    <!-- SIDEBAR -->
     <aside class="admin-sidebar" id="adminSidebar">
         <div class="sidebar-brand">
             <img src="../img/logo.webp" alt="Los Hijos de Tencha">
@@ -224,9 +232,7 @@
 
     <div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- ============================================================
-    CONTENIDO PRINCIPAL
-    ============================================================ -->
+    <!-- CONTENIDO PRINCIPAL -->
     <main class="admin-main">
 
         <!-- HEADER -->
@@ -251,9 +257,7 @@
             </div>
         </header>
 
-        <!-- ============================================================
-        FORMULARIO
-        ============================================================ -->
+        <!-- FORMULARIO -->
         <div class="admin-card" id="formVideo">
             <div class="card-header">
                 <h3 id="formTitle"><i class="fa-solid fa-plus-circle"></i> Agregar Video</h3>
@@ -325,9 +329,7 @@
             </div>
         </div>
 
-        <!-- ============================================================
-        LISTA DE VIDEOS
-        ============================================================ -->
+        <!-- LISTA DE VIDEOS -->
         <div class="admin-card">
             <div class="card-header">
                 <h3><i class="fa-solid fa-list"></i> Videoteca</h3>
@@ -365,9 +367,7 @@
 
     </main>
 
-    <!-- ============================================================
-    MODAL - PREVISUALIZAR VIDEO
-    ============================================================ -->
+    <!-- MODAL - PREVISUALIZAR VIDEO -->
     <div class="admin-modal" id="modalVideo">
         <div class="modal-content" style="max-width:700px;">
             <div class="modal-header">
@@ -386,9 +386,7 @@
         </div>
     </div>
 
-    <!-- ============================================================
-    TOAST
-    ============================================================ -->
+    <!-- TOAST -->
     <div id="adminToast" class="admin-toast"></div>
 
     <!-- ============================================================
@@ -438,7 +436,7 @@
         })();
 
         // ============================================================
-        // FUNCIONES CRUD
+        // FUNCIONES - MENSAJES
         // ============================================================
 
         function mostrarMensajeVideo(elemento, texto, tipo) {
@@ -463,6 +461,10 @@
                 }, 6000);
             }
         }
+
+        // ============================================================
+        // FUNCIONES CRUD
+        // ============================================================
 
         async function guardarVideo() {
             const id = document.getElementById('videoId').value;
@@ -565,8 +567,8 @@
                     throw new Error('Firebase no disponible');
                 }
 
+                // 🔥 SIN orderBy compuestos - SOLO UN CAMPO
                 const snapshot = await db.collection('videos')
-                    .orderBy('orden', 'asc')
                     .orderBy('creadoEn', 'desc')
                     .get();
 
@@ -575,15 +577,29 @@
                     videos.push({ id: doc.id, ...doc.data() });
                 });
 
+                // Ordenar en memoria por 'orden' si existe
+                videos.sort((a, b) => {
+                    const ordenA = a.orden || 999;
+                    const ordenB = b.orden || 999;
+                    if (ordenA !== ordenB) return ordenA - ordenB;
+                    const fechaA = a.creadoEn ? new Date(a.creadoEn) : new Date(0);
+                    const fechaB = b.creadoEn ? new Date(b.creadoEn) : new Date(0);
+                    return fechaB - fechaA;
+                });
+
                 document.getElementById('videosCount').textContent = videos.length + ' videos';
                 renderizarVideos();
 
             } catch (error) {
                 console.error('Error al cargar videos:', error);
                 container.innerHTML = `
-                            <div class="video-vacia">
+                            <div class="error-box">
                                 <i class="fa-solid fa-triangle-exclamation"></i>
-                                <p>Error al cargar videos: ${error.message}</p>
+                                <p><strong>Error al cargar videos</strong></p>
+                                <p style="font-size:0.9rem; color:var(--color-text-muted);">${error.message}</p>
+                                <button class="btn-admin btn-primary" onclick="cargarVideos()" style="margin-top:12px;">
+                                    <i class="fa-solid fa-rotate"></i> Reintentar
+                                </button>
                             </div>
                         `;
             }
@@ -773,7 +789,6 @@
             console.log('🚀 Gestor de Videos cargado');
         });
 
-        // Prevenir cierre con Ctrl+W
         document.addEventListener('keydown', function (e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
                 e.preventDefault();

@@ -22,10 +22,6 @@
     <link rel="stylesheet" href="css/admin.css">
 
     <style>
-        /* ============================================================
-           ESTILOS ESPECÍFICOS DE CANCIONES
-           ============================================================ */
-
         .cancion-item {
             display: flex;
             gap: 16px;
@@ -125,7 +121,21 @@
             -webkit-box-orient: vertical;
         }
 
-        /* RESPONSIVE */
+        .error-box {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--color-danger);
+            border: 1px solid var(--color-danger);
+            border-radius: var(--radius-sm);
+            background: rgba(211, 47, 47, 0.05);
+        }
+
+        .error-box i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 12px;
+        }
+
         @media (max-width: 768px) {
             .cancion-item {
                 flex-direction: column;
@@ -157,9 +167,7 @@
 
 <body>
 
-    <!-- ============================================================
-    SIDEBAR
-    ============================================================ -->
+    <!-- SIDEBAR -->
     <aside class="admin-sidebar" id="adminSidebar">
         <div class="sidebar-brand">
             <img src="../img/logo.webp" alt="Los Hijos de Tencha">
@@ -189,9 +197,7 @@
 
     <div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- ============================================================
-    CONTENIDO PRINCIPAL
-    ============================================================ -->
+    <!-- CONTENIDO PRINCIPAL -->
     <main class="admin-main">
 
         <!-- HEADER -->
@@ -216,9 +222,7 @@
             </div>
         </header>
 
-        <!-- ============================================================
-        FORMULARIO
-        ============================================================ -->
+        <!-- FORMULARIO -->
         <div class="admin-card" id="formCancion">
             <div class="card-header">
                 <h3 id="formTitle"><i class="fa-solid fa-plus-circle"></i> Agregar Canción</h3>
@@ -290,9 +294,7 @@
                 style="margin-top:12px; display:none; padding:12px; border-radius:var(--radius-sm);"></div>
         </div>
 
-        <!-- ============================================================
-        LISTA DE CANCIONES
-        ============================================================ -->
+        <!-- LISTA DE CANCIONES -->
         <div class="admin-card">
             <div class="card-header">
                 <h3><i class="fa-solid fa-list"></i> Cancionero</h3>
@@ -311,9 +313,7 @@
 
     </main>
 
-    <!-- ============================================================
-    TOAST
-    ============================================================ -->
+    <!-- TOAST -->
     <div id="adminToast" class="admin-toast"></div>
 
     <!-- ============================================================
@@ -362,7 +362,7 @@
         })();
 
         // ============================================================
-        // FUNCIONES CRUD
+        // FUNCIONES - MENSAJES
         // ============================================================
 
         function mostrarMensajeCancion(elemento, texto, tipo) {
@@ -387,6 +387,10 @@
                 }, 6000);
             }
         }
+
+        // ============================================================
+        // FUNCIONES CRUD
+        // ============================================================
 
         async function guardarCancion() {
             const id = document.getElementById('cancionId').value;
@@ -473,8 +477,8 @@
                     throw new Error('Firebase no disponible');
                 }
 
+                // 🔥 SIN orderBy compuestos - SOLO UN CAMPO
                 const snapshot = await db.collection('canciones')
-                    .orderBy('orden', 'asc')
                     .orderBy('titulo', 'asc')
                     .get();
 
@@ -483,15 +487,27 @@
                     canciones.push({ id: doc.id, ...doc.data() });
                 });
 
+                // Ordenar en memoria por 'orden' si existe
+                canciones.sort((a, b) => {
+                    const ordenA = a.orden || 999;
+                    const ordenB = b.orden || 999;
+                    if (ordenA !== ordenB) return ordenA - ordenB;
+                    return a.titulo.localeCompare(b.titulo);
+                });
+
                 document.getElementById('cancionesCount').textContent = canciones.length + ' canciones';
                 renderizarCanciones();
 
             } catch (error) {
                 console.error('Error al cargar canciones:', error);
                 container.innerHTML = `
-                            <div class="cancion-vacia">
+                            <div class="error-box">
                                 <i class="fa-solid fa-triangle-exclamation"></i>
-                                <p>Error al cargar canciones: ${error.message}</p>
+                                <p><strong>Error al cargar canciones</strong></p>
+                                <p style="font-size:0.9rem; color:var(--color-text-muted);">${error.message}</p>
+                                <button class="btn-admin btn-primary" onclick="cargarCanciones()" style="margin-top:12px;">
+                                    <i class="fa-solid fa-rotate"></i> Reintentar
+                                </button>
                             </div>
                         `;
             }
@@ -644,7 +660,6 @@
             console.log('🚀 Gestor de Canciones cargado');
         });
 
-        // Prevenir cierre con Ctrl+W
         document.addEventListener('keydown', function (e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
                 e.preventDefault();

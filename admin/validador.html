@@ -25,10 +25,6 @@
     <link rel="stylesheet" href="css/admin.css">
 
     <style>
-        /* ============================================================
-           ESTILOS ESPECÍFICOS DEL VALIDADOR
-           ============================================================ */
-
         .validador-container {
             max-width: 600px;
             margin: 0 auto;
@@ -299,7 +295,21 @@
             }
         }
 
-        /* RESPONSIVE */
+        .error-box {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--color-danger);
+            border: 1px solid var(--color-danger);
+            border-radius: var(--radius-sm);
+            background: rgba(211, 47, 47, 0.05);
+        }
+
+        .error-box i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 12px;
+        }
+
         @media (max-width: 768px) {
             .mini-stats {
                 grid-template-columns: 1fr 1fr;
@@ -360,9 +370,7 @@
 
 <body>
 
-    <!-- ============================================================
-    SIDEBAR
-    ============================================================ -->
+    <!-- SIDEBAR -->
     <aside class="admin-sidebar" id="adminSidebar">
         <div class="sidebar-brand">
             <img src="../img/logo.webp" alt="Los Hijos de Tencha">
@@ -392,9 +400,7 @@
 
     <div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- ============================================================
-    CONTENIDO PRINCIPAL
-    ============================================================ -->
+    <!-- CONTENIDO PRINCIPAL -->
     <main class="admin-main">
 
         <!-- HEADER -->
@@ -419,14 +425,10 @@
             </div>
         </header>
 
-        <!-- ============================================================
-        CONTENIDO VALIDADOR
-        ============================================================ -->
+        <!-- CONTENIDO VALIDADOR -->
         <div class="validador-container">
 
-            <!-- ============================================================
-            TABS
-            ============================================================ -->
+            <!-- TABS -->
             <div class="sub-tabs">
                 <button class="active" onclick="switchTab('escaner', this)">
                     <i class="fa-solid fa-qrcode"></i> Escáner
@@ -436,9 +438,7 @@
                 </button>
             </div>
 
-            <!-- ============================================================
-            TAB 1: ESCÁNER
-            ============================================================ -->
+            <!-- TAB 1: ESCÁNER -->
             <div id="subTab-escaner" class="sub-tab-content active">
                 <div class="admin-card">
                     <div class="card-header">
@@ -468,9 +468,7 @@
                     <div id="resultadoEscaneo"></div>
                 </div>
 
-                <!-- ============================================================
-                VALIDACIÓN MANUAL
-                ============================================================ -->
+                <!-- VALIDACIÓN MANUAL -->
                 <div class="admin-card">
                     <div class="card-header">
                         <h3><i class="fa-solid fa-keyboard"></i> Validación Manual</h3>
@@ -488,9 +486,7 @@
                 </div>
             </div>
 
-            <!-- ============================================================
-            TAB 2: LISTA DE ASISTENTES
-            ============================================================ -->
+            <!-- TAB 2: LISTA DE ASISTENTES -->
             <div id="subTab-lista" class="sub-tab-content">
                 <div class="admin-card">
                     <div class="card-header">
@@ -533,9 +529,7 @@
 
     </main>
 
-    <!-- ============================================================
-    TOAST
-    ============================================================ -->
+    <!-- TOAST -->
     <div id="adminToast" class="admin-toast"></div>
 
     <!-- ============================================================
@@ -788,22 +782,31 @@
                     throw new Error('Firebase no disponible');
                 }
 
-                const snapshot = await db.collection('eventos')
-                    .orderBy('creadoEn', 'desc')
-                    .get();
+                const snapshot = await db.collection('eventos').get();
 
                 const select = document.getElementById('selectEventoLista');
                 let options = '<option value="">Selecciona un evento</option>';
 
+                // Ordenar en memoria
+                const eventosList = [];
                 snapshot.forEach(doc => {
-                    const data = doc.data();
-                    options += '<option value="' + doc.id + '">' + sanitizar(data.nombre) + '</option>';
+                    eventosList.push({ id: doc.id, ...doc.data() });
+                });
+                eventosList.sort((a, b) => {
+                    const fechaA = a.creadoEn ? new Date(a.creadoEn) : new Date(0);
+                    const fechaB = b.creadoEn ? new Date(b.creadoEn) : new Date(0);
+                    return fechaB - fechaA;
+                });
+
+                eventosList.forEach(evento => {
+                    options += '<option value="' + evento.id + '">' + sanitizar(evento.nombre) + '</option>';
                 });
 
                 select.innerHTML = options;
 
             } catch (error) {
                 console.error('Error al cargar eventos:', error);
+                document.getElementById('selectEventoLista').innerHTML = '<option value="">Error al cargar eventos</option>';
             }
         }
 
