@@ -476,6 +476,15 @@
 
     <script>
         // ============================================================
+        // CONFIGURACIÓN DE CLOUDINARY
+        // ============================================================
+        const CLOUDINARY_CONFIG = {
+            cloudName: 'ldiiqgdp',
+            uploadPreset: 'tencha_uploads',
+            uploadUrl: 'https://api.cloudinary.com/v1_1/ldiiqgdp/image/upload'
+        };
+
+        // ============================================================
         // VARIABLES GLOBALES
         // ============================================================
         let categorias = [];
@@ -518,6 +527,36 @@
         })();
 
         // ============================================================
+        // FUNCIÓN: SUBIR IMAGEN A CLOUDINARY (MÚLTIPLES)
+        // ============================================================
+        async function subirImagenCloudinary(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
+            formData.append('folder', 'galeria/' + categoriaSeleccionadaId);
+
+            try {
+                const response = await fetch(CLOUDINARY_CONFIG.uploadUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('❌ Error Cloudinary:', errorData);
+                    throw new Error(errorData.error?.message || 'Error al subir a Cloudinary');
+                }
+
+                const data = await response.json();
+                console.log('✅ Imagen subida a Cloudinary:', data.secure_url);
+                return data.secure_url;
+            } catch (error) {
+                console.error('❌ Error en subirImagenCloudinary:', error);
+                throw error;
+            }
+        }
+
+        // ============================================================
         // FUNCIONES - CATEGORÍAS (SIN orderBy)
         // ============================================================
 
@@ -534,7 +573,6 @@
                     categorias.push({ id: doc.id, ...doc.data() });
                 });
 
-                // Ordenar en memoria por nombre
                 categorias.sort((a, b) => {
                     return (a.nombre || '').localeCompare(b.nombre || '');
                 });
@@ -701,9 +739,11 @@
                     const data = doc.data();
                     if (data.url) {
                         try {
-                            await eliminarArchivo(data.url);
+                            // Intentar eliminar de Cloudinary (opcional)
+                            // Cloudinary no tiene una API simple para eliminar por URL, lo dejamos pasar
+                            console.log('ℹ️ Foto eliminada de Firestore, URL:', data.url);
                         } catch (e) {
-                            console.warn('No se pudo eliminar imagen:', e);
+                            console.warn('No se pudo eliminar imagen de Cloudinary:', e);
                         }
                     }
                     await db.collection('galeria_fotos').doc(doc.id).delete();
@@ -760,7 +800,6 @@
                     fotos.push({ id: doc.id, ...doc.data() });
                 });
 
-                // Ordenar en memoria por orden
                 fotos.sort((a, b) => {
                     const ordenA = a.orden || 0;
                     const ordenB = b.orden || 0;
@@ -852,16 +891,10 @@
             if (!confirm('¿Eliminar esta foto?')) return;
 
             try {
-                if (foto.url) {
-                    try {
-                        await eliminarArchivo(foto.url);
-                    } catch (e) {
-                        console.warn('No se pudo eliminar imagen:', e);
-                    }
-                }
-
+                // La imagen está en Cloudinary, no podemos eliminarla fácilmente sin la API
+                // La dejamos en Cloudinary pero la eliminamos de Firestore
                 await db.collection('galeria_fotos').doc(id).delete();
-                mostrarToast('✅ Foto eliminada', 'success');
+                mostrarToast('✅ Foto eliminada de la galería', 'success');
                 await cargarFotos(categoriaSeleccionadaId);
 
             } catch (error) {
@@ -871,7 +904,7 @@
         }
 
         // ============================================================
-        // SUBIDA DE FOTOS - DRAG & DROP
+        // SUBIDA DE FOTOS - DRAG & DROP (CON CLOUDINARY)
         // ============================================================
 
         const dropzone = document.getElementById('dropzone');
@@ -958,12 +991,10 @@
                 progressText.textContent = 'Subiendo ' + (i + 1) + '/' + total + ': ' + file.name;
 
                 try {
-                    const path = 'galeria/' + categoriaSeleccionadaId + '/';
-                    const url = await subirArchivo(file, path, (progreso) => {
-                        const totalProgress = ((i + (progreso / 100)) / total) * 100;
-                        progressFill.style.width = totalProgress + '%';
-                    });
+                    // Subir a Cloudinary en lugar de Firebase Storage
+                    const url = await subirImagenCloudinary(file);
 
+                    // Guardar en Firestore con la URL de Cloudinary
                     await db.collection('galeria_fotos').add({
                         categoriaId: categoriaSeleccionadaId,
                         url: url,
@@ -974,6 +1005,10 @@
                     });
 
                     subidos++;
+
+                    // Actualizar progreso
+                    const totalProgress = ((i + 1) / total) * 100;
+                    progressFill.style.width = totalProgress + '%';
 
                 } catch (error) {
                     console.error('Error al subir archivo:', error);
@@ -997,7 +1032,7 @@
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
             cargarCategorias();
-            console.log('🚀 Gestor de Galería cargado');
+            console.log('🚀 Gestor de Galería cargado con Cloudinary');
         });
 
         document.addEventListener('keydown', function (e) {
