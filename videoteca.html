@@ -49,9 +49,6 @@
     </script>
 
     <style>
-        /* =====================================
-           MENÚ CON SCROLL HORIZONTAL
-           ===================================== */
         .menu {
             display: flex;
             gap: 8px;
@@ -120,9 +117,6 @@
             }
         }
 
-        /* =====================================
-           HERO VIDEOTECA
-           ===================================== */
         .hero-videoteca {
             min-height: 50vh;
             background:
@@ -200,9 +194,6 @@
             }
         }
 
-        /* =====================================
-           FILTROS DE CATEGORÍAS
-           ===================================== */
         .filtros-videos {
             display: flex;
             gap: 10px;
@@ -236,9 +227,6 @@
             border-color: #ffcc00;
         }
 
-        /* =====================================
-           VIDEOS GRID
-           ===================================== */
         .videos-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -276,17 +264,6 @@
             display: block;
         }
 
-        .video-card .video-badge {
-            display: inline-block;
-            background: rgba(255, 204, 0, 0.15);
-            color: #ffcc00;
-            padding: 2px 12px;
-            border-radius: 12px;
-            font-size: 0.6rem;
-            font-weight: 600;
-            margin-left: 8px;
-        }
-
         .video-card h3 {
             color: #fff;
             font-size: 1.2rem;
@@ -321,9 +298,6 @@
             font-size: 0.9rem;
         }
 
-        /* =====================================
-           VACÍO / CARGA
-           ===================================== */
         .videos-vacia {
             text-align: center;
             padding: 60px 20px;
@@ -338,9 +312,6 @@
             opacity: 0.3;
         }
 
-        /* =====================================
-           RESPONSIVE
-           ===================================== */
         @media (max-width: 768px) {
             .videos-grid {
                 grid-template-columns: 1fr !important;
@@ -472,17 +443,14 @@
 <body>
 
     <header class="hero-videoteca">
-
         <nav>
             <a href="index.html" class="logo">
                 <img src="img/logo.webp" alt="Los Hijos de Tencha">
             </a>
-
             <button id="menu-btn" class="menu-btn">
                 <img src="img/menu-icono.webp" alt="Menú">
                 <span>Menú</span>
             </button>
-
             <ul class="menu">
                 <li><a href="index.html">Inicio</a></li>
                 <li><a href="index.html#banda">La Banda</a></li>
@@ -497,26 +465,19 @@
                 <li><a href="index.html#contacto">Contacto</a></li>
                 <li><a href="admin/" style="color: #ffcc00; font-weight: 700;">⚙️ Admin</a></li>
             </ul>
-
         </nav>
-
         <div class="titulo-videoteca">
-
             <span>LOS HIJOS DE TENCHA</span>
             <h1>VIDEOS OFICIALES</h1>
             <p>
                 Videoclips, sesiones en vivo y presentaciones de la agrupación musical costarricense Los Hijos de
                 Tencha.
             </p>
-
         </div>
-
     </header>
 
     <section class="canciones animar">
-
         <div class="contenedor">
-
             <div class="header-videos">
                 <div class="titulo-seccion">
                     <span>Contenido audiovisual</span>
@@ -525,7 +486,6 @@
                 <span class="videos-count" id="videosCount">0 videos</span>
             </div>
 
-            <!-- Filtros de categorías -->
             <div class="filtros-videos" id="filtrosContainer">
                 <!-- Los filtros se generan dinámicamente desde JavaScript -->
             </div>
@@ -533,33 +493,20 @@
             <div class="videos-grid animar" id="videosGrid">
                 <!-- Los videos se cargan desde Firebase -->
             </div>
-
         </div>
-
     </section>
 
     <footer>
-
         <img src="img/logo.webp" alt="Los Hijos de Tencha">
-
-        <p>
-            Los Hijos de Tencha © 2026
-        </p>
-
-        <p class="credito-web">
-            Diseñado por
-            <a href="https://www.instagram.com/tavo_musico" target="_blank" rel="noopener noreferrer">
-                Tavo Músico
-            </a>
-        </p>
-
+        <p>Los Hijos de Tencha © 2026</p>
+        <p class="credito-web">Diseñado por <a href="https://www.instagram.com/tavo_musico" target="_blank"
+                rel="noopener noreferrer">Tavo Músico</a></p>
     </footer>
 
     <button id="subir">
         <i class="fa-solid fa-arrow-up"></i>
     </button>
 
-    <!-- Pantalla de transición -->
     <div id="transicion">
         <img src="img/transicion.gif" alt="Transición">
     </div>
@@ -606,6 +553,43 @@
         let categoriasDisponibles = [];
 
         // ============================================================
+        // MAPA DE ÍCONOS POR DEFECTO
+        // ============================================================
+        const iconosDefault = {
+            'oficial': '🎥',
+            'momentos': '🎬',
+            'en_vivo': '🎤'
+        };
+
+        const nombresDefault = {
+            'oficial': 'Oficiales',
+            'momentos': 'Momentos Tencha',
+            'en_vivo': 'En Vivo'
+        };
+
+        // ============================================================
+        // FUNCIÓN: OBTENER ICONO DE CATEGORÍA
+        // ============================================================
+        function getIconoCategoria(categoria, iconoGuardado) {
+            // Si el video tiene icono guardado, usarlo
+            if (iconoGuardado && iconoGuardado !== '') {
+                return iconoGuardado;
+            }
+            // Si no, usar el default por categoría
+            if (iconosDefault[categoria]) {
+                return iconosDefault[categoria];
+            }
+            return '📁';
+        }
+
+        function getNombreCategoria(categoria) {
+            if (nombresDefault[categoria]) {
+                return nombresDefault[categoria];
+            }
+            return categoria;
+        }
+
+        // ============================================================
         // FUNCIÓN: FORMATEAR FECHA
         // ============================================================
         function formatearFecha(fechaStr) {
@@ -620,29 +604,6 @@
             } catch (e) {
                 return fechaStr;
             }
-        }
-
-        // ============================================================
-        // FUNCIÓN: OBTENER NOMBRE DE CATEGORÍA DESDE LOCALSTORAGE (FALLBACK)
-        // ============================================================
-        function getNombreCategoria(id) {
-            try {
-                const guardadas = localStorage.getItem('videoCategorias');
-                if (guardadas) {
-                    const parsed = JSON.parse(guardadas);
-                    for (var i = 0; i < parsed.length; i++) {
-                        if (parsed[i].id === id) {
-                            return parsed[i].nombre;
-                        }
-                    }
-                }
-            } catch (e) { }
-            var nombres = {
-                'oficial': 'Oficiales',
-                'momentos': 'Momentos Tencha',
-                'en_vivo': 'En Vivo'
-            };
-            return nombres[id] || id;
         }
 
         // ============================================================
@@ -672,7 +633,7 @@
                                 titulo: data.titulo || 'Video sin título',
                                 descripcion: data.descripcion || '',
                                 categoria: data.categoria || 'general',
-                                iconoCategoria: data.iconoCategoria || '📁',
+                                iconoCategoria: data.iconoCategoria || '',
                                 url: data.url,
                                 fecha: data.fecha || '',
                                 orden: data.orden || 0,
@@ -697,16 +658,12 @@
                     });
                     categoriasDisponibles = Object.keys(cats);
 
-                    // Actualizar contador
                     document.getElementById('videosCount').textContent = videos.length + ' videos';
 
-                    // Renderizar filtros
                     renderizarFiltros();
-
-                    // Renderizar videos
                     renderizarVideos();
 
-                    console.log('✅ ' + videos.length + ' videos cargados desde Firebase');
+                    console.log('✅ ' + videos.length + ' videos cargados');
 
                 })
                 .catch(function (error) {
@@ -733,10 +690,10 @@
             html += '<button class="btn-filtro ' + (filtroActual === 'todas' ? 'active' : '') + '" data-filtro="todas" onclick="filtrarVideos(\'todas\', this)">📸 Todas</button>';
 
             categoriasDisponibles.forEach(function (cat) {
-                // Buscar el icono de la categoría desde los videos
-                var videoConIcono = videos.find(function (v) { return v.categoria === cat; });
-                var icono = videoConIcono ? videoConIcono.iconoCategoria : '📁';
-                var nombre = getNombreCategoria(cat) || cat;
+                // Buscar un video de la categoría para obtener su icono
+                var videoEjemplo = videos.find(function (v) { return v.categoria === cat; });
+                var icono = getIconoCategoria(cat, videoEjemplo ? videoEjemplo.iconoCategoria : '');
+                var nombre = getNombreCategoria(cat);
                 var isActive = (filtroActual === cat);
                 html += '<button class="btn-filtro ' + (isActive ? 'active' : '') + '" data-filtro="' + cat + '" onclick="filtrarVideos(\'' + cat + '\', this)">' + icono + ' ' + nombre + '</button>';
             });
@@ -783,17 +740,15 @@
                 return;
             }
 
-            // Separar destacados y normales
             var destacados = filtrados.filter(function (v) { return v.destacado; });
             var normales = filtrados.filter(function (v) { return !v.destacado; });
-
             var ordenados = destacados.concat(normales);
 
             var html = '';
             ordenados.forEach(function (video) {
                 var fecha = video.fecha ? formatearFecha(video.fecha) : '';
-                var catIcono = video.iconoCategoria || '📁';
-                var catNombre = getNombreCategoria(video.categoria) || video.categoria;
+                var icono = getIconoCategoria(video.categoria, video.iconoCategoria);
+                var nombre = getNombreCategoria(video.categoria);
                 var fuenteIcon = video.fuente === 'cloudinary' ? '☁️' : '▶️';
 
                 html +=
@@ -803,7 +758,7 @@
                     '</div>' +
                     '<h3>' + video.titulo + (video.destacado ? ' <span class="destacado">⭐ Destacado</span>' : '') + '</h3>' +
                     '<div class="video-meta">' +
-                    '<span><i class="fa-regular fa-folder"></i> ' + catIcono + ' ' + catNombre + '</span>' +
+                    '<span><i class="fa-regular fa-folder"></i> ' + icono + ' ' + nombre + '</span>' +
                     (fecha ? '<span><i class="fa-regular fa-calendar"></i> ' + fecha + '</span>' : '') +
                     '<span>' + fuenteIcon + ' ' + (video.fuente === 'cloudinary' ? 'Cloudinary' : 'YouTube') + '</span>' +
                     (video.orden > 0 ? '<span><i class="fa-regular fa-hashtag"></i> #' + video.orden + '</span>' : '') +
@@ -814,7 +769,6 @@
 
             grid.innerHTML = html;
 
-            // Animación escalonada
             var cards = document.querySelectorAll('.video-card');
             cards.forEach(function (el, i) {
                 setTimeout(function () {
@@ -842,7 +796,7 @@
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
             cargarVideos();
-            console.log('🚀 Videoteca: íconos desde Firebase (sincronización multi-dispositivo)');
+            console.log('🚀 Videoteca iniciada');
         });
     </script>
 
