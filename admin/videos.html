@@ -369,6 +369,10 @@
             flex-shrink: 0;
         }
 
+        .limpiar-categorias-btn {
+            margin-top: 8px;
+        }
+
         /* ============================================================
            MODAL EDITAR CATEGORÍA
            ============================================================ */
@@ -670,6 +674,10 @@
                         <i class="fa-solid fa-plus"></i> Agregar
                     </button>
                 </div>
+                <button class="btn-admin btn-danger btn-sm limpiar-categorias-btn"
+                    onclick="limpiarCategoriasUndefined()">
+                    <i class="fa-solid fa-broom"></i> Limpiar categorías undefined
+                </button>
                 <div class="categorias-videos" id="categoriasContainer">
                     <span style="color:var(--color-text-muted); font-size:0.8rem;">Categorías disponibles:</span>
                     <span class="cat-tag" data-categoria="oficial">
@@ -968,6 +976,34 @@
             'momentos': { nombre: 'Momentos Tencha', icono: '🎬' },
             'en_vivo': { nombre: 'En Vivo', icono: '🎤' }
         };
+
+        // ============================================================
+        // FUNCIÓN: LIMPIAR CATEGORÍAS UNDEFINED
+        // ============================================================
+        function limpiarCategoriasUndefined() {
+            const undefinedCats = categoriasDisponibles.filter(cat =>
+                !cat || !cat.id || cat.id === 'undefined' || !cat.nombre || cat.nombre === 'undefined'
+            );
+
+            if (undefinedCats.length === 0) {
+                mostrarToast('✅ No hay categorías undefined para limpiar', 'info');
+                return;
+            }
+
+            if (!confirm('⚠️ Se eliminarán ' + undefinedCats.length + ' categorías "undefined". ¿Continuar?')) {
+                return;
+            }
+
+            const limpias = categoriasDisponibles.filter(cat =>
+                cat && cat.id && cat.id !== 'undefined' && cat.nombre && cat.nombre !== 'undefined'
+            );
+
+            categoriasDisponibles = limpias;
+            guardarCategorias();
+            renderizarCategorias();
+            renderizarFiltros();
+            mostrarToast('✅ ' + undefinedCats.length + ' categorías undefined eliminadas', 'success');
+        }
 
         // ============================================================
         // FUNCIÓN: CARGAR CATEGORÍAS GUARDADAS
@@ -1908,7 +1944,7 @@
             cargarCategoriasGuardadas();
             cargarVideos();
             switchUploadOption('youtube');
-            console.log('🚀 Gestor de Videos cargado con opción "Pegar enlace Cloudinary"');
+            console.log('🚀 Gestor de Videos cargado con opción "Pegar enlace Cloudinary" y limpiador de categorías');
         });
 
         document.addEventListener('keydown', function (e) {
