@@ -585,10 +585,29 @@
     <!-- ============================================= -->
     <script>
         // =====================================
-        // GALERÍA CON CATEGORÍAS - DATOS
+        // CONFIGURACIÓN DE FIREBASE
         // =====================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDvp_6UFymZZnqxMyL6yobJ3twLMvVkThw",
+            authDomain: "base-entradas-tenchos.firebaseapp.com",
+            projectId: "base-entradas-tenchos",
+            storageBucket: "base-entradas-tenchos.firebasestorage.app",
+            messagingSenderId: "273676503007",
+            appId: "1:273676503007:web:56180c485b648ef076a66a"
+        };
 
-        const galeriaDatos = {
+        // Inicializar Firebase si no está ya inicializado
+        if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+            console.log('✅ Firebase inicializado en galería');
+        }
+
+        const db = firebase.firestore();
+
+        // =====================================
+        // DATOS DE RESPALDO (FOTOS Y CATEGORÍAS FIJAS)
+        // =====================================
+        const galeriaDatosRespaldo = {
             'vocho': {
                 titulo: 'Sesión Vocho',
                 fotos: [
@@ -629,11 +648,126 @@
             }
         };
 
+        // =====================================
+        // MAPEO DE CATEGORÍAS DE FIREBASE A NOMBRES
+        // =====================================
+        const categoriaMap = {
+            'vocho': '🚗 Sesión Vocho',
+            'disco': '🎵 Sesión Disco Cumbias',
+            'lanzamiento': '🎸 Cumbia Salvaje'
+        };
+
         let categoriaActual = 'todas';
         let fotosActuales = [];
         let indiceActualVisor = 0;
+        let fotosFirebase = [];
+        let categoriasFirebase = [];
 
-        function cargarGaleria(categoria) {
+        // =====================================
+        // FUNCIÓN: CARGAR FOTOS DESDE FIREBASE
+        // =====================================
+        async function cargarFotosFirebase() {
+            try {
+                console.log('🔄 Cargando fotos desde Firebase...');
+
+                // Obtener todas las fotos de la colección
+                const snapshot = await db.collection('galeria_fotos').get();
+
+                fotosFirebase = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    fotosFirebase.push({
+                        id: doc.id,
+                        categoriaId: data.categoriaId || 'general',
+                        url: data.url || '',
+                        titulo: data.titulo || 'Foto',
+                        orden: data.orden || 0,
+                        destacada: data.destacada || false,
+                        creadoEn: data.creadoEn || ''
+                    });
+                });
+
+                // Ordenar por orden o por fecha de creación
+                fotosFirebase.sort((a, b) => {
+                    if (a.orden !== b.orden) return a.orden - b.orden;
+                    return (a.creadoEn || '').localeCompare(b.creadoEn || '');
+                });
+
+                console.log(`✅ ${fotosFirebase.length} fotos cargadas desde Firebase`);
+
+                // Obtener categorías
+                const catSnapshot = await db.collection('galeria_categorias').get();
+                categoriasFirebase = [];
+                catSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    categoriasFirebase.push({
+                        id: doc.id,
+                        nombre: data.nombre || doc.id,
+                        descripcion: data.descripcion || ''
+                    });
+                });
+
+                console.log(`✅ ${categoriasFirebase.length} categorías cargadas desde Firebase`);
+
+                return true;
+
+            } catch (error) {
+                console.error('❌ Error al cargar fotos desde Firebase:', error);
+                return false;
+            }
+        }
+
+        // =====================================
+        // FUNCIÓN: COMBINAR FOTOS (FIREBASE + RESPALDO)
+        // =====================================
+        function obtenerFotosCombinadas(categoria) {
+            let fotos = [];
+
+            // 1. Agregar fotos de Firebase
+            let fotosFiltradas = fotosFirebase;
+
+            if (categoria !== 'todas') {
+                fotosFiltradas = fotosFirebase.filter(f => f.categoriaId === categoria);
+            }
+
+            // Agregar URLs de Firebase
+            fotosFiltradas.forEach(f => {
+                if (f.url) {
+                    fotos.push(f.url);
+                }
+            });
+
+            // 2. Agregar fotos de respaldo SOLO si no hay fotos de Firebase en esa categoría
+            const tieneFotosFirebase = fotosFiltradas.length > 0;
+
+            if (!tieneFotosFirebase) {
+                // Si no hay fotos de Firebase en esta categoría, usar las de respaldo
+                if (categoria === 'todas') {
+                    Object.keys(galeriaDatosRespaldo).forEach(key => {
+                        fotos = fotos.concat(galeriaDatosRespaldo[key].fotos);
+                    });
+                } else if (galeriaDatosRespaldo[categoria]) {
+                    fotos = galeriaDatosRespaldo[categoria].fotos;
+                }
+            }
+
+            return fotos;
+        }
+
+        // =====================================
+        // FUNCIÓN: VERIFICAR SI HAY FOTOS EN FIREBASE
+        // =====================================
+        function tieneFotosFirebase(categoria) {
+            if (categoria === 'todas') {
+                return fotosFirebase.length > 0;
+            }
+            return fotosFirebase.filter(f => f.categoriaId === categoria).length > 0;
+        }
+
+        // =====================================
+        // FUNCIÓN: RENDERIZAR GALERÍA
+        // =====================================
+        function renderizarGaleria(categoria) {
             const grid = document.getElementById('galeriaGrid');
             if (!grid) {
                 console.warn('⚠️ No se encontró el contenedor de la galería');
@@ -642,48 +776,63 @@
 
             categoriaActual = categoria;
 
-            let fotos = [];
-            if (categoria === 'todas') {
-                Object.keys(galeriaDatos).forEach(key => {
-                    fotos = fotos.concat(galeriaDatos[key].fotos);
-                });
-            } else if (galeriaDatos[categoria]) {
-                fotos = galeriaDatos[categoria].fotos;
-            }
-
+            // Obtener fotos combinadas
+            const fotos = obtenerFotosCombinadas(categoria);
             fotosActuales = fotos;
+
+            // Verificar si hay fotos en Firebase para esta categoría
+            const hayFotosFirebase = tieneFotosFirebase(categoria);
 
             // Actualizar botones de categorías
             document.querySelectorAll('.cat-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.categoria === categoria);
             });
 
+            // Si no hay fotos (ni de Firebase ni de respaldo)
             if (fotos.length === 0) {
-                grid.innerHTML = `<div class="galeria-vacia">📸 No hay fotos en esta categoría aún.</div>`;
+                grid.innerHTML = `
+                    <div class="galeria-vacia">
+                        <i class="fa-regular fa-image" style="font-size:2.5rem; display:block; margin-bottom:12px; opacity:0.3;"></i>
+                        <p>📸 No hay fotos disponibles en esta categoría.</p>
+                        <p style="font-size:0.85rem; color:#555; margin-top:8px;">Pronto subiremos nuevas imágenes.</p>
+                    </div>
+                `;
                 return;
             }
 
-            // Generar HTML de la galería
-            grid.innerHTML = fotos.map((foto, index) => {
+            // Generar HTML de la galería con las fotos combinadas
+            let html = '';
+            fotos.forEach((foto, index) => {
+                // Buscar título para la foto
                 let titulo = '';
-                if (categoria === 'todas') {
-                    for (let key in galeriaDatos) {
-                        if (galeriaDatos[key].fotos.includes(foto)) {
-                            titulo = galeriaDatos[key].titulo;
+                let esFirebase = false;
+
+                // Verificar si es una foto de Firebase
+                const fotoFirebase = fotosFirebase.find(f => f.url === foto);
+                if (fotoFirebase) {
+                    esFirebase = true;
+                    titulo = fotoFirebase.titulo || 'Foto';
+                } else {
+                    // Buscar en datos de respaldo
+                    for (let key in galeriaDatosRespaldo) {
+                        if (galeriaDatosRespaldo[key].fotos.includes(foto)) {
+                            titulo = galeriaDatosRespaldo[key].titulo;
                             break;
                         }
                     }
-                } else {
-                    titulo = galeriaDatos[categoria]?.titulo || 'Evento';
                 }
-                return `
-                <div class="foto-item" data-index="${index}">
-                    <img src="${foto}" alt="${titulo}" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='#2a2a2a';">
-                    <div class="foto-overlay">
-                        <span>${titulo}</span>
+
+                html += `
+                    <div class="foto-item" data-index="${index}">
+                        <img src="${foto}" alt="${titulo}" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='#2a2a2a';">
+                        <div class="foto-overlay">
+                            <span>${titulo} ${esFirebase ? '📌' : ''}</span>
+                        </div>
                     </div>
-                </div>
-            `}).join('');
+                `;
+            });
+
+            grid.innerHTML = html;
 
             // Agregar eventos de click a las fotos
             grid.querySelectorAll('.foto-item').forEach(el => {
@@ -703,7 +852,29 @@
                 }, 100 + (i * 50));
             });
 
-            console.log(`✅ Galería cargada: ${fotos.length} fotos en categoría "${categoria}"`);
+            console.log(`✅ Galería renderizada: ${fotos.length} fotos en categoría "${categoria}"`);
+        }
+
+        // =====================================
+        // FUNCIÓN: CARGAR GALERÍA COMPLETA
+        // =====================================
+        async function cargarGaleriaCompleta(categoria) {
+            // Mostrar estado de carga
+            const grid = document.getElementById('galeriaGrid');
+            if (grid) {
+                grid.innerHTML = `
+                    <div class="galeria-vacia">
+                        <i class="fa-solid fa-spinner fa-spin" style="font-size:2.5rem; display:block; margin-bottom:12px; color:#ffcc00;"></i>
+                        <p>Cargando galería...</p>
+                    </div>
+                `;
+            }
+
+            // Cargar fotos desde Firebase
+            await cargarFotosFirebase();
+
+            // Renderizar galería
+            renderizarGaleria(categoria || 'todas');
         }
 
         // =====================================
@@ -790,7 +961,7 @@
         });
 
         // =====================================
-        // INICIALIZAR GALERÍA - CON FORZADO PARA MÓVIL
+        // INICIALIZAR GALERÍA
         // =====================================
 
         function inicializarGaleria() {
@@ -798,12 +969,15 @@
 
             if (document.getElementById('galeriaGrid')) {
                 console.log('✅ Galería encontrada, cargando...');
-                cargarGaleria('todas');
 
+                // Cargar galería completa
+                cargarGaleriaCompleta('todas');
+
+                // Configurar eventos de categorías
                 document.querySelectorAll('.cat-btn').forEach(btn => {
                     btn.addEventListener('click', function () {
                         const categoria = this.dataset.categoria;
-                        cargarGaleria(categoria);
+                        cargarGaleriaCompleta(categoria);
                     });
                 });
             } else {
@@ -812,6 +986,7 @@
             }
         }
 
+        // Ejecutar cuando el DOM esté listo
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', function () {
                 setTimeout(inicializarGaleria, 300);
@@ -820,11 +995,12 @@
             setTimeout(inicializarGaleria, 300);
         }
 
+        // Forzar carga en dispositivos móviles
         if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
             console.log('📱 Dispositivo móvil detectado, forzando carga...');
             setTimeout(function () {
                 const grid = document.getElementById('galeriaGrid');
-                if (grid && grid.children.length === 0) {
+                if (grid && (grid.children.length === 0 || grid.innerHTML.includes('Cargando'))) {
                     console.log('🔄 Reintentando carga en móvil...');
                     inicializarGaleria();
                 }
