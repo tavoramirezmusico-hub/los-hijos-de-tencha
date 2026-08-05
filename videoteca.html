@@ -606,67 +606,6 @@
         let categoriasDisponibles = [];
 
         // ============================================================
-        // FUNCIONES PARA LEER ÍCONOS DESDE LOCALSTORAGE
-        // ============================================================
-        function getIconosCategorias() {
-            try {
-                const guardadas = localStorage.getItem('videoCategorias');
-                if (guardadas) {
-                    const parsed = JSON.parse(guardadas);
-                    const mapa = {};
-                    parsed.forEach(function (cat) {
-                        mapa[cat.id] = cat.icono || '📁';
-                    });
-                    return mapa;
-                }
-            } catch (e) {
-                console.warn('Error al leer localStorage:', e);
-            }
-            // Fallback: íconos por defecto
-            return {
-                'oficial': '🎥',
-                'momentos': '🎬',
-                'en_vivo': '🎤'
-            };
-        }
-
-        function getNombreCategoria(id) {
-            try {
-                const guardadas = localStorage.getItem('videoCategorias');
-                if (guardadas) {
-                    const parsed = JSON.parse(guardadas);
-                    for (var i = 0; i < parsed.length; i++) {
-                        if (parsed[i].id === id) {
-                            return parsed[i].nombre;
-                        }
-                    }
-                }
-            } catch (e) { }
-            // Fallback
-            var nombres = {
-                'oficial': 'Oficiales',
-                'momentos': 'Momentos Tencha',
-                'en_vivo': 'En Vivo'
-            };
-            return nombres[id] || id;
-        }
-
-        function getCategoriasDesdeLocalStorage() {
-            try {
-                const guardadas = localStorage.getItem('videoCategorias');
-                if (guardadas) {
-                    return JSON.parse(guardadas);
-                }
-            } catch (e) { }
-            // Fallback
-            return [
-                { id: 'oficial', nombre: 'Oficiales', icono: '🎥' },
-                { id: 'momentos', nombre: 'Momentos Tencha', icono: '🎬' },
-                { id: 'en_vivo', nombre: 'En Vivo', icono: '🎤' }
-            ];
-        }
-
-        // ============================================================
         // FUNCIÓN: FORMATEAR FECHA
         // ============================================================
         function formatearFecha(fechaStr) {
@@ -681,6 +620,29 @@
             } catch (e) {
                 return fechaStr;
             }
+        }
+
+        // ============================================================
+        // FUNCIÓN: OBTENER NOMBRE DE CATEGORÍA DESDE LOCALSTORAGE (FALLBACK)
+        // ============================================================
+        function getNombreCategoria(id) {
+            try {
+                const guardadas = localStorage.getItem('videoCategorias');
+                if (guardadas) {
+                    const parsed = JSON.parse(guardadas);
+                    for (var i = 0; i < parsed.length; i++) {
+                        if (parsed[i].id === id) {
+                            return parsed[i].nombre;
+                        }
+                    }
+                }
+            } catch (e) { }
+            var nombres = {
+                'oficial': 'Oficiales',
+                'momentos': 'Momentos Tencha',
+                'en_vivo': 'En Vivo'
+            };
+            return nombres[id] || id;
         }
 
         // ============================================================
@@ -710,6 +672,7 @@
                                 titulo: data.titulo || 'Video sin título',
                                 descripcion: data.descripcion || '',
                                 categoria: data.categoria || 'general',
+                                iconoCategoria: data.iconoCategoria || '📁',
                                 url: data.url,
                                 fecha: data.fecha || '',
                                 orden: data.orden || 0,
@@ -766,22 +729,16 @@
             var container = document.getElementById('filtrosContainer');
             if (!container) return;
 
-            var categoriasFromLS = getCategoriasDesdeLocalStorage();
-            var mapaNombres = {};
-            var mapaIconos = {};
-            categoriasFromLS.forEach(function (cat) {
-                mapaNombres[cat.id] = cat.nombre;
-                mapaIconos[cat.id] = cat.icono || '📁';
-            });
-
             var html = '';
             html += '<button class="btn-filtro ' + (filtroActual === 'todas' ? 'active' : '') + '" data-filtro="todas" onclick="filtrarVideos(\'todas\', this)">📸 Todas</button>';
 
             categoriasDisponibles.forEach(function (cat) {
-                var label = mapaIconos[cat] || '📁';
-                var nombre = mapaNombres[cat] || cat;
+                // Buscar el icono de la categoría desde los videos
+                var videoConIcono = videos.find(function (v) { return v.categoria === cat; });
+                var icono = videoConIcono ? videoConIcono.iconoCategoria : '📁';
+                var nombre = getNombreCategoria(cat) || cat;
                 var isActive = (filtroActual === cat);
-                html += '<button class="btn-filtro ' + (isActive ? 'active' : '') + '" data-filtro="' + cat + '" onclick="filtrarVideos(\'' + cat + '\', this)">' + label + ' ' + nombre + '</button>';
+                html += '<button class="btn-filtro ' + (isActive ? 'active' : '') + '" data-filtro="' + cat + '" onclick="filtrarVideos(\'' + cat + '\', this)">' + icono + ' ' + nombre + '</button>';
             });
 
             container.innerHTML = html;
@@ -832,12 +789,10 @@
 
             var ordenados = destacados.concat(normales);
 
-            var iconos = getIconosCategorias();
-
             var html = '';
             ordenados.forEach(function (video) {
                 var fecha = video.fecha ? formatearFecha(video.fecha) : '';
-                var catIcono = iconos[video.categoria] || '📁';
+                var catIcono = video.iconoCategoria || '📁';
                 var catNombre = getNombreCategoria(video.categoria) || video.categoria;
                 var fuenteIcon = video.fuente === 'cloudinary' ? '☁️' : '▶️';
 
@@ -887,7 +842,7 @@
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
             cargarVideos();
-            console.log('🚀 Videoteca: desde Firebase con íconos personalizados desde localStorage');
+            console.log('🚀 Videoteca: íconos desde Firebase (sincronización multi-dispositivo)');
         });
     </script>
 

@@ -22,6 +22,9 @@
     <link rel="stylesheet" href="css/admin.css">
 
     <style>
+        /* ============================================================
+           ESTILOS - VERSIÓN CORREGIDA (SIN DUPLICADOS)
+           ============================================================ */
         .video-item {
             display: flex;
             gap: 16px;
@@ -290,7 +293,7 @@
         }
 
         /* ============================================================
-           CATEGORÍAS - ESTILOS MEJORADOS
+           CATEGORÍAS
            ============================================================ */
         .categorias-videos {
             display: flex;
@@ -708,8 +711,8 @@
                         </span>
                     </span>
                 </div>
-                <div class="form-help">Las categorías se guardan automáticamente. Puedes crear nuevas cuantas veces
-                    quieras.</div>
+                <div class="form-help">Las categorías se guardan en Firebase. Puedes crear nuevas cuantas veces quieras.
+                </div>
             </div>
 
             <select id="videoCategoria" class="admin-select" style="margin-top:8px;">
@@ -966,7 +969,7 @@
         let modoSubida = 'youtube';
 
         // ============================================================
-        // CATEGORÍAS CON ÍCONOS
+        // CATEGORÍAS CON ÍCONOS (se guardan en localStorage)
         // ============================================================
         let categoriasDisponibles = [];
 
@@ -1014,7 +1017,6 @@
                 if (guardadas) {
                     const parsed = JSON.parse(guardadas);
                     categoriasDisponibles = parsed.map(cat => {
-                        // Si la categoría es de las base, mantener su ícono
                         if (categoriasBase[cat.id]) {
                             return {
                                 id: cat.id,
@@ -1025,7 +1027,6 @@
                         return cat;
                     });
                 } else {
-                    // Cargar categorías base
                     categoriasDisponibles = Object.keys(categoriasBase).map(key => ({
                         id: key,
                         nombre: categoriasBase[key].nombre,
@@ -1077,7 +1078,6 @@
             });
             container.innerHTML = html;
 
-            // Actualizar select
             let selectHtml = '';
             categoriasDisponibles.forEach(cat => {
                 selectHtml += `<option value="${cat.id}">${cat.icono || '📁'} ${cat.nombre}</option>`;
@@ -1152,7 +1152,6 @@
         // FUNCIÓN: ELIMINAR CATEGORÍA
         // ============================================================
         function eliminarCategoria(id) {
-            // No permitir eliminar categorías base
             if (['oficial', 'momentos', 'en_vivo'].includes(id)) {
                 mostrarToast('⚠️ No puedes eliminar categorías predeterminadas', 'warning');
                 return;
@@ -1161,7 +1160,6 @@
             const cat = categoriasDisponibles.find(c => c.id === id);
             if (!cat) return;
 
-            // Verificar si hay videos usando esta categoría
             const videosEnCategoria = videos.filter(v => v.categoria === id);
             if (videosEnCategoria.length > 0) {
                 if (!confirm('⚠️ Hay ' + videosEnCategoria.length + ' videos usando esta categoría. ¿Eliminar la categoría? Los videos se mantendrán pero quedarán sin categoría.')) {
@@ -1194,7 +1192,7 @@
         }
 
         // ============================================================
-        // FUNCIÓN: EDITAR CATEGORÍA (MODAL)
+        // FUNCIÓN: EDITAR CATEGORÍA
         // ============================================================
         function editarCategoria(id) {
             const cat = categoriasDisponibles.find(c => c.id === id);
@@ -1213,7 +1211,6 @@
             document.getElementById('modalEditarCategoria').classList.add('active');
             document.body.style.overflow = 'hidden';
 
-            // Actualizar preview al escribir
             document.getElementById('categoriaIcono').oninput = function () {
                 const val = this.value.trim() || '📁';
                 document.getElementById('iconoPreview').textContent = val;
@@ -1222,7 +1219,6 @@
                 });
             };
 
-            // Selector de íconos
             document.querySelectorAll('.icono-btn').forEach(btn => {
                 btn.onclick = function () {
                     const icono = this.dataset.icono;
@@ -1235,9 +1231,9 @@
         }
 
         // ============================================================
-        // FUNCIÓN: GUARDAR EDICIÓN DE CATEGORÍA
+        // FUNCIÓN: GUARDAR EDICIÓN DE CATEGORÍA Y ACTUALIZAR VIDEOS
         // ============================================================
-        function guardarEdicionCategoria() {
+        async function guardarEdicionCategoria() {
             const id = document.getElementById('categoriaIdEdit').value;
             const nombre = document.getElementById('categoriaNombreEdit').value.trim();
             const icono = document.getElementById('categoriaIcono').value.trim() || '📁';
@@ -1254,7 +1250,6 @@
                 return;
             }
 
-            // Si es una categoría base, actualizar el mapa base también
             if (categoriasBase[id]) {
                 categoriasBase[id].nombre = nombre;
                 categoriasBase[id].icono = icono;
@@ -1263,18 +1258,38 @@
             cat.nombre = nombre;
             cat.icono = icono;
 
+            // Actualizar icono en TODOS los videos que usan esta categoría
+            try {
+                const snapshot = await db.collection('videos')
+                    .where('categoria', '==', id)
+                    .get();
+
+                const batch = db.batch();
+                snapshot.forEach(doc => {
+                    batch.update(doc.ref, { iconoCategoria: icono });
+                });
+
+                if (!snapshot.empty) {
+                    await batch.commit();
+                    console.log(`✅ Icono actualizado en ${snapshot.size} videos de la categoría "${nombre}"`);
+                }
+            } catch (error) {
+                console.error('❌ Error al actualizar iconos en videos:', error);
+                // Continuamos aunque falle, no es crítico
+            }
+
             guardarCategorias();
             renderizarCategorias();
             renderizarFiltros();
 
-            // Actualizar select
             const select = document.getElementById('videoCategoria');
             if (select.value === id) {
                 select.options[select.selectedIndex].text = icono + ' ' + nombre;
             }
 
             cerrarModalCategoria();
-            mostrarToast('✅ Categoría "' + nombre + '" actualizada', 'success');
+            mostrarToast('✅ Categoría "' + nombre + '" actualizada y videos sincronizados', 'success');
+            cargarVideos(); // Recargar lista de videos
         }
 
         // ============================================================
@@ -1433,7 +1448,7 @@
         }
 
         // ============================================================
-        // FUNCIONES CRUD
+        // FUNCIONES CRUD - CON GUARDADO DE ICONO EN VIDEO
         // ============================================================
 
         async function guardarVideo() {
@@ -1482,6 +1497,10 @@
                 }
             }
 
+            // Obtener el icono de la categoría seleccionada
+            const cat = categoriasDisponibles.find(c => c.id === categoria);
+            const iconoCategoria = cat ? cat.icono : '📁';
+
             const btn = document.getElementById('btnGuardar');
             const btnText = document.getElementById('btnGuardarTexto');
             btn.classList.add('loading');
@@ -1494,6 +1513,7 @@
                     titulo,
                     descripcion: descripcion || '',
                     categoria: categoria,
+                    iconoCategoria: iconoCategoria,
                     url: url,
                     fecha: fecha || '',
                     orden: orden,
@@ -1626,7 +1646,6 @@
                 return;
             }
 
-            // Crear mapa de categorías
             const catMap = {};
             categoriasDisponibles.forEach(cat => {
                 catMap[cat.id] = cat;
@@ -1636,6 +1655,7 @@
             filtrados.forEach(video => {
                 const fecha = video.fecha ? formatearFecha(video.fecha) : 'Sin fecha';
                 const cat = catMap[video.categoria] || { nombre: video.categoria || 'General', icono: '📁' };
+                const iconoMostrar = video.iconoCategoria || cat.icono || '📁';
                 const fuenteIcon = video.fuente === 'cloudinary' ? '☁️' : '▶️';
 
                 html += `
@@ -1646,7 +1666,7 @@
                                 <div class="video-info">
                                     <div class="video-titulo">${sanitizar(video.titulo)} ${video.destacado ? '⭐' : ''}</div>
                                     <div class="video-meta">
-                                        <span><i class="fa-regular fa-folder"></i> ${cat.icono} ${cat.nombre}</span>
+                                        <span><i class="fa-regular fa-folder"></i> ${iconoMostrar} ${cat.nombre}</span>
                                         <span><i class="fa-regular fa-calendar"></i> ${fecha}</span>
                                         <span>${fuenteIcon} ${video.fuente === 'cloudinary' ? 'Cloudinary' : 'YouTube'}</span>
                                         ${video.orden > 0 ? '<span><i class="fa-regular fa-hashtag"></i> #' + video.orden + '</span>' : ''}
@@ -1930,7 +1950,6 @@
             }
         });
 
-        // Cerrar modal de categoría al hacer clic fuera
         document.getElementById('modalEditarCategoria').addEventListener('click', function (e) {
             if (e.target === this) {
                 cerrarModalCategoria();
@@ -1944,7 +1963,7 @@
             cargarCategoriasGuardadas();
             cargarVideos();
             switchUploadOption('youtube');
-            console.log('🚀 Gestor de Videos cargado con opción "Pegar enlace Cloudinary" y limpiador de categorías');
+            console.log('🚀 Gestor de Videos - íconos guardados en cada video (sincronización multi-dispositivo)');
         });
 
         document.addEventListener('keydown', function (e) {
