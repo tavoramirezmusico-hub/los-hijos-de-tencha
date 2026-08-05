@@ -49,6 +49,12 @@
             background: rgba(255, 204, 0, 0.06);
         }
 
+        .categoria-item .cat-icono {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+
         .categoria-item .cat-nombre {
             font-weight: 600;
             font-size: 0.9rem;
@@ -69,6 +75,59 @@
         .categoria-item .cat-actions .btn-admin {
             padding: 2px 10px;
             font-size: 0.6rem;
+        }
+
+        /* Selector de íconos */
+        .iconos-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 8px;
+            margin: 8px 0 12px 0;
+        }
+
+        .iconos-grid .icono-btn {
+            padding: 8px 4px;
+            background: var(--color-bg);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .iconos-grid .icono-btn:hover {
+            border-color: var(--color-primary);
+            transform: scale(1.1);
+        }
+
+        .iconos-grid .icono-btn.selected {
+            border-color: var(--color-primary);
+            background: rgba(255, 204, 0, 0.1);
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.15);
+        }
+
+        .icono-preview {
+            font-size: 2rem;
+            padding: 8px 16px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+            display: inline-block;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .campo-icono-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .campo-icono-wrapper .admin-input {
+            flex: 1;
+            min-width: 120px;
         }
 
         .galeria-dropzone {
@@ -253,6 +312,11 @@
             margin-bottom: 12px;
         }
 
+        .orden-input {
+            width: 70px !important;
+            display: inline-block !important;
+        }
+
         @media (max-width: 768px) {
             .categorias-grid {
                 grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -273,6 +337,15 @@
             .galeria-dropzone p {
                 font-size: 0.85rem !important;
             }
+
+            .iconos-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+
+            .campo-icono-wrapper {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
 
         @media (max-width: 480px) {
@@ -292,16 +365,13 @@
                 font-size: 0.8rem !important;
             }
 
-            .galeria-dropzone {
-                padding: 20px 10px !important;
+            .iconos-grid {
+                grid-template-columns: repeat(5, 1fr);
             }
 
-            .galeria-dropzone i {
-                font-size: 1.5rem !important;
-            }
-
-            .galeria-dropzone p {
-                font-size: 0.8rem !important;
+            .iconos-grid .icono-btn {
+                font-size: 1.2rem;
+                padding: 6px 2px;
             }
         }
     </style>
@@ -424,6 +494,46 @@
             <input type="hidden" id="categoriaIdEdit">
 
             <div class="admin-form-group">
+                <label>Ícono de la categoría</label>
+                <div class="campo-icono-wrapper">
+                    <span class="icono-preview" id="iconoPreview">📁</span>
+                    <input type="text" id="categoriaIcono" class="admin-input" placeholder="Ej: 🎸, 🚗, 📸"
+                        maxlength="2" value="📁">
+                    <span style="font-size:0.7rem; color:var(--color-text-muted);">(máx 2 caracteres)</span>
+                </div>
+                <div style="margin-top:6px;">
+                    <span style="font-size:0.7rem; color:var(--color-text-muted);">Íconos sugeridos:</span>
+                    <div class="iconos-grid" id="iconosGrid">
+                        <button class="icono-btn" data-icono="🎸">🎸</button>
+                        <button class="icono-btn" data-icono="🚗">🚗</button>
+                        <button class="icono-btn" data-icono="📸">📸</button>
+                        <button class="icono-btn" data-icono="🎵">🎵</button>
+                        <button class="icono-btn" data-icono="🎤">🎤</button>
+                        <button class="icono-btn" data-icono="🥁">🥁</button>
+                        <button class="icono-btn" data-icono="🎷">🎷</button>
+                        <button class="icono-btn" data-icono="🎺">🎺</button>
+                        <button class="icono-btn" data-icono="🎹">🎹</button>
+                        <button class="icono-btn" data-icono="🎧">🎧</button>
+                        <button class="icono-btn" data-icono="💿">💿</button>
+                        <button class="icono-btn" data-icono="📀">📀</button>
+                        <button class="icono-btn" data-icono="🔥">🔥</button>
+                        <button class="icono-btn" data-icono="⭐">⭐</button>
+                        <button class="icono-btn" data-icono="🌟">🌟</button>
+                        <button class="icono-btn" data-icono="💫">💫</button>
+                        <button class="icono-btn" data-icono="🎪">🎪</button>
+                        <button class="icono-btn" data-icono="🎭">🎭</button>
+                        <button class="icono-btn" data-icono="🎨">🎨</button>
+                        <button class="icono-btn" data-icono="🌈">🌈</button>
+                        <button class="icono-btn" data-icono="☀️">☀️</button>
+                        <button class="icono-btn" data-icono="🌙">🌙</button>
+                        <button class="icono-btn" data-icono="🎬">🎬</button>
+                        <button class="icono-btn" data-icono="📹">📹</button>
+                    </div>
+                </div>
+                <div class="form-help">Haz clic en un ícono para seleccionarlo o escríbelo manualmente</div>
+            </div>
+
+            <div class="admin-form-group">
                 <label for="categoriaNombre">Nombre de la categoría *</label>
                 <input type="text" id="categoriaNombre" class="admin-input" placeholder="Ej: Sesión Vocho" required>
             </div>
@@ -432,6 +542,14 @@
                 <label for="categoriaDescripcion">Descripción (opcional)</label>
                 <input type="text" id="categoriaDescripcion" class="admin-input"
                     placeholder="Breve descripción de la categoría">
+            </div>
+
+            <div class="admin-form-group">
+                <label for="categoriaOrden">Orden (opcional)</label>
+                <input type="number" id="categoriaOrden" class="admin-input orden-input" placeholder="1" min="0">
+                <span style="font-size:0.7rem; color:var(--color-text-muted); margin-left:8px;">
+                    Número menor = aparece primero
+                </span>
             </div>
 
             <div class="modal-footer">
@@ -566,16 +684,26 @@
                     throw new Error('Firebase no disponible');
                 }
 
-                const snapshot = await db.collection('galeria_categorias').get();
+                const snapshot = await db.collection('galeria_categorias')
+                    .orderBy('orden', 'asc')
+                    .get();
 
                 categorias = [];
                 snapshot.forEach(doc => {
-                    categorias.push({ id: doc.id, ...doc.data() });
+                    const data = doc.data();
+                    categorias.push({
+                        id: doc.id,
+                        nombre: data.nombre || 'Sin nombre',
+                        icono: data.icono || '📁',
+                        descripcion: data.descripcion || '',
+                        orden: data.orden || 0
+                    });
                 });
 
-                categorias.sort((a, b) => {
-                    return (a.nombre || '').localeCompare(b.nombre || '');
-                });
+                // Si no hay orden definido, ordenar por nombre
+                if (categorias.length > 0 && categorias.every(c => c.orden === 0)) {
+                    categorias.sort((a, b) => a.nombre.localeCompare(b.nombre));
+                }
 
                 renderizarCategorias();
 
@@ -609,6 +737,7 @@
 
                 html += `
                             <div class="categoria-item ${isActive ? 'active' : ''}" onclick="seleccionarCategoria('${cat.id}')">
+                                <span class="cat-icono">${cat.icono || '📁'}</span>
                                 <div class="cat-nombre">${sanitizar(cat.nombre)}</div>
                                 <div class="cat-count">${count} ${count === 1 ? 'foto' : 'fotos'}</div>
                                 <div class="cat-actions">
@@ -627,23 +756,20 @@
         }
 
         // ============================================================
-        // FUNCIÓN: ACTUALIZAR SOLO LOS CONTADORES (SIN RECARGAR TODO)
+        // FUNCIÓN: ACTUALIZAR SOLO LOS CONTADORES
         // ============================================================
         async function actualizarContadores() {
             try {
-                // Obtener conteos actualizados para todas las categorías
                 const snapshot = await db.collection('galeria_fotos').get();
                 const fotosData = [];
                 snapshot.forEach(doc => {
                     fotosData.push({ id: doc.id, ...doc.data() });
                 });
 
-                // Actualizar cada categoría en el DOM
                 const items = document.querySelectorAll('.categoria-item');
                 items.forEach(item => {
                     const onclickAttr = item.getAttribute('onclick');
                     if (onclickAttr) {
-                        // Extraer el ID de la categoría del onclick
                         const match = onclickAttr.match(/seleccionarCategoria\('([^']+)'\)/);
                         if (match) {
                             const catId = match[1];
@@ -656,7 +782,6 @@
                     }
                 });
 
-                // Actualizar el contador de la categoría seleccionada
                 if (categoriaSeleccionadaId) {
                     const count = fotosData.filter(f => f.categoriaId === categoriaSeleccionadaId).length;
                     document.getElementById('fotosCount').textContent = count + ' ' + (count === 1 ? 'foto' : 'fotos');
@@ -674,16 +799,24 @@
             categoriaSeleccionadaNombre = cat ? cat.nombre : '';
 
             document.getElementById('categoriaSeleccionadaTitulo').innerHTML =
-                '<i class="fa-solid fa-folder-open"></i> ' + sanitizar(categoriaSeleccionadaNombre);
+                '<i class="fa-solid fa-folder-open"></i> ' + (cat ? cat.icono + ' ' : '') + sanitizar(categoriaSeleccionadaNombre);
 
             renderizarCategorias();
             await cargarFotos(id);
         }
 
+        // ============================================================
+        // FUNCIONES - MODAL CATEGORÍA
+        // ============================================================
+
         function mostrarModalCategoria() {
             document.getElementById('categoriaIdEdit').value = '';
             document.getElementById('categoriaNombre').value = '';
             document.getElementById('categoriaDescripcion').value = '';
+            document.getElementById('categoriaIcono').value = '📁';
+            document.getElementById('categoriaOrden').value = '';
+            document.getElementById('iconoPreview').textContent = '📁';
+            document.querySelectorAll('.icono-btn').forEach(btn => btn.classList.remove('selected'));
             document.getElementById('modalCategoriaTitulo').innerHTML = '<i class="fa-solid fa-tag"></i> Nueva Categoría';
             document.getElementById('btnGuardarCategoria').innerHTML = '<i class="fa-solid fa-save"></i> Guardar';
             document.getElementById('modalCategoria').classList.add('active');
@@ -701,16 +834,52 @@
             document.getElementById('categoriaIdEdit').value = id;
             document.getElementById('categoriaNombre').value = cat.nombre || '';
             document.getElementById('categoriaDescripcion').value = cat.descripcion || '';
+            document.getElementById('categoriaIcono').value = cat.icono || '📁';
+            document.getElementById('categoriaOrden').value = cat.orden || '';
+            document.getElementById('iconoPreview').textContent = cat.icono || '📁';
+
+            document.querySelectorAll('.icono-btn').forEach(btn => {
+                btn.classList.toggle('selected', btn.dataset.icono === (cat.icono || '📁'));
+            });
+
             document.getElementById('modalCategoriaTitulo').innerHTML = '<i class="fa-solid fa-pen"></i> Editar Categoría';
             document.getElementById('btnGuardarCategoria').innerHTML = '<i class="fa-solid fa-save"></i> Actualizar';
             document.getElementById('modalCategoria').classList.add('active');
             setTimeout(() => document.getElementById('categoriaNombre').focus(), 100);
         }
 
+        // ============================================================
+        // SELECTOR DE ÍCONOS
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.icono-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const icono = this.dataset.icono;
+                    document.getElementById('categoriaIcono').value = icono;
+                    document.getElementById('iconoPreview').textContent = icono;
+                    document.querySelectorAll('.icono-btn').forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+
+            document.getElementById('categoriaIcono').addEventListener('input', function () {
+                const val = this.value.trim() || '📁';
+                document.getElementById('iconoPreview').textContent = val;
+                document.querySelectorAll('.icono-btn').forEach(btn => {
+                    btn.classList.toggle('selected', btn.dataset.icono === val);
+                });
+            });
+        });
+
+        // ============================================================
+        // GUARDAR CATEGORÍA
+        // ============================================================
         async function guardarCategoria() {
             const id = document.getElementById('categoriaIdEdit').value;
             const nombre = document.getElementById('categoriaNombre').value.trim();
             const descripcion = document.getElementById('categoriaDescripcion').value.trim();
+            const icono = document.getElementById('categoriaIcono').value.trim() || '📁';
+            const orden = parseInt(document.getElementById('categoriaOrden').value) || 0;
 
             if (!nombre) {
                 mostrarToast('⚠️ Ingresa un nombre para la categoría', 'warning');
@@ -726,6 +895,8 @@
                 const datos = {
                     nombre,
                     descripcion: descripcion || '',
+                    icono: icono,
+                    orden: orden,
                     actualizadoEn: new Date().toISOString()
                 };
 
@@ -750,6 +921,10 @@
             btn.classList.remove('loading');
             btn.disabled = false;
         }
+
+        // ============================================================
+        // ELIMINAR CATEGORÍA
+        // ============================================================
 
         function mostrarEliminarCategoria(id) {
             const cat = categorias.find(c => c.id === id);
@@ -778,10 +953,6 @@
                     .get();
 
                 for (const doc of fotosSnap.docs) {
-                    const data = doc.data();
-                    if (data.url) {
-                        console.log('ℹ️ Eliminando referencia de Firestore para:', data.url);
-                    }
                     await db.collection('galeria_fotos').doc(doc.id).delete();
                 }
 
@@ -1057,11 +1228,7 @@
 
             if (subidos > 0) {
                 mostrarToast('✅ ' + subidos + ' fotos subidas con éxito', 'success');
-
-                // Recargar fotos para mostrar las nuevas
                 await cargarFotos(categoriaSeleccionadaId);
-
-                // Actualizar SOLO los contadores (sin recargar todo el grid)
                 await actualizarContadores();
             }
         }
@@ -1071,7 +1238,7 @@
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
             cargarCategorias();
-            console.log('🚀 Gestor de Galería cargado con actualización de contadores');
+            console.log('🚀 Gestor de Galería cargado con íconos y orden');
         });
 
         document.addEventListener('keydown', function (e) {

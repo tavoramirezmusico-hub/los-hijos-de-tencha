@@ -109,7 +109,7 @@
         }
 
         /* =====================================
-           HERO GALERÍA - UNIFICADO CON LAS DEMÁS PÁGINAS
+           HERO GALERÍA
            ===================================== */
         .hero-galeria {
             min-height: 50vh;
@@ -189,7 +189,7 @@
         }
 
         /* =====================================
-           GALERÍA - ESTILOS PROPIOS
+           GALERÍA
            ===================================== */
         .galeria-grid {
             display: grid;
@@ -260,12 +260,26 @@
             grid-column: 1 / -1;
         }
 
+        /* =====================================
+           CATEGORÍAS CON DRAG & DROP
+           ===================================== */
         .galeria-categorias {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
             justify-content: center;
             margin-bottom: 35px;
+            padding: 10px;
+            min-height: 60px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 16px;
+            border: 2px dashed rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .galeria-categorias.dragover {
+            border-color: #ffcc00;
+            background: rgba(255, 204, 0, 0.05);
         }
 
         .galeria-categorias .cat-btn {
@@ -276,9 +290,19 @@
             color: #aaa;
             font-size: 0.9rem;
             font-weight: 600;
-            cursor: pointer;
+            cursor: grab;
             transition: all 0.3s;
             font-family: 'Poppins', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+
+        .galeria-categorias .cat-btn:active {
+            cursor: grabbing;
         }
 
         .galeria-categorias .cat-btn:hover {
@@ -293,47 +317,30 @@
             border-color: #ffcc00;
         }
 
-        /* RESPONSIVE GALERÍA */
-        @media (max-width: 900px) {
-            .galeria-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 16px;
-            }
-
-            .foto-item {
-                height: 240px;
-            }
+        .galeria-categorias .cat-btn .drag-handle {
+            font-size: 0.7rem;
+            opacity: 0.3;
+            cursor: grab;
+            margin-right: 4px;
         }
 
-        @media (max-width: 600px) {
-            .galeria-grid {
-                display: flex !important;
-                flex-direction: column;
-                gap: 16px;
-                padding: 0 4px;
-            }
+        .galeria-categorias .cat-btn .drag-handle:active {
+            cursor: grabbing;
+        }
 
-            .foto-item {
-                height: 280px !important;
-                width: 100% !important;
-                border-radius: 14px;
-                min-height: 280px;
-            }
+        .galeria-categorias .cat-btn.dragging {
+            opacity: 0.3;
+            transform: scale(0.95);
+        }
 
-            .foto-item img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-
-            .galeria-categorias .cat-btn {
-                padding: 8px 16px;
-                font-size: 0.8rem;
-            }
+        .galeria-categorias .cat-btn.drag-over {
+            border-color: #ffcc00;
+            background: rgba(255, 204, 0, 0.1);
+            transform: scale(1.05);
         }
 
         /* =====================================
-           VISOR DE GALERÍA MEJORADO
+           VISOR
            ===================================== */
         .visor {
             position: fixed;
@@ -485,6 +492,13 @@
             opacity: 1;
             transform: translateY(0) scale(1);
         }
+
+        @media (max-width: 600px) {
+            .galeria-categorias .cat-btn {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+            }
+        }
     </style>
 </head>
 
@@ -528,9 +542,12 @@
                 <h2>Nuestra Galería</h2>
             </div>
 
-            <!-- Categorías - SOLO DESDE FIREBASE -->
+            <!-- Categorías - SOLO DESDE FIREBASE con DRAG & DROP -->
             <div class="galeria-categorias" id="galeriaCategorias">
                 <!-- Se cargan dinámicamente desde Firebase -->
+                <p style="color:#555; width:100%; text-align:center; padding:10px 0;">
+                    <i class="fa-solid fa-spinner fa-spin"></i> Cargando categorías...
+                </p>
             </div>
 
             <div class="galeria-grid" id="galeriaGrid">
@@ -578,7 +595,7 @@
     <script src="js/eventos.js"></script>
 
     <!-- ============================================= -->
-    <!-- SCRIPT GALERÍA - SOLO FIREBASE                -->
+    <!-- SCRIPT GALERÍA - CON DRAG & DROP E ÍCONOS    -->
     <!-- ============================================= -->
     <script>
         // =====================================
@@ -593,13 +610,11 @@
             appId: "1:273676503007:web:56180c485b648ef076a66a"
         };
 
-        // Inicializar Firebase SOLO si no está ya inicializado
         if (typeof firebase !== 'undefined' && !firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
             console.log('✅ Firebase inicializado en galería');
         }
 
-        // Usar la db existente de script.js o crear una nueva
         let dbGaleria = null;
         try {
             if (typeof db !== 'undefined') {
@@ -623,6 +638,96 @@
         let indiceVisor = 0;
 
         // =====================================
+        // DRAG & DROP
+        // =====================================
+        let dragItem = null;
+        let dragOverItem = null;
+
+        function iniciarDragDrop() {
+            const container = document.getElementById('galeriaCategorias');
+            if (!container) return;
+
+            const items = container.querySelectorAll('.cat-btn');
+
+            items.forEach(function (item) {
+                // Prevenir selección de texto
+                item.addEventListener('dragstart', function (e) {
+                    dragItem = this;
+                    this.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/html', this.innerHTML);
+                });
+
+                item.addEventListener('dragend', function (e) {
+                    this.classList.remove('dragging');
+                    container.querySelectorAll('.cat-btn').forEach(function (btn) {
+                        btn.classList.remove('drag-over');
+                    });
+                });
+
+                item.addEventListener('dragover', function (e) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    container.querySelectorAll('.cat-btn').forEach(function (btn) {
+                        btn.classList.remove('drag-over');
+                    });
+                    this.classList.add('drag-over');
+                });
+
+                item.addEventListener('dragleave', function (e) {
+                    this.classList.remove('drag-over');
+                });
+
+                item.addEventListener('drop', function (e) {
+                    e.preventDefault();
+                    this.classList.remove('drag-over');
+
+                    if (dragItem !== this && dragItem) {
+                        // Obtener índices
+                        var allItems = Array.from(container.querySelectorAll('.cat-btn'));
+                        var fromIndex = allItems.indexOf(dragItem);
+                        var toIndex = allItems.indexOf(this);
+
+                        if (fromIndex < toIndex) {
+                            this.parentNode.insertBefore(dragItem, this.nextSibling);
+                        } else {
+                            this.parentNode.insertBefore(dragItem, this);
+                        }
+
+                        // Actualizar orden en Firebase
+                        actualizarOrdenCategorias();
+                    }
+                    dragItem = null;
+                });
+            });
+        }
+
+        // =====================================
+        // ACTUALIZAR ORDEN EN FIREBASE
+        // =====================================
+        function actualizarOrdenCategorias() {
+            var container = document.getElementById('galeriaCategorias');
+            var items = container.querySelectorAll('.cat-btn');
+            var batch = dbGaleria.batch();
+
+            items.forEach(function (item, index) {
+                var id = item.dataset.categoriaId;
+                if (id && id !== 'todas') {
+                    var ref = dbGaleria.collection('galeria_categorias').doc(id);
+                    batch.update(ref, { orden: index + 1 });
+                }
+            });
+
+            batch.commit().then(function () {
+                console.log('✅ Orden de categorías actualizado en Firebase');
+                // Recargar categorías para mantener sincronía
+                cargarCategorias();
+            }).catch(function (error) {
+                console.error('❌ Error al actualizar orden:', error);
+            });
+        }
+
+        // =====================================
         // CARGAR CATEGORÍAS DESDE FIREBASE
         // =====================================
         function cargarCategorias() {
@@ -640,7 +745,7 @@
             `;
 
             dbGaleria.collection('galeria_categorias')
-                .orderBy('nombre', 'asc')
+                .orderBy('orden', 'asc')
                 .get()
                 .then(function (snapshot) {
                     categorias = [];
@@ -648,9 +753,18 @@
                         var data = doc.data();
                         categorias.push({
                             id: doc.id,
-                            nombre: data.nombre || doc.id
+                            nombre: data.nombre || doc.id,
+                            icono: data.icono || '📁',
+                            orden: data.orden || 0
                         });
                     });
+
+                    // Si no hay orden definido, ordenar por nombre
+                    if (categorias.length > 0 && categorias.every(function (c) { return c.orden === 0; })) {
+                        categorias.sort(function (a, b) {
+                            return a.nombre.localeCompare(b.nombre);
+                        });
+                    }
 
                     console.log('✅ ' + categorias.length + ' categorías cargadas');
                     renderizarCategorias();
@@ -670,35 +784,48 @@
             if (!container) return;
 
             var html = '';
-            html += '<button class="cat-btn active" data-categoria="todas">📸 Todas</button>';
+            html += '<button class="cat-btn active" data-categoria="todas" data-categoria-id="todas">📸 Todas</button>';
 
             for (var i = 0; i < categorias.length; i++) {
                 var cat = categorias[i];
-                html += '<button class="cat-btn" data-categoria="' + cat.id + '">📁 ' + cat.nombre + '</button>';
+                var icono = cat.icono || '📁';
+                html += '<button class="cat-btn" data-categoria="' + cat.id + '" data-categoria-id="' + cat.id + '" draggable="true">' +
+                    '<span class="drag-handle">⠿</span> ' +
+                    icono + ' ' + cat.nombre +
+                    '</button>';
             }
 
             container.innerHTML = html;
 
-            // Eventos click en categorías
+            // Marcar la categoría activa
             var botones = container.querySelectorAll('.cat-btn');
             for (var j = 0; j < botones.length; j++) {
+                if (botones[j].dataset.categoria === categoriaActual) {
+                    botones[j].classList.add('active');
+                }
+            }
+
+            // Eventos click
+            for (var k = 0; k < botones.length; k++) {
                 (function (btn) {
                     btn.addEventListener('click', function () {
                         var categoria = this.dataset.categoria;
                         categoriaActual = categoria;
-                        // Actualizar clases activas
                         var allBtns = document.querySelectorAll('.cat-btn');
-                        for (var k = 0; k < allBtns.length; k++) {
-                            if (allBtns[k].dataset.categoria === categoria) {
-                                allBtns[k].classList.add('active');
+                        for (var b = 0; b < allBtns.length; b++) {
+                            if (allBtns[b].dataset.categoria === categoria) {
+                                allBtns[b].classList.add('active');
                             } else {
-                                allBtns[k].classList.remove('active');
+                                allBtns[b].classList.remove('active');
                             }
                         }
                         filtrarFotos(categoria);
                     });
-                })(botones[j]);
+                })(botones[k]);
             }
+
+            // Iniciar Drag & Drop después de renderizar
+            setTimeout(iniciarDragDrop, 100);
         }
 
         // =====================================
@@ -759,7 +886,6 @@
                 }
             }
 
-            // Ordenar por orden
             filtradas.sort(function (a, b) {
                 return (a.orden || 0) - (b.orden || 0);
             });
@@ -803,7 +929,6 @@
 
             grid.innerHTML = html;
 
-            // Eventos click en fotos
             var items = grid.querySelectorAll('.foto-item');
             for (var j = 0; j < items.length; j++) {
                 (function (el, idx) {
@@ -816,14 +941,12 @@
                 })(items[j], j);
             }
 
-            // Animación escalonada
-            var itemsAnim = grid.querySelectorAll('.foto-item');
-            for (var k = 0; k < itemsAnim.length; k++) {
+            for (var k = 0; k < items.length; k++) {
                 (function (el, idx) {
                     setTimeout(function () {
                         el.classList.add('visible');
                     }, 100 + (idx * 50));
-                })(itemsAnim[k], k);
+                })(items[k], k);
             }
 
             console.log('✅ Mostrando ' + fotosActuales.length + ' fotos en categoría "' + categoriaActual + '"');
@@ -844,7 +967,7 @@
         }
 
         // =====================================
-        // VISOR DE GALERÍA
+        // VISOR
         // =====================================
         var visorEl = document.getElementById('visor-galeria');
         var imgVisor = document.getElementById('imagen-galeria');
@@ -927,7 +1050,7 @@
             setTimeout(iniciar, 300);
         }
 
-        console.log('🚀 Galería con Firebase - Solo contenido del admin');
+        console.log('🚀 Galería con Drag & Drop e Íconos personalizados');
     </script>
 
 </body>
