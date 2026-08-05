@@ -585,29 +585,34 @@
     <!-- ============================================= -->
     <script>
         // =====================================
-        // CONFIGURACIÓN DE FIREBASE
+        // CONFIGURACIÓN DE FIREBASE (SOLO SI NO ESTÁ INICIALIZADO)
         // =====================================
-        const firebaseConfig = {
-            apiKey: "AIzaSyDvp_6UFymZZnqxMyL6yobJ3twLMvVkThw",
-            authDomain: "base-entradas-tenchos.firebaseapp.com",
-            projectId: "base-entradas-tenchos",
-            storageBucket: "base-entradas-tenchos.firebasestorage.app",
-            messagingSenderId: "273676503007",
-            appId: "1:273676503007:web:56180c485b648ef076a66a"
-        };
-
-        // Inicializar Firebase si no está ya inicializado
         if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+            const firebaseConfig = {
+                apiKey: "AIzaSyDvp_6UFymZZnqxMyL6yobJ3twLMvVkThw",
+                authDomain: "base-entradas-tenchos.firebaseapp.com",
+                projectId: "base-entradas-tenchos",
+                storageBucket: "base-entradas-tenchos.firebasestorage.app",
+                messagingSenderId: "273676503007",
+                appId: "1:273676503007:web:56180c485b648ef076a66a"
+            };
             firebase.initializeApp(firebaseConfig);
             console.log('✅ Firebase inicializado en galería');
         }
 
-        let db = null;
+        // Usar la variable db que ya existe en script.js (no crear una nueva)
+        // Si no existe, crearla
+        let dbGaleria = null;
         try {
-            db = firebase.firestore();
-            console.log('✅ Firestore disponible');
+            if (typeof db !== 'undefined') {
+                dbGaleria = db;
+                console.log('✅ Usando db existente desde script.js');
+            } else if (typeof firebase !== 'undefined') {
+                dbGaleria = firebase.firestore();
+                console.log('✅ Firestore inicializado localmente');
+            }
         } catch (error) {
-            console.warn('⚠️ Firestore no disponible, usando solo respaldo');
+            console.warn('⚠️ Firestore no disponible:', error);
         }
 
         // =====================================
@@ -654,21 +659,10 @@
             }
         };
 
-        // =====================================
-        // MAPEO DE CATEGORÍAS DE FIREBASE A NOMBRES
-        // =====================================
-        const categoriaMap = {
-            'vocho': '🚗 Sesión Vocho',
-            'disco': '🎵 Sesión Disco Cumbias',
-            'lanzamiento': '🎸 Cumbia Salvaje'
-        };
-
         let categoriaActual = 'todas';
         let fotosActuales = [];
         let indiceActualVisor = 0;
         let fotosFirebase = [];
-        let categoriasFirebase = [];
-        let datosCargados = false;
 
         // =====================================
         // FUNCIÓN: OBTENER FOTOS DE RESPALDO
@@ -691,7 +685,7 @@
         // FUNCIÓN: CARGAR FOTOS DESDE FIREBASE
         // =====================================
         async function cargarFotosFirebase() {
-            if (!db) {
+            if (!dbGaleria) {
                 console.warn('⚠️ Firestore no disponible, usando solo respaldo');
                 return false;
             }
@@ -699,48 +693,31 @@
             try {
                 console.log('🔄 Cargando fotos desde Firebase...');
 
-                const snapshot = await db.collection('galeria_fotos').get();
+                const snapshot = await dbGaleria.collection('galeria_fotos').get();
 
                 fotosFirebase = [];
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    fotosFirebase.push({
-                        id: doc.id,
-                        categoriaId: data.categoriaId || 'general',
-                        url: data.url || '',
-                        titulo: data.titulo || 'Foto',
-                        orden: data.orden || 0,
-                        destacada: data.destacada || false,
-                        creadoEn: data.creadoEn || ''
-                    });
+                    if (data.url) {
+                        fotosFirebase.push({
+                            id: doc.id,
+                            categoriaId: data.categoriaId || 'general',
+                            url: data.url,
+                            titulo: data.titulo || 'Foto',
+                            orden: data.orden || 0,
+                            destacada: data.destacada || false,
+                            creadoEn: data.creadoEn || ''
+                        });
+                    }
                 });
 
-                // Ordenar por orden o por fecha de creación
+                // Ordenar por orden
                 fotosFirebase.sort((a, b) => {
                     if (a.orden !== b.orden) return a.orden - b.orden;
                     return (a.creadoEn || '').localeCompare(b.creadoEn || '');
                 });
 
                 console.log(`✅ ${fotosFirebase.length} fotos cargadas desde Firebase`);
-
-                // Obtener categorías
-                try {
-                    const catSnapshot = await db.collection('galeria_categorias').get();
-                    categoriasFirebase = [];
-                    catSnapshot.forEach(doc => {
-                        const data = doc.data();
-                        categoriasFirebase.push({
-                            id: doc.id,
-                            nombre: data.nombre || doc.id,
-                            descripcion: data.descripcion || ''
-                        });
-                    });
-                    console.log(`✅ ${categoriasFirebase.length} categorías cargadas desde Firebase`);
-                } catch (catError) {
-                    console.warn('⚠️ Error al cargar categorías:', catError);
-                }
-
-                datosCargados = true;
                 return true;
 
             } catch (error) {
@@ -755,7 +732,7 @@
         function obtenerFotosCombinadas(categoria) {
             let fotos = [];
 
-            // 1. Agregar fotos de Firebase si existen
+            // 1. Filtrar fotos de Firebase por categoría
             let fotosFiltradas = [];
             if (fotosFirebase.length > 0) {
                 if (categoria === 'todas') {
@@ -773,24 +750,12 @@
             });
 
             // 2. Si NO hay fotos de Firebase en esta categoría, usar respaldo
-            const tieneFotosFirebase = fotosFiltradas.length > 0;
-
-            if (!tieneFotosFirebase) {
-                // Usar fotos de respaldo
+            if (fotosFiltradas.length === 0) {
                 const respaldo = obtenerFotosRespaldo(categoria);
                 fotos = fotos.concat(respaldo);
             }
 
             return fotos;
-        }
-
-        // =====================================
-        // FUNCIÓN: VERIFICAR SI HAY FOTOS EN FIREBASE
-        // =====================================
-        function tieneFotosFirebase(categoria) {
-            if (fotosFirebase.length === 0) return false;
-            if (categoria === 'todas') return fotosFirebase.length > 0;
-            return fotosFirebase.filter(f => f.categoriaId === categoria).length > 0;
         }
 
         // =====================================
@@ -814,7 +779,7 @@
                 btn.classList.toggle('active', btn.dataset.categoria === categoria);
             });
 
-            // Si no hay fotos (ni de Firebase ni de respaldo)
+            // Si no hay fotos
             if (fotos.length === 0) {
                 grid.innerHTML = `
                     <div class="galeria-vacia">
@@ -826,10 +791,9 @@
                 return;
             }
 
-            // Generar HTML de la galería con las fotos combinadas
+            // Generar HTML
             let html = '';
             fotos.forEach((foto, index) => {
-                // Buscar título para la foto
                 let titulo = '';
                 let esFirebase = false;
 
@@ -860,7 +824,7 @@
 
             grid.innerHTML = html;
 
-            // Agregar eventos de click a las fotos
+            // Eventos de click
             grid.querySelectorAll('.foto-item').forEach(el => {
                 el.addEventListener('click', function () {
                     const index = parseInt(this.dataset.index);
@@ -871,7 +835,7 @@
                 });
             });
 
-            // Activar animaciones escalonadas
+            // Animaciones escalonadas
             document.querySelectorAll('.galeria-grid .foto-item').forEach((el, i) => {
                 setTimeout(() => {
                     el.classList.add('visible');
@@ -885,7 +849,6 @@
         // FUNCIÓN: CARGAR GALERÍA COMPLETA
         // =====================================
         async function cargarGaleriaCompleta(categoria) {
-            // Mostrar estado de carga
             const grid = document.getElementById('galeriaGrid');
             if (grid) {
                 grid.innerHTML = `
@@ -896,10 +859,7 @@
                 `;
             }
 
-            // Cargar fotos desde Firebase (si está disponible)
             await cargarFotosFirebase();
-
-            // Renderizar galería (siempre muestra algo, ya sea Firebase o respaldo)
             renderizarGaleria(categoria || 'todas');
         }
 
@@ -995,11 +955,8 @@
 
             if (document.getElementById('galeriaGrid')) {
                 console.log('✅ Galería encontrada, cargando...');
-
-                // Cargar galería completa
                 cargarGaleriaCompleta('todas');
 
-                // Configurar eventos de categorías
                 document.querySelectorAll('.cat-btn').forEach(btn => {
                     btn.addEventListener('click', function () {
                         const categoria = this.dataset.categoria;
@@ -1012,7 +969,6 @@
             }
         }
 
-        // Ejecutar cuando el DOM esté listo
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', function () {
                 setTimeout(inicializarGaleria, 300);
@@ -1021,7 +977,6 @@
             setTimeout(inicializarGaleria, 300);
         }
 
-        // Forzar carga en dispositivos móviles
         if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
             console.log('📱 Dispositivo móvil detectado, forzando carga...');
             setTimeout(function () {
