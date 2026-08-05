@@ -690,7 +690,6 @@
             html += '<button class="btn-filtro ' + (filtroActual === 'todas' ? 'active' : '') + '" data-filtro="todas" onclick="filtrarVideos(\'todas\', this)">📸 Todas</button>';
 
             categoriasDisponibles.forEach(function (cat) {
-                // Buscar un video de la categoría para obtener su icono
                 var videoEjemplo = videos.find(function (v) { return v.categoria === cat; });
                 var icono = getIconoCategoria(cat, videoEjemplo ? videoEjemplo.iconoCategoria : '');
                 var nombre = getNombreCategoria(cat);
@@ -792,11 +791,69 @@
         }
 
         // ============================================================
+        // FUNCIÓN: ACTUALIZAR VIDEOS EXISTENTES CON ICONO
+        // ============================================================
+        function actualizarIconosVideos() {
+            if (!dbVideos) {
+                console.warn('⚠️ Firebase no disponible para actualizar');
+                return;
+            }
+
+            console.log('🔄 Verificando videos sin iconoCategoria...');
+
+            dbVideos.collection('videos').get().then(function (snapshot) {
+                var batch = dbVideos.batch();
+                var count = 0;
+                var actualizados = [];
+
+                snapshot.forEach(function (doc) {
+                    var data = doc.data();
+                    var icono = '📁';
+
+                    if (data.categoria === 'oficial') icono = '🎥';
+                    else if (data.categoria === 'momentos') icono = '🎬';
+                    else if (data.categoria === 'en_vivo') icono = '🎤';
+
+                    if (!data.iconoCategoria || data.iconoCategoria === '') {
+                        batch.update(doc.ref, { iconoCategoria: icono });
+                        count++;
+                        actualizados.push(data.titulo || 'Sin título');
+                    }
+                });
+
+                if (count > 0) {
+                    batch.commit().then(function () {
+                        console.log('✅ ' + count + ' videos actualizados:', actualizados);
+                        if (actualizados.length > 0) {
+                            console.log('📝 Videos actualizados:', actualizados.join(', '));
+                        }
+                        // Recargar videos
+                        cargarVideos();
+                    }).catch(function (error) {
+                        console.error('❌ Error al actualizar:', error);
+                    });
+                } else {
+                    console.log('✅ Todos los videos ya tienen iconoCategoria');
+                    cargarVideos();
+                }
+            }).catch(function (error) {
+                console.error('❌ Error al obtener videos:', error);
+            });
+        }
+
+        // ============================================================
         // INICIALIZAR
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
+            // Primero cargar videos
             cargarVideos();
-            console.log('🚀 Videoteca iniciada');
+
+            // Luego actualizar los que faltan (después de un pequeño delay)
+            setTimeout(function () {
+                actualizarIconosVideos();
+            }, 1500);
+
+            console.log('🚀 Videoteca con íconos automáticos');
         });
     </script>
 
