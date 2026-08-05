@@ -308,6 +308,32 @@
                 justify-content: center;
             }
         }
+
+        .debug-info {
+            background: #0a0a15;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 12px;
+            font-size: 0.7rem;
+            font-family: monospace;
+            color: #666;
+            max-height: 100px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .debug-info.show {
+            display: block;
+        }
+
+        .debug-info .ok {
+            color: #2ecc71;
+        }
+
+        .debug-info .error {
+            color: #e74c3c;
+        }
     </style>
 </head>
 
@@ -373,6 +399,8 @@
                 <li class="empty"><i class="fa-regular fa-inbox"></i> No hay mensajes guardados</li>
             </ul>
         </div>
+
+        <div class="debug-info" id="debugInfo"></div>
     </div>
 
     <div id="toast" class="toast"></div>
@@ -403,7 +431,7 @@
         } catch (e) { console.warn('⚠️ Firebase error:', e); }
 
         // ============================================================
-        // WORKER URL - ACTUALIZA SI ES NECESARIO
+        // WORKER URL
         // ============================================================
         const WORKER = 'https://generador-whatsapp.tavoramirezmusico.workers.dev/';
 
@@ -425,6 +453,7 @@
         const tiempo = document.getElementById('tiempo');
         const historial = document.getElementById('historialList');
         const toast = document.getElementById('toast');
+        const debugInfo = document.getElementById('debugInfo');
 
         // ============================================================
         // TOAST
@@ -437,6 +466,15 @@
             else if (tipo === 'warning') toast.classList.add('warning');
             clearTimeout(toast._timeout);
             toast._timeout = setTimeout(() => toast.classList.remove('show'), 3500);
+        }
+
+        function logDebug(texto, tipo = 'info') {
+            debugInfo.classList.add('show');
+            const span = document.createElement('span');
+            span.textContent = '> ' + texto + '\n';
+            span.className = tipo === 'error' ? 'error' : (tipo === 'ok' ? 'ok' : '');
+            debugInfo.appendChild(span);
+            debugInfo.scrollTop = debugInfo.scrollHeight;
         }
 
         // ============================================================
@@ -452,35 +490,48 @@
             tiempo.textContent = '';
             btnGen.disabled = true;
             btnGen.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando...';
+            debugInfo.innerHTML = '';
+            debugInfo.classList.remove('show');
+
+            logDebug('📤 Enviando solicitud al Worker...', 'info');
 
             try {
+                const body = JSON.stringify({
+                    tema: t,
+                    tono: tono.value,
+                    longitud: longitud.value,
+                    contexto: contexto.value.trim()
+                });
+
+                logDebug('📦 Datos: ' + body, 'info');
+
                 const res = await fetch(WORKER, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        tema: t,
-                        tono: tono.value,
-                        longitud: longitud.value,
-                        contexto: contexto.value.trim()
-                    })
+                    body: body
                 });
 
                 const data = await res.json();
+
+                logDebug('📥 Respuesta recibida', 'ok');
 
                 if (data.success) {
                     mensaje.className = 'text';
                     mensaje.textContent = data.texto;
                     tiempo.textContent = '✅ ' + new Date().toLocaleString();
                     mostrarToast('✅ Mensaje generado', 'success');
+                    logDebug('✅ Texto generado: ' + data.texto.substring(0, 50) + '...', 'ok');
                 } else {
                     mensaje.className = 'text';
-                    mensaje.textContent = '❌ ' + (data.error || 'Error');
+                    mensaje.textContent = '❌ ' + (data.error || 'Error desconocido');
                     mostrarToast('❌ Error al generar', 'error');
+                    logDebug('❌ Error: ' + (data.error || 'Error desconocido'), 'error');
                 }
             } catch (error) {
                 mensaje.className = 'text';
-                mensaje.textContent = '❌ Error de conexión';
+                mensaje.textContent = '❌ Error de conexión: ' + error.message;
                 mostrarToast('❌ Error de conexión', 'error');
+                logDebug('❌ Error de conexión: ' + error.message, 'error');
             }
 
             btnGen.disabled = false;
@@ -551,6 +602,8 @@
             resultado.classList.remove('show');
             mensaje.textContent = '✍️ Escribe un tema y haz clic en "Generar"';
             tiempo.textContent = '';
+            debugInfo.innerHTML = '';
+            debugInfo.classList.remove('show');
         }
 
         // ============================================================
@@ -608,6 +661,7 @@
                 const doc = await db.collection('mensajes_generados').doc(id).get();
                 if (!doc.exists) return;
                 const d = doc.data();
+                mensaje.className = 'text';
                 mensaje.textContent = d.texto || 'Sin contenido';
                 tiempo.textContent = '📂 Reutilizado';
                 resultado.classList.add('show');
