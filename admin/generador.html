@@ -318,9 +318,11 @@
             font-size: 0.7rem;
             font-family: monospace;
             color: #666;
-            max-height: 100px;
+            max-height: 150px;
             overflow-y: auto;
             display: none;
+            white-space: pre-wrap;
+            word-break: break-all;
         }
 
         .debug-info.show {
@@ -333,6 +335,10 @@
 
         .debug-info .error {
             color: #e74c3c;
+        }
+
+        .debug-info .info {
+            color: #ffcc00;
         }
     </style>
 </head>
@@ -434,6 +440,7 @@
         // WORKER URL
         // ============================================================
         const WORKER = 'https://generador-whatsapp.tavoramirezmusico.workers.dev/';
+
         // ============================================================
         // DOM
         // ============================================================
@@ -469,11 +476,12 @@
 
         function logDebug(texto, tipo = 'info') {
             debugInfo.classList.add('show');
-            const span = document.createElement('span');
-            span.textContent = '> ' + texto + '\n';
-            span.className = tipo === 'error' ? 'error' : (tipo === 'ok' ? 'ok' : '');
+            const span = document.createElement('div');
+            span.textContent = '> ' + texto;
+            span.className = tipo;
             debugInfo.appendChild(span);
             debugInfo.scrollTop = debugInfo.scrollHeight;
+            console.log('[Debug]', texto);
         }
 
         // ============================================================
@@ -493,6 +501,7 @@
             debugInfo.classList.remove('show');
 
             logDebug('📤 Enviando solicitud al Worker...', 'info');
+            logDebug('📡 URL: ' + WORKER, 'info');
 
             try {
                 const body = JSON.stringify({
@@ -502,7 +511,7 @@
                     contexto: contexto.value.trim()
                 });
 
-                logDebug('📦 Datos: ' + body, 'info');
+                logDebug('📦 Datos enviados: ' + body, 'info');
 
                 const res = await fetch(WORKER, {
                     method: 'POST',
@@ -510,16 +519,17 @@
                     body: body
                 });
 
-                const data = await res.json();
+                logDebug('📥 Respuesta recibida. Status: ' + res.status, res.status === 200 ? 'ok' : 'error');
 
-                logDebug('📥 Respuesta recibida', 'ok');
+                const data = await res.json();
+                logDebug('📄 Datos: ' + JSON.stringify(data).substring(0, 200), 'info');
 
                 if (data.success) {
                     mensaje.className = 'text';
                     mensaje.textContent = data.texto;
                     tiempo.textContent = '✅ ' + new Date().toLocaleString();
                     mostrarToast('✅ Mensaje generado', 'success');
-                    logDebug('✅ Texto generado: ' + data.texto.substring(0, 50) + '...', 'ok');
+                    logDebug('✅ Texto: ' + data.texto.substring(0, 100) + '...', 'ok');
                 } else {
                     mensaje.className = 'text';
                     mensaje.textContent = '❌ ' + (data.error || 'Error desconocido');
@@ -630,15 +640,15 @@
                     const fecha = d.fecha ? new Date(d.fecha) : new Date();
                     const preview = (d.texto || 'Sin texto').substring(0, 50) + '...';
                     html += `
-                <li>
-                    <span class="h-text" title="${sanitizar(d.texto || '')}">${sanitizar(preview)}</span>
-                    <span style="font-size:0.65rem;color:#666;">${formatearFecha(fecha)}</span>
-                    <span class="h-actions">
-                        <button class="reuse" data-id="${doc.id}" title="Reutilizar"><i class="fa-solid fa-rotate-right"></i></button>
-                        <button data-id="${doc.id}" title="Eliminar" class="delete-btn"><i class="fa-regular fa-trash-can"></i></button>
-                    </span>
-                </li>
-            `;
+                            <li>
+                                <span class="h-text" title="${sanitizar(d.texto || '')}">${sanitizar(preview)}</span>
+                                <span style="font-size:0.65rem;color:#666;">${formatearFecha(fecha)}</span>
+                                <span class="h-actions">
+                                    <button class="reuse" data-id="${doc.id}" title="Reutilizar"><i class="fa-solid fa-rotate-right"></i></button>
+                                    <button data-id="${doc.id}" title="Eliminar" class="delete-btn"><i class="fa-regular fa-trash-can"></i></button>
+                                </span>
+                            </li>
+                        `;
                 });
                 historial.innerHTML = html;
 
@@ -698,6 +708,7 @@
         // UTILIDADES
         // ============================================================
         function sanitizar(t) { if (!t) return ''; const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+
         function formatearFecha(f) {
             if (!f || isNaN(f.getTime())) return 'Fecha inválida';
             return f.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
