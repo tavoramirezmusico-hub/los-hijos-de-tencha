@@ -4,40 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Textos WhatsApp | Los Hijos de Tencha</title>
+    <title>Generador WhatsApp | Los Hijos de Tencha</title>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js">
-    </script>
+    <!-- Firebase solo para guardar historial -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
 
     <style>
-        /* ============================================================
-           ESTILOS COMPLETOS (sin depender de admin.css)
-           ============================================================ */
-        :root {
-            --color-primary: #ffcc00;
-            --color-primary-dark: #e6b800;
-            --color-bg: #121212;
-            --color-card-bg: #1a1a2e;
-            --color-text: #ffffff;
-            --color-text-muted: #888;
-            --color-border: #333;
-            --color-danger: #d32f2f;
-            --radius-sm: 8px;
-            --radius-md: 16px;
-            --shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.3);
-            --transition: all 0.3s ease;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -46,307 +23,109 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: var(--color-bg);
-            color: var(--color-text);
+            background: #121212;
+            color: #fff;
             min-height: 100vh;
+            padding: 20px;
         }
 
-        /* ===== SIDEBAR ===== */
-        .admin-sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 260px;
-            height: 100vh;
-            background: #0d0d1a;
-            border-right: 1px solid var(--color-border);
-            z-index: 1000;
-            transition: transform 0.3s ease;
-            overflow-y: auto;
-            padding: 20px 0;
-        }
-
-        .admin-sidebar .sidebar-brand {
-            padding: 0 20px 20px;
-            text-align: center;
-            border-bottom: 1px solid var(--color-border);
-        }
-
-        .admin-sidebar .sidebar-brand img {
-            max-width: 80px;
-            border-radius: 50%;
-            margin-bottom: 8px;
-        }
-
-        .admin-sidebar .sidebar-brand h2 {
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-
-        .admin-sidebar .sidebar-brand h2 span {
-            color: var(--color-primary);
-        }
-
-        .admin-sidebar .sidebar-nav {
-            list-style: none;
-            padding: 20px 0;
-        }
-
-        .admin-sidebar .sidebar-nav .nav-label {
-            padding: 8px 20px;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            color: var(--color-text-muted);
-            letter-spacing: 1px;
-        }
-
-        .admin-sidebar .sidebar-nav .nav-divider {
-            height: 1px;
-            background: var(--color-border);
-            margin: 12px 20px;
-        }
-
-        .admin-sidebar .sidebar-nav li a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 20px;
-            color: var(--color-text-muted);
-            text-decoration: none;
-            transition: var(--transition);
-            font-size: 0.85rem;
-            border-left: 3px solid transparent;
-        }
-
-        .admin-sidebar .sidebar-nav li a:hover {
-            color: #fff;
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .admin-sidebar .sidebar-nav li a.active {
-            color: var(--color-primary);
-            border-left-color: var(--color-primary);
-            background: rgba(255, 204, 0, 0.05);
-        }
-
-        .admin-sidebar .sidebar-nav li a i {
-            width: 20px;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-
-        /* ===== OVERLAY ===== */
-        .admin-sidebar-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-
-        .admin-sidebar-overlay.active {
-            display: block;
-        }
-
-        /* ===== MAIN ===== */
-        .admin-main {
-            margin-left: 260px;
-            padding: 20px 30px;
-            min-height: 100vh;
-        }
-
-        /* ===== HEADER ===== */
-        .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0 20px;
-            border-bottom: 1px solid var(--color-border);
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .admin-header .header-left {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .admin-header .hamburger {
-            display: none;
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 1.4rem;
-            cursor: pointer;
-        }
-
-        .admin-header .header-left h1 {
-            font-size: 1.4rem;
-            font-weight: 700;
-        }
-
-        .admin-header .header-left h1 span {
-            color: var(--color-primary);
-        }
-
-        .admin-header .header-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .admin-header .header-right .user-badge {
-            font-size: 0.8rem;
-            color: var(--color-text-muted);
-            padding: 6px 14px;
-            border: 1px solid var(--color-border);
-            border-radius: 20px;
-        }
-
-        .admin-header .header-right .user-badge i {
-            color: var(--color-primary);
-            margin-right: 6px;
-        }
-
-        .admin-header .btn-header {
-            padding: 8px 16px;
-            border: none;
-            border-radius: var(--radius-sm);
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .admin-header .btn-header.btn-secondary {
-            background: transparent;
-            color: var(--text-muted);
-            border: 1px solid var(--color-border);
-        }
-
-        .admin-header .btn-header.btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .admin-header .btn-header.btn-danger {
-            background: var(--color-danger);
-            color: #fff;
-        }
-
-        .admin-header .btn-header.btn-danger:hover {
-            background: #b71c1c;
-        }
-
-        /* ============================================================
-           GENERADOR
-           ============================================================ */
-        .generator-container {
+        .container {
             max-width: 800px;
             margin: 0 auto;
         }
 
-        .generator-header {
+        .header {
             margin-bottom: 25px;
         }
 
-        .generator-header h1 {
+        .header h1 {
             font-size: 1.8rem;
             font-weight: 800;
         }
 
-        .generator-header h1 span {
-            color: var(--color-primary);
+        .header h1 span {
+            color: #ffcc00;
         }
 
-        .generator-header p {
-            color: var(--color-text-muted);
+        .header p {
+            color: #888;
             font-size: 0.95rem;
             margin-top: 4px;
         }
 
-        .generator-card {
-            background: var(--color-card-bg);
-            border-radius: var(--radius-md);
+        .card {
+            background: #1a1a2e;
+            border-radius: 16px;
             padding: 30px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--color-border);
+            border: 1px solid #333;
             margin-bottom: 20px;
         }
 
-        .generator-card .form-group {
+        .form-group {
             margin-bottom: 18px;
         }
 
-        .generator-card .form-group label {
+        .form-group label {
             display: block;
             font-weight: 600;
             font-size: 0.9rem;
             margin-bottom: 6px;
-            color: var(--color-text);
         }
 
-        .generator-card .form-group label i {
-            color: var(--color-primary);
+        .form-group label i {
+            color: #ffcc00;
             margin-right: 6px;
         }
 
-        .generator-card .form-group .helper-text {
-            font-size: 0.75rem;
-            color: var(--color-text-muted);
-            margin-top: 4px;
-        }
-
-        .generator-card input[type="text"],
-        .generator-card select,
-        .generator-card textarea {
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
             width: 100%;
             padding: 10px 14px;
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-sm);
+            border: 1px solid #333;
+            border-radius: 8px;
             font-family: 'Poppins', sans-serif;
             font-size: 0.9rem;
-            background: var(--color-bg);
-            color: var(--color-text);
-            transition: var(--transition);
+            background: #121212;
+            color: #fff;
+            transition: all 0.3s ease;
         }
 
-        .generator-card input[type="text"]:focus,
-        .generator-card select:focus,
-        .generator-card textarea:focus {
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
             outline: none;
-            border-color: var(--color-primary);
+            border-color: #ffcc00;
             box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.15);
         }
 
-        .generator-card textarea {
+        .form-group textarea {
             resize: vertical;
             min-height: 80px;
         }
 
-        .generator-card .form-row {
+        .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 18px;
         }
 
+        .helper-text {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 4px;
+        }
+
         .btn-generate {
-            background: var(--color-primary);
+            background: #ffcc00;
             color: #1a1a2e;
             border: none;
             padding: 12px 28px;
-            border-radius: var(--radius-sm);
+            border-radius: 8px;
             font-weight: 700;
             font-size: 0.95rem;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
             gap: 10px;
@@ -365,18 +144,13 @@
             transform: none;
         }
 
-        .btn-generate i {
-            font-size: 1rem;
-        }
-
-        /* ===== RESULTADO ===== */
         .result-box {
             display: none;
             margin-top: 20px;
             padding: 20px;
             background: rgba(255, 204, 0, 0.05);
-            border: 1px solid var(--color-primary);
-            border-radius: var(--radius-sm);
+            border: 1px solid #ffcc00;
+            border-radius: 8px;
             animation: fadeIn 0.4s ease;
         }
 
@@ -394,7 +168,7 @@
         .result-box .result-header h3 {
             font-size: 1rem;
             font-weight: 700;
-            color: var(--color-primary);
+            color: #ffcc00;
         }
 
         .result-box .result-header h3 i {
@@ -405,17 +179,17 @@
             font-size: 0.95rem;
             line-height: 1.7;
             padding: 16px;
-            background: var(--color-bg);
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--color-border);
+            background: #121212;
+            border-radius: 8px;
+            border: 1px solid #333;
             white-space: pre-wrap;
             word-break: break-word;
             min-height: 80px;
-            color: var(--color-text);
+            color: #fff;
         }
 
         .result-box .result-text.loading {
-            color: var(--color-text-muted);
+            color: #888;
             font-style: italic;
         }
 
@@ -429,172 +203,56 @@
         .result-actions .btn-action {
             padding: 8px 18px;
             border: none;
-            border-radius: var(--radius-sm);
+            border-radius: 8px;
             font-weight: 600;
             font-size: 0.8rem;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: var(--color-bg);
-            color: var(--color-text);
-            border: 1px solid var(--color-border);
+            background: #121212;
+            color: #fff;
+            border: 1px solid #333;
         }
 
         .result-actions .btn-action:hover {
             transform: translateY(-2px);
         }
 
-        .result-actions .btn-action.btn-copy {
-            background: var(--color-primary);
+        .result-actions .btn-copy {
+            background: #ffcc00;
             color: #1a1a2e;
-            border-color: var(--color-primary);
+            border-color: #ffcc00;
         }
 
-        .result-actions .btn-action.btn-copy:hover {
+        .result-actions .btn-copy:hover {
             background: #e6b800;
             box-shadow: 0 4px 12px rgba(255, 204, 0, 0.3);
         }
 
-        .result-actions .btn-action.btn-save {
+        .result-actions .btn-save {
             background: #2ecc71;
             color: #fff;
             border-color: #2ecc71;
         }
 
-        .result-actions .btn-action.btn-save:hover {
+        .result-actions .btn-save:hover {
             background: #27ae60;
             box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
         }
 
-        .result-actions .btn-action.btn-whatsapp {
+        .result-actions .btn-whatsapp {
             background: #25D366;
             color: #fff;
             border-color: #25D366;
         }
 
-        .result-actions .btn-action.btn-whatsapp:hover {
+        .result-actions .btn-whatsapp:hover {
             background: #1da851;
             box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
         }
 
-        /* ===== HISTORIAL ===== */
-        .history-section {
-            margin-top: 30px;
-        }
-
-        .history-section .history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .history-section .history-header h3 {
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-
-        .history-section .history-header h3 i {
-            color: var(--color-primary);
-            margin-right: 8px;
-        }
-
-        .history-list {
-            list-style: none;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .history-list li {
-            padding: 12px 0;
-            border-bottom: 1px solid var(--color-border);
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            font-size: 0.85rem;
-        }
-
-        .history-list li:last-child {
-            border-bottom: none;
-        }
-
-        .history-list li .history-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: rgba(255, 204, 0, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--color-primary);
-            flex-shrink: 0;
-            font-size: 0.8rem;
-        }
-
-        .history-list li .history-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .history-list li .history-content .history-text {
-            font-weight: 500;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .history-list li .history-content .history-meta {
-            color: var(--color-text-muted);
-            font-size: 0.7rem;
-        }
-
-        .history-list li .history-actions {
-            display: flex;
-            gap: 6px;
-            flex-shrink: 0;
-        }
-
-        .history-list li .history-actions button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--color-text-muted);
-            padding: 4px 6px;
-            border-radius: 4px;
-            transition: var(--transition);
-            font-size: 0.7rem;
-        }
-
-        .history-list li .history-actions button:hover {
-            background: var(--color-border);
-            color: var(--color-text);
-        }
-
-        .history-list li .history-actions .btn-reuse {
-            color: var(--color-primary);
-        }
-
-        .history-list li .history-actions .btn-reuse:hover {
-            background: rgba(255, 204, 0, 0.15);
-        }
-
-        .empty-history {
-            color: var(--color-text-muted);
-            text-align: center;
-            padding: 20px 0;
-            font-size: 0.9rem;
-        }
-
-        .empty-history i {
-            display: block;
-            font-size: 2rem;
-            margin-bottom: 10px;
-            opacity: 0.5;
-        }
-
-        /* ===== ANIMACIONES ===== */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -623,17 +281,16 @@
             animation: pulse 1.2s ease-in-out infinite;
         }
 
-        /* ===== TOAST ===== */
-        .admin-toast {
+        .toast {
             position: fixed;
             bottom: 30px;
             right: 30px;
-            background: var(--color-card-bg);
-            color: var(--color-text);
+            background: #1a1a2e;
+            color: #fff;
             padding: 14px 24px;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--color-border);
-            box-shadow: var(--shadow-sm);
+            border-radius: 8px;
+            border: 1px solid #333;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             z-index: 9999;
             transform: translateY(100px);
             opacity: 0;
@@ -642,54 +299,161 @@
             font-size: 0.9rem;
         }
 
-        .admin-toast.show {
+        .toast.show {
             transform: translateY(0);
             opacity: 1;
         }
 
-        .admin-toast.toast-success {
+        .toast.success {
             border-color: #2ecc71;
         }
 
-        .admin-toast.toast-error {
+        .toast.error {
             border-color: #e74c3c;
         }
 
-        .admin-toast.toast-warning {
+        .toast.warning {
             border-color: #f39c12;
         }
 
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 992px) {
-            .admin-sidebar {
-                transform: translateX(-100%);
-            }
+        .history-list {
+            list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
 
-            .admin-sidebar.open {
-                transform: translateX(0);
-            }
+        .history-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 0.85rem;
+        }
 
-            .admin-main {
-                margin-left: 0;
-                padding: 15px;
-            }
+        .history-list li:last-child {
+            border-bottom: none;
+        }
 
-            .admin-header .hamburger {
-                display: block;
-            }
+        .history-list li .history-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 204, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffcc00;
+            flex-shrink: 0;
+            font-size: 0.8rem;
+        }
+
+        .history-list li .history-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .history-list li .history-content .history-text {
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .history-list li .history-content .history-meta {
+            color: #888;
+            font-size: 0.7rem;
+        }
+
+        .history-list li .history-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .history-list li .history-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #888;
+            padding: 4px 6px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-size: 0.7rem;
+        }
+
+        .history-list li .history-actions button:hover {
+            background: #333;
+            color: #fff;
+        }
+
+        .history-list li .history-actions .btn-reuse {
+            color: #ffcc00;
+        }
+
+        .history-list li .history-actions .btn-reuse:hover {
+            background: rgba(255, 204, 0, 0.15);
+        }
+
+        .empty-history {
+            color: #888;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 0.9rem;
+        }
+
+        .empty-history i {
+            display: block;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .history-header h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .history-header h3 i {
+            color: #ffcc00;
+            margin-right: 8px;
+        }
+
+        .btn-danger-sm {
+            background: #d32f2f;
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger-sm:hover {
+            background: #b71c1c;
         }
 
         @media (max-width: 768px) {
-            .generator-card {
+            .card {
                 padding: 20px;
             }
 
-            .generator-card .form-row {
+            .form-row {
                 grid-template-columns: 1fr;
                 gap: 0;
             }
 
-            .generator-header h1 {
+            .header h1 {
                 font-size: 1.4rem;
             }
 
@@ -701,38 +465,16 @@
                 width: 100%;
                 justify-content: center;
             }
-
-            .history-section .history-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-
-            .admin-header .header-right .user-badge {
-                display: none;
-            }
         }
 
         @media (max-width: 480px) {
-            .generator-card {
+            .card {
                 padding: 15px;
-            }
-
-            .generator-card input[type="text"],
-            .generator-card select,
-            .generator-card textarea {
-                font-size: 0.8rem;
-                padding: 8px 12px;
             }
 
             .btn-generate {
                 font-size: 0.85rem;
                 padding: 10px 20px;
-            }
-
-            .result-box .result-text {
-                font-size: 0.85rem;
-                padding: 12px;
             }
         }
     </style>
@@ -740,174 +482,90 @@
 
 <body>
 
-    <!-- SIDEBAR (MENÚ LATERAL) -->
-    <aside class="admin-sidebar" id="adminSidebar">
-        <div class="sidebar-brand">
-            <img src="../img/logo.webp" alt="Los Hijos de Tencha">
-            <h2>Panel <span>Admin</span></h2>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>Generador de Textos <span>WhatsApp</span></h1>
+            <p>Crea mensajes profesionales con inteligencia artificial (Gemini).</p>
         </div>
 
-        <ul class="sidebar-nav">
-            <li class="nav-label">Menú Principal</li>
-            <li><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
-            <li><a href="eventos.html"><i class="fa-solid fa-calendar"></i> Eventos</a></li>
-            <li><a href="noticias.html"><i class="fa-solid fa-newspaper"></i> Noticias</a></li>
-            <li><a href="galeria.html"><i class="fa-solid fa-images"></i> Galería</a></li>
-
-            <li class="nav-divider"></li>
-            <li class="nav-label">Contenido</li>
-            <li><a href="canciones.html"><i class="fa-solid fa-music"></i> Canciones</a></li>
-            <li><a href="videos.html"><i class="fa-solid fa-video"></i> Videos</a></li>
-            <li><a href="tienda.html"><i class="fa-solid fa-shirt"></i> Tienda</a></li>
-
-            <li class="nav-divider"></li>
-            <li class="nav-label">Sistema</li>
-            <li><a href="asistentes.html"><i class="fa-solid fa-users"></i> Asistentes</a></li>
-            <li><a href="validador.html"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
-            <li><a href="generador.html" class="active"><i class="fa-solid fa-robot"></i> Generador IA</a></li>
-            <li><a href="#" id="btnSalir"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
-        </ul>
-    </aside>
-
-    <!-- Overlay para móvil -->
-    <div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
-
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="admin-main">
-
-        <!-- HEADER SUPERIOR -->
-        <header class="admin-header">
-            <div class="header-left">
-                <button class="hamburger" id="hamburgerBtn">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-                <h1><span>🤖</span> Generador IA</h1>
-            </div>
-            <div class="header-right">
-                <div class="user-badge">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    Administrador
-                </div>
-                <a href="../validador.html" target="_blank" class="btn-header btn-secondary">
-                    <i class="fa-solid fa-qrcode"></i> Validador
-                </a>
-                <a href="../index.html" target="_blank" class="btn-header btn-secondary">
-                    <i class="fa-solid fa-globe"></i> Web
-                </a>
-                <button class="btn-header btn-danger" id="btnSalirHeader">
-                    <i class="fa-solid fa-right-from-bracket"></i> Salir
-                </button>
-            </div>
-        </header>
-
-        <!-- CONTENIDO GENERADOR -->
-        <div class="generator-container">
-
-            <!-- ENCABEZADO -->
-            <div class="generator-header">
-                <h1>Generador de Textos <span>WhatsApp</span></h1>
-                <p>Crea mensajes profesionales para WhatsApp con ayuda de inteligencia artificial (Gemini).</p>
+        <!-- CARD PRINCIPAL -->
+        <div class="card">
+            <div class="form-group">
+                <label for="tema"><i class="fa-solid fa-pen"></i> Tema del mensaje</label>
+                <input type="text" id="tema" placeholder="Ej: Oferta de camisetas, Recordatorio..." />
+                <div class="helper-text">Describe brevemente de qué quieres que trate el mensaje.</div>
             </div>
 
-            <!-- CARD PRINCIPAL -->
-            <div class="generator-card">
-
+            <div class="form-row">
                 <div class="form-group">
-                    <label for="tema"><i class="fa-solid fa-pen"></i> Tema del mensaje</label>
-                    <input type="text" id="tema"
-                        placeholder="Ej: Oferta de verano, Recordatorio de cita, Bienvenida..." />
-                    <div class="helper-text">Describe brevemente de qué quieres que trate el mensaje.</div>
+                    <label for="tono"><i class="fa-solid fa-face-smile"></i> Tono</label>
+                    <select id="tono">
+                        <option value="formal">Formal</option>
+                        <option value="amigable" selected>Amigable</option>
+                        <option value="urgente">Urgente</option>
+                        <option value="inspirador">Inspirador</option>
+                        <option value="humoristico">Humorístico</option>
+                    </select>
                 </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="tono"><i class="fa-solid fa-face-smile"></i> Tono</label>
-                        <select id="tono">
-                            <option value="formal">Formal</option>
-                            <option value="amigable" selected>Amigable</option>
-                            <option value="urgente">Urgente</option>
-                            <option value="inspirador">Inspirador</option>
-                            <option value="humoristico">Humorístico</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="longitud"><i class="fa-solid fa-ruler"></i> Longitud</label>
-                        <select id="longitud">
-                            <option value="corto">Corto (1-2 líneas)</option>
-                            <option value="medio" selected>Medio (3-5 líneas)</option>
-                            <option value="largo">Largo (6+ líneas)</option>
-                        </select>
-                    </div>
-                </div>
-
                 <div class="form-group">
-                    <label for="contexto"><i class="fa-solid fa-circle-info"></i> Contexto adicional (opcional)</label>
-                    <textarea id="contexto"
-                        placeholder="Ej: El mensaje es para clientes que ya compraron antes, incluir descuento del 10%..."
-                        rows="2"></textarea>
-                </div>
-
-                <button class="btn-generate" id="btnGenerar">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    Generar mensaje con IA
-                </button>
-
-                <!-- RESULTADO -->
-                <div class="result-box" id="resultado">
-                    <div class="result-header">
-                        <h3><i class="fa-solid fa-message"></i> Mensaje generado</h3>
-                        <span style="font-size:0.7rem; color:var(--color-text-muted);" id="tiempoGeneracion"></span>
-                    </div>
-                    <div class="result-text" id="mensajeGenerado">✍️ Escribe un tema y haz clic en "Generar"</div>
-                    <div class="result-actions">
-                        <button class="btn-action btn-copy" id="btnCopiar">
-                            <i class="fa-regular fa-clipboard"></i> Copiar
-                        </button>
-                        <button class="btn-action btn-whatsapp" id="btnWhatsApp">
-                            <i class="fa-brands fa-whatsapp"></i> Enviar a WhatsApp
-                        </button>
-                        <button class="btn-action btn-save" id="btnGuardar">
-                            <i class="fa-regular fa-floppy-disk"></i> Guardar
-                        </button>
-                        <button class="btn-action" id="btnLimpiar">
-                            <i class="fa-regular fa-trash-can"></i> Limpiar
-                        </button>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- HISTORIAL -->
-            <div class="history-section">
-                <div class="history-header">
-                    <h3><i class="fa-regular fa-clock"></i> Historial de mensajes</h3>
-                    <button class="btn-generate" id="btnBorrarHistorial"
-                        style="font-size:0.7rem; padding:8px 16px; width:auto; background:var(--color-danger); color:#fff;">
-                        <i class="fa-regular fa-trash-can"></i> Borrar todo
-                    </button>
-                </div>
-                <div class="admin-card"
-                    style="background:var(--color-card-bg); border-radius:var(--radius-md); padding:10px 20px; border:1px solid var(--color-border);">
-                    <ul class="history-list" id="historialList">
-                        <li class="empty-history">
-                            <i class="fa-regular fa-inbox"></i>
-                            No hay mensajes guardados
-                        </li>
-                    </ul>
+                    <label for="longitud"><i class="fa-solid fa-ruler"></i> Longitud</label>
+                    <select id="longitud">
+                        <option value="corto">Corto (1-2 líneas)</option>
+                        <option value="medio" selected>Medio (3-5 líneas)</option>
+                        <option value="largo">Largo (6+ líneas)</option>
+                    </select>
                 </div>
             </div>
 
+            <div class="form-group">
+                <label for="contexto"><i class="fa-solid fa-circle-info"></i> Contexto adicional (opcional)</label>
+                <textarea id="contexto" placeholder="Ej: Descuento del 20% para clientes frecuentes"
+                    rows="2"></textarea>
+            </div>
+
+            <button class="btn-generate" id="btnGenerar">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Generar mensaje con IA
+            </button>
+
+            <!-- RESULTADO -->
+            <div class="result-box" id="resultado">
+                <div class="result-header">
+                    <h3><i class="fa-solid fa-message"></i> Mensaje generado</h3>
+                    <span style="font-size:0.7rem; color:#888;" id="tiempoGeneracion"></span>
+                </div>
+                <div class="result-text" id="mensajeGenerado">✍️ Escribe un tema y haz clic en "Generar"</div>
+                <div class="result-actions">
+                    <button class="btn-action btn-copy" id="btnCopiar"><i class="fa-regular fa-clipboard"></i>
+                        Copiar</button>
+                    <button class="btn-action btn-whatsapp" id="btnWhatsApp"><i class="fa-brands fa-whatsapp"></i>
+                        WhatsApp</button>
+                    <button class="btn-action btn-save" id="btnGuardar"><i class="fa-regular fa-floppy-disk"></i>
+                        Guardar</button>
+                    <button class="btn-action" id="btnLimpiar"><i class="fa-regular fa-trash-can"></i> Limpiar</button>
+                </div>
+            </div>
         </div>
 
-    </main>
+        <!-- HISTORIAL -->
+        <div class="history-header">
+            <h3><i class="fa-regular fa-clock"></i> Historial de mensajes</h3>
+            <button class="btn-danger-sm" id="btnBorrarHistorial"><i class="fa-regular fa-trash-can"></i> Borrar
+                todo</button>
+        </div>
+        <div class="card" style="padding:10px 20px;">
+            <ul class="history-list" id="historialList">
+                <li class="empty-history">
+                    <i class="fa-regular fa-inbox"></i>
+                    No hay mensajes guardados
+                </li>
+            </ul>
+        </div>
+    </div>
 
     <!-- TOAST -->
-    <div id="adminToast" class="admin-toast"></div>
+    <div id="toast" class="toast"></div>
 
-    <!-- ============================================================
-    SCRIPTS
-    ============================================================ -->
     <script>
         // ============================================================
         // CONFIGURACIÓN DE FIREBASE
@@ -921,426 +579,59 @@
             appId: "1:273676503007:web:56180c485b648ef076a66a"
         };
 
-        // Inicializar Firebase
+        // Inicializar Firebase SOLO UNA VEZ
         let db = null;
-        let firebaseInicializado = false;
-
         try {
             if (typeof firebase !== 'undefined') {
                 if (!firebase.apps.length) {
                     firebase.initializeApp(firebaseConfig);
                 }
                 db = firebase.firestore();
-                firebaseInicializado = true;
-                console.log('✅ Firebase inicializado');
+                console.log('✅ Firebase conectado');
             } else {
                 console.warn('⚠️ Firebase no cargado');
             }
         } catch (e) {
-            console.warn('⚠️ Error al conectar Firebase:', e);
+            console.warn('⚠️ Error Firebase:', e);
         }
 
         // ============================================================
-        // CONFIGURACIÓN - URL DEL WORKER
+        // CONFIGURACIÓN
         // ============================================================
-        const SCRIPT_URL = 'https://generador-whatsapp.tavoramirezmusico.workers.dev/';
+        const WORKER_URL = 'https://generador-whatsapp.tavoramirezmusico.workers.dev/';
 
         // ============================================================
-        // SIDEBAR - MENÚ HAMBURGUESA
+        // DOM ELEMENTS
         // ============================================================
-        const sidebar = document.getElementById('adminSidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        const hamburger = document.getElementById('hamburgerBtn');
-
-        function toggleSidebar() {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('active');
-        }
-
-        if (hamburger) {
-            hamburger.addEventListener('click', toggleSidebar);
-        }
-
-        if (overlay) {
-            overlay.addEventListener('click', toggleSidebar);
-        }
-
-        // ============================================================
-        // SALIR
-        // ============================================================
-        function cerrarSesion() {
-            if (confirm('¿Seguro que quieres cerrar sesión?')) {
-                localStorage.removeItem('adminSesion');
-                window.location.href = 'login.html';
-            }
-        }
-
-        document.getElementById('btnSalir')?.addEventListener('click', cerrarSesion);
-        document.getElementById('btnSalirHeader')?.addEventListener('click', cerrarSesion);
-
-        // ============================================================
-        // ELEMENTOS
-        // ============================================================
+        const tema = document.getElementById('tema');
+        const tono = document.getElementById('tono');
+        const longitud = document.getElementById('longitud');
+        const contexto = document.getElementById('contexto');
         const btnGenerar = document.getElementById('btnGenerar');
         const btnCopiar = document.getElementById('btnCopiar');
         const btnWhatsApp = document.getElementById('btnWhatsApp');
         const btnGuardar = document.getElementById('btnGuardar');
         const btnLimpiar = document.getElementById('btnLimpiar');
         const btnBorrarHistorial = document.getElementById('btnBorrarHistorial');
-        const temaInput = document.getElementById('tema');
-        const tonoSelect = document.getElementById('tono');
-        const longitudSelect = document.getElementById('longitud');
-        const contextoTextarea = document.getElementById('contexto');
-        const resultadoDiv = document.getElementById('resultado');
-        const mensajeEl = document.getElementById('mensajeGenerado');
-        const tiempoEl = document.getElementById('tiempoGeneracion');
+        const resultado = document.getElementById('resultado');
+        const mensaje = document.getElementById('mensajeGenerado');
+        const tiempo = document.getElementById('tiempoGeneracion');
         const historialList = document.getElementById('historialList');
+        const toast = document.getElementById('toast');
 
         // ============================================================
-        // GENERAR TEXTO
+        // FUNCIONES
         // ============================================================
-        async function generarTexto() {
-            const tema = temaInput.value.trim();
-            const tono = tonoSelect.value;
-            const longitud = longitudSelect.value;
-            const contexto = contextoTextarea.value.trim();
 
-            if (!tema) {
-                mostrarToast('⚠️ Por favor, escribe un tema para el mensaje.', 'warning');
-                temaInput.focus();
-                return;
-            }
-
-            resultadoDiv.classList.add('show');
-            mensajeEl.className = 'result-text loading pulsing';
-            mensajeEl.textContent = '⏳ Generando mensaje con IA...';
-            tiempoEl.textContent = '';
-            btnGenerar.disabled = true;
-            btnGenerar.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando...';
-
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        tema,
-                        tono,
-                        longitud,
-                        contexto
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    mensajeEl.className = 'result-text';
-                    mensajeEl.textContent = data.texto;
-                    tiempoEl.textContent = '✅ Generado ' + new Date().toLocaleString();
-                    mostrarToast('✅ Mensaje generado correctamente', 'success');
-                } else {
-                    mensajeEl.className = 'result-text';
-                    mensajeEl.textContent = '❌ Error: ' + (data.error || 'No se pudo generar el mensaje.');
-                    mostrarToast('❌ Error al generar mensaje', 'error');
-                }
-
-            } catch (error) {
-                console.error('Error:', error);
-                mensajeEl.className = 'result-text';
-                mensajeEl.textContent = '❌ Error de conexión. Intenta de nuevo.';
-                mostrarToast('❌ Error de conexión', 'error');
-            }
-
-            btnGenerar.disabled = false;
-            btnGenerar.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Generar mensaje con IA';
+        function mostrarToast(texto, tipo = 'info') {
+            toast.textContent = texto;
+            toast.className = 'toast show';
+            if (tipo === 'success') toast.classList.add('success');
+            else if (tipo === 'error') toast.classList.add('error');
+            else if (tipo === 'warning') toast.classList.add('warning');
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => toast.classList.remove('show'), 4000);
         }
-
-        // ============================================================
-        // COPIAR TEXTO
-        // ============================================================
-        function copiarTexto() {
-            const texto = mensajeEl.textContent;
-            if (!texto || texto.includes('❌') || texto.includes('⏳')) {
-                mostrarToast('⚠️ No hay un mensaje válido para copiar.', 'warning');
-                return;
-            }
-
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(texto)
-                    .then(() => mostrarToast('✅ Texto copiado al portapapeles', 'success'))
-                    .catch(() => copiarTextoAlternativo(texto));
-            } else {
-                copiarTextoAlternativo(texto);
-            }
-        }
-
-        function copiarTextoAlternativo(texto) {
-            const textarea = document.createElement('textarea');
-            textarea.value = texto;
-            textarea.style.position = 'fixed';
-            textarea.style.opacity = '0';
-            document.body.appendChild(textarea);
-            textarea.select();
-            try {
-                document.execCommand('copy');
-                mostrarToast('✅ Texto copiado al portapapeles', 'success');
-            } catch (e) {
-                mostrarToast('❌ No se pudo copiar el texto', 'error');
-            }
-            document.body.removeChild(textarea);
-        }
-
-        // ============================================================
-        // ENVIAR A WHATSAPP
-        // ============================================================
-        function enviarWhatsApp() {
-            const texto = mensajeEl.textContent;
-            if (!texto || texto.includes('❌') || texto.includes('⏳')) {
-                mostrarToast('⚠️ No hay un mensaje válido para enviar.', 'warning');
-                return;
-            }
-            const textoCodificado = encodeURIComponent(texto);
-            window.open('https://wa.me/?text=' + textoCodificado, '_blank');
-            mostrarToast('📱 Abriendo WhatsApp...', 'success');
-        }
-
-        // ============================================================
-        // GUARDAR EN FIRESTORE
-        // ============================================================
-        async function guardarTexto() {
-            const texto = mensajeEl.textContent;
-            const tema = temaInput.value.trim() || 'Sin tema';
-            const tono = tonoSelect.value;
-
-            if (!texto || texto.includes('❌') || texto.includes('⏳')) {
-                mostrarToast('⚠️ No hay un mensaje válido para guardar.', 'warning');
-                return;
-            }
-
-            try {
-                if (!db) {
-                    mostrarToast('⚠️ Firestore no está disponible. El mensaje no se guardó.', 'warning');
-                    return;
-                }
-
-                await db.collection('mensajes_generados').add({
-                    texto: texto,
-                    tema: tema,
-                    tono: tono,
-                    fecha: new Date().toISOString(),
-                    usuario: 'admin'
-                });
-
-                mostrarToast('💾 Mensaje guardado correctamente', 'success');
-                cargarHistorial();
-
-            } catch (error) {
-                console.error('Error al guardar:', error);
-                mostrarToast('❌ Error al guardar el mensaje', 'error');
-            }
-        }
-
-        // ============================================================
-        // LIMPIAR RESULTADO
-        // ============================================================
-        function limpiarResultado() {
-            resultadoDiv.classList.remove('show');
-            mensajeEl.textContent = '✍️ Escribe un tema y haz clic en "Generar"';
-            tiempoEl.textContent = '';
-        }
-
-        // ============================================================
-        // CARGAR HISTORIAL
-        // ============================================================
-        async function cargarHistorial() {
-            try {
-                if (!db) {
-                    historialList.innerHTML = `
-                        <li class="empty-history">
-                            <i class="fa-solid fa-triangle-exclamation"></i>
-                            Firestore no disponible
-                        </li>
-                    `;
-                    return;
-                }
-
-                const snapshot = await db.collection('mensajes_generados')
-                    .orderBy('fecha', 'desc')
-                    .limit(20)
-                    .get();
-
-                if (snapshot.empty) {
-                    historialList.innerHTML = `
-                        <li class="empty-history">
-                            <i class="fa-regular fa-inbox"></i>
-                            No hay mensajes guardados
-                        </li>
-                    `;
-                    return;
-                }
-
-                let html = '';
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const fecha = data.fecha ? new Date(data.fecha) : new Date();
-                    const texto = data.texto || 'Sin texto';
-                    const tema = data.tema || 'Sin tema';
-                    const tono = data.tono || '';
-
-                    const preview = texto.length > 60 ? texto.substring(0, 60) + '...' : texto;
-
-                    html += `
-                        <li>
-                            <div class="history-icon">
-                                <i class="fa-regular fa-message"></i>
-                            </div>
-                            <div class="history-content">
-                                <div class="history-text" title="${sanitizar(texto)}">${sanitizar(preview)}</div>
-                                <div class="history-meta">
-                                    <i class="fa-regular fa-tag"></i> ${sanitizar(tema)}
-                                    ${tono ? '· <i class="fa-regular fa-face-smile"></i> ' + sanitizar(tono) : ''}
-                                    · ${formatearFechaHora(fecha)}
-                                </div>
-                            </div>
-                            <div class="history-actions">
-                                <button class="btn-reuse" data-id="${doc.id}" title="Reutilizar">
-                                    <i class="fa-solid fa-rotate-right"></i>
-                                </button>
-                                <button class="btn-delete" data-id="${doc.id}" title="Eliminar">
-                                    <i class="fa-regular fa-trash-can"></i>
-                                </button>
-                            </div>
-                        </li>
-                    `;
-                });
-
-                historialList.innerHTML = html;
-
-                // Eventos para reutilizar
-                document.querySelectorAll('.btn-reuse').forEach(btn => {
-                    btn.addEventListener('click', function () {
-                        reutilizarMensaje(this.dataset.id);
-                    });
-                });
-
-                // Eventos para eliminar
-                document.querySelectorAll('.btn-delete').forEach(btn => {
-                    btn.addEventListener('click', function () {
-                        eliminarMensaje(this.dataset.id);
-                    });
-                });
-
-            } catch (error) {
-                console.error('Error al cargar historial:', error);
-                historialList.innerHTML = `
-                    <li class="empty-history">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                        Error al cargar historial
-                    </li>
-                `;
-            }
-        }
-
-        // ============================================================
-        // REUTILIZAR MENSAJE
-        // ============================================================
-        async function reutilizarMensaje(docId) {
-            try {
-                if (!db) {
-                    mostrarToast('⚠️ Firestore no disponible', 'warning');
-                    return;
-                }
-
-                const doc = await db.collection('mensajes_generados').doc(docId).get();
-                if (!doc.exists) {
-                    mostrarToast('⚠️ El mensaje ya no existe', 'warning');
-                    return;
-                }
-
-                const data = doc.data();
-                mensajeEl.className = 'result-text';
-                mensajeEl.textContent = data.texto || 'Sin contenido';
-                tiempoEl.textContent = '📂 Reutilizado de historial';
-                resultadoDiv.classList.add('show');
-
-                if (data.tema) {
-                    temaInput.value = data.tema;
-                }
-                if (data.tono) {
-                    tonoSelect.value = data.tono;
-                }
-
-                mostrarToast('📂 Mensaje cargado del historial', 'success');
-
-            } catch (error) {
-                console.error('Error al reutilizar:', error);
-                mostrarToast('❌ Error al cargar el mensaje', 'error');
-            }
-        }
-
-        // ============================================================
-        // ELIMINAR MENSAJE
-        // ============================================================
-        async function eliminarMensaje(docId) {
-            if (!confirm('¿Estás seguro de que quieres eliminar este mensaje?')) {
-                return;
-            }
-
-            try {
-                if (!db) {
-                    mostrarToast('⚠️ Firestore no disponible', 'warning');
-                    return;
-                }
-
-                await db.collection('mensajes_generados').doc(docId).delete();
-                mostrarToast('🗑️ Mensaje eliminado', 'success');
-                cargarHistorial();
-
-            } catch (error) {
-                console.error('Error al eliminar:', error);
-                mostrarToast('❌ Error al eliminar el mensaje', 'error');
-            }
-        }
-
-        // ============================================================
-        // BORRAR HISTORIAL
-        // ============================================================
-        async function borrarHistorial() {
-            if (!confirm('⚠️ ¿Estás seguro de que quieres borrar TODO el historial? Esta acción no se puede deshacer.')) {
-                return;
-            }
-
-            try {
-                if (!db) {
-                    mostrarToast('⚠️ Firestore no disponible', 'warning');
-                    return;
-                }
-
-                const snapshot = await db.collection('mensajes_generados').get();
-                if (snapshot.empty) {
-                    mostrarToast('⚠️ No hay mensajes para borrar', 'warning');
-                    return;
-                }
-
-                const batch = db.batch();
-                snapshot.forEach(doc => {
-                    batch.delete(doc.ref);
-                });
-                await batch.commit();
-
-                mostrarToast('🗑️ Historial borrado completamente', 'success');
-                cargarHistorial();
-
-            } catch (error) {
-                console.error('Error al borrar historial:', error);
-                mostrarToast('❌ Error al borrar el historial', 'error');
-            }
-        }
-
-        // ============================================================
-        // FUNCIONES UTILITARIAS
-        // ============================================================
 
         function sanitizar(texto) {
             if (!texto) return '';
@@ -1349,36 +640,246 @@
             return div.innerHTML;
         }
 
-        function formatearFechaHora(fecha) {
+        function formatearFecha(fecha) {
             if (!fecha || isNaN(fecha.getTime())) return 'Fecha inválida';
-            const opciones = {
+            return fecha.toLocaleDateString('es-ES', {
                 day: '2-digit',
                 month: 'short',
                 hour: '2-digit',
                 minute: '2-digit'
-            };
-            return fecha.toLocaleDateString('es-ES', opciones);
+            });
         }
 
-        function mostrarToast(mensaje, tipo = 'info') {
-            const toast = document.getElementById('adminToast');
-            if (!toast) return;
-
-            toast.textContent = mensaje;
-            toast.className = 'admin-toast show';
-
-            if (tipo === 'success') {
-                toast.classList.add('toast-success');
-            } else if (tipo === 'error') {
-                toast.classList.add('toast-error');
-            } else if (tipo === 'warning') {
-                toast.classList.add('toast-warning');
+        // ============================================================
+        // GENERAR
+        // ============================================================
+        async function generarTexto() {
+            const temaVal = tema.value.trim();
+            if (!temaVal) {
+                mostrarToast('⚠️ Escribe un tema para el mensaje.', 'warning');
+                tema.focus();
+                return;
             }
 
-            clearTimeout(toast._timeout);
-            toast._timeout = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 4000);
+            resultado.classList.add('show');
+            mensaje.className = 'result-text loading pulsing';
+            mensaje.textContent = '⏳ Generando mensaje con IA...';
+            tiempo.textContent = '';
+            btnGenerar.disabled = true;
+            btnGenerar.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando...';
+
+            try {
+                const response = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        tema: temaVal,
+                        tono: tono.value,
+                        longitud: longitud.value,
+                        contexto: contexto.value.trim()
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    mensaje.className = 'result-text';
+                    mensaje.textContent = data.texto;
+                    tiempo.textContent = '✅ Generado ' + new Date().toLocaleString();
+                    mostrarToast('✅ Mensaje generado correctamente', 'success');
+                } else {
+                    mensaje.className = 'result-text';
+                    mensaje.textContent = '❌ Error: ' + (data.error || 'No se pudo generar.');
+                    mostrarToast('❌ Error al generar', 'error');
+                }
+            } catch (error) {
+                mensaje.className = 'result-text';
+                mensaje.textContent = '❌ Error de conexión. Intenta de nuevo.';
+                mostrarToast('❌ Error de conexión', 'error');
+            }
+
+            btnGenerar.disabled = false;
+            btnGenerar.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Generar mensaje con IA';
+        }
+
+        // ============================================================
+        // COPIAR
+        // ============================================================
+        function copiarTexto() {
+            const texto = mensaje.textContent;
+            if (!texto || texto.includes('❌') || texto.includes('⏳')) {
+                mostrarToast('⚠️ No hay mensaje válido para copiar.', 'warning');
+                return;
+            }
+            navigator.clipboard.writeText(texto)
+                .then(() => mostrarToast('✅ Texto copiado', 'success'))
+                .catch(() => {
+                    const ta = document.createElement('textarea');
+                    ta.value = texto;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    mostrarToast('✅ Texto copiado', 'success');
+                });
+        }
+
+        // ============================================================
+        // WHATSAPP
+        // ============================================================
+        function enviarWhatsApp() {
+            const texto = mensaje.textContent;
+            if (!texto || texto.includes('❌') || texto.includes('⏳')) {
+                mostrarToast('⚠️ No hay mensaje válido.', 'warning');
+                return;
+            }
+            window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+        }
+
+        // ============================================================
+        // GUARDAR
+        // ============================================================
+        async function guardarTexto() {
+            const texto = mensaje.textContent;
+            if (!texto || texto.includes('❌') || texto.includes('⏳')) {
+                mostrarToast('⚠️ No hay mensaje válido para guardar.', 'warning');
+                return;
+            }
+
+            if (!db) {
+                mostrarToast('⚠️ Firestore no disponible', 'warning');
+                return;
+            }
+
+            try {
+                await db.collection('mensajes_generados').add({
+                    texto: texto,
+                    tema: tema.value.trim() || 'Sin tema',
+                    tono: tono.value,
+                    fecha: new Date().toISOString(),
+                    usuario: 'admin'
+                });
+                mostrarToast('💾 Mensaje guardado', 'success');
+                cargarHistorial();
+            } catch (error) {
+                mostrarToast('❌ Error al guardar', 'error');
+            }
+        }
+
+        // ============================================================
+        // LIMPIAR
+        // ============================================================
+        function limpiarResultado() {
+            resultado.classList.remove('show');
+            mensaje.textContent = '✍️ Escribe un tema y haz clic en "Generar"';
+            tiempo.textContent = '';
+        }
+
+        // ============================================================
+        // HISTORIAL
+        // ============================================================
+        async function cargarHistorial() {
+            if (!db) {
+                historialList.innerHTML = `<li class="empty-history"><i class="fa-solid fa-triangle-exclamation"></i>Firestore no disponible</li>`;
+                return;
+            }
+
+            try {
+                const snap = await db.collection('mensajes_generados')
+                    .orderBy('fecha', 'desc')
+                    .limit(20)
+                    .get();
+
+                if (snap.empty) {
+                    historialList.innerHTML = `<li class="empty-history"><i class="fa-regular fa-inbox"></i>No hay mensajes guardados</li>`;
+                    return;
+                }
+
+                let html = '';
+                snap.forEach(doc => {
+                    const d = doc.data();
+                    const fecha = d.fecha ? new Date(d.fecha) : new Date();
+                    const texto = d.texto || 'Sin texto';
+                    const preview = texto.length > 60 ? texto.substring(0, 60) + '...' : texto;
+
+                    html += `
+                        <li>
+                            <div class="history-icon"><i class="fa-regular fa-message"></i></div>
+                            <div class="history-content">
+                                <div class="history-text" title="${sanitizar(texto)}">${sanitizar(preview)}</div>
+                                <div class="history-meta">
+                                    <i class="fa-regular fa-tag"></i> ${sanitizar(d.tema || 'Sin tema')}
+                                    ${d.tono ? '· <i class="fa-regular fa-face-smile"></i> ' + sanitizar(d.tono) : ''}
+                                    · ${formatearFecha(fecha)}
+                                </div>
+                            </div>
+                            <div class="history-actions">
+                                <button class="btn-reuse" data-id="${doc.id}" title="Reutilizar"><i class="fa-solid fa-rotate-right"></i></button>
+                                <button class="btn-delete" data-id="${doc.id}" title="Eliminar"><i class="fa-regular fa-trash-can"></i></button>
+                            </div>
+                        </li>
+                    `;
+                });
+                historialList.innerHTML = html;
+
+                document.querySelectorAll('.btn-reuse').forEach(b => {
+                    b.addEventListener('click', function () { reutilizarMensaje(this.dataset.id); });
+                });
+                document.querySelectorAll('.btn-delete').forEach(b => {
+                    b.addEventListener('click', function () { eliminarMensaje(this.dataset.id); });
+                });
+
+            } catch (error) {
+                historialList.innerHTML = `<li class="empty-history"><i class="fa-solid fa-triangle-exclamation"></i>Error al cargar</li>`;
+            }
+        }
+
+        async function reutilizarMensaje(id) {
+            if (!db) return;
+            try {
+                const doc = await db.collection('mensajes_generados').doc(id).get();
+                if (!doc.exists) return;
+                const d = doc.data();
+                mensaje.textContent = d.texto || 'Sin contenido';
+                tiempo.textContent = '📂 Reutilizado de historial';
+                resultado.classList.add('show');
+                if (d.tema) tema.value = d.tema;
+                if (d.tono) tono.value = d.tono;
+                mostrarToast('📂 Mensaje cargado', 'success');
+            } catch (error) {
+                mostrarToast('❌ Error al cargar', 'error');
+            }
+        }
+
+        async function eliminarMensaje(id) {
+            if (!confirm('¿Eliminar este mensaje?')) return;
+            if (!db) return;
+            try {
+                await db.collection('mensajes_generados').doc(id).delete();
+                mostrarToast('🗑️ Mensaje eliminado', 'success');
+                cargarHistorial();
+            } catch (error) {
+                mostrarToast('❌ Error al eliminar', 'error');
+            }
+        }
+
+        async function borrarHistorial() {
+            if (!confirm('⚠️ ¿Borrar TODO el historial?')) return;
+            if (!db) return;
+            try {
+                const snap = await db.collection('mensajes_generados').get();
+                if (snap.empty) {
+                    mostrarToast('⚠️ No hay mensajes', 'warning');
+                    return;
+                }
+                const batch = db.batch();
+                snap.forEach(doc => batch.delete(doc.ref));
+                await batch.commit();
+                mostrarToast('🗑️ Historial borrado', 'success');
+                cargarHistorial();
+            } catch (error) {
+                mostrarToast('❌ Error al borrar', 'error');
+            }
         }
 
         // ============================================================
@@ -1391,7 +892,7 @@
         btnLimpiar.addEventListener('click', limpiarResultado);
         btnBorrarHistorial.addEventListener('click', borrarHistorial);
 
-        temaInput.addEventListener('keydown', function (e) {
+        tema.addEventListener('keydown', function (e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 generarTexto();
@@ -1399,13 +900,13 @@
         });
 
         // ============================================================
-        // INICIALIZAR
+        // INICIO
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
             cargarHistorial();
-            console.log('🤖 Generador de Textos WhatsApp con IA cargado');
-            console.log('📡 Usando Worker:', SCRIPT_URL);
-            console.log('🔥 Firebase disponible:', !!db);
+            console.log('🤖 Generador WhatsApp con IA cargado');
+            console.log('📡 Worker:', WORKER_URL);
+            console.log('🔥 Firebase:', !!db);
         });
     </script>
 
