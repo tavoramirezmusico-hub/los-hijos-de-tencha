@@ -481,6 +481,32 @@
         });
 
         // ============================================================
+        // LIMPIAR TEXTO PARA WHATSAPP
+        // ============================================================
+        function limpiarTextoWhatsApp(texto) {
+            if (!texto) return '';
+
+            // Eliminar caracteres de control
+            let textoLimpio = texto.replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
+
+            // Eliminar caracteres de reemplazo
+            textoLimpio = textoLimpio.replace(/\uFFFD/g, '');
+
+            // Normalizar caracteres Unicode
+            try {
+                textoLimpio = textoLimpio.normalize('NFC');
+            } catch (e) {
+                // Si falla, continuamos con el texto actual
+            }
+
+            // Reemplazar emojis con variación de género (como 👕🔥) que pueden causar problemas
+            // Estos son caracteres combinados que a veces se rompen en URLs
+            textoLimpio = textoLimpio.replace(/\uFE0F/g, ''); // Eliminar selector de variación
+
+            return textoLimpio.trim();
+        }
+
+        // ============================================================
         // GENERAR
         // ============================================================
         async function generar() {
@@ -521,10 +547,12 @@
 
                 if (data.success) {
                     mensaje.className = 'result-text';
-                    mensaje.textContent = data.texto;
+                    // Limpiamos el texto para WhatsApp
+                    const textoLimpio = limpiarTextoWhatsApp(data.texto);
+                    mensaje.textContent = textoLimpio;
                     tiempo.textContent = '✅ ' + new Date().toLocaleString();
                     toast('✅ Mensaje generado', 'success');
-                    logDebug('✅ Texto: ' + data.texto.substring(0, 100) + '...', 'ok');
+                    logDebug('✅ Texto: ' + textoLimpio.substring(0, 100) + '...', 'ok');
                 } else {
                     mensaje.className = 'result-text';
                     mensaje.textContent = '❌ ' + (data.error || 'Error desconocido');
@@ -565,7 +593,7 @@
         }
 
         // ============================================================
-        // WHATSAPP
+        // WHATSAPP (VERSIÓN CORREGIDA)
         // ============================================================
         function whatsapp() {
             const txt = mensaje.textContent;
@@ -573,7 +601,69 @@
                 toast('⚠️ No hay mensaje válido', 'warning');
                 return;
             }
-            window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
+
+            try {
+                // Método 1: Limpiar y codificar el texto
+                const textoLimpio = limpiarTextoWhatsApp(txt);
+                const textoCodificado = encodeURIComponent(textoLimpio);
+
+                // Abrir WhatsApp
+                const url = 'https://wa.me/?text=' + textoCodificado;
+                window.open(url, '_blank');
+                toast('📱 Abriendo WhatsApp...', 'success');
+
+            } catch (e) {
+                // Fallback: Si falla la codificación estándar, intentamos con un método alternativo
+                try {
+                    // Eliminar todos los caracteres no ASCII y codificar
+                    const textoSimple = txt
+                        .replace(/[^\x00-\x7F]/g, '') // Elimina emojis y caracteres especiales
+                        .trim();
+                    const textoCodificado = encodeURIComponent(textoSimple);
+                    window.open('https://wa.me/?text=' + textoCodificado, '_blank');
+                    toast('📱 Abriendo WhatsApp (modo simple)...', 'success');
+                } catch (e2) {
+                    toast('❌ Error al abrir WhatsApp. Intenta copiar el mensaje.', 'error');
+                }
+            }
+        }
+
+        // ============================================================
+        // WHATSAPP (VERSIÓN ALTERNATIVA CON EMOJIS PRESERVADOS)
+        // Esta versión intenta preservar los emojis usando un método
+        // diferente de codificación
+        // ============================================================
+        function whatsappConEmojis() {
+            const txt = mensaje.textContent;
+            if (!txt || txt.includes('❌') || txt.includes('⏳')) {
+                toast('⚠️ No hay mensaje válido', 'warning');
+                return;
+            }
+
+            // Primero limpiamos el texto
+            let textoLimpio = limpiarTextoWhatsApp(txt);
+
+            // Reemplazamos caracteres especiales que pueden causar problemas en la URL
+            // pero mantenemos los emojis que son soportados por WhatsApp
+            textoLimpio = textoLimpio
+                .replace(/\uFE0F/g, '') // Eliminar selector de variación de emoji
+                .replace(/\u200D/g, ''); // Eliminar joiners de emoji
+
+            // Codificamos el texto de manera segura
+            try {
+                // Usamos encodeURIComponent estándar
+                const textoCodificado = encodeURIComponent(textoLimpio);
+                window.open('https://wa.me/?text=' + textoCodificado, '_blank');
+                toast('📱 Abriendo WhatsApp...', 'success');
+            } catch (e) {
+                // Si falla, usamos el método de fallback
+                const textoSimple = txt
+                    .replace(/[^\x00-\x7F]/g, '')
+                    .trim();
+                const textoCodificado = encodeURIComponent(textoSimple);
+                window.open('https://wa.me/?text=' + textoCodificado, '_blank');
+                toast('📱 Abriendo WhatsApp (modo simple)...', 'success');
+            }
         }
 
         // ============================================================
@@ -666,7 +756,8 @@
                 if (!doc.exists) return;
                 const d = doc.data();
                 mensaje.className = 'result-text';
-                mensaje.textContent = d.texto || 'Sin contenido';
+                const textoLimpio = limpiarTextoWhatsApp(d.texto || 'Sin contenido');
+                mensaje.textContent = textoLimpio;
                 tiempo.textContent = '📂 Reutilizado';
                 resultado.classList.add('show');
                 if (d.tema) tema.value = d.tema;
