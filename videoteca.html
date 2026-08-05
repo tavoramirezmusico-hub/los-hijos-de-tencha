@@ -556,101 +556,92 @@
         // FUNCIÓN: CARGAR CATEGORÍAS DESDE FIREBASE
         // ============================================================
         function cargarCategoriasFirebase() {
-            if (!dbVideos) return;
+            return new Promise(function (resolve, reject) {
+                if (!dbVideos) {
+                    reject('Firebase no disponible');
+                    return;
+                }
 
-            dbVideos.collection('categorias_videos')
-                .orderBy('orden', 'asc')
-                .get()
-                .then(function (snapshot) {
-                    categorias = [];
-                    snapshot.forEach(function (doc) {
-                        var data = doc.data();
-                        categorias.push({
-                            id: doc.id,
-                            nombre: data.nombre || doc.id,
-                            icono: data.icono || '📁',
-                            orden: data.orden || 0
+                dbVideos.collection('categorias_videos')
+                    .orderBy('orden', 'asc')
+                    .get()
+                    .then(function (snapshot) {
+                        categorias = [];
+                        snapshot.forEach(function (doc) {
+                            var data = doc.data();
+                            categorias.push({
+                                id: doc.id,
+                                nombre: data.nombre || doc.id,
+                                icono: data.icono || '📁',
+                                orden: data.orden || 0
+                            });
                         });
+
+                        if (categorias.length > 0 && categorias.every(function (c) {
+                            return c.orden ===
+                                0;
+                        })) {
+                            categorias.sort(function (a, b) {
+                                return a.nombre.localeCompare(b.nombre);
+                            });
+                        }
+
+                        console.log('✅ ' + categorias.length + ' categorías cargadas desde Firebase');
+                        resolve(categorias);
+                    })
+                    .catch(function (error) {
+                        console.error('❌ Error al cargar categorías:', error);
+                        reject(error);
                     });
-
-                    if (categorias.length > 0 && categorias.every(function (c) { return c.orden === 0; })) {
-                        categorias.sort(function (a, b) {
-                            return a.nombre.localeCompare(b.nombre);
-                        });
-                    }
-
-                    console.log('✅ ' + categorias.length + ' categorías cargadas desde Firebase');
-                    renderizarFiltros();
-                })
-                .catch(function (error) {
-                    console.error('❌ Error al cargar categorías:', error);
-                });
+            });
         }
 
         // ============================================================
         // FUNCIÓN: CARGAR VIDEOS DESDE FIREBASE
         // ============================================================
         function cargarVideos() {
-            if (!dbVideos) {
-                mostrarError('⚠️ No se pudo conectar a la base de datos');
-                return;
-            }
+            return new Promise(function (resolve, reject) {
+                if (!dbVideos) {
+                    reject('Firebase no disponible');
+                    return;
+                }
 
-            var grid = document.getElementById('videosGrid');
-            grid.innerHTML =
-                '<div class="videos-vacia">' +
-                '<i class="fa-solid fa-spinner fa-spin" style="color:#ffcc00;"></i>' +
-                '<p>Cargando videos...</p>' +
-                '</div>';
+                dbVideos.collection('videos').get()
+                    .then(function (snapshot) {
+                        videos = [];
+                        snapshot.forEach(function (doc) {
+                            var data = doc.data();
+                            if (data.url) {
+                                videos.push({
+                                    id: doc.id,
+                                    titulo: data.titulo || 'Video sin título',
+                                    descripcion: data.descripcion || '',
+                                    categoria: data.categoria || 'general',
+                                    iconoCategoria: data.iconoCategoria || '',
+                                    url: data.url,
+                                    fecha: data.fecha || '',
+                                    orden: data.orden || 0,
+                                    destacado: data.destacado || false,
+                                    fuente: data.fuente || 'youtube'
+                                });
+                            }
+                        });
 
-            dbVideos.collection('videos').get()
-                .then(function (snapshot) {
-                    videos = [];
-                    snapshot.forEach(function (doc) {
-                        var data = doc.data();
-                        if (data.url) {
-                            videos.push({
-                                id: doc.id,
-                                titulo: data.titulo || 'Video sin título',
-                                descripcion: data.descripcion || '',
-                                categoria: data.categoria || 'general',
-                                iconoCategoria: data.iconoCategoria || '',
-                                url: data.url,
-                                fecha: data.fecha || '',
-                                orden: data.orden || 0,
-                                destacado: data.destacado || false,
-                                fuente: data.fuente || 'youtube'
-                            });
-                        }
+                        videos.sort(function (a, b) {
+                            var ordenA = a.orden || 999;
+                            var ordenB = b.orden || 999;
+                            if (ordenA !== ordenB) return ordenA - ordenB;
+                            return (a.titulo || '').localeCompare(b.titulo || '');
+                        });
+
+                        console.log('✅ ' + videos.length + ' videos cargados');
+                        resolve(videos);
+                    })
+                    .catch(function (error) {
+                        console.error('❌ Error al cargar videos:', error);
+                        reject(error);
                     });
-
-                    videos.sort(function (a, b) {
-                        var ordenA = a.orden || 999;
-                        var ordenB = b.orden || 999;
-                        if (ordenA !== ordenB) return ordenA - ordenB;
-                        return (a.titulo || '').localeCompare(b.titulo || '');
-                    });
-
-                    document.getElementById('videosCount').textContent = videos.length + ' videos';
-
-                    // Primero cargar categorías y luego renderizar
-                    cargarCategoriasFirebase();
-                    renderizarVideos();
-
-                    console.log('✅ ' + videos.length + ' videos cargados');
-
-                })
-                .catch(function (error) {
-                    console.error('❌ Error al cargar videos:', error);
-                    grid.innerHTML =
-                        '<div class="videos-vacia">' +
-                        '<i class="fa-solid fa-triangle-exclamation" style="color:#d32f2f;"></i>' +
-                        '<p>❌ Error al cargar videos: ' + error.message + '</p>' +
-                        '<button onclick="cargarVideos()" style="margin-top:12px; padding:10px 24px; background:#ffcc00; color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:\'Poppins\',sans-serif;">' +
-                        '<i class="fa-solid fa-rotate"></i> Reintentar' +
-                        '</button>' +
-                        '</div>';
-                });
+            });
         }
 
         // ============================================================
@@ -660,12 +651,19 @@
             var container = document.getElementById('filtrosContainer');
             if (!container) return;
 
+            if (categorias.length === 0) {
+                container.innerHTML = '<span style="color:#555; font-size:0.85rem;">No hay categorías disponibles</span>';
+                return;
+            }
+
             var html = '';
             html += '<button class="btn-filtro ' + (filtroActual === 'todas' ? 'active' : '') + '" data-filtro="todas" onclick="filtrarVideos(\'todas\', this)">📸 Todas</button>';
 
             categorias.forEach(function (cat) {
                 var isActive = (filtroActual === cat.id);
-                html += '<button class="btn-filtro ' + (isActive ? 'active' : '') + '" data-filtro="' + cat.id + '" onclick="filtrarVideos(\'' + cat.id + '\', this)">' + (cat.icono || '📁') + ' ' + cat.nombre + '</button>';
+                html += '<button class="btn-filtro ' + (isActive ? 'active' : '') + '" data-filtro="' + cat.id +
+                    '" onclick="filtrarVideos(\'' + cat.id + '\', this)">' + (cat.icono || '📁') + ' ' + cat
+                        .nombre + '</button>';
             });
 
             container.innerHTML = html;
@@ -704,7 +702,8 @@
                 grid.innerHTML =
                     '<div class="videos-vacia">' +
                     '<i class="fa-regular fa-circle-play"></i>' +
-                    '<p>' + (videos.length === 0 ? 'No hay videos disponibles aún.' : 'No hay videos en esta categoría.') + '</p>' +
+                    '<p>' + (videos.length === 0 ? 'No hay videos disponibles aún.' :
+                        'No hay videos en esta categoría.') + '</p>' +
                     '<p style="font-size:0.85rem; color:#555; margin-top:8px;">Pronto subiremos nuevo contenido.</p>' +
                     '</div>';
                 return;
@@ -722,7 +721,10 @@
             var html = '';
             ordenados.forEach(function (video) {
                 var fecha = video.fecha ? formatearFecha(video.fecha) : '';
-                var cat = catMap[video.categoria] || { nombre: video.categoria || 'General', icono: '📁' };
+                var cat = catMap[video.categoria] || {
+                    nombre: video.categoria || 'General',
+                    icono: '📁'
+                };
                 var icono = video.iconoCategoria || cat.icono || '📁';
                 var nombre = cat.nombre || video.categoria || 'General';
                 var fuenteIcon = video.fuente === 'cloudinary' ? '☁️' : '▶️';
@@ -730,14 +732,18 @@
                 html +=
                     '<div class="video-card">' +
                     '<div class="youtube-player">' +
-                    '<iframe src="' + video.url + '" title="' + video.titulo + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>' +
+                    '<iframe src="' + video.url + '" title="' + video.titulo +
+                    '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>' +
                     '</div>' +
-                    '<h3>' + video.titulo + (video.destacado ? ' <span class="destacado">⭐ Destacado</span>' : '') + '</h3>' +
+                    '<h3>' + video.titulo + (video.destacado ? ' <span class="destacado">⭐ Destacado</span>' :
+                        '') + '</h3>' +
                     '<div class="video-meta">' +
                     '<span><i class="fa-regular fa-folder"></i> ' + icono + ' ' + nombre + '</span>' +
                     (fecha ? '<span><i class="fa-regular fa-calendar"></i> ' + fecha + '</span>' : '') +
-                    '<span>' + fuenteIcon + ' ' + (video.fuente === 'cloudinary' ? 'Cloudinary' : 'YouTube') + '</span>' +
-                    (video.orden > 0 ? '<span><i class="fa-regular fa-hashtag"></i> #' + video.orden + '</span>' : '') +
+                    '<span>' + fuenteIcon + ' ' + (video.fuente === 'cloudinary' ? 'Cloudinary' : 'YouTube') +
+                    '</span>' +
+                    (video.orden > 0 ? '<span><i class="fa-regular fa-hashtag"></i> #' + video.orden +
+                        '</span>' : '') +
                     '</div>' +
                     (video.descripcion ? '<p>' + video.descripcion + '</p>' : '') +
                     '</div>';
@@ -785,11 +791,41 @@
         }
 
         // ============================================================
+        // FUNCIÓN: CARGAR TODO (CATEGORÍAS + VIDEOS)
+        // ============================================================
+        function cargarTodo() {
+            var grid = document.getElementById('videosGrid');
+            grid.innerHTML =
+                '<div class="videos-vacia">' +
+                '<i class="fa-solid fa-spinner fa-spin" style="color:#ffcc00;"></i>' +
+                '<p>Cargando videos...</p>' +
+                '</div>';
+
+            // Primero cargar categorías, luego videos
+            cargarCategoriasFirebase()
+                .then(function () {
+                    // Categorías cargadas, ahora cargar videos
+                    return cargarVideos();
+                })
+                .then(function () {
+                    // Videos cargados, renderizar todo
+                    document.getElementById('videosCount').textContent = videos.length + ' videos';
+                    renderizarFiltros();
+                    renderizarVideos();
+                    console.log('✅ Todo cargado correctamente');
+                })
+                .catch(function (error) {
+                    console.error('❌ Error al cargar datos:', error);
+                    mostrarError('⚠️ Error al cargar datos: ' + error.message);
+                });
+        }
+
+        // ============================================================
         // INICIALIZAR
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
-            cargarVideos();
-            console.log('🚀 Videoteca: categorías desde Firebase (mismo sistema que galería)');
+            cargarTodo();
+            console.log('🚀 Videoteca: carga secuencial (categorías → videos)');
         });
     </script>
 
