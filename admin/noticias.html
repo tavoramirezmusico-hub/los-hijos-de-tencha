@@ -423,6 +423,42 @@
             letter-spacing: 1px;
         }
 
+        /* ============================================================
+           BOTÓN RECARGAR (ESTILO VIDEOS)
+           ============================================================ */
+        .recargar-btn {
+            margin-left: 8px;
+            background: var(--color-bg-hover);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+            border-radius: 50% !important;
+            width: 36px !important;
+            height: 36px !important;
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 0.9rem !important;
+            flex-shrink: 0 !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .recargar-btn:hover {
+            background: #2a2a2a;
+            transform: rotate(180deg);
+        }
+
+        .recargar-btn i {
+            transition: transform 0.5s ease;
+        }
+
+        .card-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
         @media (max-width: 768px) {
             .preview-modal .preview-content {
                 padding: 20px;
@@ -440,6 +476,15 @@
 
             .cropper-container {
                 max-height: 300px;
+            }
+
+            .noticias-toolbar {
+                margin-bottom: 8px;
+            }
+
+            .card-actions {
+                width: 100%;
+                justify-content: space-between;
             }
         }
 
@@ -464,18 +509,22 @@
             .cropper-buttons .btn-admin {
                 min-width: 100%;
             }
-        }
 
-        .recargar-btn {
-            margin-right: 8px;
-        }
+            .noticias-toolbar .btn-admin {
+                flex: 1;
+                justify-content: center;
+                font-size: 0.7rem !important;
+                padding: 6px 12px !important;
+            }
 
-        .recargar-btn i {
-            transition: transform 0.5s ease;
-        }
+            .card-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
 
-        .recargar-btn:hover i {
-            transform: rotate(180deg);
+            .recargar-btn {
+                align-self: flex-end;
+            }
         }
     </style>
 </head>
@@ -658,25 +707,27 @@
             <div class="card-header">
                 <h3><i class="fa-solid fa-list"></i> Noticias Publicadas</h3>
                 <div class="card-actions">
+                    <span id="noticiasCount" style="font-size:0.75rem; color:var(--color-text-muted);"></span>
                     <button class="btn-admin btn-secondary btn-sm recargar-btn" onclick="recargarNoticias()"
                         title="Recargar lista de noticias">
-                        <i class="fa-solid fa-rotate"></i> Recargar
+                        <i class="fa-solid fa-rotate"></i>
                     </button>
-                    <div class="noticias-toolbar">
-                        <button class="btn-admin btn-secondary btn-sm active" data-filtro="todas"
-                            onclick="filtrarNoticias('todas', this)">
-                            <i class="fa-solid fa-list"></i> Todas
-                        </button>
-                        <button class="btn-admin btn-secondary btn-sm" data-filtro="publicada"
-                            onclick="filtrarNoticias('publicada', this)">
-                            <i class="fa-solid fa-check-circle"></i> Publicadas
-                        </button>
-                        <button class="btn-admin btn-secondary btn-sm" data-filtro="borrador"
-                            onclick="filtrarNoticias('borrador', this)">
-                            <i class="fa-solid fa-pen"></i> Borradores
-                        </button>
-                    </div>
                 </div>
+            </div>
+
+            <div class="noticias-toolbar">
+                <button class="btn-admin btn-secondary btn-sm active" data-filtro="todas"
+                    onclick="filtrarNoticias('todas', this)">
+                    <i class="fa-solid fa-list"></i> Todas
+                </button>
+                <button class="btn-admin btn-secondary btn-sm" data-filtro="publicada"
+                    onclick="filtrarNoticias('publicada', this)">
+                    <i class="fa-solid fa-check-circle"></i> Publicadas
+                </button>
+                <button class="btn-admin btn-secondary btn-sm" data-filtro="borrador"
+                    onclick="filtrarNoticias('borrador', this)">
+                    <i class="fa-solid fa-pen"></i> Borradores
+                </button>
             </div>
 
             <div id="listaNoticias">
@@ -815,17 +866,6 @@
             } catch (error) {
                 console.error('❌ Error al inicializar Quill:', error);
             }
-        }
-
-        // ============================================================
-        // FUNCIONES - MENSAJES
-        // ============================================================
-
-        function mostrarMensajeNoticia(elemento, texto, tipo) {
-            if (!elemento) return;
-            elemento.style.display = 'block';
-            elemento.textContent = texto;
-            elemento.className = 'admin-form-group ' + tipo;
         }
 
         // ============================================================
@@ -1089,6 +1129,7 @@
                     return fechaB - fechaA;
                 });
 
+                document.getElementById('noticiasCount').textContent = noticias.length + ' noticias';
                 renderizarNoticias();
 
             } catch (error) {
@@ -1423,7 +1464,7 @@
             document.getElementById('noticiaFecha').value = new Date().toISOString().split('T')[0];
             setTimeout(initQuill, 300);
             setTimeout(cargarNoticias, 500);
-            console.log('🚀 Gestor de Noticias cargado con recorte de imágenes y botón recargar');
+            console.log('🚀 Gestor de Noticias cargado con recorte de imágenes y botón recargar estilo videos');
         });
     </script>
 
