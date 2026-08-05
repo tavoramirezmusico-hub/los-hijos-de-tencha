@@ -22,9 +22,6 @@
     <link rel="stylesheet" href="css/admin.css">
 
     <style>
-        /* ============================================================
-           ESTILOS - VERSIÓN CORREGIDA (SIN DUPLICADOS)
-           ============================================================ */
         .video-item {
             display: flex;
             gap: 16px;
@@ -292,9 +289,6 @@
             transform: scale(1.2);
         }
 
-        /* ============================================================
-           CATEGORÍAS
-           ============================================================ */
         .categorias-videos {
             display: flex;
             flex-wrap: wrap;
@@ -376,9 +370,6 @@
             margin-top: 8px;
         }
 
-        /* ============================================================
-           MODAL EDITAR CATEGORÍA
-           ============================================================ */
         #modalEditarCategoria .modal-content {
             max-width: 480px;
         }
@@ -711,8 +702,8 @@
                         </span>
                     </span>
                 </div>
-                <div class="form-help">Las categorías se guardan en Firebase. Puedes crear nuevas cuantas veces quieras.
-                </div>
+                <div class="form-help">Las categorías se guardan en localStorage. Puedes crear nuevas cuantas veces
+                    quieras.</div>
             </div>
 
             <select id="videoCategoria" class="admin-select" style="margin-top:8px;">
@@ -969,11 +960,10 @@
         let modoSubida = 'youtube';
 
         // ============================================================
-        // CATEGORÍAS CON ÍCONOS (se guardan en localStorage)
+        // CATEGORÍAS CON ÍCONOS
         // ============================================================
         let categoriasDisponibles = [];
 
-        // Mapa de categorías base con sus íconos
         const categoriasBase = {
             'oficial': { nombre: 'Oficiales', icono: '🎥' },
             'momentos': { nombre: 'Momentos Tencha', icono: '🎬' },
@@ -1192,7 +1182,7 @@
         }
 
         // ============================================================
-        // FUNCIÓN: EDITAR CATEGORÍA
+        // FUNCIÓN: EDITAR CATEGORÍA Y ACTUALIZAR VIDEOS EN FIREBASE
         // ============================================================
         function editarCategoria(id) {
             const cat = categoriasDisponibles.find(c => c.id === id);
@@ -1230,9 +1220,6 @@
             });
         }
 
-        // ============================================================
-        // FUNCIÓN: GUARDAR EDICIÓN DE CATEGORÍA Y ACTUALIZAR VIDEOS
-        // ============================================================
         async function guardarEdicionCategoria() {
             const id = document.getElementById('categoriaIdEdit').value;
             const nombre = document.getElementById('categoriaNombreEdit').value.trim();
@@ -1258,24 +1245,26 @@
             cat.nombre = nombre;
             cat.icono = icono;
 
-            // Actualizar icono en TODOS los videos que usan esta categoría
+            // 🔥 ACTUALIZAR TODOS LOS VIDEOS EN FIREBASE CON EL NUEVO ICONO
             try {
                 const snapshot = await db.collection('videos')
                     .where('categoria', '==', id)
                     .get();
 
-                const batch = db.batch();
-                snapshot.forEach(doc => {
-                    batch.update(doc.ref, { iconoCategoria: icono });
-                });
-
                 if (!snapshot.empty) {
+                    const batch = db.batch();
+                    snapshot.forEach(doc => {
+                        batch.update(doc.ref, { iconoCategoria: icono });
+                    });
                     await batch.commit();
                     console.log(`✅ Icono actualizado en ${snapshot.size} videos de la categoría "${nombre}"`);
+                    mostrarToast(`✅ ${snapshot.size} videos actualizados con el nuevo ícono`, 'success');
+                } else {
+                    console.log('ℹ️ No hay videos en esta categoría para actualizar');
                 }
             } catch (error) {
                 console.error('❌ Error al actualizar iconos en videos:', error);
-                // Continuamos aunque falle, no es crítico
+                mostrarToast('⚠️ Categoría guardada pero hubo error al actualizar videos', 'warning');
             }
 
             guardarCategorias();
@@ -1288,8 +1277,8 @@
             }
 
             cerrarModalCategoria();
-            mostrarToast('✅ Categoría "' + nombre + '" actualizada y videos sincronizados', 'success');
             cargarVideos(); // Recargar lista de videos
+            mostrarToast('✅ Categoría "' + nombre + '" actualizada', 'success');
         }
 
         // ============================================================
@@ -1448,7 +1437,7 @@
         }
 
         // ============================================================
-        // FUNCIONES CRUD - CON GUARDADO DE ICONO EN VIDEO
+        // FUNCIONES CRUD - CON GUARDADO DE ICONO EN CADA VIDEO
         // ============================================================
 
         async function guardarVideo() {
@@ -1655,6 +1644,7 @@
             filtrados.forEach(video => {
                 const fecha = video.fecha ? formatearFecha(video.fecha) : 'Sin fecha';
                 const cat = catMap[video.categoria] || { nombre: video.categoria || 'General', icono: '📁' };
+                // Priorizar icono guardado en el video, luego el de la categoría, luego default
                 const iconoMostrar = video.iconoCategoria || cat.icono || '📁';
                 const fuenteIcon = video.fuente === 'cloudinary' ? '☁️' : '▶️';
 
