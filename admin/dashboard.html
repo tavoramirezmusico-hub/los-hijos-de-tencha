@@ -143,6 +143,48 @@
             color: var(--color-text);
         }
 
+        .modulos-config .separador {
+            width: 1px;
+            height: 28px;
+            background: var(--color-border);
+            margin: 0 4px;
+            flex-shrink: 0;
+        }
+
+        .btn-config-modulos {
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-size: 0.7rem;
+            transition: var(--transition);
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-config-modulos:hover {
+            color: var(--color-text);
+        }
+
+        .btn-config-modulos i {
+            font-size: 0.85rem;
+        }
+
+        .config-guardada-msg {
+            font-size: 0.65rem;
+            color: var(--color-success);
+            display: none;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .config-guardada-msg.show {
+            display: inline-flex;
+        }
+
         /* ============================================================
            ESTADÍSTICAS - GRID DINÁMICO
            ============================================================ */
@@ -180,7 +222,6 @@
             display: none;
         }
 
-        /* Cuando solo hay una tarjeta visible, que ocupe todo el ancho */
         .dashboard-grid-2.una-columna {
             grid-template-columns: 1fr;
         }
@@ -243,7 +284,7 @@
         }
 
         /* ============================================================
-           QUICK ACCESS
+           QUICK ACCESS - CON BOTONES PERSONALIZABLES
            ============================================================ */
         .quick-access-grid {
             display: grid;
@@ -292,43 +333,52 @@
             margin-top: 4px;
         }
 
+        .quick-access-grid .quick-item.oculto {
+            display: none;
+        }
+
         /* ============================================================
-           ENLACES RÁPIDOS
+           CONFIGURACIÓN DE ACCESO RÁPIDO
            ============================================================ */
-        .enlaces-rapidos {
+        .config-acceso-rapido {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            margin-bottom: 12px;
             display: flex;
             flex-wrap: wrap;
+            align-items: center;
             gap: 8px;
         }
 
-        .enlaces-rapidos .btn-admin {
-            font-size: 0.75rem;
-            padding: 6px 14px;
+        .config-acceso-rapido .label-sm {
+            font-size: 0.65rem;
+            color: var(--color-text-muted);
+            font-weight: 500;
+            margin-right: 4px;
         }
 
-        /* ============================================================
-           TOGGLE DE MÓDULOS - BOTÓN DE CONFIGURACIÓN
-           ============================================================ */
-        .btn-config-modulos {
-            background: none;
-            border: none;
+        .config-acceso-rapido .toggle-sm {
+            padding: 2px 10px;
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+            background: transparent;
             color: var(--color-text-muted);
+            font-size: 0.6rem;
             cursor: pointer;
-            padding: 4px 10px;
-            font-size: 0.75rem;
             transition: var(--transition);
             font-family: 'Poppins', sans-serif;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
-        .btn-config-modulos:hover {
-            color: var(--color-text);
+        .config-acceso-rapido .toggle-sm.active {
+            background: var(--color-primary);
+            color: #000;
+            border-color: var(--color-primary);
         }
 
-        .btn-config-modulos i {
-            font-size: 0.9rem;
+        .config-acceso-rapido .toggle-sm:hover:not(.active) {
+            border-color: var(--color-primary);
         }
 
         /* ============================================================
@@ -409,9 +459,18 @@
                 padding: 3px 10px;
             }
 
-            .enlaces-rapidos .btn-admin {
-                font-size: 0.65rem;
-                padding: 4px 10px;
+            .modulos-config .separador {
+                display: none;
+            }
+
+            .config-acceso-rapido {
+                padding: 10px 12px;
+                gap: 6px;
+            }
+
+            .config-acceso-rapido .toggle-sm {
+                font-size: 0.55rem;
+                padding: 2px 8px;
             }
         }
 
@@ -480,20 +539,16 @@
                 font-size: 0.6rem;
                 margin-left: auto;
             }
-        }
 
-        /* ============================================================
-           GUARDAR CONFIGURACIÓN EN LOCALSTORAGE
-           ============================================================ */
-        .config-guardada-msg {
-            font-size: 0.65rem;
-            color: var(--color-success);
-            margin-left: 8px;
-            display: none;
-        }
+            .config-acceso-rapido .toggle-sm {
+                font-size: 0.5rem;
+                padding: 2px 6px;
+            }
 
-        .config-guardada-msg.show {
-            display: inline;
+            .config-acceso-rapido .label-sm {
+                font-size: 0.55rem;
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -586,8 +641,8 @@
                 <button class="toggle-btn active" data-modulo="stats">Estadísticas</button>
                 <button class="toggle-btn active" data-modulo="actividad">Actividad</button>
                 <button class="toggle-btn active" data-modulo="acceso">Acceso Rápido</button>
-                <button class="toggle-btn active" data-modulo="enlaces">Enlaces</button>
             </div>
+            <span class="separador"></span>
             <button class="btn-config-modulos" id="btnResetModulos" title="Restaurar configuración predeterminada">
                 <i class="fa-solid fa-rotate-left"></i> Reset
             </button>
@@ -644,77 +699,67 @@
             <div class="admin-card" data-modulo="acceso">
                 <div class="card-header">
                     <h3><i class="fa-solid fa-bolt"></i> Acceso Rápido</h3>
+                    <button class="btn-config-modulos" id="toggleConfigAcceso" style="font-size:0.65rem;">
+                        <i class="fa-solid fa-pen"></i> Personalizar
+                    </button>
                 </div>
-                <div class="quick-access-grid">
-                    <a href="eventos.html" class="quick-item">
+
+                <!-- Configuración de botones de acceso rápido (oculta por defecto) -->
+                <div class="config-acceso-rapido" id="configAccesoRapido" style="display:none;">
+                    <span class="label-sm"><i class="fa-solid fa-check-square"></i> Botones visibles:</span>
+                    <button class="toggle-sm active" data-boton="eventos">Eventos</button>
+                    <button class="toggle-sm active" data-boton="noticias">Noticias</button>
+                    <button class="toggle-sm active" data-boton="galeria">Galería</button>
+                    <button class="toggle-sm active" data-boton="canciones">Canciones</button>
+                    <button class="toggle-sm active" data-boton="videos">Videos</button>
+                    <button class="toggle-sm active" data-boton="tienda">Tienda</button>
+                    <button class="toggle-sm active" data-boton="validador">Validador</button>
+                    <button class="toggle-sm active" data-boton="generador">Generador</button>
+                    <button class="toggle-sm active" data-boton="web">Web</button>
+                </div>
+
+                <div class="quick-access-grid" id="quickAccessGrid">
+                    <a href="eventos.html" class="quick-item" data-boton="eventos">
                         <i class="fa-solid fa-calendar-plus"></i>
                         <span>Crear Evento</span>
                     </a>
-                    <a href="noticias.html" class="quick-item">
+                    <a href="noticias.html" class="quick-item" data-boton="noticias">
                         <i class="fa-solid fa-pen-to-square"></i>
                         <span>Nueva Noticia</span>
                     </a>
-                    <a href="galeria.html" class="quick-item">
+                    <a href="galeria.html" class="quick-item" data-boton="galeria">
                         <i class="fa-solid fa-upload"></i>
                         <span>Subir Fotos</span>
                     </a>
-                    <a href="canciones.html" class="quick-item">
+                    <a href="canciones.html" class="quick-item" data-boton="canciones">
                         <i class="fa-solid fa-plus-circle"></i>
                         <span>Agregar Canción</span>
                     </a>
-                    <a href="videos.html" class="quick-item">
+                    <a href="videos.html" class="quick-item" data-boton="videos">
                         <i class="fa-solid fa-plus-circle"></i>
                         <span>Agregar Video</span>
                     </a>
-                    <a href="tienda.html" class="quick-item">
+                    <a href="tienda.html" class="quick-item" data-boton="tienda">
                         <i class="fa-solid fa-plus-circle"></i>
                         <span>Agregar Producto</span>
                     </a>
-                    <a href="validador.html" class="quick-item">
+                    <a href="validador.html" class="quick-item" data-boton="validador">
                         <i class="fa-solid fa-qrcode"></i>
                         <span>Validador QR</span>
                         <span class="quick-badge">Escáner</span>
                     </a>
-                    <a href="generador.html" class="quick-item">
+                    <a href="generador.html" class="quick-item" data-boton="generador">
                         <i class="fa-solid fa-wand-magic-sparkles"></i>
                         <span>Generador WhatsApp</span>
                         <span class="quick-badge">IA</span>
                     </a>
-                    <a href="../index.html" target="_blank" class="quick-item">
+                    <a href="../index.html" target="_blank" class="quick-item" data-boton="web">
                         <i class="fa-solid fa-globe"></i>
                         <span>Ver Sitio Web</span>
                     </a>
                 </div>
             </div>
 
-        </div>
-
-        <!-- ENLACES RÁPIDOS ADICIONALES -->
-        <div class="admin-card" data-modulo="enlaces">
-            <div class="card-header">
-                <h3><i class="fa-solid fa-link"></i> Enlaces Rápidos</h3>
-            </div>
-            <div class="enlaces-rapidos">
-                <a href="eventos.html" class="btn-admin btn-secondary btn-sm"><i class="fa-solid fa-calendar"></i>
-                    Eventos</a>
-                <a href="noticias.html" class="btn-admin btn-secondary btn-sm"><i class="fa-solid fa-newspaper"></i>
-                    Noticias</a>
-                <a href="galeria.html" class="btn-admin btn-secondary btn-sm"><i class="fa-solid fa-images"></i>
-                    Galería</a>
-                <a href="canciones.html" class="btn-admin btn-secondary btn-sm"><i class="fa-solid fa-music"></i>
-                    Canciones</a>
-                <a href="videos.html" class="btn-admin btn-secondary btn-sm"><i class="fa-solid fa-video"></i>
-                    Videos</a>
-                <a href="tienda.html" class="btn-admin btn-secondary btn-sm"><i class="fa-solid fa-shirt"></i>
-                    Tienda</a>
-                <a href="asistentes.html" class="btn-admin btn-secondary btn-sm"><i class="fa-solid fa-users"></i>
-                    Asistentes</a>
-                <a href="validador.html" class="btn-admin btn-primary btn-sm"><i class="fa-solid fa-qrcode"></i>
-                    Validador</a>
-                <a href="generador.html" class="btn-admin btn-primary btn-sm"><i
-                        class="fa-solid fa-wand-magic-sparkles"></i>
-                    Generador IA</a>
-            </div>
         </div>
 
     </main>
@@ -771,46 +816,75 @@
         // CONFIGURACIÓN DE MÓDULOS - LOCALSTORAGE
         // ============================================================
         const MODULOS_KEY = 'dashboard_modulos_tencha';
+        const BOTONES_KEY = 'dashboard_botones_tencha';
 
-        // Estado por defecto
+        // Estado por defecto de módulos
         const MODULOS_DEFAULT = {
             stats: true,
             actividad: true,
-            acceso: true,
-            enlaces: true
+            acceso: true
         };
 
-        // Cargar configuración guardada
+        // Estado por defecto de botones de acceso rápido
+        const BOTONES_DEFAULT = {
+            eventos: true,
+            noticias: true,
+            galeria: true,
+            canciones: true,
+            videos: true,
+            tienda: true,
+            validador: true,
+            generador: true,
+            web: true
+        };
+
+        // ============================================================
+        // FUNCIONES DE CONFIGURACIÓN
+        // ============================================================
+
         function cargarConfigModulos() {
             try {
                 const guardado = localStorage.getItem(MODULOS_KEY);
                 if (guardado) {
                     const config = JSON.parse(guardado);
-                    // Mezclar con default por si faltan keys
                     return { ...MODULOS_DEFAULT, ...config };
                 }
-            } catch (e) {
-                console.warn('Error al cargar configuración de módulos:', e);
-            }
+            } catch (e) { }
             return { ...MODULOS_DEFAULT };
         }
 
-        // Guardar configuración
         function guardarConfigModulos(config) {
             try {
                 localStorage.setItem(MODULOS_KEY, JSON.stringify(config));
-                // Mostrar mensaje de confirmación
                 const msg = document.getElementById('configGuardadaMsg');
                 msg.classList.add('show');
                 setTimeout(() => msg.classList.remove('show'), 2000);
-            } catch (e) {
-                console.warn('Error al guardar configuración:', e);
-            }
+            } catch (e) { }
         }
 
-        // Aplicar configuración a la UI
+        function cargarConfigBotones() {
+            try {
+                const guardado = localStorage.getItem(BOTONES_KEY);
+                if (guardado) {
+                    const config = JSON.parse(guardado);
+                    return { ...BOTONES_DEFAULT, ...config };
+                }
+            } catch (e) { }
+            return { ...BOTONES_DEFAULT };
+        }
+
+        function guardarConfigBotones(config) {
+            try {
+                localStorage.setItem(BOTONES_KEY, JSON.stringify(config));
+            } catch (e) { }
+        }
+
+        // ============================================================
+        // APLICAR CONFIGURACIONES
+        // ============================================================
+
         function aplicarConfigModulos(config) {
-            // Actualizar botones toggle
+            // Botones toggle
             document.querySelectorAll('.toggle-btn').forEach(btn => {
                 const modulo = btn.dataset.modulo;
                 if (config[modulo]) {
@@ -820,61 +894,64 @@
                 }
             });
 
-            // Mostrar/ocultar tarjetas de estadísticas
+            // Estadísticas
             document.querySelectorAll('.admin-stat-card[data-modulo="stats"]').forEach(el => {
-                if (config.stats) {
-                    el.classList.remove('oculto');
-                } else {
-                    el.classList.add('oculto');
-                }
+                el.classList.toggle('oculto', !config.stats);
             });
 
-            // Mostrar/ocultar tarjetas del grid
+            // Tarjetas del grid
             document.querySelectorAll('.dashboard-grid-2 .admin-card').forEach(el => {
                 const modulo = el.dataset.modulo;
-                if (config[modulo]) {
-                    el.classList.remove('oculto');
+                el.classList.toggle('oculto', !config[modulo]);
+            });
+
+            // Ajustar grid
+            const grid = document.getElementById('dashboardGrid');
+            const visibles = document.querySelectorAll('.dashboard-grid-2 .admin-card:not(.oculto)');
+            grid.classList.toggle('una-columna', visibles.length <= 1);
+        }
+
+        function aplicarConfigBotones(config) {
+            // Actualizar botones toggle pequeños
+            document.querySelectorAll('.config-acceso-rapido .toggle-sm').forEach(btn => {
+                const boton = btn.dataset.boton;
+                if (config[boton]) {
+                    btn.classList.add('active');
                 } else {
-                    el.classList.add('oculto');
+                    btn.classList.remove('active');
                 }
             });
 
-            // Mostrar/ocultar tarjeta de enlaces
-            const enlacesCard = document.querySelector('.admin-card[data-modulo="enlaces"]');
-            if (enlacesCard) {
-                if (config.enlaces) {
-                    enlacesCard.classList.remove('oculto');
-                } else {
-                    enlacesCard.classList.add('oculto');
-                }
-            }
-
-            // Ajustar grid: si solo hay una columna visible, usar una columna
-            const grid = document.getElementById('dashboardGrid');
-            const visibles = document.querySelectorAll('.dashboard-grid-2 .admin-card:not(.oculto)');
-            if (visibles.length <= 1) {
-                grid.classList.add('una-columna');
-            } else {
-                grid.classList.remove('una-columna');
-            }
+            // Mostrar/ocultar items de acceso rápido
+            document.querySelectorAll('.quick-access-grid .quick-item').forEach(el => {
+                const boton = el.dataset.boton;
+                el.classList.toggle('oculto', !config[boton]);
+            });
         }
 
-        // Inicializar módulos
-        let configModulos = cargarConfigModulos();
+        // ============================================================
+        // INICIALIZAR CONFIGURACIONES
+        // ============================================================
 
-        // Eventos de los botones toggle
+        let configModulos = cargarConfigModulos();
+        let configBotones = cargarConfigBotones();
+
+        aplicarConfigModulos(configModulos);
+        aplicarConfigBotones(configBotones);
+
+        // ============================================================
+        // EVENTOS - MÓDULOS
+        // ============================================================
+
         document.querySelectorAll('.toggle-btn').forEach(btn => {
             btn.addEventListener('click', function () {
                 const modulo = this.dataset.modulo;
-                // Toggle
                 configModulos[modulo] = !configModulos[modulo];
-                // Guardar y aplicar
                 guardarConfigModulos(configModulos);
                 aplicarConfigModulos(configModulos);
             });
         });
 
-        // Reset a configuración por defecto
         document.getElementById('btnResetModulos').addEventListener('click', function () {
             configModulos = { ...MODULOS_DEFAULT };
             guardarConfigModulos(configModulos);
@@ -884,12 +961,40 @@
             }
         });
 
-        // Aplicar configuración inicial
-        aplicarConfigModulos(configModulos);
+        // ============================================================
+        // EVENTOS - TOGGLE CONFIGURACIÓN DE ACCESO RÁPIDO
+        // ============================================================
+
+        document.getElementById('toggleConfigAcceso').addEventListener('click', function () {
+            const panel = document.getElementById('configAccesoRapido');
+            const estaVisible = panel.style.display !== 'none';
+            panel.style.display = estaVisible ? 'none' : 'block';
+            this.innerHTML = estaVisible ?
+                '<i class="fa-solid fa-pen"></i> Personalizar' :
+                '<i class="fa-solid fa-check"></i> Listo';
+        });
+
+        // ============================================================
+        // EVENTOS - BOTONES DE ACCESO RÁPIDO
+        // ============================================================
+
+        document.querySelectorAll('.config-acceso-rapido .toggle-sm').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const boton = this.dataset.boton;
+                configBotones[boton] = !configBotones[boton];
+                guardarConfigBotones(configBotones);
+                aplicarConfigBotones(configBotones);
+                // Mostrar mensaje de guardado
+                const msg = document.getElementById('configGuardadaMsg');
+                msg.classList.add('show');
+                setTimeout(() => msg.classList.remove('show'), 1500);
+            });
+        });
 
         // ============================================================
         // CARGAR ESTADÍSTICAS
         // ============================================================
+
         async function cargarDashboard() {
             try {
                 if (typeof db === 'undefined' || !db) {
@@ -911,7 +1016,6 @@
                     const eventosSnap = await db.collection('eventos').get();
                     document.getElementById('totalEventos').textContent = eventosSnap.size || 0;
                 } catch (e) {
-                    console.warn('Error al contar eventos:', e);
                     document.getElementById('totalEventos').textContent = '0';
                 }
 
@@ -920,7 +1024,6 @@
                     const asistentesSnap = await db.collection('asistentes').get();
                     document.getElementById('totalAsistentes').textContent = asistentesSnap.size || 0;
                 } catch (e) {
-                    console.warn('Error al contar asistentes:', e);
                     document.getElementById('totalAsistentes').textContent = '0';
                 }
 
@@ -944,7 +1047,6 @@
                     });
                     document.getElementById('ingresadosHoy').textContent = ingresadosHoy;
                 } catch (e) {
-                    console.warn('Error al contar ingresados hoy:', e);
                     document.getElementById('ingresadosHoy').textContent = '0';
                 }
 
@@ -953,7 +1055,6 @@
                     const noticiasSnap = await db.collection('noticias').get();
                     document.getElementById('totalNoticias').textContent = noticiasSnap.size || 0;
                 } catch (e) {
-                    console.warn('Error al contar noticias:', e);
                     document.getElementById('totalNoticias').textContent = '0';
                 }
 
@@ -1007,7 +1108,6 @@
                         lista.innerHTML = html;
                     }
                 } catch (e) {
-                    console.warn('Error al cargar actividad reciente:', e);
                     document.getElementById('actividadReciente').innerHTML = `
                                 <li style="color:var(--color-text-muted); padding:20px 0; text-align:center; justify-content:center;">
                                     <i class="fa-regular fa-clock"></i> No hay actividad reciente
@@ -1035,6 +1135,7 @@
         // ============================================================
         // INICIALIZAR
         // ============================================================
+
         document.addEventListener('DOMContentLoaded', function () {
             setTimeout(cargarDashboard, 500);
             setInterval(cargarDashboard, 60000);
