@@ -109,7 +109,7 @@
         }
 
         /* =====================================
-           HERO GALERÍA - UNIFICADO CON LAS DEMÁS PÁGINAS
+           HERO GALERÍA
            ===================================== */
         .hero-galeria {
             min-height: 50vh;
@@ -189,7 +189,7 @@
         }
 
         /* =====================================
-           GALERÍA - ESTILOS PROPIOS
+           GALERÍA
            ===================================== */
         .galeria-grid {
             display: grid;
@@ -293,7 +293,6 @@
             border-color: #ffcc00;
         }
 
-        /* RESPONSIVE GALERÍA */
         @media (max-width: 900px) {
             .galeria-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -333,7 +332,7 @@
         }
 
         /* =====================================
-           VISOR DE GALERÍA MEJORADO
+           VISOR
            ===================================== */
         .visor {
             position: fixed;
@@ -528,7 +527,6 @@
                 <h2>Nuestra Galería</h2>
             </div>
 
-            <!-- Categorías -->
             <div class="galeria-categorias" id="galeriaCategorias">
                 <button class="cat-btn active" data-categoria="todas">📸 Todas</button>
                 <button class="cat-btn" data-categoria="vocho">🚗 Sesión Vocho</button>
@@ -536,9 +534,7 @@
                 <button class="cat-btn" data-categoria="lanzamiento">🎸 Cumbia Salvaje</button>
             </div>
 
-            <div class="galeria-grid" id="galeriaGrid">
-                <!-- Las fotos se cargan desde JavaScript -->
-            </div>
+            <div class="galeria-grid" id="galeriaGrid"></div>
         </div>
     </section>
 
@@ -551,9 +547,7 @@
 
     <button id="subir"><i class="fa-solid fa-arrow-up"></i></button>
 
-    <!-- ==========================
-         VISOR DE GALERÍA
-    ========================== -->
+    <!-- VISOR -->
     <div id="visor-galeria" class="visor">
         <button id="cerrar-galeria" class="cerrar-visor">&times;</button>
         <button id="foto-anterior" class="flecha flecha-izq">&#10094;</button>
@@ -566,7 +560,7 @@
         </div>
     </div>
 
-    <!-- Pantalla de transición -->
+    <!-- TRANSICIÓN -->
     <div id="transicion">
         <img src="img/transicion.gif" alt="Transición">
     </div>
@@ -581,412 +575,390 @@
     <script src="js/eventos.js"></script>
 
     <!-- ============================================= -->
-    <!-- SCRIPT ESPECÍFICO PARA GALERÍA               -->
+    <!-- SCRIPT GALERÍA - VERSIÓN SIMPLE Y ESTABLE    -->
     <!-- ============================================= -->
     <script>
-        // =====================================
-        // CONFIGURACIÓN DE FIREBASE (SOLO SI NO ESTÁ INICIALIZADO)
-        // =====================================
-        if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-            const firebaseConfig = {
-                apiKey: "AIzaSyDvp_6UFymZZnqxMyL6yobJ3twLMvVkThw",
-                authDomain: "base-entradas-tenchos.firebaseapp.com",
-                projectId: "base-entradas-tenchos",
-                storageBucket: "base-entradas-tenchos.firebasestorage.app",
-                messagingSenderId: "273676503007",
-                appId: "1:273676503007:web:56180c485b648ef076a66a"
+        (function () {
+            "use strict";
+
+            // =====================================
+            // DATOS DE RESPALDO
+            // =====================================
+            var galeriaDatosRespaldo = {
+                'vocho': {
+                    titulo: 'Sesión Vocho',
+                    fotos: [
+                        'img/galeria/vocho/foto1.webp',
+                        'img/galeria/vocho/foto2.webp',
+                        'img/galeria/vocho/foto7.webp',
+                        'img/galeria/vocho/foto8.webp',
+                        'img/galeria/vocho/foto9.webp',
+                        'img/galeria/vocho/foto10.webp',
+                        'img/galeria/vocho/foto11.webp',
+                        'img/galeria/vocho/foto12.webp',
+                        'img/galeria/vocho/foto13.webp',
+                        'img/galeria/vocho/foto14.webp',
+                        'img/galeria/vocho/foto15.webp',
+                        'img/galeria/vocho/foto16.webp'
+                    ]
+                },
+                'disco': {
+                    titulo: 'Sesión Disco Cumbias',
+                    fotos: [
+                        'img/galeria/cumbias/foto3.webp',
+                        'img/galeria/cumbias/foto4.webp',
+                        'img/galeria/cumbias/foto5.webp',
+                        'img/galeria/cumbias/foto6.webp'
+                    ]
+                },
+                'lanzamiento': {
+                    titulo: 'Cumbia Salvaje - Lanzamiento',
+                    fotos: [
+                        'img/galeria/lanzamiento/foto1.webp',
+                        'img/galeria/lanzamiento/foto2.webp',
+                        'img/galeria/lanzamiento/foto3.webp',
+                        'img/galeria/lanzamiento/foto17.webp',
+                        'img/galeria/lanzamiento/foto18.webp',
+                        'img/galeria/lanzamiento/foto19.webp',
+                        'img/galeria/lanzamiento/foto20.webp'
+                    ]
+                }
             };
-            firebase.initializeApp(firebaseConfig);
-            console.log('✅ Firebase inicializado en galería');
-        }
 
-        // Usar la variable db que ya existe en script.js (no crear una nueva)
-        // Si no existe, crearla
-        let dbGaleria = null;
-        try {
-            if (typeof db !== 'undefined') {
-                dbGaleria = db;
-                console.log('✅ Usando db existente desde script.js');
-            } else if (typeof firebase !== 'undefined') {
-                dbGaleria = firebase.firestore();
-                console.log('✅ Firestore inicializado localmente');
-            }
-        } catch (error) {
-            console.warn('⚠️ Firestore no disponible:', error);
-        }
+            var categoriaActual = 'todas';
+            var fotosActuales = [];
+            var indiceActualVisor = 0;
+            var fotosFirebase = [];
 
-        // =====================================
-        // DATOS DE RESPALDO (FOTOS Y CATEGORÍAS FIJAS)
-        // =====================================
-        const galeriaDatosRespaldo = {
-            'vocho': {
-                titulo: 'Sesión Vocho',
-                fotos: [
-                    'img/galeria/vocho/foto1.webp',
-                    'img/galeria/vocho/foto2.webp',
-                    'img/galeria/vocho/foto7.webp',
-                    'img/galeria/vocho/foto8.webp',
-                    'img/galeria/vocho/foto9.webp',
-                    'img/galeria/vocho/foto10.webp',
-                    'img/galeria/vocho/foto11.webp',
-                    'img/galeria/vocho/foto12.webp',
-                    'img/galeria/vocho/foto13.webp',
-                    'img/galeria/vocho/foto14.webp',
-                    'img/galeria/vocho/foto15.webp',
-                    'img/galeria/vocho/foto16.webp'
-                ]
-            },
-            'disco': {
-                titulo: 'Sesión Disco Cumbias',
-                fotos: [
-                    'img/galeria/cumbias/foto3.webp',
-                    'img/galeria/cumbias/foto4.webp',
-                    'img/galeria/cumbias/foto5.webp',
-                    'img/galeria/cumbias/foto6.webp'
-                ]
-            },
-            'lanzamiento': {
-                titulo: 'Cumbia Salvaje - Lanzamiento',
-                fotos: [
-                    'img/galeria/lanzamiento/foto1.webp',
-                    'img/galeria/lanzamiento/foto2.webp',
-                    'img/galeria/lanzamiento/foto3.webp',
-                    'img/galeria/lanzamiento/foto17.webp',
-                    'img/galeria/lanzamiento/foto18.webp',
-                    'img/galeria/lanzamiento/foto19.webp',
-                    'img/galeria/lanzamiento/foto20.webp'
-                ]
-            }
-        };
-
-        let categoriaActual = 'todas';
-        let fotosActuales = [];
-        let indiceActualVisor = 0;
-        let fotosFirebase = [];
-
-        // =====================================
-        // FUNCIÓN: OBTENER FOTOS DE RESPALDO
-        // =====================================
-        function obtenerFotosRespaldo(categoria) {
-            let fotos = [];
-
-            if (categoria === 'todas') {
-                Object.keys(galeriaDatosRespaldo).forEach(key => {
-                    fotos = fotos.concat(galeriaDatosRespaldo[key].fotos);
-                });
-            } else if (galeriaDatosRespaldo[categoria]) {
-                fotos = galeriaDatosRespaldo[categoria].fotos;
+            // =====================================
+            // OBTENER RESPALDO
+            // =====================================
+            function obtenerFotosRespaldo(categoria) {
+                var fotos = [];
+                if (categoria === 'todas') {
+                    for (var key in galeriaDatosRespaldo) {
+                        if (galeriaDatosRespaldo.hasOwnProperty(key)) {
+                            fotos = fotos.concat(galeriaDatosRespaldo[key].fotos);
+                        }
+                    }
+                } else if (galeriaDatosRespaldo[categoria]) {
+                    fotos = galeriaDatosRespaldo[categoria].fotos;
+                }
+                return fotos;
             }
 
-            return fotos;
-        }
+            // =====================================
+            // OBTENER FOTOS COMBINADAS
+            // =====================================
+            function obtenerFotosCombinadas(categoria) {
+                var fotos = [];
 
-        // =====================================
-        // FUNCIÓN: CARGAR FOTOS DESDE FIREBASE
-        // =====================================
-        async function cargarFotosFirebase() {
-            if (!dbGaleria) {
-                console.warn('⚠️ Firestore no disponible, usando solo respaldo');
-                return false;
-            }
-
-            try {
-                console.log('🔄 Cargando fotos desde Firebase...');
-
-                const snapshot = await dbGaleria.collection('galeria_fotos').get();
-
-                fotosFirebase = [];
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    if (data.url) {
-                        fotosFirebase.push({
-                            id: doc.id,
-                            categoriaId: data.categoriaId || 'general',
-                            url: data.url,
-                            titulo: data.titulo || 'Foto',
-                            orden: data.orden || 0,
-                            destacada: data.destacada || false,
-                            creadoEn: data.creadoEn || ''
+                var fotosFiltradas = [];
+                if (fotosFirebase.length > 0) {
+                    if (categoria === 'todas') {
+                        fotosFiltradas = fotosFirebase;
+                    } else {
+                        fotosFiltradas = fotosFirebase.filter(function (f) {
+                            return f.categoriaId === categoria;
                         });
+                    }
+                }
+
+                fotosFiltradas.forEach(function (f) {
+                    if (f.url) {
+                        fotos.push(f.url);
                     }
                 });
 
-                // Ordenar por orden
-                fotosFirebase.sort((a, b) => {
-                    if (a.orden !== b.orden) return a.orden - b.orden;
-                    return (a.creadoEn || '').localeCompare(b.creadoEn || '');
+                if (fotosFiltradas.length === 0) {
+                    var respaldo = obtenerFotosRespaldo(categoria);
+                    fotos = fotos.concat(respaldo);
+                }
+
+                return fotos;
+            }
+
+            // =====================================
+            // RENDERIZAR GALERÍA
+            // =====================================
+            function renderizarGaleria(categoria) {
+                var grid = document.getElementById('galeriaGrid');
+                if (!grid) return;
+
+                categoriaActual = categoria;
+                var fotos = obtenerFotosCombinadas(categoria);
+                fotosActuales = fotos;
+
+                var botones = document.querySelectorAll('.cat-btn');
+                botones.forEach(function (btn) {
+                    if (btn.dataset.categoria === categoria) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
                 });
 
-                console.log(`✅ ${fotosFirebase.length} fotos cargadas desde Firebase`);
-                return true;
-
-            } catch (error) {
-                console.error('❌ Error al cargar fotos desde Firebase:', error);
-                return false;
-            }
-        }
-
-        // =====================================
-        // FUNCIÓN: OBTENER FOTOS COMBINADAS (FIREBASE + RESPALDO)
-        // =====================================
-        function obtenerFotosCombinadas(categoria) {
-            let fotos = [];
-
-            // 1. Filtrar fotos de Firebase por categoría
-            let fotosFiltradas = [];
-            if (fotosFirebase.length > 0) {
-                if (categoria === 'todas') {
-                    fotosFiltradas = fotosFirebase;
-                } else {
-                    fotosFiltradas = fotosFirebase.filter(f => f.categoriaId === categoria);
+                if (fotos.length === 0) {
+                    grid.innerHTML =
+                        '<div class="galeria-vacia">' +
+                        '<i class="fa-regular fa-image" style="font-size:2.5rem; display:block; margin-bottom:12px; opacity:0.3;"></i>' +
+                        '<p>📸 No hay fotos disponibles en esta categoría.</p>' +
+                        '<p style="font-size:0.85rem; color:#555; margin-top:8px;">Pronto subiremos nuevas imágenes.</p>' +
+                        '</div>';
+                    return;
                 }
-            }
 
-            // Agregar URLs de Firebase
-            fotosFiltradas.forEach(f => {
-                if (f.url) {
-                    fotos.push(f.url);
-                }
-            });
+                var html = '';
+                fotos.forEach(function (foto, index) {
+                    var titulo = '';
+                    var esFirebase = false;
 
-            // 2. Si NO hay fotos de Firebase en esta categoría, usar respaldo
-            if (fotosFiltradas.length === 0) {
-                const respaldo = obtenerFotosRespaldo(categoria);
-                fotos = fotos.concat(respaldo);
-            }
-
-            return fotos;
-        }
-
-        // =====================================
-        // FUNCIÓN: RENDERIZAR GALERÍA
-        // =====================================
-        function renderizarGaleria(categoria) {
-            const grid = document.getElementById('galeriaGrid');
-            if (!grid) {
-                console.warn('⚠️ No se encontró el contenedor de la galería');
-                return;
-            }
-
-            categoriaActual = categoria;
-
-            // Obtener fotos combinadas
-            const fotos = obtenerFotosCombinadas(categoria);
-            fotosActuales = fotos;
-
-            // Actualizar botones de categorías
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.categoria === categoria);
-            });
-
-            // Si no hay fotos
-            if (fotos.length === 0) {
-                grid.innerHTML = `
-                    <div class="galeria-vacia">
-                        <i class="fa-regular fa-image" style="font-size:2.5rem; display:block; margin-bottom:12px; opacity:0.3;"></i>
-                        <p>📸 No hay fotos disponibles en esta categoría.</p>
-                        <p style="font-size:0.85rem; color:#555; margin-top:8px;">Pronto subiremos nuevas imágenes.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            // Generar HTML
-            let html = '';
-            fotos.forEach((foto, index) => {
-                let titulo = '';
-                let esFirebase = false;
-
-                // Verificar si es una foto de Firebase
-                const fotoFirebase = fotosFirebase.find(f => f.url === foto);
-                if (fotoFirebase) {
-                    esFirebase = true;
-                    titulo = fotoFirebase.titulo || 'Foto';
-                } else {
-                    // Buscar en datos de respaldo
-                    for (let key in galeriaDatosRespaldo) {
-                        if (galeriaDatosRespaldo[key].fotos.includes(foto)) {
-                            titulo = galeriaDatosRespaldo[key].titulo;
+                    for (var i = 0; i < fotosFirebase.length; i++) {
+                        if (fotosFirebase[i].url === foto) {
+                            esFirebase = true;
+                            titulo = fotosFirebase[i].titulo || 'Foto';
                             break;
                         }
                     }
+
+                    if (!esFirebase) {
+                        for (var key in galeriaDatosRespaldo) {
+                            if (galeriaDatosRespaldo.hasOwnProperty(key)) {
+                                if (galeriaDatosRespaldo[key].fotos.indexOf(foto) !== -1) {
+                                    titulo = galeriaDatosRespaldo[key].titulo;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    html +=
+                        '<div class="foto-item" data-index="' + index + '">' +
+                        '<img src="' + foto + '" alt="' + titulo + '" loading="lazy" onerror="this.style.display=\'none\'; this.parentElement.style.background=\'#2a2a2a\';">' +
+                        '<div class="foto-overlay"><span>' + titulo + (esFirebase ? ' 📌' : '') + '</span></div>' +
+                        '</div>';
+                });
+
+                grid.innerHTML = html;
+
+                var items = grid.querySelectorAll('.foto-item');
+                items.forEach(function (el, i) {
+                    el.addEventListener('click', function () {
+                        var index = parseInt(this.dataset.index);
+                        var img = this.querySelector('img');
+                        if (img && img.src && img.src !== '') {
+                            abrirVisor(index);
+                        }
+                    });
+                    setTimeout(function () {
+                        el.classList.add('visible');
+                    }, 100 + (i * 50));
+                });
+
+                console.log('✅ Galería renderizada: ' + fotos.length + ' fotos en categoría "' + categoria + '"');
+            }
+
+            // =====================================
+            // CARGAR DESDE FIREBASE
+            // =====================================
+            function cargarFotosFirebase() {
+                var dbGaleria = null;
+                try {
+                    if (typeof db !== 'undefined') {
+                        dbGaleria = db;
+                    } else if (typeof firebase !== 'undefined') {
+                        dbGaleria = firebase.firestore();
+                    }
+                } catch (e) {
+                    console.warn('⚠️ Firestore no disponible:', e);
+                    return Promise.resolve(false);
                 }
 
-                html += `
-                    <div class="foto-item" data-index="${index}">
-                        <img src="${foto}" alt="${titulo}" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='#2a2a2a';">
-                        <div class="foto-overlay">
-                            <span>${titulo} ${esFirebase ? '📌' : ''}</span>
-                        </div>
-                    </div>
-                `;
-            });
+                if (!dbGaleria) {
+                    console.warn('⚠️ Firestore no disponible, usando solo respaldo');
+                    return Promise.resolve(false);
+                }
 
-            grid.innerHTML = html;
+                console.log('🔄 Cargando fotos desde Firebase...');
 
-            // Eventos de click
-            grid.querySelectorAll('.foto-item').forEach(el => {
-                el.addEventListener('click', function () {
-                    const index = parseInt(this.dataset.index);
-                    const img = this.querySelector('img');
-                    if (img && img.src && img.src !== '') {
-                        abrirVisor(index);
+                return dbGaleria.collection('galeria_fotos').get()
+                    .then(function (snapshot) {
+                        fotosFirebase = [];
+                        snapshot.forEach(function (doc) {
+                            var data = doc.data();
+                            if (data.url) {
+                                fotosFirebase.push({
+                                    id: doc.id,
+                                    categoriaId: data.categoriaId || 'general',
+                                    url: data.url,
+                                    titulo: data.titulo || 'Foto',
+                                    orden: data.orden || 0,
+                                    destacada: data.destacada || false,
+                                    creadoEn: data.creadoEn || ''
+                                });
+                            }
+                        });
+
+                        fotosFirebase.sort(function (a, b) {
+                            if (a.orden !== b.orden) return a.orden - b.orden;
+                            return (a.creadoEn || '').localeCompare(b.creadoEn || '');
+                        });
+
+                        console.log('✅ ' + fotosFirebase.length + ' fotos cargadas desde Firebase');
+                        return true;
+                    })
+                    .catch(function (error) {
+                        console.error('❌ Error al cargar fotos desde Firebase:', error);
+                        return false;
+                    });
+            }
+
+            // =====================================
+            // CARGAR GALERÍA COMPLETA
+            // =====================================
+            function cargarGaleriaCompleta(categoria) {
+                var grid = document.getElementById('galeriaGrid');
+                if (grid) {
+                    grid.innerHTML =
+                        '<div class="galeria-vacia">' +
+                        '<i class="fa-solid fa-spinner fa-spin" style="font-size:2.5rem; display:block; margin-bottom:12px; color:#ffcc00;"></i>' +
+                        '<p>Cargando galería...</p>' +
+                        '</div>';
+                }
+
+                cargarFotosFirebase()
+                    .then(function () {
+                        renderizarGaleria(categoria || 'todas');
+                    })
+                    .catch(function () {
+                        renderizarGaleria(categoria || 'todas');
+                    });
+            }
+
+            // =====================================
+            // VISOR
+            // =====================================
+            var visorGaleria = document.getElementById('visor-galeria');
+            var imagenGaleria = document.getElementById('imagen-galeria');
+            var cerrarGaleria = document.getElementById('cerrar-galeria');
+            var anterior = document.getElementById('foto-anterior');
+            var siguiente = document.getElementById('foto-siguiente');
+            var fotoActual = document.getElementById('foto-actual');
+            var totalFotos = document.getElementById('total-fotos');
+
+            function abrirVisor(index) {
+                if (!visorGaleria || !imagenGaleria) return;
+                if (fotosActuales.length === 0) return;
+                var imgSrc = fotosActuales[index];
+                if (!imgSrc) return;
+
+                indiceActualVisor = index;
+                mostrarFotoVisor(indiceActualVisor);
+                visorGaleria.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function mostrarFotoVisor(indice) {
+                if (!imagenGaleria || !fotoActual || !totalFotos) return;
+                if (fotosActuales.length === 0) return;
+
+                if (indice < 0) indice = fotosActuales.length - 1;
+                if (indice >= fotosActuales.length) indice = 0;
+
+                indiceActualVisor = indice;
+                imagenGaleria.src = fotosActuales[indice];
+                fotoActual.textContent = indice + 1;
+                totalFotos.textContent = fotosActuales.length;
+
+                imagenGaleria.style.animation = 'none';
+                setTimeout(function () {
+                    imagenGaleria.style.animation = 'zoomEntrada .35s ease';
+                }, 50);
+            }
+
+            function cerrarVisor() {
+                if (visorGaleria) {
+                    visorGaleria.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            }
+
+            if (cerrarGaleria) {
+                cerrarGaleria.addEventListener('click', cerrarVisor);
+            }
+
+            if (visorGaleria) {
+                visorGaleria.addEventListener('click', function (e) {
+                    if (e.target === visorGaleria) {
+                        cerrarVisor();
                     }
                 });
-            });
-
-            // Animaciones escalonadas
-            document.querySelectorAll('.galeria-grid .foto-item').forEach((el, i) => {
-                setTimeout(() => {
-                    el.classList.add('visible');
-                }, 100 + (i * 50));
-            });
-
-            console.log(`✅ Galería renderizada: ${fotos.length} fotos en categoría "${categoria}"`);
-        }
-
-        // =====================================
-        // FUNCIÓN: CARGAR GALERÍA COMPLETA
-        // =====================================
-        async function cargarGaleriaCompleta(categoria) {
-            const grid = document.getElementById('galeriaGrid');
-            if (grid) {
-                grid.innerHTML = `
-                    <div class="galeria-vacia">
-                        <i class="fa-solid fa-spinner fa-spin" style="font-size:2.5rem; display:block; margin-bottom:12px; color:#ffcc00;"></i>
-                        <p>Cargando galería...</p>
-                    </div>
-                `;
             }
 
-            await cargarFotosFirebase();
-            renderizarGaleria(categoria || 'todas');
-        }
-
-        // =====================================
-        // VISOR DE GALERÍA
-        // =====================================
-
-        const visorGaleria = document.getElementById('visor-galeria');
-        const imagenGaleria = document.getElementById('imagen-galeria');
-        const cerrarGaleria = document.getElementById('cerrar-galeria');
-        const anterior = document.getElementById('foto-anterior');
-        const siguiente = document.getElementById('foto-siguiente');
-        const fotoActual = document.getElementById('foto-actual');
-        const totalFotos = document.getElementById('total-fotos');
-
-        function abrirVisor(index) {
-            if (!visorGaleria || !imagenGaleria) return;
-            if (fotosActuales.length === 0) return;
-
-            const imgSrc = fotosActuales[index];
-            if (!imgSrc) return;
-
-            indiceActualVisor = index;
-            mostrarFotoVisor(indiceActualVisor);
-            visorGaleria.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function mostrarFotoVisor(indice) {
-            if (!imagenGaleria || !fotoActual || !totalFotos) return;
-            if (fotosActuales.length === 0) return;
-
-            if (indice < 0) indice = fotosActuales.length - 1;
-            if (indice >= fotosActuales.length) indice = 0;
-
-            indiceActualVisor = indice;
-            imagenGaleria.src = fotosActuales[indice];
-            fotoActual.textContent = indice + 1;
-            totalFotos.textContent = fotosActuales.length;
-
-            imagenGaleria.style.animation = 'none';
-            setTimeout(() => {
-                imagenGaleria.style.animation = 'zoomEntrada .35s ease';
-            }, 50);
-        }
-
-        function cerrarVisor() {
-            if (visorGaleria) {
-                visorGaleria.classList.remove('active');
-                document.body.style.overflow = '';
+            if (anterior) {
+                anterior.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    mostrarFotoVisor(indiceActualVisor - 1);
+                });
             }
-        }
 
-        if (cerrarGaleria) {
-            cerrarGaleria.addEventListener('click', cerrarVisor);
-        }
+            if (siguiente) {
+                siguiente.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    mostrarFotoVisor(indiceActualVisor + 1);
+                });
+            }
 
-        if (visorGaleria) {
-            visorGaleria.addEventListener('click', (e) => {
-                if (e.target === visorGaleria) {
-                    cerrarVisor();
-                }
+            document.addEventListener('keydown', function (e) {
+                if (!visorGaleria || !visorGaleria.classList.contains('active')) return;
+                if (e.key === 'Escape') cerrarVisor();
+                if (e.key === 'ArrowRight') mostrarFotoVisor(indiceActualVisor + 1);
+                if (e.key === 'ArrowLeft') mostrarFotoVisor(indiceActualVisor - 1);
             });
-        }
 
-        if (anterior) {
-            anterior.addEventListener('click', (e) => {
-                e.stopPropagation();
-                mostrarFotoVisor(indiceActualVisor - 1);
-            });
-        }
+            // =====================================
+            // INICIALIZAR
+            // =====================================
+            function inicializarGaleria() {
+                console.log('🔄 Inicializando galería...');
+                var grid = document.getElementById('galeriaGrid');
+                if (grid) {
+                    console.log('✅ Galería encontrada, cargando...');
+                    cargarGaleriaCompleta('todas');
 
-        if (siguiente) {
-            siguiente.addEventListener('click', (e) => {
-                e.stopPropagation();
-                mostrarFotoVisor(indiceActualVisor + 1);
-            });
-        }
-
-        document.addEventListener('keydown', (e) => {
-            if (!visorGaleria || !visorGaleria.classList.contains('active')) return;
-            if (e.key === 'Escape') cerrarVisor();
-            if (e.key === 'ArrowRight') mostrarFotoVisor(indiceActualVisor + 1);
-            if (e.key === 'ArrowLeft') mostrarFotoVisor(indiceActualVisor - 1);
-        });
-
-        // =====================================
-        // INICIALIZAR GALERÍA
-        // =====================================
-
-        function inicializarGaleria() {
-            console.log('🔄 Inicializando galería...');
-
-            if (document.getElementById('galeriaGrid')) {
-                console.log('✅ Galería encontrada, cargando...');
-                cargarGaleriaCompleta('todas');
-
-                document.querySelectorAll('.cat-btn').forEach(btn => {
-                    btn.addEventListener('click', function () {
-                        const categoria = this.dataset.categoria;
-                        cargarGaleriaCompleta(categoria);
+                    var botones = document.querySelectorAll('.cat-btn');
+                    botones.forEach(function (btn) {
+                        btn.addEventListener('click', function () {
+                            var categoria = this.dataset.categoria;
+                            cargarGaleriaCompleta(categoria);
+                        });
                     });
+                } else {
+                    console.warn('⚠️ No se encontró la galería, reintentando...');
+                    setTimeout(inicializarGaleria, 500);
+                }
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function () {
+                    setTimeout(inicializarGaleria, 300);
                 });
             } else {
-                console.warn('⚠️ No se encontró la galería, reintentando...');
-                setTimeout(inicializarGaleria, 500);
-            }
-        }
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function () {
                 setTimeout(inicializarGaleria, 300);
-            });
-        } else {
-            setTimeout(inicializarGaleria, 300);
-        }
+            }
 
-        if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-            console.log('📱 Dispositivo móvil detectado, forzando carga...');
-            setTimeout(function () {
-                const grid = document.getElementById('galeriaGrid');
-                if (grid && (grid.children.length === 0 || grid.innerHTML.includes('Cargando'))) {
-                    console.log('🔄 Reintentando carga en móvil...');
-                    inicializarGaleria();
-                }
-            }, 2000);
-        }
+            if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                console.log('📱 Dispositivo móvil detectado, forzando carga...');
+                setTimeout(function () {
+                    var grid = document.getElementById('galeriaGrid');
+                    if (grid && (grid.children.length === 0 || grid.innerHTML.indexOf('Cargando') !== -1)) {
+                        console.log('🔄 Reintentando carga en móvil...');
+                        inicializarGaleria();
+                    }
+                }, 2000);
+            }
+
+        })();
     </script>
 
 </body>
