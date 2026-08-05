@@ -583,6 +583,29 @@
     </div>
 
     <!-- ============================================================
+    OVERLAY DE CONFIRMACIÓN PARA SALIR DEL VALIDADOR
+    ============================================================ -->
+    <div class="validador-login-overlay hidden" id="validadorExitOverlay">
+        <div class="validador-login-box">
+            <img src="../img/logo.webp" alt="Los Hijos de Tencha" class="logo-login">
+            <h2>🔐 Confirmar salida</h2>
+            <p class="subtitle">Ingresa la contraseña para cerrar el validador</p>
+            <div class="input-wrapper">
+                <i class="fa-solid fa-key"></i>
+                <input type="password" id="validadorExitPasswordInput" placeholder="Contraseña" autocomplete="off">
+            </div>
+            <button class="btn-login" id="validadorExitConfirmBtn">
+                <span class="btn-text"><i class="fa-solid fa-right-from-bracket"></i> Salir</span>
+                <span class="spinner-login"></span>
+            </button>
+            <div class="error-msg" id="validadorExitError">❌ Contraseña incorrecta</div>
+            <div class="login-footer">
+                <a href="#" id="validadorExitCancelar"><i class="fa-solid fa-xmark"></i> Cancelar y seguir</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
     CONTENIDO PRINCIPAL DEL VALIDADOR
     ============================================================ -->
     <div id="validadorContent" style="display:none;">
@@ -764,7 +787,8 @@
         // ============================================================
         // CONFIGURACIÓN DE LOGIN - CORREGIDA
         // ============================================================
-        const PASSWORD_HASH = '435a4954c470cee2b68da8bee7f879e00db66866b6d4dd7be0af3701e21db53f';
+        // La contraseña (PASSWORD_HASH) ya viene declarada globalmente por js/admin.js.
+        // Se usa la misma en dashboard, validador y todo el panel — una sola fuente de verdad.
 
         async function hashPasswordValidador(password) {
             const encoder = new TextEncoder();
@@ -799,8 +823,6 @@
                     error.classList.remove('show');
                     document.getElementById('validadorLoginOverlay').classList.add('hidden');
                     document.getElementById('validadorContent').style.display = 'block';
-                    sessionStorage.setItem('validadorAuth', 'authenticated');
-                    sessionStorage.setItem('validadorLoginTime', Date.now().toString());
                     iniciarValidador();
                 } else {
                     error.textContent = '❌ Contraseña incorrecta. Intenta de nuevo.';
@@ -820,8 +842,6 @@
         }
 
         function cerrarSesionValidador() {
-            sessionStorage.removeItem('validadorAuth');
-            sessionStorage.removeItem('validadorLoginTime');
             document.getElementById('validadorContent').style.display = 'none';
             document.getElementById('validadorLoginOverlay').classList.remove('hidden');
             document.getElementById('validadorPasswordInput').value = '';
@@ -830,7 +850,61 @@
         }
 
         // ============================================================
-        // CONFIGURAR EVENTOS DE LOGIN CON addEventListener
+        // CONFIRMACIÓN DE SALIDA CON CONTRASEÑA
+        // ============================================================
+        function mostrarConfirmacionSalida() {
+            document.getElementById('validadorExitError').classList.remove('show');
+            document.getElementById('validadorExitPasswordInput').value = '';
+            document.getElementById('validadorExitOverlay').classList.remove('hidden');
+            document.getElementById('validadorExitPasswordInput').focus();
+        }
+
+        function ocultarConfirmacionSalida() {
+            document.getElementById('validadorExitOverlay').classList.add('hidden');
+        }
+
+        async function verificarPasswordSalida() {
+            const input = document.getElementById('validadorExitPasswordInput');
+            const error = document.getElementById('validadorExitError');
+            const btn = document.getElementById('validadorExitConfirmBtn');
+            const password = input.value.trim();
+
+            error.classList.remove('show');
+
+            if (!password) {
+                error.textContent = '⚠️ Por favor, ingresa la contraseña';
+                error.classList.add('show');
+                input.focus();
+                return;
+            }
+
+            btn.classList.add('loading');
+            btn.disabled = true;
+
+            try {
+                const inputHash = await hashPasswordValidador(password);
+
+                if (inputHash === PASSWORD_HASH) {
+                    ocultarConfirmacionSalida();
+                    cerrarSesionValidador();
+                } else {
+                    error.textContent = '❌ Contraseña incorrecta';
+                    error.classList.add('show');
+                    input.value = '';
+                    input.focus();
+                }
+            } catch (err) {
+                console.error('Error de autenticación:', err);
+                error.textContent = '❌ Error al verificar la contraseña';
+                error.classList.add('show');
+            }
+
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+
+        // ============================================================
+        // CONFIGURAR EVENTOS DE LOGIN / SALIDA CON addEventListener
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
             // Botón de login con addEventListener en lugar de onclick
@@ -851,27 +925,41 @@
                     }
                 });
             }
+
+            // Botón de confirmar salida
+            const exitBtn = document.getElementById('validadorExitConfirmBtn');
+            if (exitBtn) {
+                exitBtn.addEventListener('click', verificarPasswordSalida);
+            }
+
+            // Enter para confirmar salida
+            const exitPasswordInput = document.getElementById('validadorExitPasswordInput');
+            if (exitPasswordInput) {
+                exitPasswordInput.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        verificarPasswordSalida();
+                    }
+                });
+            }
+
+            // Cancelar salida
+            const exitCancelar = document.getElementById('validadorExitCancelar');
+            if (exitCancelar) {
+                exitCancelar.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    ocultarConfirmacionSalida();
+                });
+            }
         });
 
         // ============================================================
         // VERIFICAR SESIÓN DEL VALIDADOR
         // ============================================================
         function verificarSesionValidador() {
-            const auth = sessionStorage.getItem('validadorAuth');
-            const loginTime = sessionStorage.getItem('validadorLoginTime');
-
-            if (auth === 'authenticated' && loginTime) {
-                const timeElapsed = Date.now() - parseInt(loginTime);
-                if (timeElapsed < 14400000) {
-                    document.getElementById('validadorLoginOverlay').classList.add('hidden');
-                    document.getElementById('validadorContent').style.display = 'block';
-                    iniciarValidador();
-                    return true;
-                } else {
-                    sessionStorage.removeItem('validadorAuth');
-                    sessionStorage.removeItem('validadorLoginTime');
-                }
-            }
+            // Siempre pide contraseña al entrar: no se recuerda sesión previa.
+            sessionStorage.removeItem('validadorAuth');
+            sessionStorage.removeItem('validadorLoginTime');
             document.getElementById('validadorLoginOverlay').classList.remove('hidden');
             document.getElementById('validadorContent').style.display = 'none';
             return false;
@@ -904,8 +992,14 @@
         // ============================================================
         // BOTONES DE SALIR
         // ============================================================
-        document.getElementById('btnSalirValidador')?.addEventListener('click', cerrarSesionValidador);
-        document.getElementById('btnSalirHeaderValidador')?.addEventListener('click', cerrarSesionValidador);
+        document.getElementById('btnSalirValidador')?.addEventListener('click', function (e) {
+            e.preventDefault();
+            mostrarConfirmacionSalida();
+        });
+        document.getElementById('btnSalirHeaderValidador')?.addEventListener('click', function (e) {
+            e.preventDefault();
+            mostrarConfirmacionSalida();
+        });
 
         // ============================================================
         // FUNCIONES - TABS
