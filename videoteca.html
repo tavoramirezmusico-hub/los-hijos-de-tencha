@@ -451,9 +451,6 @@
             text-shadow: 0 0 8px rgba(255, 204, 0, .8), 0 0 15px rgba(255, 204, 0, .5);
         }
 
-        /* =====================================
-           HEADER VIDEOS CENTRADO
-           ===================================== */
         .header-videos {
             text-align: center;
             display: block;
@@ -609,13 +606,65 @@
         let categoriasDisponibles = [];
 
         // ============================================================
-        // MAPEO DE CATEGORÍAS A NOMBRES Y EMOJIS
+        // FUNCIONES PARA LEER ÍCONOS DESDE LOCALSTORAGE
         // ============================================================
-        const categoriaMap = {
-            'oficial': { nombre: 'Oficiales', emoji: '🎥' },
-            'momentos': { nombre: 'Momentos Tencha', emoji: '🎬' },
-            'en_vivo': { nombre: 'En Vivo', emoji: '🎤' }
-        };
+        function getIconosCategorias() {
+            try {
+                const guardadas = localStorage.getItem('videoCategorias');
+                if (guardadas) {
+                    const parsed = JSON.parse(guardadas);
+                    const mapa = {};
+                    parsed.forEach(function (cat) {
+                        mapa[cat.id] = cat.icono || '📁';
+                    });
+                    return mapa;
+                }
+            } catch (e) {
+                console.warn('Error al leer localStorage:', e);
+            }
+            // Fallback: íconos por defecto
+            return {
+                'oficial': '🎥',
+                'momentos': '🎬',
+                'en_vivo': '🎤'
+            };
+        }
+
+        function getNombreCategoria(id) {
+            try {
+                const guardadas = localStorage.getItem('videoCategorias');
+                if (guardadas) {
+                    const parsed = JSON.parse(guardadas);
+                    for (var i = 0; i < parsed.length; i++) {
+                        if (parsed[i].id === id) {
+                            return parsed[i].nombre;
+                        }
+                    }
+                }
+            } catch (e) { }
+            // Fallback
+            var nombres = {
+                'oficial': 'Oficiales',
+                'momentos': 'Momentos Tencha',
+                'en_vivo': 'En Vivo'
+            };
+            return nombres[id] || id;
+        }
+
+        function getCategoriasDesdeLocalStorage() {
+            try {
+                const guardadas = localStorage.getItem('videoCategorias');
+                if (guardadas) {
+                    return JSON.parse(guardadas);
+                }
+            } catch (e) { }
+            // Fallback
+            return [
+                { id: 'oficial', nombre: 'Oficiales', icono: '🎥' },
+                { id: 'momentos', nombre: 'Momentos Tencha', icono: '🎬' },
+                { id: 'en_vivo', nombre: 'En Vivo', icono: '🎤' }
+            ];
+        }
 
         // ============================================================
         // FUNCIÓN: FORMATEAR FECHA
@@ -623,9 +672,9 @@
         function formatearFecha(fechaStr) {
             if (!fechaStr) return 'Fecha no disponible';
             try {
-                const d = new Date(fechaStr + 'T00:00:00');
+                var d = new Date(fechaStr + 'T00:00:00');
                 if (isNaN(d.getTime())) return fechaStr;
-                const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                var meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
                     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
                 ];
                 return d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear();
@@ -637,108 +686,102 @@
         // ============================================================
         // FUNCIÓN: CARGAR VIDEOS DESDE FIREBASE
         // ============================================================
-        async function cargarVideos() {
+        function cargarVideos() {
             if (!dbVideos) {
                 mostrarError('⚠️ No se pudo conectar a la base de datos');
                 return;
             }
 
-            const grid = document.getElementById('videosGrid');
-            grid.innerHTML = `
-                <div class="videos-vacia">
-                    <i class="fa-solid fa-spinner fa-spin" style="color:#ffcc00;"></i>
-                    <p>Cargando videos...</p>
-                </div>
-            `;
+            var grid = document.getElementById('videosGrid');
+            grid.innerHTML =
+                '<div class="videos-vacia">' +
+                '<i class="fa-solid fa-spinner fa-spin" style="color:#ffcc00;"></i>' +
+                '<p>Cargando videos...</p>' +
+                '</div>';
 
-            try {
-                const snapshot = await dbVideos.collection('videos').get();
+            dbVideos.collection('videos').get()
+                .then(function (snapshot) {
+                    videos = [];
+                    snapshot.forEach(function (doc) {
+                        var data = doc.data();
+                        if (data.url) {
+                            videos.push({
+                                id: doc.id,
+                                titulo: data.titulo || 'Video sin título',
+                                descripcion: data.descripcion || '',
+                                categoria: data.categoria || 'general',
+                                url: data.url,
+                                fecha: data.fecha || '',
+                                orden: data.orden || 0,
+                                destacado: data.destacado || false,
+                                fuente: data.fuente || 'youtube'
+                            });
+                        }
+                    });
 
-                videos = [];
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    if (data.url) {
-                        videos.push({
-                            id: doc.id,
-                            titulo: data.titulo || 'Video sin título',
-                            descripcion: data.descripcion || '',
-                            categoria: data.categoria || 'general',
-                            url: data.url,
-                            fecha: data.fecha || '',
-                            orden: data.orden || 0,
-                            destacado: data.destacado || false,
-                            fuente: data.fuente || 'youtube'
-                        });
-                    }
+                    // Ordenar por orden
+                    videos.sort(function (a, b) {
+                        var ordenA = a.orden || 999;
+                        var ordenB = b.orden || 999;
+                        if (ordenA !== ordenB) return ordenA - ordenB;
+                        return (a.titulo || '').localeCompare(b.titulo || '');
+                    });
+
+                    // Extraer categorías disponibles
+                    var cats = {};
+                    videos.forEach(function (v) {
+                        if (v.categoria) cats[v.categoria] = true;
+                    });
+                    categoriasDisponibles = Object.keys(cats);
+
+                    // Actualizar contador
+                    document.getElementById('videosCount').textContent = videos.length + ' videos';
+
+                    // Renderizar filtros
+                    renderizarFiltros();
+
+                    // Renderizar videos
+                    renderizarVideos();
+
+                    console.log('✅ ' + videos.length + ' videos cargados desde Firebase');
+
+                })
+                .catch(function (error) {
+                    console.error('❌ Error al cargar videos:', error);
+                    grid.innerHTML =
+                        '<div class="videos-vacia">' +
+                        '<i class="fa-solid fa-triangle-exclamation" style="color:#d32f2f;"></i>' +
+                        '<p>❌ Error al cargar videos: ' + error.message + '</p>' +
+                        '<button onclick="cargarVideos()" style="margin-top:12px; padding:10px 24px; background:#ffcc00; color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:\'Poppins\',sans-serif;">' +
+                        '<i class="fa-solid fa-rotate"></i> Reintentar' +
+                        '</button>' +
+                        '</div>';
                 });
-
-                // Ordenar por orden
-                videos.sort((a, b) => {
-                    const ordenA = a.orden || 999;
-                    const ordenB = b.orden || 999;
-                    if (ordenA !== ordenB) return ordenA - ordenB;
-                    return (a.titulo || '').localeCompare(b.titulo || '');
-                });
-
-                // Extraer categorías disponibles
-                const cats = new Set();
-                videos.forEach(v => {
-                    if (v.categoria) cats.add(v.categoria);
-                });
-                categoriasDisponibles = Array.from(cats);
-
-                // Actualizar contador
-                document.getElementById('videosCount').textContent = videos.length + ' videos';
-
-                // Renderizar filtros
-                renderizarFiltros();
-
-                // Renderizar videos
-                renderizarVideos();
-
-                console.log(`✅ ${videos.length} videos cargados desde Firebase`);
-
-            } catch (error) {
-                console.error('❌ Error al cargar videos:', error);
-                grid.innerHTML = `
-                    <div class="videos-vacia">
-                        <i class="fa-solid fa-triangle-exclamation" style="color:#d32f2f;"></i>
-                        <p>❌ Error al cargar videos: ${error.message}</p>
-                        <button onclick="cargarVideos()" style="margin-top:12px; padding:10px 24px; background:#ffcc00; color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif;">
-                            <i class="fa-solid fa-rotate"></i> Reintentar
-                        </button>
-                    </div>
-                `;
-            }
         }
 
         // ============================================================
         // FUNCIÓN: RENDERIZAR FILTROS
         // ============================================================
         function renderizarFiltros() {
-            const container = document.getElementById('filtrosContainer');
+            var container = document.getElementById('filtrosContainer');
             if (!container) return;
 
-            const nombres = {};
-            categoriasDisponibles.forEach(cat => {
-                if (categoriaMap[cat]) {
-                    nombres[cat] = categoriaMap[cat].emoji + ' ' + categoriaMap[cat].nombre;
-                } else {
-                    nombres[cat] = '📁 ' + cat;
-                }
+            var categoriasFromLS = getCategoriasDesdeLocalStorage();
+            var mapaNombres = {};
+            var mapaIconos = {};
+            categoriasFromLS.forEach(function (cat) {
+                mapaNombres[cat.id] = cat.nombre;
+                mapaIconos[cat.id] = cat.icono || '📁';
             });
 
-            let html = '';
-            html += `<button class="btn-filtro ${filtroActual === 'todas' ? 'active' : ''}" data-filtro="todas" onclick="filtrarVideos('todas', this)">
-                        📸 Todas
-                    </button>`;
+            var html = '';
+            html += '<button class="btn-filtro ' + (filtroActual === 'todas' ? 'active' : '') + '" data-filtro="todas" onclick="filtrarVideos(\'todas\', this)">📸 Todas</button>';
 
-            categoriasDisponibles.forEach(cat => {
-                const label = nombres[cat] || cat;
-                const isActive = filtroActual === cat;
-                html += `<button class="btn-filtro ${isActive ? 'active' : ''}" data-filtro="${cat}" onclick="filtrarVideos('${cat}', this)">
-                            ${label}
-                        </button>`;
+            categoriasDisponibles.forEach(function (cat) {
+                var label = mapaIconos[cat] || '📁';
+                var nombre = mapaNombres[cat] || cat;
+                var isActive = (filtroActual === cat);
+                html += '<button class="btn-filtro ' + (isActive ? 'active' : '') + '" data-filtro="' + cat + '" onclick="filtrarVideos(\'' + cat + '\', this)">' + label + ' ' + nombre + '</button>';
             });
 
             container.innerHTML = html;
@@ -750,7 +793,10 @@
         function filtrarVideos(filtro, btn) {
             filtroActual = filtro;
 
-            document.querySelectorAll('.filtros-videos .btn-filtro').forEach(b => b.classList.remove('active'));
+            var botones = document.querySelectorAll('.filtros-videos .btn-filtro');
+            botones.forEach(function (b) {
+                b.classList.remove('active');
+            });
             if (btn) btn.classList.add('active');
 
             renderizarVideos();
@@ -760,64 +806,63 @@
         // FUNCIÓN: RENDERIZAR VIDEOS
         // ============================================================
         function renderizarVideos() {
-            const grid = document.getElementById('videosGrid');
+            var grid = document.getElementById('videosGrid');
             if (!grid) return;
 
-            let filtrados = videos;
+            var filtrados = videos;
             if (filtroActual !== 'todas') {
-                filtrados = videos.filter(v => v.categoria === filtroActual);
+                filtrados = videos.filter(function (v) {
+                    return v.categoria === filtroActual;
+                });
             }
 
             if (filtrados.length === 0) {
-                grid.innerHTML = `
-                    <div class="videos-vacia">
-                        <i class="fa-regular fa-circle-play"></i>
-                        <p>${videos.length === 0 ? 'No hay videos disponibles aún.' : 'No hay videos en esta categoría.'}</p>
-                        <p style="font-size:0.85rem; color:#555; margin-top:8px;">Pronto subiremos nuevo contenido.</p>
-                    </div>
-                `;
+                grid.innerHTML =
+                    '<div class="videos-vacia">' +
+                    '<i class="fa-regular fa-circle-play"></i>' +
+                    '<p>' + (videos.length === 0 ? 'No hay videos disponibles aún.' : 'No hay videos en esta categoría.') + '</p>' +
+                    '<p style="font-size:0.85rem; color:#555; margin-top:8px;">Pronto subiremos nuevo contenido.</p>' +
+                    '</div>';
                 return;
             }
 
             // Separar destacados y normales
-            const destacados = filtrados.filter(v => v.destacado);
-            const normales = filtrados.filter(v => !v.destacado);
+            var destacados = filtrados.filter(function (v) { return v.destacado; });
+            var normales = filtrados.filter(function (v) { return !v.destacado; });
 
-            const ordenados = [...destacados, ...normales];
+            var ordenados = destacados.concat(normales);
 
-            let html = '';
-            ordenados.forEach(video => {
-                const fecha = video.fecha ? formatearFecha(video.fecha) : '';
-                const catNombre = categoriaMap[video.categoria] ? categoriaMap[video.categoria].nombre : video.categoria;
-                const fuenteIcon = video.fuente === 'cloudinary' ? '☁️' : '▶️';
+            var iconos = getIconosCategorias();
 
-                html += `
-                    <div class="video-card">
-                        <div class="youtube-player">
-                            <iframe src="${video.url}" 
-                                    title="${video.titulo}"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    referrerpolicy="strict-origin-when-cross-origin" 
-                                    allowfullscreen>
-                            </iframe>
-                        </div>
-                        <h3>${video.titulo} ${video.destacado ? '<span class="destacado">⭐ Destacado</span>' : ''}</h3>
-                        <div class="video-meta">
-                            <span><i class="fa-regular fa-folder"></i> ${catNombre}</span>
-                            ${fecha ? `<span><i class="fa-regular fa-calendar"></i> ${fecha}</span>` : ''}
-                            <span>${fuenteIcon} ${video.fuente === 'cloudinary' ? 'Cloudinary' : 'YouTube'}</span>
-                            ${video.orden > 0 ? `<span><i class="fa-regular fa-hashtag"></i> #${video.orden}</span>` : ''}
-                        </div>
-                        ${video.descripcion ? `<p>${video.descripcion}</p>` : ''}
-                    </div>
-                `;
+            var html = '';
+            ordenados.forEach(function (video) {
+                var fecha = video.fecha ? formatearFecha(video.fecha) : '';
+                var catIcono = iconos[video.categoria] || '📁';
+                var catNombre = getNombreCategoria(video.categoria) || video.categoria;
+                var fuenteIcon = video.fuente === 'cloudinary' ? '☁️' : '▶️';
+
+                html +=
+                    '<div class="video-card">' +
+                    '<div class="youtube-player">' +
+                    '<iframe src="' + video.url + '" title="' + video.titulo + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>' +
+                    '</div>' +
+                    '<h3>' + video.titulo + (video.destacado ? ' <span class="destacado">⭐ Destacado</span>' : '') + '</h3>' +
+                    '<div class="video-meta">' +
+                    '<span><i class="fa-regular fa-folder"></i> ' + catIcono + ' ' + catNombre + '</span>' +
+                    (fecha ? '<span><i class="fa-regular fa-calendar"></i> ' + fecha + '</span>' : '') +
+                    '<span>' + fuenteIcon + ' ' + (video.fuente === 'cloudinary' ? 'Cloudinary' : 'YouTube') + '</span>' +
+                    (video.orden > 0 ? '<span><i class="fa-regular fa-hashtag"></i> #' + video.orden + '</span>' : '') +
+                    '</div>' +
+                    (video.descripcion ? '<p>' + video.descripcion + '</p>' : '') +
+                    '</div>';
             });
 
             grid.innerHTML = html;
 
             // Animación escalonada
-            document.querySelectorAll('.video-card').forEach((el, i) => {
-                setTimeout(() => {
+            var cards = document.querySelectorAll('.video-card');
+            cards.forEach(function (el, i) {
+                setTimeout(function () {
                     el.classList.add('visible');
                 }, 100 + (i * 80));
             });
@@ -827,14 +872,13 @@
         // FUNCIÓN: MOSTRAR ERROR
         // ============================================================
         function mostrarError(texto) {
-            const grid = document.getElementById('videosGrid');
+            var grid = document.getElementById('videosGrid');
             if (grid) {
-                grid.innerHTML = `
-                    <div class="videos-vacia">
-                        <i class="fa-solid fa-triangle-exclamation" style="color:#d32f2f;"></i>
-                        <p>${texto}</p>
-                    </div>
-                `;
+                grid.innerHTML =
+                    '<div class="videos-vacia">' +
+                    '<i class="fa-solid fa-triangle-exclamation" style="color:#d32f2f;"></i>' +
+                    '<p>' + texto + '</p>' +
+                    '</div>';
             }
         }
 
@@ -843,7 +887,7 @@
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
             cargarVideos();
-            console.log('🚀 Videoteca: solo desde Firebase');
+            console.log('🚀 Videoteca: desde Firebase con íconos personalizados desde localStorage');
         });
     </script>
 
