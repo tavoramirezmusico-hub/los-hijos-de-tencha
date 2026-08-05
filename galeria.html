@@ -602,7 +602,13 @@
             console.log('✅ Firebase inicializado en galería');
         }
 
-        const db = firebase.firestore();
+        let db = null;
+        try {
+            db = firebase.firestore();
+            console.log('✅ Firestore disponible');
+        } catch (error) {
+            console.warn('⚠️ Firestore no disponible, usando solo respaldo');
+        }
 
         // =====================================
         // DATOS DE RESPALDO (FOTOS Y CATEGORÍAS FIJAS)
@@ -662,15 +668,37 @@
         let indiceActualVisor = 0;
         let fotosFirebase = [];
         let categoriasFirebase = [];
+        let datosCargados = false;
+
+        // =====================================
+        // FUNCIÓN: OBTENER FOTOS DE RESPALDO
+        // =====================================
+        function obtenerFotosRespaldo(categoria) {
+            let fotos = [];
+
+            if (categoria === 'todas') {
+                Object.keys(galeriaDatosRespaldo).forEach(key => {
+                    fotos = fotos.concat(galeriaDatosRespaldo[key].fotos);
+                });
+            } else if (galeriaDatosRespaldo[categoria]) {
+                fotos = galeriaDatosRespaldo[categoria].fotos;
+            }
+
+            return fotos;
+        }
 
         // =====================================
         // FUNCIÓN: CARGAR FOTOS DESDE FIREBASE
         // =====================================
         async function cargarFotosFirebase() {
+            if (!db) {
+                console.warn('⚠️ Firestore no disponible, usando solo respaldo');
+                return false;
+            }
+
             try {
                 console.log('🔄 Cargando fotos desde Firebase...');
 
-                // Obtener todas las fotos de la colección
                 const snapshot = await db.collection('galeria_fotos').get();
 
                 fotosFirebase = [];
@@ -696,19 +724,23 @@
                 console.log(`✅ ${fotosFirebase.length} fotos cargadas desde Firebase`);
 
                 // Obtener categorías
-                const catSnapshot = await db.collection('galeria_categorias').get();
-                categoriasFirebase = [];
-                catSnapshot.forEach(doc => {
-                    const data = doc.data();
-                    categoriasFirebase.push({
-                        id: doc.id,
-                        nombre: data.nombre || doc.id,
-                        descripcion: data.descripcion || ''
+                try {
+                    const catSnapshot = await db.collection('galeria_categorias').get();
+                    categoriasFirebase = [];
+                    catSnapshot.forEach(doc => {
+                        const data = doc.data();
+                        categoriasFirebase.push({
+                            id: doc.id,
+                            nombre: data.nombre || doc.id,
+                            descripcion: data.descripcion || ''
+                        });
                     });
-                });
+                    console.log(`✅ ${categoriasFirebase.length} categorías cargadas desde Firebase`);
+                } catch (catError) {
+                    console.warn('⚠️ Error al cargar categorías:', catError);
+                }
 
-                console.log(`✅ ${categoriasFirebase.length} categorías cargadas desde Firebase`);
-
+                datosCargados = true;
                 return true;
 
             } catch (error) {
@@ -718,16 +750,19 @@
         }
 
         // =====================================
-        // FUNCIÓN: COMBINAR FOTOS (FIREBASE + RESPALDO)
+        // FUNCIÓN: OBTENER FOTOS COMBINADAS (FIREBASE + RESPALDO)
         // =====================================
         function obtenerFotosCombinadas(categoria) {
             let fotos = [];
 
-            // 1. Agregar fotos de Firebase
-            let fotosFiltradas = fotosFirebase;
-
-            if (categoria !== 'todas') {
-                fotosFiltradas = fotosFirebase.filter(f => f.categoriaId === categoria);
+            // 1. Agregar fotos de Firebase si existen
+            let fotosFiltradas = [];
+            if (fotosFirebase.length > 0) {
+                if (categoria === 'todas') {
+                    fotosFiltradas = fotosFirebase;
+                } else {
+                    fotosFiltradas = fotosFirebase.filter(f => f.categoriaId === categoria);
+                }
             }
 
             // Agregar URLs de Firebase
@@ -737,18 +772,13 @@
                 }
             });
 
-            // 2. Agregar fotos de respaldo SOLO si no hay fotos de Firebase en esa categoría
+            // 2. Si NO hay fotos de Firebase en esta categoría, usar respaldo
             const tieneFotosFirebase = fotosFiltradas.length > 0;
 
             if (!tieneFotosFirebase) {
-                // Si no hay fotos de Firebase en esta categoría, usar las de respaldo
-                if (categoria === 'todas') {
-                    Object.keys(galeriaDatosRespaldo).forEach(key => {
-                        fotos = fotos.concat(galeriaDatosRespaldo[key].fotos);
-                    });
-                } else if (galeriaDatosRespaldo[categoria]) {
-                    fotos = galeriaDatosRespaldo[categoria].fotos;
-                }
+                // Usar fotos de respaldo
+                const respaldo = obtenerFotosRespaldo(categoria);
+                fotos = fotos.concat(respaldo);
             }
 
             return fotos;
@@ -758,9 +788,8 @@
         // FUNCIÓN: VERIFICAR SI HAY FOTOS EN FIREBASE
         // =====================================
         function tieneFotosFirebase(categoria) {
-            if (categoria === 'todas') {
-                return fotosFirebase.length > 0;
-            }
+            if (fotosFirebase.length === 0) return false;
+            if (categoria === 'todas') return fotosFirebase.length > 0;
             return fotosFirebase.filter(f => f.categoriaId === categoria).length > 0;
         }
 
@@ -779,9 +808,6 @@
             // Obtener fotos combinadas
             const fotos = obtenerFotosCombinadas(categoria);
             fotosActuales = fotos;
-
-            // Verificar si hay fotos en Firebase para esta categoría
-            const hayFotosFirebase = tieneFotosFirebase(categoria);
 
             // Actualizar botones de categorías
             document.querySelectorAll('.cat-btn').forEach(btn => {
@@ -870,10 +896,10 @@
                 `;
             }
 
-            // Cargar fotos desde Firebase
+            // Cargar fotos desde Firebase (si está disponible)
             await cargarFotosFirebase();
 
-            // Renderizar galería
+            // Renderizar galería (siempre muestra algo, ya sea Firebase o respaldo)
             renderizarGaleria(categoria || 'todas');
         }
 
