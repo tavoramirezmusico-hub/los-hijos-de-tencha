@@ -850,9 +850,12 @@
         }
 
         // ============================================================
-        // CONFIRMACIÓN DE SALIDA CON CONTRASEÑA
+        // CONFIRMACIÓN CON CONTRASEÑA (salir o navegar a otra sección)
         // ============================================================
-        function mostrarConfirmacionSalida() {
+        let destinoConfirmacion = null; // null = solo cerrar sesión; string = URL a la que ir
+
+        function mostrarConfirmacionSalida(destino = null) {
+            destinoConfirmacion = destino;
             document.getElementById('validadorExitError').classList.remove('show');
             document.getElementById('validadorExitPasswordInput').value = '';
             document.getElementById('validadorExitOverlay').classList.remove('hidden');
@@ -860,6 +863,7 @@
         }
 
         function ocultarConfirmacionSalida() {
+            destinoConfirmacion = null;
             document.getElementById('validadorExitOverlay').classList.add('hidden');
         }
 
@@ -885,8 +889,13 @@
                 const inputHash = await hashPasswordValidador(password);
 
                 if (inputHash === PASSWORD_HASH) {
+                    const destino = destinoConfirmacion;
                     ocultarConfirmacionSalida();
-                    cerrarSesionValidador();
+                    if (destino) {
+                        window.location.href = destino;
+                    } else {
+                        cerrarSesionValidador();
+                    }
                 } else {
                     error.textContent = '❌ Contraseña incorrecta';
                     error.classList.add('show');
@@ -999,6 +1008,20 @@
         document.getElementById('btnSalirHeaderValidador')?.addEventListener('click', function (e) {
             e.preventDefault();
             mostrarConfirmacionSalida();
+        });
+
+        // ============================================================
+        // INTERCEPTAR LINKS DEL SIDEBAR: piden contraseña antes de ir
+        // a cualquier otra sección del panel (Dashboard, Eventos, etc.)
+        // ============================================================
+        document.querySelectorAll('.admin-sidebar .sidebar-nav a').forEach(link => {
+            if (link.id === 'btnSalirValidador') return; // ya tiene su propio manejo
+            const href = link.getAttribute('href');
+            if (!href || href === '#') return;
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                mostrarConfirmacionSalida(href);
+            });
         });
 
         // ============================================================
