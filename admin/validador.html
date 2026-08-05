@@ -571,7 +571,7 @@
                 <i class="fa-solid fa-key"></i>
                 <input type="password" id="validadorPasswordInput" placeholder="Contraseña" autofocus>
             </div>
-            <button class="btn-login" id="validadorLoginBtn" onclick="verificarPasswordValidador()">
+            <button class="btn-login" id="validadorLoginBtn">
                 <span class="btn-text">▶️ Ingresar</span>
                 <span class="spinner-login"></span>
             </button>
@@ -762,7 +762,7 @@
 
     <script>
         // ============================================================
-        // CONFIGURACIÓN DE LOGIN
+        // CONFIGURACIÓN DE LOGIN - CORREGIDA
         // ============================================================
         const PASSWORD_HASH = '435a4954c470cee2b68da8bee7f879e00db66866b6d4dd7be0af3701e21db53f';
 
@@ -826,9 +826,32 @@
             document.getElementById('validadorLoginOverlay').classList.remove('hidden');
             document.getElementById('validadorPasswordInput').value = '';
             document.getElementById('validadorPasswordInput').focus();
-            // Detener escáner si está activo
             if (isScanning) stopScanner();
         }
+
+        // ============================================================
+        // CONFIGURAR EVENTOS DE LOGIN CON addEventListener
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function () {
+            // Botón de login con addEventListener en lugar de onclick
+            const loginBtn = document.getElementById('validadorLoginBtn');
+            if (loginBtn) {
+                // Eliminar cualquier onclick previo
+                loginBtn.removeAttribute('onclick');
+                loginBtn.addEventListener('click', verificarPasswordValidador);
+            }
+
+            // Enter para login
+            const passwordInput = document.getElementById('validadorPasswordInput');
+            if (passwordInput) {
+                passwordInput.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        verificarPasswordValidador();
+                    }
+                });
+            }
+        });
 
         // ============================================================
         // VERIFICAR SESIÓN DEL VALIDADOR
@@ -1187,13 +1210,6 @@
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
             verificarSesionValidador();
-
-            // Enter para login
-            document.getElementById('validadorPasswordInput').addEventListener('keydown', function (e) {
-                if (e.key === 'Enter') {
-                    verificarPasswordValidador();
-                }
-            });
         });
 
         document.addEventListener('visibilitychange', function () {
