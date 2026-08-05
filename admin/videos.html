@@ -289,6 +289,9 @@
             transform: scale(1.2);
         }
 
+        /* ============================================================
+           CATEGORÍAS - ESTILOS MEJORADOS
+           ============================================================ */
         .categorias-videos {
             display: flex;
             flex-wrap: wrap;
@@ -299,27 +302,54 @@
 
         .categorias-videos .cat-tag {
             background: var(--color-bg);
-            padding: 4px 14px;
+            padding: 6px 14px;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             border: 1px solid var(--color-border);
-            color: var(--color-text-muted);
+            color: var(--color-text);
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            transition: var(--transition);
         }
 
-        .categorias-videos .cat-tag .cat-remove {
+        .categorias-videos .cat-tag:hover {
+            border-color: var(--color-primary);
+        }
+
+        .categorias-videos .cat-tag .cat-icono {
+            font-size: 1rem;
+        }
+
+        .categorias-videos .cat-tag .cat-nombre {
+            font-weight: 500;
+        }
+
+        .categorias-videos .cat-tag .cat-actions {
+            display: inline-flex;
+            gap: 4px;
+            margin-left: 4px;
+        }
+
+        .categorias-videos .cat-tag .cat-actions button {
             background: none;
             border: none;
-            color: var(--color-danger);
+            color: var(--color-text-muted);
             cursor: pointer;
-            font-size: 0.7rem;
-            padding: 0 2px;
+            font-size: 0.65rem;
+            padding: 2px 4px;
+            transition: var(--transition);
+            border-radius: 4px;
         }
 
-        .categorias-videos .cat-tag .cat-remove:hover {
-            transform: scale(1.2);
+        .categorias-videos .cat-tag .cat-actions .cat-edit:hover {
+            color: var(--color-primary);
+            background: rgba(255, 204, 0, 0.1);
+        }
+
+        .categorias-videos .cat-tag .cat-actions .cat-remove:hover {
+            color: var(--color-danger);
+            background: rgba(211, 47, 47, 0.1);
         }
 
         .categoria-input-group {
@@ -337,6 +367,65 @@
 
         .categoria-input-group .btn-admin {
             flex-shrink: 0;
+        }
+
+        /* ============================================================
+           MODAL EDITAR CATEGORÍA
+           ============================================================ */
+        #modalEditarCategoria .modal-content {
+            max-width: 480px;
+        }
+
+        .iconos-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 8px;
+            margin: 8px 0 12px 0;
+        }
+
+        .iconos-grid .icono-btn {
+            padding: 8px 4px;
+            background: var(--color-bg);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .iconos-grid .icono-btn:hover {
+            border-color: var(--color-primary);
+            transform: scale(1.1);
+        }
+
+        .iconos-grid .icono-btn.selected {
+            border-color: var(--color-primary);
+            background: rgba(255, 204, 0, 0.1);
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.15);
+        }
+
+        .icono-preview {
+            font-size: 2rem;
+            padding: 8px 16px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+            display: inline-block;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .campo-icono-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .campo-icono-wrapper .admin-input {
+            flex: 1;
+            min-width: 120px;
         }
 
         #modalVideo .modal-content {
@@ -379,11 +468,25 @@
             background: var(--color-bg-hover);
             color: var(--color-text);
             border: 1px solid var(--color-border);
+            border-radius: 50% !important;
+            width: 36px !important;
+            height: 36px !important;
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 0.9rem !important;
+            flex-shrink: 0 !important;
+            transition: all 0.3s ease !important;
         }
 
         .recargar-btn:hover {
             background: #2a2a2a;
             transform: rotate(180deg);
+        }
+
+        .recargar-btn i {
+            transition: transform 0.5s ease;
         }
 
         @media (max-width: 768px) {
@@ -422,6 +525,15 @@
                 width: 100%;
                 justify-content: center;
             }
+
+            .iconos-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+
+            .campo-icono-wrapper {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
 
         @media (max-width: 480px) {
@@ -451,6 +563,15 @@
 
             .video-dropzone i {
                 font-size: 2rem !important;
+            }
+
+            .iconos-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+
+            .iconos-grid .icono-btn {
+                font-size: 1.2rem;
+                padding: 6px 2px;
             }
         }
     </style>
@@ -551,9 +672,33 @@
                 </div>
                 <div class="categorias-videos" id="categoriasContainer">
                     <span style="color:var(--color-text-muted); font-size:0.8rem;">Categorías disponibles:</span>
-                    <span class="cat-tag" data-categoria="oficial">🎥 Oficiales</span>
-                    <span class="cat-tag" data-categoria="momentos">🎬 Momentos Tencha</span>
-                    <span class="cat-tag" data-categoria="en_vivo">🎤 En Vivo</span>
+                    <span class="cat-tag" data-categoria="oficial">
+                        <span class="cat-icono">🎥</span>
+                        <span class="cat-nombre">Oficiales</span>
+                        <span class="cat-actions">
+                            <button class="cat-edit" onclick="editarCategoria('oficial')" title="Editar categoría">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                        </span>
+                    </span>
+                    <span class="cat-tag" data-categoria="momentos">
+                        <span class="cat-icono">🎬</span>
+                        <span class="cat-nombre">Momentos Tencha</span>
+                        <span class="cat-actions">
+                            <button class="cat-edit" onclick="editarCategoria('momentos')" title="Editar categoría">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                        </span>
+                    </span>
+                    <span class="cat-tag" data-categoria="en_vivo">
+                        <span class="cat-icono">🎤</span>
+                        <span class="cat-nombre">En Vivo</span>
+                        <span class="cat-actions">
+                            <button class="cat-edit" onclick="editarCategoria('en_vivo')" title="Editar categoría">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                        </span>
+                    </span>
                 </div>
                 <div class="form-help">Las categorías se guardan automáticamente. Puedes crear nuevas cuantas veces
                     quieras.</div>
@@ -706,6 +851,69 @@
         </div>
     </div>
 
+    <!-- MODAL - EDITAR CATEGORÍA -->
+    <div class="admin-modal" id="modalEditarCategoria">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalCategoriaTitulo"><i class="fa-solid fa-tag"></i> Editar Categoría</h3>
+                <button class="modal-close" onclick="cerrarModalCategoria()">&times;</button>
+            </div>
+            <input type="hidden" id="categoriaIdEdit">
+
+            <div class="admin-form-group">
+                <label>Ícono de la categoría</label>
+                <div class="campo-icono-wrapper">
+                    <span class="icono-preview" id="iconoPreview">🎥</span>
+                    <input type="text" id="categoriaIcono" class="admin-input" placeholder="Ej: 🎸, 🚗, 📸"
+                        maxlength="2" value="🎥">
+                    <span style="font-size:0.7rem; color:var(--color-text-muted);">(máx 2 caracteres)</span>
+                </div>
+                <div style="margin-top:6px;">
+                    <span style="font-size:0.7rem; color:var(--color-text-muted);">Íconos sugeridos:</span>
+                    <div class="iconos-grid" id="iconosGrid">
+                        <button class="icono-btn" data-icono="🎸">🎸</button>
+                        <button class="icono-btn" data-icono="🚗">🚗</button>
+                        <button class="icono-btn" data-icono="📸">📸</button>
+                        <button class="icono-btn" data-icono="🎵">🎵</button>
+                        <button class="icono-btn" data-icono="🎤">🎤</button>
+                        <button class="icono-btn" data-icono="🥁">🥁</button>
+                        <button class="icono-btn" data-icono="🎷">🎷</button>
+                        <button class="icono-btn" data-icono="🎺">🎺</button>
+                        <button class="icono-btn" data-icono="🎹">🎹</button>
+                        <button class="icono-btn" data-icono="🎧">🎧</button>
+                        <button class="icono-btn" data-icono="💿">💿</button>
+                        <button class="icono-btn" data-icono="📀">📀</button>
+                        <button class="icono-btn" data-icono="🔥">🔥</button>
+                        <button class="icono-btn" data-icono="⭐">⭐</button>
+                        <button class="icono-btn" data-icono="🌟">🌟</button>
+                        <button class="icono-btn" data-icono="💫">💫</button>
+                        <button class="icono-btn" data-icono="🎪">🎪</button>
+                        <button class="icono-btn" data-icono="🎭">🎭</button>
+                        <button class="icono-btn" data-icono="🎨">🎨</button>
+                        <button class="icono-btn" data-icono="🌈">🌈</button>
+                        <button class="icono-btn" data-icono="☀️">☀️</button>
+                        <button class="icono-btn" data-icono="🌙">🌙</button>
+                        <button class="icono-btn" data-icono="🎬">🎬</button>
+                        <button class="icono-btn" data-icono="📹">📹</button>
+                    </div>
+                </div>
+                <div class="form-help">Haz clic en un ícono para seleccionarlo o escríbelo manualmente</div>
+            </div>
+
+            <div class="admin-form-group">
+                <label for="categoriaNombreEdit">Nombre de la categoría *</label>
+                <input type="text" id="categoriaNombreEdit" class="admin-input" placeholder="Ej: Entrevistas" required>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-admin btn-secondary" onclick="cerrarModalCategoria()">Cancelar</button>
+                <button class="btn-admin btn-primary" id="btnGuardarCategoria" onclick="guardarEdicionCategoria()">
+                    <i class="fa-solid fa-save"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- TOAST -->
     <div id="adminToast" class="admin-toast"></div>
 
@@ -734,44 +942,117 @@
         let modoSubida = 'youtube';
 
         // ============================================================
-        // FUNCIÓN: RECARGAR VIDEOTECA
+        // CATEGORÍAS CON ÍCONOS
         // ============================================================
-        function recargarVideoteca() {
-            mostrarToast('🔄 Recargando videoteca...', 'info');
-            cargarVideos().then(() => {
-                mostrarToast('✅ Videoteca recargada', 'success');
-            }).catch(() => {
-                mostrarToast('❌ Error al recargar videoteca', 'error');
-            });
+        let categoriasDisponibles = [];
+
+        // Mapa de categorías base con sus íconos
+        const categoriasBase = {
+            'oficial': { nombre: 'Oficiales', icono: '🎥' },
+            'momentos': { nombre: 'Momentos Tencha', icono: '🎬' },
+            'en_vivo': { nombre: 'En Vivo', icono: '🎤' }
+        };
+
+        // ============================================================
+        // FUNCIÓN: CARGAR CATEGORÍAS GUARDADAS
+        // ============================================================
+        function cargarCategoriasGuardadas() {
+            try {
+                const guardadas = localStorage.getItem('videoCategorias');
+                if (guardadas) {
+                    const parsed = JSON.parse(guardadas);
+                    categoriasDisponibles = parsed.map(cat => {
+                        // Si la categoría es de las base, mantener su ícono
+                        if (categoriasBase[cat.id]) {
+                            return {
+                                id: cat.id,
+                                nombre: cat.nombre || categoriasBase[cat.id].nombre,
+                                icono: cat.icono || categoriasBase[cat.id].icono
+                            };
+                        }
+                        return cat;
+                    });
+                } else {
+                    // Cargar categorías base
+                    categoriasDisponibles = Object.keys(categoriasBase).map(key => ({
+                        id: key,
+                        nombre: categoriasBase[key].nombre,
+                        icono: categoriasBase[key].icono
+                    }));
+                }
+            } catch (e) {
+                categoriasDisponibles = Object.keys(categoriasBase).map(key => ({
+                    id: key,
+                    nombre: categoriasBase[key].nombre,
+                    icono: categoriasBase[key].icono
+                }));
+            }
+            renderizarCategorias();
+            renderizarFiltros();
         }
 
         // ============================================================
-        // FUNCIÓN: RENDERIZAR FILTROS DINÁMICOS
+        // FUNCIÓN: GUARDAR CATEGORÍAS
+        // ============================================================
+        function guardarCategorias() {
+            localStorage.setItem('videoCategorias', JSON.stringify(categoriasDisponibles));
+        }
+
+        // ============================================================
+        // FUNCIÓN: RENDERIZAR CATEGORÍAS
+        // ============================================================
+        function renderizarCategorias() {
+            const container = document.getElementById('categoriasContainer');
+            const select = document.getElementById('videoCategoria');
+
+            let html = '<span style="color:var(--color-text-muted); font-size:0.8rem;">Categorías disponibles:</span>';
+            categoriasDisponibles.forEach(cat => {
+                const isBase = ['oficial', 'momentos', 'en_vivo'].includes(cat.id);
+                html += `
+                    <span class="cat-tag" data-categoria="${cat.id}">
+                        <span class="cat-icono">${cat.icono || '📁'}</span>
+                        <span class="cat-nombre">${cat.nombre}</span>
+                        <span class="cat-actions">
+                            <button class="cat-edit" onclick="editarCategoria('${cat.id}')" title="Editar categoría">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            ${!isBase ? `<button class="cat-remove" onclick="eliminarCategoria('${cat.id}')" title="Eliminar categoría">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>` : ''}
+                        </span>
+                    </span>
+                `;
+            });
+            container.innerHTML = html;
+
+            // Actualizar select
+            let selectHtml = '';
+            categoriasDisponibles.forEach(cat => {
+                selectHtml += `<option value="${cat.id}">${cat.icono || '📁'} ${cat.nombre}</option>`;
+            });
+            select.innerHTML = selectHtml;
+
+            const currentVal = select.value;
+            if (!categoriasDisponibles.find(c => c.id === currentVal) && categoriasDisponibles.length > 0) {
+                select.value = categoriasDisponibles[0].id;
+            }
+        }
+
+        // ============================================================
+        // FUNCIÓN: RENDERIZAR FILTROS
         // ============================================================
         function renderizarFiltros() {
             const container = document.getElementById('filtrosContainer');
-            const base = getCategoriasBase();
-
-            // Construir mapa de nombres
-            const nombres = {};
-            categoriasDisponibles.forEach(cat => {
-                nombres[cat] = base[cat] || cat;
-            });
 
             let html = '';
-
-            // Botón "Todas" siempre presente
             html += `<button class="btn-admin btn-secondary btn-sm ${filtroActual === 'todas' ? 'active' : ''}" data-filtro="todas" onclick="filtrarVideos('todas', this)">
                         <i class="fa-solid fa-list"></i> Todas
                     </button>`;
 
-            // Botones para cada categoría
             categoriasDisponibles.forEach(cat => {
-                const label = nombres[cat] || cat;
-                const emoji = cat === 'oficial' ? '🎥' : cat === 'momentos' ? '🎬' : cat === 'en_vivo' ? '🎤' : '📁';
-                const isActive = filtroActual === cat;
-                html += `<button class="btn-admin btn-secondary btn-sm ${isActive ? 'active' : ''}" data-filtro="${cat}" onclick="filtrarVideos('${cat}', this)">
-                            ${emoji} ${label}
+                const isActive = filtroActual === cat.id;
+                html += `<button class="btn-admin btn-secondary btn-sm ${isActive ? 'active' : ''}" data-filtro="${cat.id}" onclick="filtrarVideos('${cat.id}', this)">
+                            ${cat.icono || '📁'} ${cat.nombre}
                         </button>`;
             });
 
@@ -779,71 +1060,8 @@
         }
 
         // ============================================================
-        // CATEGORÍAS
+        // FUNCIÓN: AGREGAR CATEGORÍA
         // ============================================================
-        let categoriasDisponibles = [];
-
-        function getCategoriasBase() {
-            return {
-                'oficial': '🎥 Oficiales',
-                'momentos': '🎬 Momentos Tencha',
-                'en_vivo': '🎤 En Vivo'
-            };
-        }
-
-        function cargarCategoriasGuardadas() {
-            try {
-                const guardadas = localStorage.getItem('videoCategorias');
-                if (guardadas) {
-                    const parsed = JSON.parse(guardadas);
-                    categoriasDisponibles = parsed;
-                } else {
-                    categoriasDisponibles = Object.keys(getCategoriasBase());
-                }
-            } catch (e) {
-                categoriasDisponibles = Object.keys(getCategoriasBase());
-            }
-            renderizarCategorias();
-            renderizarFiltros();
-        }
-
-        function guardarCategorias() {
-            localStorage.setItem('videoCategorias', JSON.stringify(categoriasDisponibles));
-        }
-
-        function renderizarCategorias() {
-            const container = document.getElementById('categoriasContainer');
-            const select = document.getElementById('videoCategoria');
-            const base = getCategoriasBase();
-
-            let html = '<span style="color:var(--color-text-muted); font-size:0.8rem;">Categorías disponibles:</span>';
-            categoriasDisponibles.forEach(cat => {
-                const label = base[cat] || cat;
-                const emoji = cat === 'oficial' ? '🎥' : cat === 'momentos' ? '🎬' : cat === 'en_vivo' ? '🎤' : '📁';
-                const isBase = ['oficial', 'momentos', 'en_vivo'].includes(cat);
-                html += `
-                            <span class="cat-tag" data-categoria="${cat}">
-                                ${emoji} ${label}
-                                ${!isBase ? `<button class="cat-remove" onclick="eliminarCategoria('${cat}')" title="Eliminar categoría">×</button>` : ''}
-                            </span>
-                        `;
-            });
-            container.innerHTML = html;
-
-            let selectHtml = '';
-            categoriasDisponibles.forEach(cat => {
-                const label = base[cat] || cat;
-                const emoji = cat === 'oficial' ? '🎥' : cat === 'momentos' ? '🎬' : cat === 'en_vivo' ? '🎤' : '📁';
-                selectHtml += `<option value="${cat}">${emoji} ${label}</option>`;
-            });
-            select.innerHTML = selectHtml;
-
-            const currentVal = select.value;
-            if (!categoriasDisponibles.includes(currentVal) && categoriasDisponibles.length > 0) {
-                select.value = categoriasDisponibles[0];
-            }
-        }
-
         function agregarCategoria() {
             const input = document.getElementById('nuevaCategoriaInput');
             const nombre = input.value.trim();
@@ -858,45 +1076,138 @@
                 .replace(/[^a-z0-9\s]/g, '')
                 .replace(/\s+/g, '_');
 
-            if (categoriasDisponibles.includes(slug)) {
+            if (categoriasDisponibles.find(c => c.id === slug)) {
                 mostrarToast('⚠️ La categoría "' + nombre + '" ya existe', 'warning');
                 input.value = '';
                 input.focus();
                 return;
             }
 
-            categoriasDisponibles.push(slug);
+            categoriasDisponibles.push({
+                id: slug,
+                nombre: nombre,
+                icono: '📁'
+            });
             guardarCategorias();
             renderizarCategorias();
-            renderizarFiltros(); // 🔥 ACTUALIZAR FILTROS
+            renderizarFiltros();
             document.getElementById('videoCategoria').value = slug;
             input.value = '';
             mostrarToast('✅ Categoría "' + nombre + '" creada', 'success');
         }
 
-        function eliminarCategoria(slug) {
-            if (['oficial', 'momentos', 'en_vivo'].includes(slug)) {
+        // ============================================================
+        // FUNCIÓN: EDITAR CATEGORÍA (MODAL)
+        // ============================================================
+        function editarCategoria(id) {
+            const cat = categoriasDisponibles.find(c => c.id === id);
+            if (!cat) return;
+
+            document.getElementById('categoriaIdEdit').value = id;
+            document.getElementById('categoriaNombreEdit').value = cat.nombre;
+            document.getElementById('categoriaIcono').value = cat.icono || '📁';
+            document.getElementById('iconoPreview').textContent = cat.icono || '📁';
+
+            document.querySelectorAll('.icono-btn').forEach(btn => {
+                btn.classList.toggle('selected', btn.dataset.icono === (cat.icono || '📁'));
+            });
+
+            document.getElementById('modalCategoriaTitulo').innerHTML = '<i class="fa-solid fa-pen"></i> Editar Categoría';
+            document.getElementById('modalEditarCategoria').classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            // Actualizar preview al escribir
+            document.getElementById('categoriaIcono').oninput = function () {
+                const val = this.value.trim() || '📁';
+                document.getElementById('iconoPreview').textContent = val;
+                document.querySelectorAll('.icono-btn').forEach(btn => {
+                    btn.classList.toggle('selected', btn.dataset.icono === val);
+                });
+            };
+
+            // Selector de íconos
+            document.querySelectorAll('.icono-btn').forEach(btn => {
+                btn.onclick = function () {
+                    const icono = this.dataset.icono;
+                    document.getElementById('categoriaIcono').value = icono;
+                    document.getElementById('iconoPreview').textContent = icono;
+                    document.querySelectorAll('.icono-btn').forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                };
+            });
+        }
+
+        // ============================================================
+        // FUNCIÓN: GUARDAR EDICIÓN DE CATEGORÍA
+        // ============================================================
+        function guardarEdicionCategoria() {
+            const id = document.getElementById('categoriaIdEdit').value;
+            const nombre = document.getElementById('categoriaNombreEdit').value.trim();
+            const icono = document.getElementById('categoriaIcono').value.trim() || '📁';
+
+            if (!nombre) {
+                mostrarToast('⚠️ Ingresa un nombre para la categoría', 'warning');
+                document.getElementById('categoriaNombreEdit').focus();
+                return;
+            }
+
+            const cat = categoriasDisponibles.find(c => c.id === id);
+            if (!cat) {
+                mostrarToast('❌ Categoría no encontrada', 'error');
+                return;
+            }
+
+            // Si es una categoría base, actualizar el mapa base también
+            if (categoriasBase[id]) {
+                categoriasBase[id].nombre = nombre;
+                categoriasBase[id].icono = icono;
+            }
+
+            cat.nombre = nombre;
+            cat.icono = icono;
+
+            guardarCategorias();
+            renderizarCategorias();
+            renderizarFiltros();
+
+            // Actualizar select
+            const select = document.getElementById('videoCategoria');
+            if (select.value === id) {
+                select.options[select.selectedIndex].text = icono + ' ' + nombre;
+            }
+
+            cerrarModalCategoria();
+            mostrarToast('✅ Categoría "' + nombre + '" actualizada', 'success');
+        }
+
+        // ============================================================
+        // FUNCIÓN: ELIMINAR CATEGORÍA
+        // ============================================================
+        function eliminarCategoria(id) {
+            if (['oficial', 'momentos', 'en_vivo'].includes(id)) {
                 mostrarToast('⚠️ No puedes eliminar categorías predeterminadas', 'warning');
                 return;
             }
 
-            if (!confirm('¿Eliminar la categoría "' + slug + '"? Los videos no se eliminarán, solo la categoría.')) {
+            const cat = categoriasDisponibles.find(c => c.id === id);
+            if (!cat) return;
+
+            if (!confirm('¿Eliminar la categoría "' + cat.nombre + '"? Los videos no se eliminarán, solo la categoría.')) {
                 return;
             }
 
-            categoriasDisponibles = categoriasDisponibles.filter(c => c !== slug);
+            categoriasDisponibles = categoriasDisponibles.filter(c => c.id !== id);
             guardarCategorias();
 
             const select = document.getElementById('videoCategoria');
-            if (select.value === slug && categoriasDisponibles.length > 0) {
-                select.value = categoriasDisponibles[0];
+            if (select.value === id && categoriasDisponibles.length > 0) {
+                select.value = categoriasDisponibles[0].id;
             }
 
             renderizarCategorias();
-            renderizarFiltros(); // 🔥 ACTUALIZAR FILTROS
+            renderizarFiltros();
 
-            // Si el filtro actual era la categoría eliminada, cambiar a "todas"
-            if (filtroActual === slug) {
+            if (filtroActual === id) {
                 filtroActual = 'todas';
                 renderizarFiltros();
                 renderizarVideos();
@@ -906,11 +1217,18 @@
         }
 
         // ============================================================
+        // FUNCIÓN: CERRAR MODAL CATEGORÍA
+        // ============================================================
+        function cerrarModalCategoria() {
+            document.getElementById('modalEditarCategoria').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // ============================================================
         // FUNCIÓN: NORMALIZAR URL DE YOUTUBE
         // ============================================================
         function normalizarYoutubeUrl(url) {
             if (!url) return '';
-
             url = url.trim();
 
             if (url.includes('youtube.com/embed/')) {
@@ -937,11 +1255,6 @@
 
             if (url.includes('youtube.com/shorts/')) {
                 const match = url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/);
-                if (match) return 'https://www.youtube.com/embed/' + match[1];
-            }
-
-            if (url.includes('youtube.com/embed/')) {
-                const match = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/);
                 if (match) return 'https://www.youtube.com/embed/' + match[1];
             }
 
@@ -1243,17 +1556,16 @@
                 return;
             }
 
-            const categoriasNombres = getCategoriasBase();
+            // Crear mapa de categorías
+            const catMap = {};
             categoriasDisponibles.forEach(cat => {
-                if (!categoriasNombres[cat]) {
-                    categoriasNombres[cat] = cat;
-                }
+                catMap[cat.id] = cat;
             });
 
             let html = '';
             filtrados.forEach(video => {
                 const fecha = video.fecha ? formatearFecha(video.fecha) : 'Sin fecha';
-                const catNombre = categoriasNombres[video.categoria] || video.categoria;
+                const cat = catMap[video.categoria] || { nombre: video.categoria || 'General', icono: '📁' };
                 const fuenteIcon = video.fuente === 'cloudinary' ? '☁️' : '▶️';
 
                 html += `
@@ -1264,7 +1576,7 @@
                                 <div class="video-info">
                                     <div class="video-titulo">${sanitizar(video.titulo)} ${video.destacado ? '⭐' : ''}</div>
                                     <div class="video-meta">
-                                        <span><i class="fa-regular fa-folder"></i> ${catNombre}</span>
+                                        <span><i class="fa-regular fa-folder"></i> ${cat.icono} ${cat.nombre}</span>
                                         <span><i class="fa-regular fa-calendar"></i> ${fecha}</span>
                                         <span>${fuenteIcon} ${video.fuente === 'cloudinary' ? 'Cloudinary' : 'YouTube'}</span>
                                         ${video.orden > 0 ? '<span><i class="fa-regular fa-hashtag"></i> #' + video.orden + '</span>' : ''}
@@ -1406,7 +1718,7 @@
             document.getElementById('videoId').value = '';
             document.getElementById('videoTitulo').value = '';
             document.getElementById('videoDescripcion').value = '';
-            document.getElementById('videoCategoria').value = categoriasDisponibles[0] || 'oficial';
+            document.getElementById('videoCategoria').value = categoriasDisponibles.length > 0 ? categoriasDisponibles[0].id : 'oficial';
             document.getElementById('videoUrl').value = '';
             document.getElementById('videoUrlCloudinary').value = '';
             document.getElementById('videoPublicId').value = '';
@@ -1430,6 +1742,17 @@
             if (confirm('¿Cancelar la edición? Los cambios no guardados se perderán.')) {
                 limpiarFormulario();
             }
+        }
+
+        function recargarVideoteca() {
+            const btn = document.querySelector('.recargar-btn');
+            const icon = btn.querySelector('i');
+            icon.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                icon.style.transform = 'rotate(0deg)';
+            }, 500);
+            mostrarToast('🔄 Recargando videoteca...', 'info');
+            cargarVideos();
         }
 
         // ============================================================
@@ -1529,6 +1852,14 @@
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 cerrarModalVideo();
+                cerrarModalCategoria();
+            }
+        });
+
+        // Cerrar modal de categoría al hacer clic fuera
+        document.getElementById('modalEditarCategoria').addEventListener('click', function (e) {
+            if (e.target === this) {
+                cerrarModalCategoria();
             }
         });
 
@@ -1539,7 +1870,7 @@
             cargarCategoriasGuardadas();
             cargarVideos();
             switchUploadOption('youtube');
-            console.log('🚀 Gestor de Videos cargado con filtros dinámicos');
+            console.log('🚀 Gestor de Videos cargado con edición de categorías');
         });
 
         document.addEventListener('keydown', function (e) {
