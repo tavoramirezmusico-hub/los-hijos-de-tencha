@@ -4,12 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador WhatsApp | Los Hijos de Tencha</title>
+    <title>Generador de Textos WhatsApp | Los Hijos de Tencha</title>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js">
     </script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js">
     </script>
 
     <!-- Font Awesome -->
@@ -23,7 +25,7 @@
     <link rel="stylesheet" href="css/admin.css">
 
     <style>
-        /* ===== ESTILOS ===== */
+        /* ===== ESTILOS PROPIOS DEL GENERADOR ===== */
         .generator-container {
             max-width: 800px;
             margin: 0 auto;
@@ -145,6 +147,7 @@
             font-size: 1rem;
         }
 
+        /* ===== RESULTADO ===== */
         .result-box {
             display: none;
             margin-top: 20px;
@@ -221,52 +224,59 @@
             transform: translateY(-2px);
         }
 
-        .result-actions .btn-copy {
+        .result-actions .btn-action.btn-copy {
             background: var(--color-primary);
             color: #1a1a2e;
             border-color: var(--color-primary);
         }
 
-        .result-actions .btn-copy:hover {
+        .result-actions .btn-action.btn-copy:hover {
             background: #e6b800;
             box-shadow: 0 4px 12px rgba(255, 204, 0, 0.3);
         }
 
-        .result-actions .btn-save {
+        .result-actions .btn-action.btn-save {
             background: #2ecc71;
             color: #fff;
             border-color: #2ecc71;
         }
 
-        .result-actions .btn-save:hover {
+        .result-actions .btn-action.btn-save:hover {
             background: #27ae60;
             box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
         }
 
-        .result-actions .btn-whatsapp {
+        .result-actions .btn-action.btn-whatsapp {
             background: #25D366;
             color: #fff;
             border-color: #25D366;
         }
 
-        .result-actions .btn-whatsapp:hover {
+        .result-actions .btn-action.btn-whatsapp:hover {
             background: #1da851;
             box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
         }
 
-        .toast-success {
-            background: #2ecc71 !important;
-            color: #fff !important;
+        /* ===== HISTORIAL ===== */
+        .history-section {
+            margin-top: 30px;
         }
 
-        .toast-error {
-            background: #e74c3c !important;
-            color: #fff !important;
+        .history-section .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
         }
 
-        .toast-warning {
-            background: #f39c12 !important;
-            color: #fff !important;
+        .history-section .history-header h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .history-section .history-header h3 i {
+            color: var(--color-primary);
+            margin-right: 8px;
         }
 
         .history-list {
@@ -362,6 +372,7 @@
             opacity: 0.5;
         }
 
+        /* ===== ANIMACIONES ===== */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -390,6 +401,7 @@
             animation: pulse 1.2s ease-in-out infinite;
         }
 
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .generator-card {
                 padding: 20px;
@@ -411,6 +423,12 @@
             .result-actions .btn-action {
                 width: 100%;
                 justify-content: center;
+            }
+
+            .history-section .history-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
             }
         }
 
@@ -436,12 +454,28 @@
                 padding: 12px;
             }
         }
+
+        /* ===== TOAST personalizado ===== */
+        .toast-success {
+            background: #2ecc71 !important;
+            color: #fff !important;
+        }
+
+        .toast-error {
+            background: #e74c3c !important;
+            color: #fff !important;
+        }
+
+        .toast-warning {
+            background: #f39c12 !important;
+            color: #fff !important;
+        }
     </style>
 </head>
 
 <body>
 
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR (MENÚ LATERAL) -->
     <aside class="admin-sidebar" id="adminSidebar">
         <div class="sidebar-brand">
             <img src="../img/logo.webp" alt="Los Hijos de Tencha">
@@ -470,12 +504,13 @@
         </ul>
     </aside>
 
+    <!-- Overlay para móvil -->
     <div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- CONTENIDO PRINCIPAL -->
     <main class="admin-main">
 
-        <!-- HEADER -->
+        <!-- HEADER SUPERIOR -->
         <header class="admin-header">
             <div class="header-left">
                 <button class="hamburger" id="hamburgerBtn">
@@ -488,6 +523,9 @@
                     <i class="fa-solid fa-shield-halved"></i>
                     Administrador
                 </div>
+                <a href="../validador.html" target="_blank" class="btn-header btn-secondary">
+                    <i class="fa-solid fa-qrcode"></i> Validador
+                </a>
                 <a href="../index.html" target="_blank" class="btn-header btn-secondary">
                     <i class="fa-solid fa-globe"></i> Web
                 </a>
@@ -497,19 +535,22 @@
             </div>
         </header>
 
-        <!-- GENERADOR -->
+        <!-- CONTENIDO GENERADOR -->
         <div class="generator-container">
 
+            <!-- ENCABEZADO -->
             <div class="generator-header">
                 <h1>Generador de Textos <span>WhatsApp</span></h1>
-                <p>Crea mensajes profesionales con inteligencia artificial (Gemini).</p>
+                <p>Crea mensajes profesionales para WhatsApp con ayuda de inteligencia artificial (Gemini).</p>
             </div>
 
+            <!-- CARD PRINCIPAL -->
             <div class="generator-card">
 
                 <div class="form-group">
                     <label for="tema"><i class="fa-solid fa-pen"></i> Tema del mensaje</label>
-                    <input type="text" id="tema" placeholder="Ej: Oferta de verano, Recordatorio de cita..." />
+                    <input type="text" id="tema"
+                        placeholder="Ej: Oferta de verano, Recordatorio de cita, Bienvenida..." />
                     <div class="helper-text">Describe brevemente de qué quieres que trate el mensaje.</div>
                 </div>
 
@@ -537,7 +578,8 @@
 
                 <div class="form-group">
                     <label for="contexto"><i class="fa-solid fa-circle-info"></i> Contexto adicional (opcional)</label>
-                    <textarea id="contexto" placeholder="Ej: El mensaje es para clientes que ya compraron antes..."
+                    <textarea id="contexto"
+                        placeholder="Ej: El mensaje es para clientes que ya compraron antes, incluir descuento del 10%..."
                         rows="2"></textarea>
                 </div>
 
@@ -626,8 +668,6 @@
         try {
             if (typeof firebase !== 'undefined') {
                 db = firebase.firestore();
-                // Configurar para usar caché si es necesario
-                db.settings({ merge: true });
                 console.log('✅ Firestore conectado');
             }
         } catch (e) {
@@ -635,12 +675,12 @@
         }
 
         // ============================================================
-        // VARIABLES
+        // CONFIGURACIÓN - URL DEL WORKER
         // ============================================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwD5BSV1HJDPYqXbQrICJnrz9bowvcWAJNi_W0Zt6lRGNxE42D8vmUFYPDX3pmju86u/exec';
+        const SCRIPT_URL = 'https://generador-whatsapp.tavoramirezmusico.workers.dev/';
 
         // ============================================================
-        // SIDEBAR
+        // SIDEBAR - MENÚ HAMBURGUESA
         // ============================================================
         const sidebar = document.getElementById('adminSidebar');
         const overlay = document.getElementById('sidebarOverlay');
@@ -651,8 +691,13 @@
             overlay.classList.toggle('active');
         }
 
-        if (hamburger) hamburger.addEventListener('click', toggleSidebar);
-        if (overlay) overlay.addEventListener('click', toggleSidebar);
+        if (hamburger) {
+            hamburger.addEventListener('click', toggleSidebar);
+        }
+
+        if (overlay) {
+            overlay.addEventListener('click', toggleSidebar);
+        }
 
         document.querySelectorAll('.admin-sidebar .sidebar-nav a').forEach(link => {
             link.addEventListener('click', () => {
@@ -666,21 +711,27 @@
         // ============================================================
         // VERIFICAR SESIÓN
         // ============================================================
-        (function () {
+        (function verificarSesion() {
             if (typeof verificarSesionAdmin !== 'undefined' && !verificarSesionAdmin()) {
                 window.location.href = 'login.html';
+                return;
             }
         })();
 
         // ============================================================
-        // GENERAR TEXTO
+        // FUNCIONES DEL GENERADOR
         // ============================================================
+
+        /**
+         * Genera un mensaje usando la API de Gemini a través del Worker
+         */
         async function generarTexto() {
             const tema = document.getElementById('tema').value.trim();
             const tono = document.getElementById('tono').value;
             const longitud = document.getElementById('longitud').value;
             const contexto = document.getElementById('contexto').value.trim();
 
+            // Validar tema
             if (!tema) {
                 mostrarToast('⚠️ Por favor, escribe un tema para el mensaje.', 'warning');
                 document.getElementById('tema').focus();
@@ -692,6 +743,7 @@
             const mensajeEl = document.getElementById('mensajeGenerado');
             const tiempoEl = document.getElementById('tiempoGeneracion');
 
+            // Mostrar resultado y estado de carga
             resultadoDiv.classList.add('show');
             mensajeEl.className = 'result-text loading pulsing';
             mensajeEl.textContent = '⏳ Generando mensaje con IA...';
@@ -729,17 +781,18 @@
             } catch (error) {
                 console.error('Error en generarTexto:', error);
                 mensajeEl.className = 'result-text';
-                mensajeEl.textContent = '❌ Error de conexión. Intenta de nuevo.';
+                mensajeEl.textContent = '❌ Error de conexión con el servidor. Intenta de nuevo.';
                 mostrarToast('❌ Error de conexión', 'error');
             }
 
+            // Restaurar botón
             btn.disabled = false;
             btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Generar mensaje con IA';
         }
 
-        // ============================================================
-        // COPIAR TEXTO
-        // ============================================================
+        /**
+         * Copia el texto al portapapeles
+         */
         function copiarTexto() {
             const mensajeEl = document.getElementById('mensajeGenerado');
             const texto = mensajeEl.textContent;
@@ -774,9 +827,9 @@
             document.body.removeChild(textarea);
         }
 
-        // ============================================================
-        // ENVIAR A WHATSAPP
-        // ============================================================
+        /**
+         * Envía el mensaje a WhatsApp (abre el enlace)
+         */
         function enviarWhatsApp() {
             const mensajeEl = document.getElementById('mensajeGenerado');
             const texto = mensajeEl.textContent;
@@ -792,9 +845,9 @@
             mostrarToast('📱 Abriendo WhatsApp...', 'success');
         }
 
-        // ============================================================
-        // GUARDAR EN FIRESTORE
-        // ============================================================
+        /**
+         * Guarda el mensaje en Firestore
+         */
         async function guardarTexto() {
             const mensajeEl = document.getElementById('mensajeGenerado');
             const texto = mensajeEl.textContent;
@@ -829,29 +882,29 @@
             }
         }
 
-        // ============================================================
-        // LIMPIAR RESULTADO
-        // ============================================================
+        /**
+         * Limpia el resultado
+         */
         function limpiarResultado() {
             document.getElementById('resultado').classList.remove('show');
             document.getElementById('mensajeGenerado').textContent = '✍️ Escribe un tema y haz clic en "Generar"';
             document.getElementById('tiempoGeneracion').textContent = '';
         }
 
-        // ============================================================
-        // CARGAR HISTORIAL
-        // ============================================================
+        /**
+         * Carga el historial desde Firestore
+         */
         async function cargarHistorial() {
             const lista = document.getElementById('historialList');
 
             try {
                 if (!db) {
                     lista.innerHTML = `
-                        <li class="empty-history">
-                            <i class="fa-solid fa-triangle-exclamation"></i>
-                            Firestore no disponible
-                        </li>
-                    `;
+                                <li class="empty-history">
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                    Firestore no disponible
+                                </li>
+                            `;
                     return;
                 }
 
@@ -862,11 +915,11 @@
 
                 if (snapshot.empty) {
                     lista.innerHTML = `
-                        <li class="empty-history">
-                            <i class="fa-regular fa-inbox"></i>
-                            No hay mensajes guardados
-                        </li>
-                    `;
+                                <li class="empty-history">
+                                    <i class="fa-regular fa-inbox"></i>
+                                    No hay mensajes guardados
+                                </li>
+                            `;
                     return;
                 }
 
@@ -878,31 +931,32 @@
                     const tema = data.tema || 'Sin tema';
                     const tono = data.tono || '';
 
+                    // Truncar texto para vista previa
                     const preview = texto.length > 60 ? texto.substring(0, 60) + '...' : texto;
 
                     html += `
-                        <li>
-                            <div class="history-icon">
-                                <i class="fa-regular fa-message"></i>
-                            </div>
-                            <div class="history-content">
-                                <div class="history-text" title="${sanitizar(texto)}">${sanitizar(preview)}</div>
-                                <div class="history-meta">
-                                    <i class="fa-regular fa-tag"></i> ${sanitizar(tema)}
-                                    ${tono ? '· <i class="fa-regular fa-face-smile"></i> ' + sanitizar(tono) : ''}
-                                    · ${formatearFechaHora(fecha)}
-                                </div>
-                            </div>
-                            <div class="history-actions">
-                                <button class="btn-reuse" onclick="reutilizarMensaje('${doc.id}')" title="Reutilizar">
-                                    <i class="fa-solid fa-rotate-right"></i>
-                                </button>
-                                <button onclick="eliminarMensaje('${doc.id}')" title="Eliminar">
-                                    <i class="fa-regular fa-trash-can"></i>
-                                </button>
-                            </div>
-                        </li>
-                    `;
+                                <li>
+                                    <div class="history-icon">
+                                        <i class="fa-regular fa-message"></i>
+                                    </div>
+                                    <div class="history-content">
+                                        <div class="history-text" title="${sanitizar(texto)}">${sanitizar(preview)}</div>
+                                        <div class="history-meta">
+                                            <i class="fa-regular fa-tag"></i> ${sanitizar(tema)}
+                                            ${tono ? '· <i class="fa-regular fa-face-smile"></i> ' + sanitizar(tono) : ''}
+                                            · ${formatearFechaHora(fecha)}
+                                        </div>
+                                    </div>
+                                    <div class="history-actions">
+                                        <button class="btn-reuse" onclick="reutilizarMensaje('${doc.id}')" title="Reutilizar">
+                                            <i class="fa-solid fa-rotate-right"></i>
+                                        </button>
+                                        <button onclick="eliminarMensaje('${doc.id}')" title="Eliminar">
+                                            <i class="fa-regular fa-trash-can"></i>
+                                        </button>
+                                    </div>
+                                </li>
+                            `;
                 });
 
                 lista.innerHTML = html;
@@ -910,21 +964,21 @@
             } catch (error) {
                 console.error('Error al cargar historial:', error);
                 lista.innerHTML = `
-                    <li class="empty-history">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                        Error al cargar historial
-                    </li>
-                `;
+                            <li class="empty-history">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                Error al cargar historial
+                            </li>
+                        `;
             }
         }
 
-        // ============================================================
-        // REUTILIZAR MENSAJE
-        // ============================================================
+        /**
+         * Reutiliza un mensaje guardado (lo carga en el resultado)
+         */
         async function reutilizarMensaje(docId) {
             try {
                 if (!db) {
-                    mostrarToast('⚠️ Firestore no disponible', 'warning');
+                    mostrarToast('⚠️ Firestore no está disponible', 'warning');
                     return;
                 }
 
@@ -943,6 +997,7 @@
                 document.getElementById('tiempoGeneracion').textContent = '📂 Reutilizado de historial';
                 resultadoDiv.classList.add('show');
 
+                // Opcional: llenar los campos con el tema y tono
                 if (data.tema) {
                     document.getElementById('tema').value = data.tema;
                 }
@@ -958,9 +1013,9 @@
             }
         }
 
-        // ============================================================
-        // ELIMINAR MENSAJE
-        // ============================================================
+        /**
+         * Elimina un mensaje del historial
+         */
         async function eliminarMensaje(docId) {
             if (!confirm('¿Estás seguro de que quieres eliminar este mensaje?')) {
                 return;
@@ -968,7 +1023,7 @@
 
             try {
                 if (!db) {
-                    mostrarToast('⚠️ Firestore no disponible', 'warning');
+                    mostrarToast('⚠️ Firestore no está disponible', 'warning');
                     return;
                 }
 
@@ -982,9 +1037,9 @@
             }
         }
 
-        // ============================================================
-        // BORRAR HISTORIAL
-        // ============================================================
+        /**
+         * Borra todo el historial
+         */
         async function borrarHistorial() {
             if (!confirm('⚠️ ¿Estás seguro de que quieres borrar TODO el historial? Esta acción no se puede deshacer.')) {
                 return;
@@ -992,7 +1047,7 @@
 
             try {
                 if (!db) {
-                    mostrarToast('⚠️ Firestore no disponible', 'warning');
+                    mostrarToast('⚠️ Firestore no está disponible', 'warning');
                     return;
                 }
 
@@ -1016,6 +1071,9 @@
         // FUNCIONES UTILITARIAS
         // ============================================================
 
+        /**
+         * Sanitiza texto para evitar XSS
+         */
         function sanitizar(texto) {
             if (!texto) return '';
             const div = document.createElement('div');
@@ -1023,6 +1081,9 @@
             return div.innerHTML;
         }
 
+        /**
+         * Formatea fecha y hora
+         */
         function formatearFechaHora(fecha) {
             if (!fecha || isNaN(fecha.getTime())) return 'Fecha inválida';
             const opciones = {
@@ -1034,6 +1095,9 @@
             return fecha.toLocaleDateString('es-ES', opciones);
         }
 
+        /**
+         * Muestra un toast
+         */
         function mostrarToast(mensaje, tipo = 'info') {
             const toast = document.getElementById('adminToast');
             if (!toast) return;
@@ -1055,9 +1119,9 @@
             }, 4000);
         }
 
-        // ============================================================
-        // INICIALIZAR
-        // ============================================================
+        /**
+         * Permite generar con Enter en el campo tema
+         */
         document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('tema').addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') {
@@ -1066,11 +1130,12 @@
                 }
             });
 
+            // Cargar historial
             setTimeout(cargarHistorial, 1000);
         });
 
         console.log('🤖 Generador de Textos WhatsApp con IA cargado');
-        console.log('📡 Usando URL:', SCRIPT_URL);
+        console.log('📡 Usando Worker:', SCRIPT_URL);
         console.log('🔥 Firebase disponible:', !!db);
     </script>
 
