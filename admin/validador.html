@@ -25,6 +25,195 @@
     <link rel="stylesheet" href="css/admin.css">
 
     <style>
+        /* ============================================================
+           LOGIN MODAL SOBRE EL VALIDADOR
+           ============================================================ */
+        .validador-login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.97);
+            z-index: 99999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(6px);
+            animation: fadeInOverlay 0.4s ease;
+        }
+
+        .validador-login-overlay.hidden {
+            display: none;
+        }
+
+        @keyframes fadeInOverlay {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .validador-login-box {
+            background: #141414;
+            padding: 40px 30px;
+            border-radius: 24px;
+            max-width: 380px;
+            width: 95%;
+            text-align: center;
+            border: 1px solid rgba(255, 204, 0, 0.15);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .validador-login-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ffcc00, #f5a623);
+        }
+
+        .validador-login-box .logo-login {
+            height: 70px;
+            width: auto;
+            margin-bottom: 10px;
+        }
+
+        .validador-login-box h2 {
+            color: #ffcc00;
+            font-size: 1.3rem;
+            margin-bottom: 4px;
+        }
+
+        .validador-login-box .subtitle {
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 18px;
+        }
+
+        .validador-login-box .input-wrapper {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        .validador-login-box .input-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #555;
+            font-size: 1rem;
+        }
+
+        .validador-login-box input {
+            width: 100%;
+            padding: 14px 14px 14px 46px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            transition: border 0.3s;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+        }
+
+        .validador-login-box input:focus {
+            outline: none;
+            border-color: #ffcc00;
+            box-shadow: 0 0 0 4px rgba(255, 204, 0, 0.06);
+        }
+
+        .validador-login-box .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+        }
+
+        .validador-login-box .btn-login:hover {
+            background: #e6b800;
+            transform: scale(1.02);
+            box-shadow: 0 8px 30px rgba(255, 204, 0, 0.25);
+        }
+
+        .validador-login-box .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .validador-login-box .error-msg {
+            color: #ff4444;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .validador-login-box .error-msg.show {
+            display: block;
+        }
+
+        .validador-login-box .login-footer {
+            margin-top: 15px;
+            color: #555;
+            font-size: 0.75rem;
+        }
+
+        .validador-login-box .login-footer a {
+            color: #ffcc00;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .validador-login-box .login-footer a:hover {
+            color: #fff;
+        }
+
+        .spinner-login {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-top: 2px solid #000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+
+        .btn-login.loading .spinner-login {
+            display: inline-block;
+        }
+
+        .btn-login.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ============================================================
+           ESTILOS EXISTENTES DEL VALIDADOR
+           ============================================================ */
         .validador-container {
             max-width: 600px;
             margin: 0 auto;
@@ -370,167 +559,201 @@
 
 <body>
 
-    <!-- SIDEBAR -->
-    <aside class="admin-sidebar" id="adminSidebar">
-        <div class="sidebar-brand">
-            <img src="../img/logo.webp" alt="Los Hijos de Tencha">
-            <h2>Panel <span>Admin</span></h2>
+    <!-- ============================================================
+    OVERLAY DE LOGIN PARA EL VALIDADOR
+    ============================================================ -->
+    <div class="validador-login-overlay" id="validadorLoginOverlay">
+        <div class="validador-login-box">
+            <img src="../img/logo.webp" alt="Los Hijos de Tencha" class="logo-login">
+            <h2>🔐 VALIDADOR QR</h2>
+            <p class="subtitle">Ingresa la contraseña para acceder</p>
+            <div class="input-wrapper">
+                <i class="fa-solid fa-key"></i>
+                <input type="password" id="validadorPasswordInput" placeholder="Contraseña" autofocus>
+            </div>
+            <button class="btn-login" id="validadorLoginBtn" onclick="verificarPasswordValidador()">
+                <span class="btn-text">▶️ Ingresar</span>
+                <span class="spinner-login"></span>
+            </button>
+            <div class="error-msg" id="validadorLoginError">❌ Contraseña incorrecta</div>
+            <div class="login-footer">
+                <a href="../index.html"><i class="fa-solid fa-arrow-left"></i> Volver al sitio</a>
+            </div>
         </div>
+    </div>
 
-        <ul class="sidebar-nav">
-            <li class="nav-label">Menú Principal</li>
-            <li><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
-            <li><a href="eventos.html"><i class="fa-solid fa-calendar"></i> Eventos</a></li>
-            <li><a href="noticias.html"><i class="fa-solid fa-newspaper"></i> Noticias</a></li>
-            <li><a href="galeria.html"><i class="fa-solid fa-images"></i> Galería</a></li>
+    <!-- ============================================================
+    CONTENIDO PRINCIPAL DEL VALIDADOR
+    ============================================================ -->
+    <div id="validadorContent" style="display:none;">
 
-            <li class="nav-divider"></li>
-            <li class="nav-label">Contenido</li>
-            <li><a href="canciones.html"><i class="fa-solid fa-music"></i> Canciones</a></li>
-            <li><a href="videos.html"><i class="fa-solid fa-video"></i> Videos</a></li>
-            <li><a href="tienda.html"><i class="fa-solid fa-shirt"></i> Tienda</a></li>
-
-            <li class="nav-divider"></li>
-            <li class="nav-label">Sistema</li>
-            <li><a href="asistentes.html"><i class="fa-solid fa-users"></i> Asistentes</a></li>
-            <li><a href="validador.html" class="active"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
-            <li><a href="#" onclick="cerrarSesionAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
-        </ul>
-    </aside>
-
-    <div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
-
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="admin-main">
-
-        <!-- HEADER -->
-        <header class="admin-header">
-            <div class="header-left">
-                <button class="hamburger" id="hamburgerBtn">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-                <h1><span>🔐</span> Validador de Entradas</h1>
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-brand">
+                <img src="../img/logo.webp" alt="Los Hijos de Tencha">
+                <h2>Panel <span>Admin</span></h2>
             </div>
-            <div class="header-right">
-                <div class="user-badge">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    Administrador
+
+            <ul class="sidebar-nav">
+                <li class="nav-label">Menú Principal</li>
+                <li><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="eventos.html"><i class="fa-solid fa-calendar"></i> Eventos</a></li>
+                <li><a href="noticias.html"><i class="fa-solid fa-newspaper"></i> Noticias</a></li>
+                <li><a href="galeria.html"><i class="fa-solid fa-images"></i> Galería</a></li>
+
+                <li class="nav-divider"></li>
+                <li class="nav-label">Contenido</li>
+                <li><a href="canciones.html"><i class="fa-solid fa-music"></i> Canciones</a></li>
+                <li><a href="videos.html"><i class="fa-solid fa-video"></i> Videos</a></li>
+                <li><a href="tienda.html"><i class="fa-solid fa-shirt"></i> Tienda</a></li>
+
+                <li class="nav-divider"></li>
+                <li class="nav-label">Herramientas</li>
+                <li><a href="generador.html"><i class="fa-solid fa-wand-magic-sparkles"></i> Generador WhatsApp</a></li>
+
+                <li class="nav-divider"></li>
+                <li class="nav-label">Sistema</li>
+                <li><a href="asistentes.html"><i class="fa-solid fa-users"></i> Asistentes</a></li>
+                <li><a href="validador.html" class="active"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
+                <li><a href="#" id="btnSalirValidador"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
+            </ul>
+        </aside>
+
+        <div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="admin-main">
+
+            <!-- HEADER -->
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="hamburger" id="hamburgerBtn">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <h1><span>🔐</span> Validador de Entradas</h1>
                 </div>
-                <a href="../index.html" target="_blank" class="btn-header btn-secondary">
-                    <i class="fa-solid fa-globe"></i> Web
-                </a>
-                <button class="btn-header btn-danger" onclick="cerrarSesionAdmin()">
-                    <i class="fa-solid fa-right-from-bracket"></i> Salir
-                </button>
-            </div>
-        </header>
-
-        <!-- CONTENIDO VALIDADOR -->
-        <div class="validador-container">
-
-            <!-- TABS -->
-            <div class="sub-tabs">
-                <button class="active" onclick="switchTab('escaner', this)">
-                    <i class="fa-solid fa-qrcode"></i> Escáner
-                </button>
-                <button onclick="switchTab('lista', this)">
-                    <i class="fa-solid fa-list"></i> Lista
-                </button>
-            </div>
-
-            <!-- TAB 1: ESCÁNER -->
-            <div id="subTab-escaner" class="sub-tab-content active">
-                <div class="admin-card">
-                    <div class="card-header">
-                        <h3><i class="fa-solid fa-camera"></i> Escanear Código QR</h3>
+                <div class="header-right">
+                    <div class="user-badge">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        Administrador
                     </div>
+                    <a href="../index.html" target="_blank" class="btn-header btn-secondary">
+                        <i class="fa-solid fa-globe"></i> Web
+                    </a>
+                    <button class="btn-header btn-danger" id="btnSalirHeaderValidador">
+                        <i class="fa-solid fa-right-from-bracket"></i> Salir
+                    </button>
+                </div>
+            </header>
 
-                    <div class="scanner-status inactive" id="scannerStatus">
-                        <i class="fa-solid fa-circle"></i> Cámara inactiva
-                    </div>
+            <!-- CONTENIDO VALIDADOR -->
+            <div class="validador-container">
 
-                    <div id="reader"></div>
-
-                    <div class="scanner-controls">
-                        <button class="btn-admin btn-primary" id="startScanBtn" onclick="startScanner()">
-                            <i class="fa-solid fa-play"></i> Iniciar
-                        </button>
-                        <button class="btn-admin btn-danger" id="stopScanBtn" onclick="stopScanner()"
-                            style="display:none;">
-                            <i class="fa-solid fa-stop"></i> Detener
-                        </button>
-                        <button class="btn-admin btn-secondary" id="switchCameraBtn" onclick="switchCamera()"
-                            style="display:none;">
-                            <i class="fa-solid fa-rotate"></i> Cámara
-                        </button>
-                    </div>
-
-                    <div id="resultadoEscaneo"></div>
+                <!-- TABS -->
+                <div class="sub-tabs">
+                    <button class="active" onclick="switchTab('escaner', this)">
+                        <i class="fa-solid fa-qrcode"></i> Escáner
+                    </button>
+                    <button onclick="switchTab('lista', this)">
+                        <i class="fa-solid fa-list"></i> Lista
+                    </button>
                 </div>
 
-                <!-- VALIDACIÓN MANUAL -->
-                <div class="admin-card">
-                    <div class="card-header">
-                        <h3><i class="fa-solid fa-keyboard"></i> Validación Manual</h3>
-                    </div>
-                    <p style="color:var(--color-text-muted); font-size:0.85rem; margin-bottom:12px;">
-                        Si el escáner no funciona, copia y pega el ID de la entrada
-                    </p>
-                    <div class="validacion-manual">
-                        <input type="text" id="manualId" class="admin-input"
-                            placeholder="ID del asistente (ej: abc123)">
-                        <button class="btn-admin btn-secondary" onclick="validarManual()">
-                            <i class="fa-solid fa-magnifying-glass"></i> Validar
-                        </button>
-                    </div>
-                </div>
-            </div>
+                <!-- TAB 1: ESCÁNER -->
+                <div id="subTab-escaner" class="sub-tab-content active">
+                    <div class="admin-card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-camera"></i> Escanear Código QR</h3>
+                        </div>
 
-            <!-- TAB 2: LISTA DE ASISTENTES -->
-            <div id="subTab-lista" class="sub-tab-content">
-                <div class="admin-card">
-                    <div class="card-header">
-                        <h3><i class="fa-solid fa-users"></i> Asistentes por Evento</h3>
-                    </div>
+                        <div class="scanner-status inactive" id="scannerStatus">
+                            <i class="fa-solid fa-circle"></i> Cámara inactiva
+                        </div>
 
-                    <div class="admin-form-group">
-                        <label for="selectEventoLista">Seleccionar Evento</label>
-                        <select id="selectEventoLista" class="admin-select" onchange="cargarListaAsistentes()">
-                            <option value="">Selecciona un evento</option>
-                        </select>
+                        <div id="reader"></div>
+
+                        <div class="scanner-controls">
+                            <button class="btn-admin btn-primary" id="startScanBtn" onclick="startScanner()">
+                                <i class="fa-solid fa-play"></i> Iniciar
+                            </button>
+                            <button class="btn-admin btn-danger" id="stopScanBtn" onclick="stopScanner()"
+                                style="display:none;">
+                                <i class="fa-solid fa-stop"></i> Detener
+                            </button>
+                            <button class="btn-admin btn-secondary" id="switchCameraBtn" onclick="switchCamera()"
+                                style="display:none;">
+                                <i class="fa-solid fa-rotate"></i> Cámara
+                            </button>
+                        </div>
+
+                        <div id="resultadoEscaneo"></div>
                     </div>
 
-                    <div id="statsListaContainer" style="display:none;">
-                        <div class="mini-stats">
-                            <div class="stat">
-                                <div class="number" id="totalLista">0</div>
-                                <div class="label">Total</div>
-                            </div>
-                            <div class="stat">
-                                <div class="number" id="ingresadosLista">0</div>
-                                <div class="label">Ingresados</div>
-                            </div>
-                            <div class="stat">
-                                <div class="number" id="pendientesLista">0</div>
-                                <div class="label">Pendientes</div>
-                            </div>
+                    <!-- VALIDACIÓN MANUAL -->
+                    <div class="admin-card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-keyboard"></i> Validación Manual</h3>
+                        </div>
+                        <p style="color:var(--color-text-muted); font-size:0.85rem; margin-bottom:12px;">
+                            Si el escáner no funciona, copia y pega el ID de la entrada
+                        </p>
+                        <div class="validacion-manual">
+                            <input type="text" id="manualId" class="admin-input"
+                                placeholder="ID del asistente (ej: abc123)">
+                            <button class="btn-admin btn-secondary" onclick="validarManual()">
+                                <i class="fa-solid fa-magnifying-glass"></i> Validar
+                            </button>
                         </div>
                     </div>
+                </div>
 
-                    <div id="listaAsistentes">
-                        <p style="color:var(--color-text-muted); text-align:center; padding:20px;">
-                            <i class="fa-solid fa-arrow-up"></i> Selecciona un evento
-                        </p>
+                <!-- TAB 2: LISTA DE ASISTENTES -->
+                <div id="subTab-lista" class="sub-tab-content">
+                    <div class="admin-card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-users"></i> Asistentes por Evento</h3>
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label for="selectEventoLista">Seleccionar Evento</label>
+                            <select id="selectEventoLista" class="admin-select" onchange="cargarListaAsistentes()">
+                                <option value="">Selecciona un evento</option>
+                            </select>
+                        </div>
+
+                        <div id="statsListaContainer" style="display:none;">
+                            <div class="mini-stats">
+                                <div class="stat">
+                                    <div class="number" id="totalLista">0</div>
+                                    <div class="label">Total</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="number" id="ingresadosLista">0</div>
+                                    <div class="label">Ingresados</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="number" id="pendientesLista">0</div>
+                                    <div class="label">Pendientes</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="listaAsistentes">
+                            <p style="color:var(--color-text-muted); text-align:center; padding:20px;">
+                                <i class="fa-solid fa-arrow-up"></i> Selecciona un evento
+                            </p>
+                        </div>
                     </div>
                 </div>
+
             </div>
 
-        </div>
+        </main>
 
-    </main>
+        <!-- TOAST -->
+        <div id="adminToast" class="admin-toast"></div>
 
-    <!-- TOAST -->
-    <div id="adminToast" class="admin-toast"></div>
+    </div>
 
     <!-- ============================================================
     SCRIPTS
@@ -539,7 +762,100 @@
 
     <script>
         // ============================================================
-        // VARIABLES GLOBALES
+        // CONFIGURACIÓN DE LOGIN
+        // ============================================================
+        const PASSWORD_HASH = '435a4954c470cee2b68da8bee7f879e00db66866b6d4dd7be0af3701e21db53f';
+
+        async function hashPasswordValidador(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function verificarPasswordValidador() {
+            const input = document.getElementById('validadorPasswordInput');
+            const error = document.getElementById('validadorLoginError');
+            const loginBtn = document.getElementById('validadorLoginBtn');
+            const password = input.value.trim();
+
+            error.classList.remove('show');
+
+            if (!password) {
+                error.textContent = '⚠️ Por favor, ingresa la contraseña';
+                error.classList.add('show');
+                input.focus();
+                return;
+            }
+
+            loginBtn.classList.add('loading');
+            loginBtn.disabled = true;
+
+            try {
+                const inputHash = await hashPasswordValidador(password);
+
+                if (inputHash === PASSWORD_HASH) {
+                    error.classList.remove('show');
+                    document.getElementById('validadorLoginOverlay').classList.add('hidden');
+                    document.getElementById('validadorContent').style.display = 'block';
+                    sessionStorage.setItem('validadorAuth', 'authenticated');
+                    sessionStorage.setItem('validadorLoginTime', Date.now().toString());
+                    iniciarValidador();
+                } else {
+                    error.textContent = '❌ Contraseña incorrecta. Intenta de nuevo.';
+                    error.classList.add('show');
+                    input.value = '';
+                    input.focus();
+                    setTimeout(() => error.classList.remove('show'), 3000);
+                }
+            } catch (err) {
+                console.error('Error de autenticación:', err);
+                error.textContent = '❌ Error al verificar la contraseña';
+                error.classList.add('show');
+            }
+
+            loginBtn.classList.remove('loading');
+            loginBtn.disabled = false;
+        }
+
+        function cerrarSesionValidador() {
+            sessionStorage.removeItem('validadorAuth');
+            sessionStorage.removeItem('validadorLoginTime');
+            document.getElementById('validadorContent').style.display = 'none';
+            document.getElementById('validadorLoginOverlay').classList.remove('hidden');
+            document.getElementById('validadorPasswordInput').value = '';
+            document.getElementById('validadorPasswordInput').focus();
+            // Detener escáner si está activo
+            if (isScanning) stopScanner();
+        }
+
+        // ============================================================
+        // VERIFICAR SESIÓN DEL VALIDADOR
+        // ============================================================
+        function verificarSesionValidador() {
+            const auth = sessionStorage.getItem('validadorAuth');
+            const loginTime = sessionStorage.getItem('validadorLoginTime');
+
+            if (auth === 'authenticated' && loginTime) {
+                const timeElapsed = Date.now() - parseInt(loginTime);
+                if (timeElapsed < 14400000) {
+                    document.getElementById('validadorLoginOverlay').classList.add('hidden');
+                    document.getElementById('validadorContent').style.display = 'block';
+                    iniciarValidador();
+                    return true;
+                } else {
+                    sessionStorage.removeItem('validadorAuth');
+                    sessionStorage.removeItem('validadorLoginTime');
+                }
+            }
+            document.getElementById('validadorLoginOverlay').classList.remove('hidden');
+            document.getElementById('validadorContent').style.display = 'none';
+            return false;
+        }
+
+        // ============================================================
+        // VARIABLES GLOBALES DEL VALIDADOR
         // ============================================================
         let html5QrCode = null;
         let isScanning = false;
@@ -562,23 +878,11 @@
         if (hamburger) hamburger.addEventListener('click', toggleSidebar);
         if (overlay) overlay.addEventListener('click', toggleSidebar);
 
-        document.querySelectorAll('.admin-sidebar .sidebar-nav a').forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth <= 992) {
-                    sidebar.classList.remove('open');
-                    overlay.classList.remove('active');
-                }
-            });
-        });
-
         // ============================================================
-        // VERIFICAR SESIÓN
+        // BOTONES DE SALIR
         // ============================================================
-        (function () {
-            if (!verificarSesionAdmin()) {
-                window.location.href = 'login.html';
-            }
-        })();
+        document.getElementById('btnSalirValidador')?.addEventListener('click', cerrarSesionValidador);
+        document.getElementById('btnSalirHeaderValidador')?.addEventListener('click', cerrarSesionValidador);
 
         // ============================================================
         // FUNCIONES - TABS
@@ -787,7 +1091,6 @@
                 const select = document.getElementById('selectEventoLista');
                 let options = '<option value="">Selecciona un evento</option>';
 
-                // Ordenar en memoria
                 const eventosList = [];
                 snapshot.forEach(doc => {
                     eventosList.push({ id: doc.id, ...doc.data() });
@@ -872,11 +1175,25 @@
         }
 
         // ============================================================
-        // INICIALIZAR
+        // INICIALIZAR VALIDADOR
         // ============================================================
-        document.addEventListener('DOMContentLoaded', function () {
+        function iniciarValidador() {
             cargarSelectEventos();
             console.log('🚀 Validador de Entradas cargado');
+        }
+
+        // ============================================================
+        // AL CARGAR LA PÁGINA
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function () {
+            verificarSesionValidador();
+
+            // Enter para login
+            document.getElementById('validadorPasswordInput').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    verificarPasswordValidador();
+                }
+            });
         });
 
         document.addEventListener('visibilitychange', function () {
