@@ -366,10 +366,6 @@
             flex-shrink: 0;
         }
 
-        .limpiar-categorias-btn {
-            margin-top: 8px;
-        }
-
         #modalEditarCategoria .modal-content {
             max-width: 480px;
         }
@@ -668,48 +664,16 @@
                         <i class="fa-solid fa-plus"></i> Agregar
                     </button>
                 </div>
-                <button class="btn-admin btn-danger btn-sm limpiar-categorias-btn"
-                    onclick="limpiarCategoriasUndefined()">
-                    <i class="fa-solid fa-broom"></i> Limpiar categorías undefined
-                </button>
                 <div class="categorias-videos" id="categoriasContainer">
                     <span style="color:var(--color-text-muted); font-size:0.8rem;">Categorías disponibles:</span>
-                    <span class="cat-tag" data-categoria="oficial">
-                        <span class="cat-icono">🎥</span>
-                        <span class="cat-nombre">Oficiales</span>
-                        <span class="cat-actions">
-                            <button class="cat-edit" onclick="editarCategoria('oficial')" title="Editar categoría">
-                                <i class="fa-solid fa-pen"></i>
-                            </button>
-                        </span>
-                    </span>
-                    <span class="cat-tag" data-categoria="momentos">
-                        <span class="cat-icono">🎬</span>
-                        <span class="cat-nombre">Momentos Tencha</span>
-                        <span class="cat-actions">
-                            <button class="cat-edit" onclick="editarCategoria('momentos')" title="Editar categoría">
-                                <i class="fa-solid fa-pen"></i>
-                            </button>
-                        </span>
-                    </span>
-                    <span class="cat-tag" data-categoria="en_vivo">
-                        <span class="cat-icono">🎤</span>
-                        <span class="cat-nombre">En Vivo</span>
-                        <span class="cat-actions">
-                            <button class="cat-edit" onclick="editarCategoria('en_vivo')" title="Editar categoría">
-                                <i class="fa-solid fa-pen"></i>
-                            </button>
-                        </span>
-                    </span>
+                    <!-- Se cargan desde Firebase -->
                 </div>
-                <div class="form-help">Las categorías se guardan en localStorage. Puedes crear nuevas cuantas veces
-                    quieras.</div>
+                <div class="form-help">Las categorías se guardan en Firebase. Puedes crear nuevas cuantas veces quieras.
+                </div>
             </div>
 
             <select id="videoCategoria" class="admin-select" style="margin-top:8px;">
-                <option value="oficial">🎥 Oficiales</option>
-                <option value="momentos">🎬 Momentos Tencha</option>
-                <option value="en_vivo">🎤 En Vivo</option>
+                <!-- Se llena desde Firebase -->
             </select>
 
             <!-- OPCIONES DE SUBIDA -->
@@ -954,377 +918,12 @@
         // VARIABLES GLOBALES
         // ============================================================
         let videos = [];
+        let categorias = [];
         let editandoId = null;
         let filtroActual = 'todas';
         let videoSeleccionado = null;
         let modoSubida = 'youtube';
-
-        // ============================================================
-        // CATEGORÍAS CON ÍCONOS
-        // ============================================================
-        let categoriasDisponibles = [];
-
-        const categoriasBase = {
-            'oficial': { nombre: 'Oficiales', icono: '🎥' },
-            'momentos': { nombre: 'Momentos Tencha', icono: '🎬' },
-            'en_vivo': { nombre: 'En Vivo', icono: '🎤' }
-        };
-
-        // ============================================================
-        // FUNCIÓN: LIMPIAR CATEGORÍAS UNDEFINED
-        // ============================================================
-        function limpiarCategoriasUndefined() {
-            const undefinedCats = categoriasDisponibles.filter(cat =>
-                !cat || !cat.id || cat.id === 'undefined' || !cat.nombre || cat.nombre === 'undefined'
-            );
-
-            if (undefinedCats.length === 0) {
-                mostrarToast('✅ No hay categorías undefined para limpiar', 'info');
-                return;
-            }
-
-            if (!confirm('⚠️ Se eliminarán ' + undefinedCats.length + ' categorías "undefined". ¿Continuar?')) {
-                return;
-            }
-
-            const limpias = categoriasDisponibles.filter(cat =>
-                cat && cat.id && cat.id !== 'undefined' && cat.nombre && cat.nombre !== 'undefined'
-            );
-
-            categoriasDisponibles = limpias;
-            guardarCategorias();
-            renderizarCategorias();
-            renderizarFiltros();
-            mostrarToast('✅ ' + undefinedCats.length + ' categorías undefined eliminadas', 'success');
-        }
-
-        // ============================================================
-        // FUNCIÓN: CARGAR CATEGORÍAS GUARDADAS
-        // ============================================================
-        function cargarCategoriasGuardadas() {
-            try {
-                const guardadas = localStorage.getItem('videoCategorias');
-                if (guardadas) {
-                    const parsed = JSON.parse(guardadas);
-                    categoriasDisponibles = parsed.map(cat => {
-                        if (categoriasBase[cat.id]) {
-                            return {
-                                id: cat.id,
-                                nombre: cat.nombre || categoriasBase[cat.id].nombre,
-                                icono: cat.icono || categoriasBase[cat.id].icono
-                            };
-                        }
-                        return cat;
-                    });
-                } else {
-                    categoriasDisponibles = Object.keys(categoriasBase).map(key => ({
-                        id: key,
-                        nombre: categoriasBase[key].nombre,
-                        icono: categoriasBase[key].icono
-                    }));
-                }
-            } catch (e) {
-                categoriasDisponibles = Object.keys(categoriasBase).map(key => ({
-                    id: key,
-                    nombre: categoriasBase[key].nombre,
-                    icono: categoriasBase[key].icono
-                }));
-            }
-            renderizarCategorias();
-            renderizarFiltros();
-        }
-
-        // ============================================================
-        // FUNCIÓN: GUARDAR CATEGORÍAS
-        // ============================================================
-        function guardarCategorias() {
-            localStorage.setItem('videoCategorias', JSON.stringify(categoriasDisponibles));
-        }
-
-        // ============================================================
-        // FUNCIÓN: RENDERIZAR CATEGORÍAS
-        // ============================================================
-        function renderizarCategorias() {
-            const container = document.getElementById('categoriasContainer');
-            const select = document.getElementById('videoCategoria');
-
-            let html = '<span style="color:var(--color-text-muted); font-size:0.8rem;">Categorías disponibles:</span>';
-            categoriasDisponibles.forEach(cat => {
-                const isBase = ['oficial', 'momentos', 'en_vivo'].includes(cat.id);
-                html += `
-                    <span class="cat-tag" data-categoria="${cat.id}">
-                        <span class="cat-icono">${cat.icono || '📁'}</span>
-                        <span class="cat-nombre">${cat.nombre}</span>
-                        <span class="cat-actions">
-                            <button class="cat-edit" onclick="editarCategoria('${cat.id}')" title="Editar categoría">
-                                <i class="fa-solid fa-pen"></i>
-                            </button>
-                            ${!isBase ? `<button class="cat-remove" onclick="eliminarCategoria('${cat.id}')" title="Eliminar categoría">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>` : ''}
-                        </span>
-                    </span>
-                `;
-            });
-            container.innerHTML = html;
-
-            let selectHtml = '';
-            categoriasDisponibles.forEach(cat => {
-                selectHtml += `<option value="${cat.id}">${cat.icono || '📁'} ${cat.nombre}</option>`;
-            });
-            select.innerHTML = selectHtml;
-
-            const currentVal = select.value;
-            if (!categoriasDisponibles.find(c => c.id === currentVal) && categoriasDisponibles.length > 0) {
-                select.value = categoriasDisponibles[0].id;
-            }
-        }
-
-        // ============================================================
-        // FUNCIÓN: RENDERIZAR FILTROS
-        // ============================================================
-        function renderizarFiltros() {
-            const container = document.getElementById('filtrosContainer');
-
-            let html = '';
-            html += `<button class="btn-admin btn-secondary btn-sm ${filtroActual === 'todas' ? 'active' : ''}" data-filtro="todas" onclick="filtrarVideos('todas', this)">
-                        <i class="fa-solid fa-list"></i> Todas
-                    </button>`;
-
-            categoriasDisponibles.forEach(cat => {
-                const isActive = filtroActual === cat.id;
-                html += `<button class="btn-admin btn-secondary btn-sm ${isActive ? 'active' : ''}" data-filtro="${cat.id}" onclick="filtrarVideos('${cat.id}', this)">
-                            ${cat.icono || '📁'} ${cat.nombre}
-                        </button>`;
-            });
-
-            container.innerHTML = html;
-        }
-
-        // ============================================================
-        // FUNCIÓN: AGREGAR CATEGORÍA
-        // ============================================================
-        function agregarCategoria() {
-            const input = document.getElementById('nuevaCategoriaInput');
-            const nombre = input.value.trim();
-
-            if (!nombre) {
-                mostrarToast('⚠️ Ingresa un nombre para la categoría', 'warning');
-                input.focus();
-                return;
-            }
-
-            const slug = nombre.toLowerCase()
-                .replace(/[^a-z0-9\s]/g, '')
-                .replace(/\s+/g, '_');
-
-            if (categoriasDisponibles.find(c => c.id === slug)) {
-                mostrarToast('⚠️ La categoría "' + nombre + '" ya existe', 'warning');
-                input.value = '';
-                input.focus();
-                return;
-            }
-
-            categoriasDisponibles.push({
-                id: slug,
-                nombre: nombre,
-                icono: '📁'
-            });
-            guardarCategorias();
-            renderizarCategorias();
-            renderizarFiltros();
-            document.getElementById('videoCategoria').value = slug;
-            input.value = '';
-            mostrarToast('✅ Categoría "' + nombre + '" creada', 'success');
-        }
-
-        // ============================================================
-        // FUNCIÓN: ELIMINAR CATEGORÍA
-        // ============================================================
-        function eliminarCategoria(id) {
-            if (['oficial', 'momentos', 'en_vivo'].includes(id)) {
-                mostrarToast('⚠️ No puedes eliminar categorías predeterminadas', 'warning');
-                return;
-            }
-
-            const cat = categoriasDisponibles.find(c => c.id === id);
-            if (!cat) return;
-
-            const videosEnCategoria = videos.filter(v => v.categoria === id);
-            if (videosEnCategoria.length > 0) {
-                if (!confirm('⚠️ Hay ' + videosEnCategoria.length + ' videos usando esta categoría. ¿Eliminar la categoría? Los videos se mantendrán pero quedarán sin categoría.')) {
-                    return;
-                }
-            } else {
-                if (!confirm('¿Eliminar la categoría "' + cat.nombre + '"? Los videos no se eliminarán.')) {
-                    return;
-                }
-            }
-
-            categoriasDisponibles = categoriasDisponibles.filter(c => c.id !== id);
-            guardarCategorias();
-
-            const select = document.getElementById('videoCategoria');
-            if (select.value === id && categoriasDisponibles.length > 0) {
-                select.value = categoriasDisponibles[0].id;
-            }
-
-            renderizarCategorias();
-            renderizarFiltros();
-
-            if (filtroActual === id) {
-                filtroActual = 'todas';
-                renderizarFiltros();
-                renderizarVideos();
-            }
-
-            mostrarToast('✅ Categoría eliminada', 'success');
-        }
-
-        // ============================================================
-        // FUNCIÓN: EDITAR CATEGORÍA Y ACTUALIZAR VIDEOS EN FIREBASE
-        // ============================================================
-        function editarCategoria(id) {
-            const cat = categoriasDisponibles.find(c => c.id === id);
-            if (!cat) return;
-
-            document.getElementById('categoriaIdEdit').value = id;
-            document.getElementById('categoriaNombreEdit').value = cat.nombre;
-            document.getElementById('categoriaIcono').value = cat.icono || '📁';
-            document.getElementById('iconoPreview').textContent = cat.icono || '📁';
-
-            document.querySelectorAll('.icono-btn').forEach(btn => {
-                btn.classList.toggle('selected', btn.dataset.icono === (cat.icono || '📁'));
-            });
-
-            document.getElementById('modalCategoriaTitulo').innerHTML = '<i class="fa-solid fa-pen"></i> Editar Categoría';
-            document.getElementById('modalEditarCategoria').classList.add('active');
-            document.body.style.overflow = 'hidden';
-
-            document.getElementById('categoriaIcono').oninput = function () {
-                const val = this.value.trim() || '📁';
-                document.getElementById('iconoPreview').textContent = val;
-                document.querySelectorAll('.icono-btn').forEach(btn => {
-                    btn.classList.toggle('selected', btn.dataset.icono === val);
-                });
-            };
-
-            document.querySelectorAll('.icono-btn').forEach(btn => {
-                btn.onclick = function () {
-                    const icono = this.dataset.icono;
-                    document.getElementById('categoriaIcono').value = icono;
-                    document.getElementById('iconoPreview').textContent = icono;
-                    document.querySelectorAll('.icono-btn').forEach(b => b.classList.remove('selected'));
-                    this.classList.add('selected');
-                };
-            });
-        }
-
-        async function guardarEdicionCategoria() {
-            const id = document.getElementById('categoriaIdEdit').value;
-            const nombre = document.getElementById('categoriaNombreEdit').value.trim();
-            const icono = document.getElementById('categoriaIcono').value.trim() || '📁';
-
-            if (!nombre) {
-                mostrarToast('⚠️ Ingresa un nombre para la categoría', 'warning');
-                document.getElementById('categoriaNombreEdit').focus();
-                return;
-            }
-
-            const cat = categoriasDisponibles.find(c => c.id === id);
-            if (!cat) {
-                mostrarToast('❌ Categoría no encontrada', 'error');
-                return;
-            }
-
-            if (categoriasBase[id]) {
-                categoriasBase[id].nombre = nombre;
-                categoriasBase[id].icono = icono;
-            }
-
-            cat.nombre = nombre;
-            cat.icono = icono;
-
-            // 🔥 ACTUALIZAR TODOS LOS VIDEOS EN FIREBASE CON EL NUEVO ICONO
-            try {
-                const snapshot = await db.collection('videos')
-                    .where('categoria', '==', id)
-                    .get();
-
-                if (!snapshot.empty) {
-                    const batch = db.batch();
-                    snapshot.forEach(doc => {
-                        batch.update(doc.ref, { iconoCategoria: icono });
-                    });
-                    await batch.commit();
-                    console.log(`✅ Icono actualizado en ${snapshot.size} videos de la categoría "${nombre}"`);
-                    mostrarToast(`✅ ${snapshot.size} videos actualizados con el nuevo ícono`, 'success');
-                } else {
-                    console.log('ℹ️ No hay videos en esta categoría para actualizar');
-                }
-            } catch (error) {
-                console.error('❌ Error al actualizar iconos en videos:', error);
-                mostrarToast('⚠️ Categoría guardada pero hubo error al actualizar videos', 'warning');
-            }
-
-            guardarCategorias();
-            renderizarCategorias();
-            renderizarFiltros();
-
-            const select = document.getElementById('videoCategoria');
-            if (select.value === id) {
-                select.options[select.selectedIndex].text = icono + ' ' + nombre;
-            }
-
-            cerrarModalCategoria();
-            cargarVideos(); // Recargar lista de videos
-            mostrarToast('✅ Categoría "' + nombre + '" actualizada', 'success');
-        }
-
-        // ============================================================
-        // FUNCIÓN: CERRAR MODAL CATEGORÍA
-        // ============================================================
-        function cerrarModalCategoria() {
-            document.getElementById('modalEditarCategoria').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        // ============================================================
-        // FUNCIÓN: NORMALIZAR URL DE YOUTUBE
-        // ============================================================
-        function normalizarYoutubeUrl(url) {
-            if (!url) return '';
-            url = url.trim();
-
-            if (url.includes('youtube.com/embed/')) {
-                const match = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/);
-                if (match) return 'https://www.youtube.com/embed/' + match[1];
-                return url;
-            }
-
-            if (url.includes('youtu.be/')) {
-                const match = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
-                if (match) return 'https://www.youtube.com/embed/' + match[1];
-            }
-
-            if (url.includes('youtube.com/watch')) {
-                try {
-                    const urlObj = new URL(url);
-                    const videoId = urlObj.searchParams.get('v');
-                    if (videoId) return 'https://www.youtube.com/embed/' + videoId;
-                } catch (e) {
-                    const match = url.match(/[?&]v=([a-zA-Z0-9_-]+)/);
-                    if (match) return 'https://www.youtube.com/embed/' + match[1];
-                }
-            }
-
-            if (url.includes('youtube.com/shorts/')) {
-                const match = url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/);
-                if (match) return 'https://www.youtube.com/embed/' + match[1];
-            }
-
-            return url;
-        }
+        let categoriaSeleccionadaId = null;
 
         // ============================================================
         // SIDEBAR
@@ -1360,6 +959,339 @@
         })();
 
         // ============================================================
+        // FUNCIÓN: CARGAR CATEGORÍAS DESDE FIREBASE
+        // ============================================================
+        function cargarCategoriasFirebase() {
+            if (!db) {
+                console.warn('Firebase no disponible');
+                return;
+            }
+
+            db.collection('categorias_videos')
+                .orderBy('orden', 'asc')
+                .get()
+                .then(function (snapshot) {
+                    categorias = [];
+                    snapshot.forEach(function (doc) {
+                        var data = doc.data();
+                        categorias.push({
+                            id: doc.id,
+                            nombre: data.nombre || doc.id,
+                            icono: data.icono || '📁',
+                            orden: data.orden || 0
+                        });
+                    });
+
+                    // Si no hay orden definido, ordenar por nombre
+                    if (categorias.length > 0 && categorias.every(function (c) { return c.orden === 0; })) {
+                        categorias.sort(function (a, b) {
+                            return a.nombre.localeCompare(b.nombre);
+                        });
+                    }
+
+                    console.log('✅ ' + categorias.length + ' categorías cargadas desde Firebase');
+                    renderizarCategorias();
+                    renderizarFiltros();
+                    actualizarSelectCategorias();
+                })
+                .catch(function (error) {
+                    console.error('❌ Error al cargar categorías:', error);
+                    mostrarToast('❌ Error al cargar categorías', 'error');
+                });
+        }
+
+        // ============================================================
+        // FUNCIÓN: RENDERIZAR CATEGORÍAS EN EL ADMIN
+        // ============================================================
+        function renderizarCategorias() {
+            var container = document.getElementById('categoriasContainer');
+            if (!container) return;
+
+            if (categorias.length === 0) {
+                container.innerHTML = `
+                    <span style="color:var(--color-text-muted); font-size:0.8rem;">Categorías disponibles:</span>
+                    <span style="color:#555; font-size:0.8rem;">No hay categorías. ¡Crea la primera!</span>
+                `;
+                return;
+            }
+
+            var html = '<span style="color:var(--color-text-muted); font-size:0.8rem;">Categorías disponibles:</span>';
+            categorias.forEach(function (cat) {
+                html += `
+                    <span class="cat-tag" data-categoria="${cat.id}">
+                        <span class="cat-icono">${cat.icono || '📁'}</span>
+                        <span class="cat-nombre">${cat.nombre}</span>
+                        <span class="cat-actions">
+                            <button class="cat-edit" onclick="editarCategoria('${cat.id}')" title="Editar categoría">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button class="cat-remove" onclick="eliminarCategoria('${cat.id}')" title="Eliminar categoría">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </span>
+                    </span>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // ============================================================
+        // FUNCIÓN: RENDERIZAR FILTROS
+        // ============================================================
+        function renderizarFiltros() {
+            var container = document.getElementById('filtrosContainer');
+            if (!container) return;
+
+            var html = '';
+            html += `<button class="btn-admin btn-secondary btn-sm ${filtroActual === 'todas' ? 'active' : ''}" data-filtro="todas" onclick="filtrarVideos('todas', this)">
+                        <i class="fa-solid fa-list"></i> Todas
+                    </button>`;
+
+            categorias.forEach(function (cat) {
+                var isActive = filtroActual === cat.id;
+                html += `<button class="btn-admin btn-secondary btn-sm ${isActive ? 'active' : ''}" data-filtro="${cat.id}" onclick="filtrarVideos('${cat.id}', this)">
+                            ${cat.icono || '📁'} ${cat.nombre}
+                        </button>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ============================================================
+        // FUNCIÓN: ACTUALIZAR SELECT DE CATEGORÍAS
+        // ============================================================
+        function actualizarSelectCategorias() {
+            var select = document.getElementById('videoCategoria');
+            if (!select) return;
+
+            var html = '';
+            categorias.forEach(function (cat) {
+                html += `<option value="${cat.id}">${cat.icono || '📁'} ${cat.nombre}</option>`;
+            });
+            select.innerHTML = html;
+
+            if (categorias.length > 0 && !categoriaSeleccionadaId) {
+                categoriaSeleccionadaId = categorias[0].id;
+            }
+            if (categoriaSeleccionadaId) {
+                select.value = categoriaSeleccionadaId;
+            }
+        }
+
+        // ============================================================
+        // FUNCIÓN: AGREGAR CATEGORÍA A FIREBASE
+        // ============================================================
+        function agregarCategoria() {
+            var input = document.getElementById('nuevaCategoriaInput');
+            var nombre = input.value.trim();
+
+            if (!nombre) {
+                mostrarToast('⚠️ Ingresa un nombre para la categoría', 'warning');
+                input.focus();
+                return;
+            }
+
+            var slug = nombre.toLowerCase()
+                .replace(/[^a-z0-9\s]/g, '')
+                .replace(/\s+/g, '_');
+
+            if (categorias.find(function (c) { return c.id === slug; })) {
+                mostrarToast('⚠️ La categoría "' + nombre + '" ya existe', 'warning');
+                input.value = '';
+                input.focus();
+                return;
+            }
+
+            var nuevoOrden = categorias.length + 1;
+
+            db.collection('categorias_videos').add({
+                nombre: nombre,
+                icono: '📁',
+                orden: nuevoOrden,
+                creadoEn: new Date().toISOString()
+            }).then(function (docRef) {
+                mostrarToast('✅ Categoría "' + nombre + '" creada', 'success');
+                input.value = '';
+                cargarCategoriasFirebase();
+            }).catch(function (error) {
+                console.error('❌ Error al crear categoría:', error);
+                mostrarToast('❌ Error: ' + error.message, 'error');
+            });
+        }
+
+        // ============================================================
+        // FUNCIÓN: EDITAR CATEGORÍA (MODAL)
+        // ============================================================
+        function editarCategoria(id) {
+            var cat = categorias.find(function (c) { return c.id === id; });
+            if (!cat) return;
+
+            document.getElementById('categoriaIdEdit').value = id;
+            document.getElementById('categoriaNombreEdit').value = cat.nombre;
+            document.getElementById('categoriaIcono').value = cat.icono || '📁';
+            document.getElementById('iconoPreview').textContent = cat.icono || '📁';
+
+            document.querySelectorAll('.icono-btn').forEach(function (btn) {
+                btn.classList.toggle('selected', btn.dataset.icono === (cat.icono || '📁'));
+            });
+
+            document.getElementById('modalCategoriaTitulo').innerHTML = '<i class="fa-solid fa-pen"></i> Editar Categoría';
+            document.getElementById('modalEditarCategoria').classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            document.getElementById('categoriaIcono').oninput = function () {
+                var val = this.value.trim() || '📁';
+                document.getElementById('iconoPreview').textContent = val;
+                document.querySelectorAll('.icono-btn').forEach(function (btn) {
+                    btn.classList.toggle('selected', btn.dataset.icono === val);
+                });
+            };
+
+            document.querySelectorAll('.icono-btn').forEach(function (btn) {
+                btn.onclick = function () {
+                    var icono = this.dataset.icono;
+                    document.getElementById('categoriaIcono').value = icono;
+                    document.getElementById('iconoPreview').textContent = icono;
+                    document.querySelectorAll('.icono-btn').forEach(function (b) { b.classList.remove('selected'); });
+                    this.classList.add('selected');
+                };
+            });
+        }
+
+        // ============================================================
+        // FUNCIÓN: GUARDAR EDICIÓN DE CATEGORÍA
+        // ============================================================
+        function guardarEdicionCategoria() {
+            var id = document.getElementById('categoriaIdEdit').value;
+            var nombre = document.getElementById('categoriaNombreEdit').value.trim();
+            var icono = document.getElementById('categoriaIcono').value.trim() || '📁';
+
+            if (!nombre) {
+                mostrarToast('⚠️ Ingresa un nombre para la categoría', 'warning');
+                document.getElementById('categoriaNombreEdit').focus();
+                return;
+            }
+
+            db.collection('categorias_videos').doc(id).update({
+                nombre: nombre,
+                icono: icono,
+                actualizadoEn: new Date().toISOString()
+            }).then(function () {
+                cerrarModalCategoria();
+                mostrarToast('✅ Categoría "' + nombre + '" actualizada', 'success');
+                cargarCategoriasFirebase();
+                // También actualizar icono en videos de esta categoría
+                actualizarIconosEnVideos(id, icono);
+            }).catch(function (error) {
+                console.error('❌ Error al actualizar categoría:', error);
+                mostrarToast('❌ Error: ' + error.message, 'error');
+            });
+        }
+
+        // ============================================================
+        // FUNCIÓN: ACTUALIZAR ICONO EN VIDEOS DE UNA CATEGORÍA
+        // ============================================================
+        function actualizarIconosEnVideos(categoriaId, icono) {
+            db.collection('videos')
+                .where('categoria', '==', categoriaId)
+                .get()
+                .then(function (snapshot) {
+                    if (snapshot.empty) return;
+                    var batch = db.batch();
+                    snapshot.forEach(function (doc) {
+                        batch.update(doc.ref, { iconoCategoria: icono });
+                    });
+                    return batch.commit();
+                })
+                .then(function () {
+                    console.log('✅ Iconos actualizados en videos de la categoría');
+                    cargarVideos();
+                })
+                .catch(function (error) {
+                    console.error('❌ Error al actualizar iconos en videos:', error);
+                });
+        }
+
+        // ============================================================
+        // FUNCIÓN: ELIMINAR CATEGORÍA
+        // ============================================================
+        function eliminarCategoria(id) {
+            var cat = categorias.find(function (c) { return c.id === id; });
+            if (!cat) return;
+
+            var videosEnCategoria = videos.filter(function (v) { return v.categoria === id; });
+            if (videosEnCategoria.length > 0) {
+                if (!confirm('⚠️ Hay ' + videosEnCategoria.length + ' videos usando esta categoría. ¿Eliminar la categoría? Los videos se mantendrán pero quedarán sin categoría.')) {
+                    return;
+                }
+            } else {
+                if (!confirm('¿Eliminar la categoría "' + cat.nombre + '"? Los videos no se eliminarán.')) {
+                    return;
+                }
+            }
+
+            db.collection('categorias_videos').doc(id).delete()
+                .then(function () {
+                    mostrarToast('✅ Categoría eliminada', 'success');
+                    cargarCategoriasFirebase();
+                    if (filtroActual === id) {
+                        filtroActual = 'todas';
+                        renderizarFiltros();
+                        renderizarVideos();
+                    }
+                })
+                .catch(function (error) {
+                    console.error('❌ Error al eliminar categoría:', error);
+                    mostrarToast('❌ Error: ' + error.message, 'error');
+                });
+        }
+
+        // ============================================================
+        // FUNCIÓN: CERRAR MODAL CATEGORÍA
+        // ============================================================
+        function cerrarModalCategoria() {
+            document.getElementById('modalEditarCategoria').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // ============================================================
+        // FUNCIÓN: NORMALIZAR URL DE YOUTUBE
+        // ============================================================
+        function normalizarYoutubeUrl(url) {
+            if (!url) return '';
+            url = url.trim();
+
+            if (url.includes('youtube.com/embed/')) {
+                var match = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/);
+                if (match) return 'https://www.youtube.com/embed/' + match[1];
+                return url;
+            }
+
+            if (url.includes('youtu.be/')) {
+                var match = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+                if (match) return 'https://www.youtube.com/embed/' + match[1];
+            }
+
+            if (url.includes('youtube.com/watch')) {
+                try {
+                    var urlObj = new URL(url);
+                    var videoId = urlObj.searchParams.get('v');
+                    if (videoId) return 'https://www.youtube.com/embed/' + videoId;
+                } catch (e) {
+                    var match = url.match(/[?&]v=([a-zA-Z0-9_-]+)/);
+                    if (match) return 'https://www.youtube.com/embed/' + match[1];
+                }
+            }
+
+            if (url.includes('youtube.com/shorts/')) {
+                var match = url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/);
+                if (match) return 'https://www.youtube.com/embed/' + match[1];
+            }
+
+            return url;
+        }
+
+        // ============================================================
         // FUNCIONES - CAMBIAR OPCIÓN DE SUBIDA
         // ============================================================
 
@@ -1378,7 +1310,7 @@
         // ============================================================
 
         async function subirVideoCloudinary(file, publicId) {
-            const formData = new FormData();
+            var formData = new FormData();
             formData.append('file', file);
             formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
             formData.append('folder', 'videos');
@@ -1388,18 +1320,18 @@
             }
 
             try {
-                const response = await fetch(CLOUDINARY_CONFIG.uploadUrl, {
+                var response = await fetch(CLOUDINARY_CONFIG.uploadUrl, {
                     method: 'POST',
                     body: formData
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json();
+                    var errorData = await response.json();
                     console.error('❌ Error Cloudinary:', errorData);
                     throw new Error(errorData.error?.message || 'Error al subir a Cloudinary');
                 }
 
-                const data = await response.json();
+                var data = await response.json();
                 console.log('✅ Video subido a Cloudinary:', data.secure_url);
                 return data.secure_url;
             } catch (error) {
@@ -1418,7 +1350,7 @@
             elemento.textContent = texto;
             elemento.className = 'admin-form-group ' + tipo;
 
-            const colors = {
+            var colors = {
                 'success': 'var(--color-success)',
                 'error': 'var(--color-danger)',
                 'warning': 'var(--color-warning)',
@@ -1430,26 +1362,26 @@
             elemento.style.background = 'var(--color-bg)';
 
             if (tipo === 'success' || tipo === 'error' || tipo === 'warning') {
-                setTimeout(() => {
+                setTimeout(function () {
                     elemento.style.display = 'none';
                 }, 6000);
             }
         }
 
         // ============================================================
-        // FUNCIONES CRUD - CON GUARDADO DE ICONO EN CADA VIDEO
+        // FUNCIONES CRUD
         // ============================================================
 
         async function guardarVideo() {
-            const id = document.getElementById('videoId').value;
-            const titulo = document.getElementById('videoTitulo').value.trim();
-            const descripcion = document.getElementById('videoDescripcion').value.trim();
-            const categoria = document.getElementById('videoCategoria').value;
-            const fecha = document.getElementById('videoFecha').value;
-            const orden = parseInt(document.getElementById('videoOrden').value) || 0;
-            const destacado = document.getElementById('videoDestacado').checked;
+            var id = document.getElementById('videoId').value;
+            var titulo = document.getElementById('videoTitulo').value.trim();
+            var descripcion = document.getElementById('videoDescripcion').value.trim();
+            var categoria = document.getElementById('videoCategoria').value;
+            var fecha = document.getElementById('videoFecha').value;
+            var orden = parseInt(document.getElementById('videoOrden').value) || 0;
+            var destacado = document.getElementById('videoDestacado').checked;
 
-            const mensajeEl = document.getElementById('mensajeVideo');
+            var mensajeEl = document.getElementById('mensajeVideo');
 
             if (!titulo) {
                 mostrarMensajeVideo(mensajeEl, '⚠️ Ingresa el título del video', 'error');
@@ -1457,7 +1389,7 @@
                 return;
             }
 
-            let url = '';
+            var url = '';
 
             if (modoSubida === 'youtube') {
                 url = document.getElementById('videoUrl').value.trim();
@@ -1487,19 +1419,19 @@
             }
 
             // Obtener el icono de la categoría seleccionada
-            const cat = categoriasDisponibles.find(c => c.id === categoria);
-            const iconoCategoria = cat ? cat.icono : '📁';
+            var cat = categorias.find(function (c) { return c.id === categoria; });
+            var iconoCategoria = cat ? cat.icono : '📁';
 
-            const btn = document.getElementById('btnGuardar');
-            const btnText = document.getElementById('btnGuardarTexto');
+            var btn = document.getElementById('btnGuardar');
+            var btnText = document.getElementById('btnGuardarTexto');
             btn.classList.add('loading');
             btn.disabled = true;
             btnText.textContent = id ? 'Actualizando...' : 'Guardando...';
             mostrarMensajeVideo(mensajeEl, '⏳ Procesando...', 'info');
 
             try {
-                const datos = {
-                    titulo,
+                var datos = {
+                    titulo: titulo,
                     descripcion: descripcion || '',
                     categoria: categoria,
                     iconoCategoria: iconoCategoria,
@@ -1512,8 +1444,8 @@
                 };
 
                 if (id) {
-                    const docRef = db.collection('videos').doc(id);
-                    const docSnap = await docRef.get();
+                    var docRef = db.collection('videos').doc(id);
+                    var docSnap = await docRef.get();
                     if (!docSnap.exists) {
                         datos.creadoEn = new Date().toISOString();
                         await db.collection('videos').add(datos);
@@ -1528,20 +1460,19 @@
                 }
 
                 if (destacado) {
-                    const snapshot = await db.collection('videos')
+                    var snapshot = await db.collection('videos')
                         .where('categoria', '==', categoria)
                         .get();
 
-                    const batch = db.batch();
-                    snapshot.forEach(doc => {
+                    var batch = db.batch();
+                    snapshot.forEach(function (doc) {
                         if (doc.id !== id && doc.data().destacado) {
                             batch.update(doc.ref, { destacado: false });
                         }
                     });
 
                     if (id) {
-                        const docRef = db.collection('videos').doc(id);
-                        batch.update(docRef, datos);
+                        batch.update(db.collection('videos').doc(id), datos);
                     }
                     await batch.commit();
 
@@ -1574,28 +1505,28 @@
         }
 
         async function cargarVideos() {
-            const container = document.getElementById('listaVideos');
+            var container = document.getElementById('listaVideos');
 
             try {
                 if (!db) {
                     throw new Error('Firebase no disponible');
                 }
 
-                const snapshot = await db.collection('videos')
+                var snapshot = await db.collection('videos')
                     .orderBy('creadoEn', 'desc')
                     .get();
 
                 videos = [];
-                snapshot.forEach(doc => {
+                snapshot.forEach(function (doc) {
                     videos.push({ id: doc.id, ...doc.data() });
                 });
 
-                videos.sort((a, b) => {
-                    const ordenA = a.orden || 999;
-                    const ordenB = b.orden || 999;
+                videos.sort(function (a, b) {
+                    var ordenA = a.orden || 999;
+                    var ordenB = b.orden || 999;
                     if (ordenA !== ordenB) return ordenA - ordenB;
-                    const fechaA = a.creadoEn ? new Date(a.creadoEn) : new Date(0);
-                    const fechaB = b.creadoEn ? new Date(b.creadoEn) : new Date(0);
+                    var fechaA = a.creadoEn ? new Date(a.creadoEn) : new Date(0);
+                    var fechaB = b.creadoEn ? new Date(b.creadoEn) : new Date(0);
                     return fechaB - fechaA;
                 });
 
@@ -1618,11 +1549,11 @@
         }
 
         function renderizarVideos() {
-            const container = document.getElementById('listaVideos');
+            var container = document.getElementById('listaVideos');
 
-            let filtrados = videos;
+            var filtrados = videos;
             if (filtroActual !== 'todas') {
-                filtrados = videos.filter(v => v.categoria === filtroActual);
+                filtrados = videos.filter(function (v) { return v.categoria === filtroActual; });
             }
 
             if (filtrados.length === 0) {
@@ -1635,18 +1566,17 @@
                 return;
             }
 
-            const catMap = {};
-            categoriasDisponibles.forEach(cat => {
+            var catMap = {};
+            categorias.forEach(function (cat) {
                 catMap[cat.id] = cat;
             });
 
-            let html = '';
-            filtrados.forEach(video => {
-                const fecha = video.fecha ? formatearFecha(video.fecha) : 'Sin fecha';
-                const cat = catMap[video.categoria] || { nombre: video.categoria || 'General', icono: '📁' };
-                // Priorizar icono guardado en el video, luego el de la categoría, luego default
-                const iconoMostrar = video.iconoCategoria || cat.icono || '📁';
-                const fuenteIcon = video.fuente === 'cloudinary' ? '☁️' : '▶️';
+            var html = '';
+            filtrados.forEach(function (video) {
+                var fecha = video.fecha ? formatearFecha(video.fecha) : 'Sin fecha';
+                var cat = catMap[video.categoria] || { nombre: video.categoria || 'General', icono: '📁' };
+                var iconoMostrar = video.iconoCategoria || cat.icono || '📁';
+                var fuenteIcon = video.fuente === 'cloudinary' ? '☁️' : '▶️';
 
                 html += `
                             <div class="video-item">
@@ -1680,21 +1610,21 @@
 
         function filtrarVideos(filtro, btn) {
             filtroActual = filtro;
-            document.querySelectorAll('.filtros-videos .btn-admin').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.filtros-videos .btn-admin').forEach(function (b) { b.classList.remove('active'); });
             if (btn) btn.classList.add('active');
             renderizarVideos();
         }
 
         function previsualizarVideo(id) {
-            const video = videos.find(v => v.id === id);
+            var video = videos.find(function (v) { return v.id === id; });
             if (!video) {
                 mostrarToast('❌ Video no encontrado', 'error');
                 return;
             }
 
-            const modal = document.getElementById('modalVideo');
-            const container = document.getElementById('videoPlayerContainer');
-            const titulo = document.getElementById('modalVideoTitulo');
+            var modal = document.getElementById('modalVideo');
+            var container = document.getElementById('videoPlayerContainer');
+            var titulo = document.getElementById('modalVideoTitulo');
 
             titulo.innerHTML = '<i class="fa-solid fa-play"></i> ' + sanitizar(video.titulo);
 
@@ -1719,8 +1649,8 @@
         }
 
         function cerrarModalVideo() {
-            const modal = document.getElementById('modalVideo');
-            const container = document.getElementById('videoPlayerContainer');
+            var modal = document.getElementById('modalVideo');
+            var container = document.getElementById('videoPlayerContainer');
             container.innerHTML = '';
             modal.classList.remove('active');
             document.body.style.overflow = '';
@@ -1728,19 +1658,19 @@
 
         async function editarVideo(id) {
             try {
-                const doc = await db.collection('videos').doc(id).get();
+                var doc = await db.collection('videos').doc(id).get();
                 if (!doc.exists) {
                     mostrarToast('❌ Video no encontrado', 'error');
                     return;
                 }
 
-                const data = doc.data();
+                var data = doc.data();
 
                 editandoId = id;
                 document.getElementById('videoId').value = id;
                 document.getElementById('videoTitulo').value = data.titulo || '';
                 document.getElementById('videoDescripcion').value = data.descripcion || '';
-                document.getElementById('videoCategoria').value = data.categoria || 'oficial';
+                document.getElementById('videoCategoria').value = data.categoria || (categorias.length > 0 ? categorias[0].id : '');
                 document.getElementById('videoFecha').value = data.fecha || '';
                 document.getElementById('videoOrden').value = data.orden || '';
                 document.getElementById('videoDestacado').checked = data.destacado || false;
@@ -1774,7 +1704,7 @@
         }
 
         async function eliminarVideo(id) {
-            const video = videos.find(v => v.id === id);
+            var video = videos.find(function (v) { return v.id === id; });
             if (!video) return;
 
             if (!confirm('¿Eliminar el video "' + video.titulo + '"?')) {
@@ -1801,7 +1731,7 @@
             document.getElementById('videoId').value = '';
             document.getElementById('videoTitulo').value = '';
             document.getElementById('videoDescripcion').value = '';
-            document.getElementById('videoCategoria').value = categoriasDisponibles.length > 0 ? categoriasDisponibles[0].id : 'oficial';
+            document.getElementById('videoCategoria').value = categorias.length > 0 ? categorias[0].id : '';
             document.getElementById('videoUrl').value = '';
             document.getElementById('videoUrlCloudinaryPegar').value = '';
             document.getElementById('videoUrlCloudinarySubir').value = '';
@@ -1829,10 +1759,10 @@
         }
 
         function recargarVideoteca() {
-            const btn = document.querySelector('.recargar-btn');
-            const icon = btn.querySelector('i');
+            var btn = document.querySelector('.recargar-btn');
+            var icon = btn.querySelector('i');
             icon.style.transform = 'rotate(360deg)';
-            setTimeout(() => {
+            setTimeout(function () {
                 icon.style.transform = 'rotate(0deg)';
             }, 500);
             mostrarToast('🔄 Recargando videoteca...', 'info');
@@ -1843,8 +1773,8 @@
         // MANEJO DE SUBIDA DE VIDEO (DRAG & DROP)
         // ============================================================
 
-        const videoDropzone = document.getElementById('videoDropzone');
-        const videoFileInput = document.getElementById('videoFileInput');
+        var videoDropzone = document.getElementById('videoDropzone');
+        var videoFileInput = document.getElementById('videoFileInput');
 
         if (videoDropzone) {
             videoDropzone.addEventListener('click', function (e) {
@@ -1866,7 +1796,7 @@
             videoDropzone.addEventListener('drop', function (e) {
                 e.preventDefault();
                 this.classList.remove('dragover');
-                const files = e.dataTransfer.files;
+                var files = e.dataTransfer.files;
                 if (files.length > 0) {
                     procesarVideo(files[0]);
                 }
@@ -1895,17 +1825,17 @@
 
             videoSeleccionado = file;
 
-            const preview = document.getElementById('videoPreview');
-            const nombre = document.getElementById('videoPreviewNombre');
-            const tamaño = document.getElementById('videoPreviewTamaño');
+            var preview = document.getElementById('videoPreview');
+            var nombre = document.getElementById('videoPreviewNombre');
+            var tamaño = document.getElementById('videoPreviewTamaño');
 
             nombre.textContent = file.name;
             tamaño.textContent = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
             preview.classList.add('show');
 
-            const publicIdInput = document.getElementById('videoPublicId');
+            var publicIdInput = document.getElementById('videoPublicId');
             if (!publicIdInput.value) {
-                const nombreBase = file.name.replace(/\.[^.]+$/, '').toLowerCase()
+                var nombreBase = file.name.replace(/\.[^.]+$/, '').toLowerCase()
                     .replace(/[^a-z0-9]/g, '-')
                     .replace(/-+/g, '-')
                     .replace(/^-|-$/g, '');
@@ -1914,8 +1844,8 @@
 
             try {
                 mostrarToast('📤 Subiendo video a Cloudinary...', 'info');
-                const publicId = document.getElementById('videoPublicId').value.trim() || undefined;
-                const url = await subirVideoCloudinary(file, publicId);
+                var publicId = document.getElementById('videoPublicId').value.trim() || undefined;
+                var url = await subirVideoCloudinary(file, publicId);
                 document.getElementById('videoUrlCloudinarySubir').value = url;
                 mostrarToast('✅ Video subido a Cloudinary con éxito', 'success');
             } catch (error) {
@@ -1932,6 +1862,23 @@
             document.getElementById('videoUrlCloudinarySubir').value = '';
         }
 
+        // ============================================================
+        // FUNCIÓN: FORMATEAR FECHA
+        // ============================================================
+        function formatearFecha(fechaStr) {
+            if (!fechaStr) return 'Fecha no disponible';
+            try {
+                var d = new Date(fechaStr + 'T00:00:00');
+                if (isNaN(d.getTime())) return fechaStr;
+                var meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                ];
+                return d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear();
+            } catch (e) {
+                return fechaStr;
+            }
+        }
+
         // Cerrar modal con Escape
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
@@ -1940,6 +1887,7 @@
             }
         });
 
+        // Cerrar modal de categoría al hacer clic fuera
         document.getElementById('modalEditarCategoria').addEventListener('click', function (e) {
             if (e.target === this) {
                 cerrarModalCategoria();
@@ -1950,10 +1898,10 @@
         // INICIALIZAR
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
-            cargarCategoriasGuardadas();
+            cargarCategoriasFirebase();
             cargarVideos();
             switchUploadOption('youtube');
-            console.log('🚀 Gestor de Videos - íconos guardados en cada video (sincronización multi-dispositivo)');
+            console.log('🚀 Gestor de Videos con categorías en Firebase (mismo sistema que galería)');
         });
 
         document.addEventListener('keydown', function (e) {

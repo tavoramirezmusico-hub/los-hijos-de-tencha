@@ -549,61 +549,42 @@
         // VARIABLES GLOBALES
         // ============================================================
         let videos = [];
+        let categorias = [];
         let filtroActual = 'todas';
-        let categoriasDisponibles = [];
 
         // ============================================================
-        // MAPA DE ÍCONOS POR DEFECTO
+        // FUNCIÓN: CARGAR CATEGORÍAS DESDE FIREBASE
         // ============================================================
-        const iconosDefault = {
-            'oficial': '🎥',
-            'momentos': '🎬',
-            'en_vivo': '🎤'
-        };
+        function cargarCategoriasFirebase() {
+            if (!dbVideos) return;
 
-        const nombresDefault = {
-            'oficial': 'Oficiales',
-            'momentos': 'Momentos Tencha',
-            'en_vivo': 'En Vivo'
-        };
+            dbVideos.collection('categorias_videos')
+                .orderBy('orden', 'asc')
+                .get()
+                .then(function (snapshot) {
+                    categorias = [];
+                    snapshot.forEach(function (doc) {
+                        var data = doc.data();
+                        categorias.push({
+                            id: doc.id,
+                            nombre: data.nombre || doc.id,
+                            icono: data.icono || '📁',
+                            orden: data.orden || 0
+                        });
+                    });
 
-        // ============================================================
-        // FUNCIÓN: OBTENER ICONO DE CATEGORÍA
-        // ============================================================
-        function getIconoCategoria(categoria, iconoGuardado) {
-            // Si el video tiene icono guardado, usarlo
-            if (iconoGuardado && iconoGuardado !== '') {
-                return iconoGuardado;
-            }
-            // Si no, usar el default por categoría
-            if (iconosDefault[categoria]) {
-                return iconosDefault[categoria];
-            }
-            return '📁';
-        }
+                    if (categorias.length > 0 && categorias.every(function (c) { return c.orden === 0; })) {
+                        categorias.sort(function (a, b) {
+                            return a.nombre.localeCompare(b.nombre);
+                        });
+                    }
 
-        function getNombreCategoria(categoria) {
-            if (nombresDefault[categoria]) {
-                return nombresDefault[categoria];
-            }
-            return categoria;
-        }
-
-        // ============================================================
-        // FUNCIÓN: FORMATEAR FECHA
-        // ============================================================
-        function formatearFecha(fechaStr) {
-            if (!fechaStr) return 'Fecha no disponible';
-            try {
-                var d = new Date(fechaStr + 'T00:00:00');
-                if (isNaN(d.getTime())) return fechaStr;
-                var meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-                ];
-                return d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear();
-            } catch (e) {
-                return fechaStr;
-            }
+                    console.log('✅ ' + categorias.length + ' categorías cargadas desde Firebase');
+                    renderizarFiltros();
+                })
+                .catch(function (error) {
+                    console.error('❌ Error al cargar categorías:', error);
+                });
         }
 
         // ============================================================
@@ -643,7 +624,6 @@
                         }
                     });
 
-                    // Ordenar por orden
                     videos.sort(function (a, b) {
                         var ordenA = a.orden || 999;
                         var ordenB = b.orden || 999;
@@ -651,16 +631,10 @@
                         return (a.titulo || '').localeCompare(b.titulo || '');
                     });
 
-                    // Extraer categorías disponibles
-                    var cats = {};
-                    videos.forEach(function (v) {
-                        if (v.categoria) cats[v.categoria] = true;
-                    });
-                    categoriasDisponibles = Object.keys(cats);
-
                     document.getElementById('videosCount').textContent = videos.length + ' videos';
 
-                    renderizarFiltros();
+                    // Primero cargar categorías y luego renderizar
+                    cargarCategoriasFirebase();
                     renderizarVideos();
 
                     console.log('✅ ' + videos.length + ' videos cargados');
@@ -689,12 +663,9 @@
             var html = '';
             html += '<button class="btn-filtro ' + (filtroActual === 'todas' ? 'active' : '') + '" data-filtro="todas" onclick="filtrarVideos(\'todas\', this)">📸 Todas</button>';
 
-            categoriasDisponibles.forEach(function (cat) {
-                var videoEjemplo = videos.find(function (v) { return v.categoria === cat; });
-                var icono = getIconoCategoria(cat, videoEjemplo ? videoEjemplo.iconoCategoria : '');
-                var nombre = getNombreCategoria(cat);
-                var isActive = (filtroActual === cat);
-                html += '<button class="btn-filtro ' + (isActive ? 'active' : '') + '" data-filtro="' + cat + '" onclick="filtrarVideos(\'' + cat + '\', this)">' + icono + ' ' + nombre + '</button>';
+            categorias.forEach(function (cat) {
+                var isActive = (filtroActual === cat.id);
+                html += '<button class="btn-filtro ' + (isActive ? 'active' : '') + '" data-filtro="' + cat.id + '" onclick="filtrarVideos(\'' + cat.id + '\', this)">' + (cat.icono || '📁') + ' ' + cat.nombre + '</button>';
             });
 
             container.innerHTML = html;
@@ -743,11 +714,17 @@
             var normales = filtrados.filter(function (v) { return !v.destacado; });
             var ordenados = destacados.concat(normales);
 
+            var catMap = {};
+            categorias.forEach(function (cat) {
+                catMap[cat.id] = cat;
+            });
+
             var html = '';
             ordenados.forEach(function (video) {
                 var fecha = video.fecha ? formatearFecha(video.fecha) : '';
-                var icono = getIconoCategoria(video.categoria, video.iconoCategoria);
-                var nombre = getNombreCategoria(video.categoria);
+                var cat = catMap[video.categoria] || { nombre: video.categoria || 'General', icono: '📁' };
+                var icono = video.iconoCategoria || cat.icono || '📁';
+                var nombre = cat.nombre || video.categoria || 'General';
                 var fuenteIcon = video.fuente === 'cloudinary' ? '☁️' : '▶️';
 
                 html +=
@@ -777,6 +754,23 @@
         }
 
         // ============================================================
+        // FUNCIÓN: FORMATEAR FECHA
+        // ============================================================
+        function formatearFecha(fechaStr) {
+            if (!fechaStr) return 'Fecha no disponible';
+            try {
+                var d = new Date(fechaStr + 'T00:00:00');
+                if (isNaN(d.getTime())) return fechaStr;
+                var meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                ];
+                return d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear();
+            } catch (e) {
+                return fechaStr;
+            }
+        }
+
+        // ============================================================
         // FUNCIÓN: MOSTRAR ERROR
         // ============================================================
         function mostrarError(texto) {
@@ -791,69 +785,11 @@
         }
 
         // ============================================================
-        // FUNCIÓN: ACTUALIZAR VIDEOS EXISTENTES CON ICONO
-        // ============================================================
-        function actualizarIconosVideos() {
-            if (!dbVideos) {
-                console.warn('⚠️ Firebase no disponible para actualizar');
-                return;
-            }
-
-            console.log('🔄 Verificando videos sin iconoCategoria...');
-
-            dbVideos.collection('videos').get().then(function (snapshot) {
-                var batch = dbVideos.batch();
-                var count = 0;
-                var actualizados = [];
-
-                snapshot.forEach(function (doc) {
-                    var data = doc.data();
-                    var icono = '📁';
-
-                    if (data.categoria === 'oficial') icono = '🎥';
-                    else if (data.categoria === 'momentos') icono = '🎬';
-                    else if (data.categoria === 'en_vivo') icono = '🎤';
-
-                    if (!data.iconoCategoria || data.iconoCategoria === '') {
-                        batch.update(doc.ref, { iconoCategoria: icono });
-                        count++;
-                        actualizados.push(data.titulo || 'Sin título');
-                    }
-                });
-
-                if (count > 0) {
-                    batch.commit().then(function () {
-                        console.log('✅ ' + count + ' videos actualizados:', actualizados);
-                        if (actualizados.length > 0) {
-                            console.log('📝 Videos actualizados:', actualizados.join(', '));
-                        }
-                        // Recargar videos
-                        cargarVideos();
-                    }).catch(function (error) {
-                        console.error('❌ Error al actualizar:', error);
-                    });
-                } else {
-                    console.log('✅ Todos los videos ya tienen iconoCategoria');
-                    cargarVideos();
-                }
-            }).catch(function (error) {
-                console.error('❌ Error al obtener videos:', error);
-            });
-        }
-
-        // ============================================================
         // INICIALIZAR
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
-            // Primero cargar videos
             cargarVideos();
-
-            // Luego actualizar los que faltan (después de un pequeño delay)
-            setTimeout(function () {
-                actualizarIconosVideos();
-            }, 1500);
-
-            console.log('🚀 Videoteca con íconos automáticos');
+            console.log('🚀 Videoteca: categorías desde Firebase (mismo sistema que galería)');
         });
     </script>
 
