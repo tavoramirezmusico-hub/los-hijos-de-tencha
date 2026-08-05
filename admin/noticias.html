@@ -25,6 +25,10 @@
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
+    <!-- Cropper.js para recorte de imágenes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+
     <style>
         .noticias-toolbar {
             display: flex;
@@ -74,6 +78,79 @@
             border-radius: 0 0 var(--radius-sm) var(--radius-sm);
         }
 
+        /* ============================================================
+           ESTILOS PARA EL RECORTADOR DE IMÁGENES (CROPPER)
+           ============================================================ */
+        .cropper-container {
+            max-width: 100%;
+            max-height: 450px;
+            margin: 10px 0;
+            background: #111;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+
+        .cropper-container img {
+            max-width: 100%;
+            display: block;
+        }
+
+        .cropper-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 12px 0;
+        }
+
+        .cropper-buttons .btn-admin {
+            flex: 1;
+            min-width: 100px;
+            justify-content: center;
+        }
+
+        .cropper-preview {
+            display: none;
+            margin: 12px 0;
+            padding: 12px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .cropper-preview.show {
+            display: flex;
+        }
+
+        .cropper-preview img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .cropper-preview .preview-info {
+            flex: 1;
+            font-size: 0.85rem;
+        }
+
+        .cropper-preview .preview-info .filename {
+            color: var(--color-text);
+            font-weight: 500;
+        }
+
+        .cropper-preview .preview-info .filesize {
+            color: var(--color-text-muted);
+            font-size: 0.75rem;
+        }
+
+        .cropper-preview .btn-admin {
+            padding: 4px 12px;
+            font-size: 0.7rem;
+        }
+
         .image-preview {
             margin: 12px 0;
             padding: 12px;
@@ -110,6 +187,10 @@
             font-size: 1.2rem;
             padding: 4px 8px;
             transition: var(--transition);
+        }
+
+        .image-preview .image-remove:hover {
+            transform: scale(1.2);
         }
 
         .noticia-item {
@@ -176,6 +257,13 @@
             text-align: center;
             padding: 40px 20px;
             color: var(--color-text-muted);
+        }
+
+        .noticia-vacia i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.3;
         }
 
         .error-box {
@@ -349,6 +437,10 @@
             .preview-modal .preview-content .preview-image {
                 max-height: 250px;
             }
+
+            .cropper-container {
+                max-height: 300px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -364,6 +456,26 @@
             .preview-modal .preview-content .preview-image {
                 max-height: 180px;
             }
+
+            .cropper-container {
+                max-height: 220px;
+            }
+
+            .cropper-buttons .btn-admin {
+                min-width: 100%;
+            }
+        }
+
+        .recargar-btn {
+            margin-right: 8px;
+        }
+
+        .recargar-btn i {
+            transition: transform 0.5s ease;
+        }
+
+        .recargar-btn:hover i {
+            transform: rotate(180deg);
         }
     </style>
 </head>
@@ -464,9 +576,38 @@
                         <i class="fa-solid fa-folder-open"></i> Seleccionar
                     </button>
                 </div>
-                <div class="form-help">Sube tu imagen a Cloudinary. Formatos: JPG, PNG, WEBP. Máximo 5MB.</div>
+                <div class="form-help">Selecciona una imagen, luego recórtala a tu gusto. Formatos: JPG, PNG, WEBP.
+                    Máximo 5MB.</div>
             </div>
 
+            <!-- Contenedor del recortador -->
+            <div id="cropperContainer" class="cropper-container" style="display:none;">
+                <img id="cropperImage" src="" alt="Selecciona una imagen para recortar">
+            </div>
+
+            <!-- Botones del recortador -->
+            <div id="cropperButtons" class="cropper-buttons" style="display:none;">
+                <button class="btn-admin btn-success" onclick="aplicarRecorte()">
+                    <i class="fa-solid fa-check"></i> Aplicar Recorte
+                </button>
+                <button class="btn-admin btn-danger" onclick="cancelarRecorte()">
+                    <i class="fa-solid fa-xmark"></i> Cancelar
+                </button>
+            </div>
+
+            <!-- Vista previa del recorte -->
+            <div id="cropperPreview" class="cropper-preview">
+                <img id="previewCropped" src="" alt="Vista previa recortada">
+                <div class="preview-info">
+                    <div class="filename" id="previewCroppedNombre">imagen-recortada.webp</div>
+                    <div class="filesize" id="previewCroppedTamaño">0 KB</div>
+                </div>
+                <button class="btn-admin btn-danger" onclick="eliminarRecorte()">
+                    <i class="fa-solid fa-trash-can"></i> Eliminar
+                </button>
+            </div>
+
+            <!-- Vista previa de imagen subida (fallback) -->
             <div class="image-preview" id="imagePreview">
                 <img id="previewImg" src="" alt="Vista previa">
                 <div class="image-info">
@@ -517,6 +658,10 @@
             <div class="card-header">
                 <h3><i class="fa-solid fa-list"></i> Noticias Publicadas</h3>
                 <div class="card-actions">
+                    <button class="btn-admin btn-secondary btn-sm recargar-btn" onclick="recargarNoticias()"
+                        title="Recargar lista de noticias">
+                        <i class="fa-solid fa-rotate"></i> Recargar
+                    </button>
                     <div class="noticias-toolbar">
                         <button class="btn-admin btn-secondary btn-sm active" data-filtro="todas"
                             onclick="filtrarNoticias('todas', this)">
@@ -581,6 +726,8 @@
         let imagenSeleccionada = null;
         let imagenUrlActual = null;
         let editandoId = null;
+        let cropper = null;
+        let imagenRecortadaBlob = null;
 
         // ============================================================
         // SIDEBAR
@@ -682,6 +829,155 @@
         }
 
         // ============================================================
+        // FUNCIONES - RECORTADOR DE IMAGEN (CROPPER)
+        // ============================================================
+
+        function initCropper() {
+            const container = document.getElementById('cropperContainer');
+            const img = document.getElementById('cropperImage');
+
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+
+            container.style.display = 'block';
+            document.getElementById('cropperButtons').style.display = 'flex';
+            document.getElementById('imagePreview').classList.remove('show');
+            document.getElementById('cropperPreview').classList.remove('show');
+
+            cropper = new Cropper(img, {
+                aspectRatio: 16 / 9,
+                viewMode: 1,
+                dragMode: 'move',
+                autoCropArea: 0.9,
+                restore: false,
+                guides: true,
+                center: true,
+                highlight: false,
+                cropBoxMovable: true,
+                cropBoxResizable: true,
+                toggleDragModeOnDblclick: false,
+                responsive: true,
+                background: false
+            });
+        }
+
+        function aplicarRecorte() {
+            if (!cropper) return;
+
+            const canvas = cropper.getCroppedCanvas({
+                width: 1200,
+                height: 675,
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high'
+            });
+
+            canvas.toBlob(function (blob) {
+                imagenRecortadaBlob = blob;
+                const url = URL.createObjectURL(blob);
+
+                // Mostrar preview
+                document.getElementById('previewCropped').src = url;
+                document.getElementById('previewCroppedNombre').textContent = 'imagen-recortada-' + Date.now() + '.webp';
+                document.getElementById('previewCroppedTamaño').textContent = (blob.size / 1024).toFixed(1) + ' KB';
+                document.getElementById('cropperPreview').classList.add('show');
+
+                // Ocultar cropper
+                document.getElementById('cropperContainer').style.display = 'none';
+                document.getElementById('cropperButtons').style.display = 'none';
+
+                // Crear archivo a partir del blob para subir
+                imagenSeleccionada = new File([blob], 'imagen-recortada-' + Date.now() + '.webp', { type: 'image/webp' });
+
+                // Destruir cropper
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+
+                mostrarToast('✅ Imagen recortada correctamente', 'success');
+            }, 'image/webp', 0.92);
+        }
+
+        function cancelarRecorte() {
+            document.getElementById('cropperContainer').style.display = 'none';
+            document.getElementById('cropperButtons').style.display = 'none';
+            document.getElementById('noticiaImagen').value = '';
+
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+
+            imagenSeleccionada = null;
+            mostrarToast('❌ Recorte cancelado', 'warning');
+        }
+
+        function eliminarRecorte() {
+            imagenRecortadaBlob = null;
+            imagenSeleccionada = null;
+            document.getElementById('cropperPreview').classList.remove('show');
+            document.getElementById('noticiaImagen').value = '';
+            mostrarToast('🗑️ Imagen recortada eliminada', 'info');
+        }
+
+        // ============================================================
+        // EVENTO: SELECCIONAR IMAGEN
+        // ============================================================
+
+        document.getElementById('noticiaImagen').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                mostrarToast('⚠️ Selecciona una imagen válida', 'warning');
+                this.value = '';
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                mostrarToast('⚠️ La imagen no debe superar los 5MB', 'warning');
+                this.value = '';
+                return;
+            }
+
+            // Limpiar recorte anterior
+            imagenRecortadaBlob = null;
+            document.getElementById('cropperPreview').classList.remove('show');
+
+            // Mostrar el recortador
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = document.getElementById('cropperImage');
+                img.src = e.target.result;
+                // Inicializar cropper después de que la imagen cargue
+                img.onload = function () {
+                    initCropper();
+                };
+                // Si la imagen ya está cargada
+                if (img.complete) {
+                    initCropper();
+                }
+            };
+            reader.readAsDataURL(file);
+
+            document.getElementById('imagenActualContainer').style.display = 'none';
+            imagenUrlActual = null;
+        });
+
+        // ============================================================
+        // FUNCIONES - MENSAJES
+        // ============================================================
+
+        function mostrarMensajeNoticia(elemento, texto, tipo) {
+            if (!elemento) return;
+            elemento.style.display = 'block';
+            elemento.textContent = texto;
+            elemento.className = 'admin-form-group ' + tipo;
+        }
+
+        // ============================================================
         // FUNCIONES CRUD
         // ============================================================
 
@@ -694,7 +990,6 @@
             const contenido = quill ? quill.root.innerHTML : '';
             const mensajeEl = document.getElementById('mensajeNoticia');
 
-            // VALIDACIONES
             if (!titulo) {
                 mostrarMensajeNoticia(mensajeEl, '⚠️ Ingresa el título', 'error');
                 document.getElementById('noticiaTitulo').focus();
@@ -722,7 +1017,6 @@
             try {
                 let imagenUrl = imagenUrlActual || '';
 
-                // Subir imagen a Cloudinary SOLO si hay una seleccionada
                 if (imagenSeleccionada) {
                     try {
                         console.log('📤 Subiendo imagen a Cloudinary:', imagenSeleccionada.name);
@@ -738,7 +1032,6 @@
                     }
                 }
 
-                // Si es edición y no hay imagen nueva, mantener la existente
                 if (id && !imagenSeleccionada && imagenUrlActual) {
                     imagenUrl = imagenUrlActual;
                 }
@@ -896,7 +1189,11 @@
                 }
 
                 document.getElementById('imagePreview').classList.remove('show');
+                document.getElementById('cropperPreview').classList.remove('show');
+                document.getElementById('cropperContainer').style.display = 'none';
+                document.getElementById('cropperButtons').style.display = 'none';
                 imagenSeleccionada = null;
+                imagenRecortadaBlob = null;
 
                 document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Editar Noticia';
                 document.getElementById('btnPublicarTexto').textContent = 'Actualizar Noticia';
@@ -938,6 +1235,17 @@
             renderizarNoticias();
         }
 
+        function recargarNoticias() {
+            const btn = document.querySelector('.recargar-btn');
+            const icon = btn.querySelector('i');
+            icon.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                icon.style.transform = 'rotate(0deg)';
+            }, 500);
+            mostrarToast('🔄 Recargando noticias...', 'info');
+            cargarNoticias();
+        }
+
         function limpiarFormulario() {
             editandoId = null;
             document.getElementById('noticiaId').value = '';
@@ -950,9 +1258,18 @@
 
             imagenUrlActual = null;
             imagenSeleccionada = null;
+            imagenRecortadaBlob = null;
             document.getElementById('imagePreview').classList.remove('show');
+            document.getElementById('cropperPreview').classList.remove('show');
+            document.getElementById('cropperContainer').style.display = 'none';
+            document.getElementById('cropperButtons').style.display = 'none';
             document.getElementById('imagenActualContainer').style.display = 'none';
             document.getElementById('mensajeNoticia').style.display = 'none';
+
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
 
             document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Crear Nueva Noticia';
             document.getElementById('btnPublicarTexto').textContent = 'Publicar Noticia';
@@ -964,43 +1281,18 @@
             if (confirm('¿Cancelar la edición?')) limpiarFormulario();
         }
 
-        document.getElementById('noticiaImagen').addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            if (!file.type.startsWith('image/')) {
-                mostrarToast('⚠️ Selecciona una imagen válida', 'warning');
-                this.value = '';
-                return;
-            }
-
-            if (file.size > 5 * 1024 * 1024) {
-                mostrarToast('⚠️ La imagen no debe superar los 5MB', 'warning');
-                this.value = '';
-                return;
-            }
-
-            imagenSeleccionada = file;
-
-            const preview = document.getElementById('imagePreview');
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                document.getElementById('previewImg').src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-
-            document.getElementById('previewNombre').textContent = file.name;
-            document.getElementById('previewTamaño').textContent = (file.size / 1024).toFixed(1) + ' KB';
-            preview.classList.add('show');
-
-            document.getElementById('imagenActualContainer').style.display = 'none';
-            imagenUrlActual = null;
-        });
-
         function eliminarImagenSeleccionada() {
             imagenSeleccionada = null;
+            imagenRecortadaBlob = null;
             document.getElementById('imagePreview').classList.remove('show');
+            document.getElementById('cropperPreview').classList.remove('show');
+            document.getElementById('cropperContainer').style.display = 'none';
+            document.getElementById('cropperButtons').style.display = 'none';
             document.getElementById('noticiaImagen').value = '';
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
         }
 
         // ============================================================
@@ -1013,27 +1305,28 @@
             const categoria = document.getElementById('noticiaCategoria').value.trim() || 'General';
             const contenido = quill ? quill.root.innerHTML : '';
             const imagenPreview = document.getElementById('previewImg').src;
+            const imagenCropped = document.getElementById('previewCropped').src;
 
             const modal = document.getElementById('previewModal');
             const container = document.getElementById('previewContenido');
 
-            // Formatear fecha
             let fechaFormateada = 'Fecha no definida';
             if (fecha) {
                 try {
                     const d = new Date(fecha + 'T00:00:00');
                     const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                    ];
                     fechaFormateada = d.getDate() + ' de ' + meses[d.getMonth()] + ' ' + d.getFullYear();
                 } catch (e) {
                     fechaFormateada = fecha;
                 }
             }
 
-            // Generar HTML de la vista previa
             let imagenHTML = '';
-            if (imagenPreview && imagenPreview.startsWith('data:image')) {
-                imagenHTML = `<img src="${imagenPreview}" alt="${sanitizar(titulo)}" class="preview-image">`;
+            const imagenFinal = imagenCropped || imagenPreview;
+            if (imagenFinal && imagenFinal.startsWith('data:image')) {
+                imagenHTML = `<img src="${imagenFinal}" alt="${sanitizar(titulo)}" class="preview-image">`;
             }
 
             container.innerHTML = `
@@ -1067,13 +1360,13 @@
             const modal = document.getElementById('previewModal');
             const container = document.getElementById('previewContenido');
 
-            // Formatear fecha
             let fechaFormateada = 'Fecha no definida';
             if (noticia.fecha) {
                 try {
                     const d = new Date(noticia.fecha + 'T00:00:00');
                     const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                    ];
                     fechaFormateada = d.getDate() + ' de ' + meses[d.getMonth()] + ' ' + d.getFullYear();
                 } catch (e) {
                     fechaFormateada = noticia.fecha;
@@ -1111,14 +1404,12 @@
             document.body.style.overflow = '';
         }
 
-        // Cerrar modal con Escape
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 cerrarPreview();
             }
         });
 
-        // Cerrar modal al hacer clic fuera
         document.getElementById('previewModal').addEventListener('click', function (e) {
             if (e.target === this) {
                 cerrarPreview();
@@ -1132,7 +1423,7 @@
             document.getElementById('noticiaFecha').value = new Date().toISOString().split('T')[0];
             setTimeout(initQuill, 300);
             setTimeout(cargarNoticias, 500);
-            console.log('🚀 Gestor de Noticias cargado con Cloudinary y Vista Previa');
+            console.log('🚀 Gestor de Noticias cargado con recorte de imágenes y botón recargar');
         });
     </script>
 
