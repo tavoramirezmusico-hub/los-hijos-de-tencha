@@ -585,7 +585,7 @@
                 toast('⚠️ No hay mensaje válido', 'warning');
                 return;
             }
-            if (!window.db) { toast('⚠️ Firestore no disponible', 'warning'); return; }
+            if (!(typeof db !== "undefined" && db)) { toast('⚠️ Firestore no disponible', 'warning'); return; }
 
             try {
                 await db.collection('mensajes_generados').add({
@@ -614,7 +614,7 @@
         // HISTORIAL
         // ============================================================
         async function cargarHistorial() {
-            if (!window.db) {
+            if (!(typeof db !== "undefined" && db)) {
                 historial.innerHTML = '<li class="empty-state"><i class="fa-solid fa-triangle-exclamation"></i> Firestore no disponible</li>';
                 return;
             }
@@ -660,7 +660,7 @@
         }
 
         async function reutilizar(id) {
-            if (!window.db) return;
+            if (!(typeof db !== "undefined" && db)) return;
             try {
                 const doc = await db.collection('mensajes_generados').doc(id).get();
                 if (!doc.exists) return;
@@ -677,7 +677,7 @@
 
         async function eliminar(id) {
             if (!confirm('¿Eliminar este mensaje?')) return;
-            if (!window.db) return;
+            if (!(typeof db !== "undefined" && db)) return;
             try {
                 await db.collection('mensajes_generados').doc(id).delete();
                 toast('🗑️ Eliminado', 'success');
@@ -687,7 +687,7 @@
 
         async function borrarTodo() {
             if (!confirm('⚠️ ¿Borrar TODO el historial?')) return;
-            if (!window.db) return;
+            if (!(typeof db !== "undefined" && db)) return;
             try {
                 const snap = await db.collection('mensajes_generados').get();
                 if (snap.empty) { toast('⚠️ No hay mensajes', 'warning'); return; }
