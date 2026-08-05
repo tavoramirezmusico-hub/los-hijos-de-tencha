@@ -451,22 +451,23 @@
             text-shadow: 0 0 8px rgba(255, 204, 0, .8), 0 0 15px rgba(255, 204, 0, .5);
         }
 
+        /* =====================================
+           HEADER VIDEOS CENTRADO
+           ===================================== */
         .header-videos {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 10px;
+            text-align: center;
+            display: block;
+            margin-bottom: 20px;
         }
 
-        .header-videos h2 {
-            margin: 0;
+        .header-videos .titulo-seccion {
+            margin-bottom: 6px;
         }
 
         .header-videos .videos-count {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             color: #888;
+            display: block;
         }
     </style>
 </head>
@@ -520,7 +521,7 @@
         <div class="contenedor">
 
             <div class="header-videos">
-                <div class="titulo-seccion" style="margin-bottom:0;">
+                <div class="titulo-seccion">
                     <span>Contenido audiovisual</span>
                     <h2>Galería de Videos</h2>
                 </div>
