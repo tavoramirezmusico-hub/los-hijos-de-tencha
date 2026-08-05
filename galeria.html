@@ -109,7 +109,7 @@
         }
 
         /* =====================================
-           HERO GALERÍA
+           HERO GALERÍA - UNIFICADO CON LAS DEMÁS PÁGINAS
            ===================================== */
         .hero-galeria {
             min-height: 50vh;
@@ -189,7 +189,7 @@
         }
 
         /* =====================================
-           GALERÍA
+           GALERÍA - ESTILOS PROPIOS
            ===================================== */
         .galeria-grid {
             display: grid;
@@ -293,6 +293,7 @@
             border-color: #ffcc00;
         }
 
+        /* RESPONSIVE GALERÍA */
         @media (max-width: 900px) {
             .galeria-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -332,9 +333,9 @@
         }
 
         /* =====================================
-           VISOR DE GALERÍA
+           VISOR DE GALERÍA MEJORADO
            ===================================== */
-        .visor-galeria {
+        .visor {
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, .95);
@@ -347,11 +348,11 @@
             animation: fadeVisor .25s ease;
         }
 
-        .visor-galeria.active {
+        .visor.active {
             display: flex;
         }
 
-        .visor-galeria img {
+        .visor img {
             max-width: 90vw;
             max-height: 85vh;
             width: auto;
@@ -362,7 +363,7 @@
             animation: zoomEntrada .35s ease;
         }
 
-        .visor-galeria .cerrar-visor {
+        .visor .cerrar-visor {
             position: absolute;
             top: 25px;
             right: 30px;
@@ -380,12 +381,12 @@
             justify-content: center;
         }
 
-        .visor-galeria .cerrar-visor:hover {
+        .visor .cerrar-visor:hover {
             background: #ffcc00;
             color: #000;
         }
 
-        .visor-galeria .flecha {
+        .visor .flecha {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
@@ -403,20 +404,20 @@
             justify-content: center;
         }
 
-        .visor-galeria .flecha:hover {
+        .visor .flecha:hover {
             background: #ffcc00;
             color: #000;
         }
 
-        .visor-galeria .flecha-izq {
+        .visor .flecha-izq {
             left: 30px;
         }
 
-        .visor-galeria .flecha-der {
+        .visor .flecha-der {
             right: 30px;
         }
 
-        .visor-galeria .contador-visor {
+        .visor .contador-visor {
             position: absolute;
             bottom: 30px;
             left: 50%;
@@ -452,23 +453,23 @@
         }
 
         @media (max-width: 700px) {
-            .visor-galeria .flecha {
+            .visor .flecha {
                 width: 45px;
                 height: 45px;
                 font-size: 1.4rem;
             }
 
-            .visor-galeria .cerrar-visor {
+            .visor .cerrar-visor {
                 width: 45px;
                 height: 45px;
                 font-size: 1.6rem;
             }
 
-            .visor-galeria .flecha-izq {
+            .visor .flecha-izq {
                 left: 15px;
             }
 
-            .visor-galeria .flecha-der {
+            .visor .flecha-der {
                 right: 15px;
             }
         }
@@ -527,16 +528,16 @@
                 <h2>Nuestra Galería</h2>
             </div>
 
+            <!-- Categorías -->
             <div class="galeria-categorias" id="galeriaCategorias">
-                <!-- Las categorías se cargan desde Firebase -->
+                <button class="cat-btn active" data-categoria="todas">📸 Todas</button>
+                <button class="cat-btn" data-categoria="vocho">🚗 Sesión Vocho</button>
+                <button class="cat-btn" data-categoria="disco">🎵 Sesión Disco Cumbias</button>
+                <button class="cat-btn" data-categoria="lanzamiento">🎸 Cumbia Salvaje</button>
             </div>
 
             <div class="galeria-grid" id="galeriaGrid">
-                <div class="galeria-vacia">
-                    <i class="fa-solid fa-spinner fa-spin"
-                        style="font-size:2.5rem; display:block; margin-bottom:12px; color:#ffcc00;"></i>
-                    <p>Cargando galería...</p>
-                </div>
+                <!-- Las fotos se cargan desde JavaScript -->
             </div>
         </div>
     </section>
@@ -550,20 +551,22 @@
 
     <button id="subir"><i class="fa-solid fa-arrow-up"></i></button>
 
-    <!-- VISOR DE GALERÍA -->
-    <div id="visorGaleria" class="visor-galeria">
-        <button id="cerrarVisor" class="cerrar-visor">&times;</button>
-        <button id="fotoAnterior" class="flecha flecha-izq">&#10094;</button>
-        <img id="imagenVisor" src="" alt="Foto ampliada">
-        <button id="fotoSiguiente" class="flecha flecha-der">&#10095;</button>
+    <!-- ==========================
+         VISOR DE GALERÍA
+    ========================== -->
+    <div id="visor-galeria" class="visor">
+        <button id="cerrar-galeria" class="cerrar-visor">&times;</button>
+        <button id="foto-anterior" class="flecha flecha-izq">&#10094;</button>
+        <img id="imagen-galeria" src="" alt="Foto ampliada">
+        <button id="foto-siguiente" class="flecha flecha-der">&#10095;</button>
         <div class="contador-visor">
-            <span id="fotoActualVisor">1</span>
+            <span id="foto-actual">1</span>
             /
-            <span id="totalFotosVisor">0</span>
+            <span id="total-fotos">0</span>
         </div>
     </div>
 
-    <!-- TRANSICIÓN -->
+    <!-- Pantalla de transición -->
     <div id="transicion">
         <img src="img/transicion.gif" alt="Transición">
     </div>
@@ -574,273 +577,259 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
+    <script src="js/script.js"></script>
+    <script src="js/eventos.js"></script>
+
     <!-- ============================================= -->
-    <!-- SCRIPT GALERÍA - VERSIÓN MÁS SIMPLE POSIBLE  -->
+    <!-- SCRIPT ESPECÍFICO PARA GALERÍA               -->
     <!-- ============================================= -->
     <script>
-        // Configuración de Firebase
-        var firebaseConfig = {
-            apiKey: "AIzaSyDvp_6UFymZZnqxMyL6yobJ3twLMvVkThw",
-            authDomain: "base-entradas-tenchos.firebaseapp.com",
-            projectId: "base-entradas-tenchos",
-            storageBucket: "base-entradas-tenchos.firebasestorage.app",
-            messagingSenderId: "273676503007",
-            appId: "1:273676503007:web:56180c485b648ef076a66a"
+        // =====================================
+        // GALERÍA CON CATEGORÍAS - DATOS
+        // =====================================
+
+        const galeriaDatos = {
+            'vocho': {
+                titulo: 'Sesión Vocho',
+                fotos: [
+                    'img/galeria/vocho/foto1.webp',
+                    'img/galeria/vocho/foto2.webp',
+                    'img/galeria/vocho/foto7.webp',
+                    'img/galeria/vocho/foto8.webp',
+                    'img/galeria/vocho/foto9.webp',
+                    'img/galeria/vocho/foto10.webp',
+                    'img/galeria/vocho/foto11.webp',
+                    'img/galeria/vocho/foto12.webp',
+                    'img/galeria/vocho/foto13.webp',
+                    'img/galeria/vocho/foto14.webp',
+                    'img/galeria/vocho/foto15.webp',
+                    'img/galeria/vocho/foto16.webp'
+                ]
+            },
+            'disco': {
+                titulo: 'Sesión Disco Cumbias',
+                fotos: [
+                    'img/galeria/cumbias/foto3.webp',
+                    'img/galeria/cumbias/foto4.webp',
+                    'img/galeria/cumbias/foto5.webp',
+                    'img/galeria/cumbias/foto6.webp'
+                ]
+            },
+            'lanzamiento': {
+                titulo: 'Cumbia Salvaje - Lanzamiento',
+                fotos: [
+                    'img/galeria/lanzamiento/foto1.webp',
+                    'img/galeria/lanzamiento/foto2.webp',
+                    'img/galeria/lanzamiento/foto3.webp',
+                    'img/galeria/lanzamiento/foto17.webp',
+                    'img/galeria/lanzamiento/foto18.webp',
+                    'img/galeria/lanzamiento/foto19.webp',
+                    'img/galeria/lanzamiento/foto20.webp'
+                ]
+            }
         };
 
-        // Inicializar Firebase
-        if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-            console.log('Firebase inicializado');
-        }
+        let categoriaActual = 'todas';
+        let fotosActuales = [];
+        let indiceActualVisor = 0;
 
-        var db = firebase.firestore();
-        var categorias = [];
-        var fotos = [];
-        var fotosActuales = [];
-        var categoriaActual = 'todas';
-        var indiceVisor = 0;
-
-        // =====================================
-        // CARGAR CATEGORÍAS
-        // =====================================
-        function cargarCategorias() {
-            db.collection('galeria_categorias').orderBy('nombre', 'asc').get().then(function (snapshot) {
-                categorias = [];
-                snapshot.forEach(function (doc) {
-                    var data = doc.data();
-                    categorias.push({
-                        id: doc.id,
-                        nombre: data.nombre || doc.id
-                    });
-                });
-                console.log('Categorías cargadas:', categorias.length);
-                renderizarCategorias();
-                cargarFotos();
-            }).catch(function (error) {
-                console.error('Error al cargar categorías:', error);
-                mostrarError('Error al cargar categorías');
-            });
-        }
-
-        // =====================================
-        // RENDERIZAR CATEGORÍAS
-        // =====================================
-        function renderizarCategorias() {
-            var container = document.getElementById('galeriaCategorias');
-            if (!container) return;
-
-            var html = '<button class="cat-btn active" data-categoria="todas">📸 Todas</button>';
-            for (var i = 0; i < categorias.length; i++) {
-                var cat = categorias[i];
-                html += '<button class="cat-btn" data-categoria="' + cat.id + '">📁 ' + cat.nombre + '</button>';
-            }
-            container.innerHTML = html;
-
-            // Eventos
-            var botones = container.querySelectorAll('.cat-btn');
-            for (var j = 0; j < botones.length; j++) {
-                (function (btn) {
-                    btn.addEventListener('click', function () {
-                        var cat = this.dataset.categoria;
-                        categoriaActual = cat;
-                        // Actualizar clases
-                        var allBtns = document.querySelectorAll('.cat-btn');
-                        for (var k = 0; k < allBtns.length; k++) {
-                            if (allBtns[k].dataset.categoria === cat) {
-                                allBtns[k].classList.add('active');
-                            } else {
-                                allBtns[k].classList.remove('active');
-                            }
-                        }
-                        filtrarFotos(cat);
-                    });
-                })(botones[j]);
-            }
-        }
-
-        // =====================================
-        // CARGAR FOTOS
-        // =====================================
-        function cargarFotos() {
-            db.collection('galeria_fotos').orderBy('orden', 'asc').get().then(function (snapshot) {
-                fotos = [];
-                snapshot.forEach(function (doc) {
-                    var data = doc.data();
-                    if (data.url) {
-                        fotos.push({
-                            id: doc.id,
-                            categoriaId: data.categoriaId || 'general',
-                            url: data.url,
-                            titulo: data.titulo || 'Foto',
-                            orden: data.orden || 0,
-                            destacada: data.destacada || false
-                        });
-                    }
-                });
-                console.log('Fotos cargadas:', fotos.length);
-                filtrarFotos('todas');
-            }).catch(function (error) {
-                console.error('Error al cargar fotos:', error);
-                mostrarError('Error al cargar fotos');
-            });
-        }
-
-        // =====================================
-        // FILTRAR FOTOS
-        // =====================================
-        function filtrarFotos(categoria) {
-            var filtradas = [];
-            if (categoria === 'todas') {
-                filtradas = fotos.slice();
-            } else {
-                for (var i = 0; i < fotos.length; i++) {
-                    if (fotos[i].categoriaId === categoria) {
-                        filtradas.push(fotos[i]);
-                    }
-                }
-            }
-            filtradas.sort(function (a, b) {
-                return (a.orden || 0) - (b.orden || 0);
-            });
-            fotosActuales = filtradas;
-            renderizarFotos();
-        }
-
-        // =====================================
-        // RENDERIZAR FOTOS
-        // =====================================
-        function renderizarFotos() {
-            var grid = document.getElementById('galeriaGrid');
-            if (!grid) return;
-
-            if (fotosActuales.length === 0) {
-                grid.innerHTML =
-                    '<div class="galeria-vacia">' +
-                    '<i class="fa-regular fa-image" style="font-size:2.5rem; display:block; margin-bottom:12px; opacity:0.3;"></i>' +
-                    '<p>📸 No hay fotos disponibles en esta categoría.</p>' +
-                    '<p style="font-size:0.85rem; color:#555; margin-top:8px;">Sube fotos desde el panel de administración.</p>' +
-                    '</div>';
+        function cargarGaleria(categoria) {
+            const grid = document.getElementById('galeriaGrid');
+            if (!grid) {
+                console.warn('⚠️ No se encontró el contenedor de la galería');
                 return;
             }
 
-            var html = '';
-            for (var i = 0; i < fotosActuales.length; i++) {
-                var f = fotosActuales[i];
-                var titulo = f.titulo || 'Foto';
-                html +=
-                    '<div class="foto-item" data-index="' + i + '">' +
-                    '<img src="' + f.url + '" alt="' + titulo + '" loading="lazy" onerror="this.style.display=\'none\'; this.parentElement.style.background=\'#2a2a2a\';">' +
-                    '<div class="foto-overlay"><span>' + titulo + (f.destacada ? ' ⭐' : '') + '</span></div>' +
-                    '</div>';
-            }
-            grid.innerHTML = html;
+            categoriaActual = categoria;
 
-            // Eventos click
-            var items = grid.querySelectorAll('.foto-item');
-            for (var j = 0; j < items.length; j++) {
-                (function (el, idx) {
-                    el.addEventListener('click', function () {
-                        var img = this.querySelector('img');
-                        if (img && img.src) {
-                            abrirVisor(idx);
+            let fotos = [];
+            if (categoria === 'todas') {
+                Object.keys(galeriaDatos).forEach(key => {
+                    fotos = fotos.concat(galeriaDatos[key].fotos);
+                });
+            } else if (galeriaDatos[categoria]) {
+                fotos = galeriaDatos[categoria].fotos;
+            }
+
+            fotosActuales = fotos;
+
+            // Actualizar botones de categorías
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.categoria === categoria);
+            });
+
+            if (fotos.length === 0) {
+                grid.innerHTML = `<div class="galeria-vacia">📸 No hay fotos en esta categoría aún.</div>`;
+                return;
+            }
+
+            // Generar HTML de la galería
+            grid.innerHTML = fotos.map((foto, index) => {
+                let titulo = '';
+                if (categoria === 'todas') {
+                    for (let key in galeriaDatos) {
+                        if (galeriaDatos[key].fotos.includes(foto)) {
+                            titulo = galeriaDatos[key].titulo;
+                            break;
                         }
-                    });
-                })(items[j], j);
-            }
+                    }
+                } else {
+                    titulo = galeriaDatos[categoria]?.titulo || 'Evento';
+                }
+                return `
+                <div class="foto-item" data-index="${index}">
+                    <img src="${foto}" alt="${titulo}" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='#2a2a2a';">
+                    <div class="foto-overlay">
+                        <span>${titulo}</span>
+                    </div>
+                </div>
+            `}).join('');
+
+            // Agregar eventos de click a las fotos
+            grid.querySelectorAll('.foto-item').forEach(el => {
+                el.addEventListener('click', function () {
+                    const index = parseInt(this.dataset.index);
+                    const img = this.querySelector('img');
+                    if (img && img.src && img.src !== '') {
+                        abrirVisor(index);
+                    }
+                });
+            });
+
+            // Activar animaciones escalonadas
+            document.querySelectorAll('.galeria-grid .foto-item').forEach((el, i) => {
+                setTimeout(() => {
+                    el.classList.add('visible');
+                }, 100 + (i * 50));
+            });
+
+            console.log(`✅ Galería cargada: ${fotos.length} fotos en categoría "${categoria}"`);
         }
 
         // =====================================
-        // MOSTRAR ERROR
+        // VISOR DE GALERÍA
         // =====================================
-        function mostrarError(texto) {
-            var grid = document.getElementById('galeriaGrid');
-            if (grid) {
-                grid.innerHTML =
-                    '<div class="galeria-vacia">' +
-                    '<i class="fa-solid fa-triangle-exclamation" style="font-size:2.5rem; display:block; margin-bottom:12px; color:#d32f2f;"></i>' +
-                    '<p>' + texto + '</p>' +
-                    '</div>';
-            }
-        }
 
-        // =====================================
-        // VISOR
-        // =====================================
-        var visorEl = document.getElementById('visorGaleria');
-        var imgVisor = document.getElementById('imagenVisor');
-        var cerrarVisorBtn = document.getElementById('cerrarVisor');
-        var btnAnt = document.getElementById('fotoAnterior');
-        var btnSig = document.getElementById('fotoSiguiente');
-        var txtActual = document.getElementById('fotoActualVisor');
-        var txtTotal = document.getElementById('totalFotosVisor');
+        const visorGaleria = document.getElementById('visor-galeria');
+        const imagenGaleria = document.getElementById('imagen-galeria');
+        const cerrarGaleria = document.getElementById('cerrar-galeria');
+        const anterior = document.getElementById('foto-anterior');
+        const siguiente = document.getElementById('foto-siguiente');
+        const fotoActual = document.getElementById('foto-actual');
+        const totalFotos = document.getElementById('total-fotos');
 
         function abrirVisor(index) {
-            if (!visorEl || fotosActuales.length === 0) return;
-            indiceVisor = index;
-            mostrarVisor(indiceVisor);
-            visorEl.classList.add('active');
+            if (!visorGaleria || !imagenGaleria) return;
+            if (fotosActuales.length === 0) return;
+
+            const imgSrc = fotosActuales[index];
+            if (!imgSrc) return;
+
+            indiceActualVisor = index;
+            mostrarFotoVisor(indiceActualVisor);
+            visorGaleria.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
-        function mostrarVisor(index) {
+        function mostrarFotoVisor(indice) {
+            if (!imagenGaleria || !fotoActual || !totalFotos) return;
             if (fotosActuales.length === 0) return;
-            if (index < 0) index = fotosActuales.length - 1;
-            if (index >= fotosActuales.length) index = 0;
-            indiceVisor = index;
-            imgVisor.src = fotosActuales[index].url;
-            txtActual.textContent = index + 1;
-            txtTotal.textContent = fotosActuales.length;
+
+            if (indice < 0) indice = fotosActuales.length - 1;
+            if (indice >= fotosActuales.length) indice = 0;
+
+            indiceActualVisor = indice;
+            imagenGaleria.src = fotosActuales[indice];
+            fotoActual.textContent = indice + 1;
+            totalFotos.textContent = fotosActuales.length;
+
+            imagenGaleria.style.animation = 'none';
+            setTimeout(() => {
+                imagenGaleria.style.animation = 'zoomEntrada .35s ease';
+            }, 50);
         }
 
-        function cerrarVisorFn() {
-            if (visorEl) {
-                visorEl.classList.remove('active');
+        function cerrarVisor() {
+            if (visorGaleria) {
+                visorGaleria.classList.remove('active');
                 document.body.style.overflow = '';
             }
         }
 
-        if (cerrarVisorBtn) cerrarVisorBtn.addEventListener('click', cerrarVisorFn);
-        if (visorEl) visorEl.addEventListener('click', function (e) {
-            if (e.target === visorEl) cerrarVisorFn();
-        });
-        if (btnAnt) btnAnt.addEventListener('click', function (e) {
-            e.stopPropagation();
-            mostrarVisor(indiceVisor - 1);
-        });
-        if (btnSig) btnSig.addEventListener('click', function (e) {
-            e.stopPropagation();
-            mostrarVisor(indiceVisor + 1);
-        });
+        if (cerrarGaleria) {
+            cerrarGaleria.addEventListener('click', cerrarVisor);
+        }
 
-        document.addEventListener('keydown', function (e) {
-            if (!visorEl || !visorEl.classList.contains('active')) return;
-            if (e.key === 'Escape') cerrarVisorFn();
-            if (e.key === 'ArrowLeft') mostrarVisor(indiceVisor - 1);
-            if (e.key === 'ArrowRight') mostrarVisor(indiceVisor + 1);
+        if (visorGaleria) {
+            visorGaleria.addEventListener('click', (e) => {
+                if (e.target === visorGaleria) {
+                    cerrarVisor();
+                }
+            });
+        }
+
+        if (anterior) {
+            anterior.addEventListener('click', (e) => {
+                e.stopPropagation();
+                mostrarFotoVisor(indiceActualVisor - 1);
+            });
+        }
+
+        if (siguiente) {
+            siguiente.addEventListener('click', (e) => {
+                e.stopPropagation();
+                mostrarFotoVisor(indiceActualVisor + 1);
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (!visorGaleria || !visorGaleria.classList.contains('active')) return;
+            if (e.key === 'Escape') cerrarVisor();
+            if (e.key === 'ArrowRight') mostrarFotoVisor(indiceActualVisor + 1);
+            if (e.key === 'ArrowLeft') mostrarFotoVisor(indiceActualVisor - 1);
         });
 
         // =====================================
-        // INICIAR
+        // INICIALIZAR GALERÍA - CON FORZADO PARA MÓVIL
         // =====================================
-        function iniciar() {
-            var grid = document.getElementById('galeriaGrid');
-            if (grid) {
-                cargarCategorias();
+
+        function inicializarGaleria() {
+            console.log('🔄 Inicializando galería...');
+
+            if (document.getElementById('galeriaGrid')) {
+                console.log('✅ Galería encontrada, cargando...');
+                cargarGaleria('todas');
+
+                document.querySelectorAll('.cat-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const categoria = this.dataset.categoria;
+                        cargarGaleria(categoria);
+                    });
+                });
             } else {
-                setTimeout(iniciar, 500);
+                console.warn('⚠️ No se encontró la galería, reintentando...');
+                setTimeout(inicializarGaleria, 500);
             }
         }
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', function () {
-                setTimeout(iniciar, 400);
+                setTimeout(inicializarGaleria, 300);
             });
         } else {
-            setTimeout(iniciar, 400);
+            setTimeout(inicializarGaleria, 300);
         }
 
-        console.log('🚀 Galería iniciada');
+        if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            console.log('📱 Dispositivo móvil detectado, forzando carga...');
+            setTimeout(function () {
+                const grid = document.getElementById('galeriaGrid');
+                if (grid && grid.children.length === 0) {
+                    console.log('🔄 Reintentando carga en móvil...');
+                    inicializarGaleria();
+                }
+            }, 2000);
+        }
     </script>
 
 </body>
