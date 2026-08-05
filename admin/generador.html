@@ -150,6 +150,10 @@
             opacity: 0.6;
             pointer-events: none;
         }
+
+        #iframeResponse {
+            display: none;
+        }
     </style>
 </head>
 
@@ -259,12 +263,15 @@
 
     <div id="adminToast" class="admin-toast"></div>
 
+    <!-- IFrame oculto para enviar datos sin CORS -->
+    <iframe id="iframeResponse" name="iframeResponse"></iframe>
+
     <script src="js/admin.js"></script>
     <script>
         // ============================================================
-        // CONFIGURACIÓN - ACTUALIZA ESTA URL CON TU NUEVA URL
+        // CONFIGURACIÓN - URL DE GOOGLE APPS SCRIPT
         // ============================================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxssQE7DCFanawrdbGVki24X-tyEmD5vJC3i5eNwjUe3qWFK3nFwLmeB_9oMgdk_FJy/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwD5BSV1HJDPYqXbQrICJnrz9bowvcWAJNi_W0Zt6lRGNxE42D8vmUFYPDX3pmju86u/exec';
 
         // ============================================================
         // SIDEBAR
@@ -281,9 +288,9 @@
         if (overlay) overlay.addEventListener('click', toggleSidebar);
 
         // ============================================================
-        // GENERAR TEXTO
+        // GENERAR TEXTO - Usando FORM + IFRAME (sin CORS)
         // ============================================================
-        async function generarTexto() {
+        function generarTexto() {
             const tema = document.getElementById('tema').value.trim();
             const tono = document.getElementById('tono').value;
             const longitud = document.getElementById('longitud').value;
@@ -306,52 +313,52 @@
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando...';
 
-            try {
-                // Usar XMLHttpRequest en lugar de fetch para evitar CORS
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', SCRIPT_URL, true);
-                xhr.setRequestHeader('Content-Type', 'application/json');
+            // Crear formulario dinámico para enviar a Google Apps Script
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = SCRIPT_URL;
+            form.target = 'iframeResponse';
+            form.style.display = 'none';
 
-                xhr.onload = function () {
-                    if (xhr.status === 200) {
-                        try {
-                            const data = JSON.parse(xhr.responseText);
-                            if (data.success) {
-                                mensajeEl.textContent = data.texto;
-                                tiempoEl.textContent = '✅ Generado ' + new Date().toLocaleString();
-                                mostrarToast('✅ Mensaje generado correctamente', 'success');
-                            } else {
-                                mensajeEl.textContent = '❌ Error: ' + (data.error || 'Error desconocido');
-                                mostrarToast('❌ Error al generar mensaje', 'error');
-                            }
-                        } catch (e) {
-                            mensajeEl.textContent = '❌ Error al procesar la respuesta';
-                            mostrarToast('❌ Error al procesar respuesta', 'error');
+            const data = { tema, tono, longitud, contexto };
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'data';
+            input.value = JSON.stringify(data);
+            form.appendChild(input);
+
+            document.body.appendChild(form);
+
+            // Escuchar la respuesta del iframe
+            const iframe = document.getElementById('iframeResponse');
+            iframe.onload = function () {
+                try {
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    const responseText = iframeDoc.body.textContent || iframeDoc.body.innerText;
+
+                    if (responseText) {
+                        const data = JSON.parse(responseText);
+                        if (data.success) {
+                            mensajeEl.textContent = data.texto;
+                            tiempoEl.textContent = '✅ Generado ' + new Date().toLocaleString();
+                            mostrarToast('✅ Mensaje generado correctamente', 'success');
+                        } else {
+                            mensajeEl.textContent = '❌ Error: ' + (data.error || 'Error desconocido');
+                            mostrarToast('❌ Error al generar mensaje', 'error');
                         }
-                    } else {
-                        mensajeEl.textContent = '❌ Error HTTP: ' + xhr.status;
-                        mostrarToast('❌ Error de conexión (HTTP ' + xhr.status + ')', 'error');
                     }
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Generar mensaje con IA';
-                };
+                } catch (e) {
+                    console.error('Error al leer respuesta:', e);
+                    mensajeEl.textContent = '❌ Error al procesar la respuesta';
+                    mostrarToast('❌ Error al procesar respuesta', 'error');
+                }
 
-                xhr.onerror = function () {
-                    mensajeEl.textContent = '❌ Error de conexión con el servidor';
-                    mostrarToast('❌ Error de conexión', 'error');
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Generar mensaje con IA';
-                };
-
-                xhr.send(JSON.stringify({ tema, tono, longitud, contexto }));
-
-            } catch (error) {
-                console.error('Error:', error);
-                mensajeEl.textContent = '❌ Error de conexión. Intenta de nuevo.';
-                mostrarToast('❌ Error de conexión', 'error');
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Generar mensaje con IA';
-            }
+                document.body.removeChild(form);
+            };
+
+            form.submit();
         }
 
         // ============================================================
@@ -454,6 +461,7 @@
                 }
             });
             console.log('🤖 Generador de Textos WhatsApp con IA cargado');
+            console.log('📡 Usando URL:', SCRIPT_URL);
         });
     </script>
 </body>
