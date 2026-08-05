@@ -33,6 +33,10 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
     <!-- GOOGLE ANALYTICS -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YNRK4G09LN"></script>
     <script>
@@ -117,7 +121,7 @@
         }
 
         /* =====================================
-           HERO VIDEOTECA - MEJORADO (MISMA PROPORCIÓN QUE GALERÍA)
+           HERO VIDEOTECA
            ===================================== */
         .hero-videoteca {
             min-height: 50vh;
@@ -197,7 +201,215 @@
         }
 
         /* =====================================
-           FIX VIDEOTECA - RESPONSIVE
+           FILTROS DE CATEGORÍAS
+           ===================================== */
+        .filtros-videos {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .filtros-videos .btn-filtro {
+            padding: 10px 24px;
+            background: #1c1c1c;
+            border: 2px solid #333;
+            border-radius: 30px;
+            color: #aaa;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .filtros-videos .btn-filtro:hover {
+            border-color: #ffcc00;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .filtros-videos .btn-filtro.active {
+            background: #ffcc00;
+            color: #000;
+            border-color: #ffcc00;
+        }
+
+        /* =====================================
+           VIDEOS GRID
+           ===================================== */
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 35px;
+            margin-top: 30px;
+        }
+
+        .video-card {
+            background: #1b1b1b;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, .35);
+            transition: .3s;
+            border: 1px solid rgba(255, 255, 255, .05);
+        }
+
+        .video-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, .45);
+            border-color: rgba(255, 204, 0, 0.2);
+        }
+
+        .video-card .youtube-player {
+            width: 100%;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+            background: #000;
+            position: relative;
+        }
+
+        .video-card .youtube-player iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+        }
+
+        .video-card .video-badge {
+            display: inline-block;
+            background: rgba(255, 204, 0, 0.15);
+            color: #ffcc00;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .video-card h3 {
+            color: #fff;
+            font-size: 1.2rem;
+            padding: 18px 20px 8px;
+            font-weight: 600;
+        }
+
+        .video-card h3 .destacado {
+            color: #ffcc00;
+            font-size: 0.8rem;
+        }
+
+        .video-card .video-meta {
+            padding: 0 20px;
+            font-size: 0.75rem;
+            color: #888;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .video-card .video-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .video-card p {
+            color: #d5d5d5;
+            padding: 8px 20px 22px;
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+
+        /* =====================================
+           MOMENTOS TENCHA
+           ===================================== */
+        .momentos-tencha {
+            padding: 90px 0;
+            background: #111;
+        }
+
+        .momentos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .momento-card {
+            background: #1a1a1a;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, .08);
+            transition: .35s;
+        }
+
+        .momento-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, .35);
+            border-color: rgba(255, 204, 0, 0.15);
+        }
+
+        .momento-card .youtube-player {
+            width: 100%;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .momento-card .youtube-player iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            border-radius: 0;
+        }
+
+        .momento-card h3 {
+            padding: 18px 20px 6px;
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
+
+        .momento-card h3 .destacado {
+            color: #ffcc00;
+            font-size: 0.8rem;
+        }
+
+        .momento-card .momento-meta {
+            padding: 0 20px;
+            font-size: 0.75rem;
+            color: #888;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .momento-card p {
+            padding: 6px 20px 20px;
+            color: #bdbdbd;
+            font-size: .95rem;
+        }
+
+        /* =====================================
+           VACÍO / CARGA
+           ===================================== */
+        .videos-vacia {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+            grid-column: 1 / -1;
+        }
+
+        .videos-vacia i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.3;
+        }
+
+        /* =====================================
+           RESPONSIVE
            ===================================== */
         @media (max-width: 768px) {
             .videos-grid {
@@ -215,7 +427,7 @@
             .video-card .youtube-player {
                 width: 100% !important;
                 max-width: 100% !important;
-                border-radius: 12px !important;
+                border-radius: 0 !important;
                 margin: 0 !important;
             }
 
@@ -251,7 +463,7 @@
                 width: 100% !important;
                 max-width: 100% !important;
                 margin: 0 !important;
-                border-radius: 12px !important;
+                border-radius: 0 !important;
             }
 
             .momento-card iframe {
@@ -269,6 +481,13 @@
                 font-size: 0.85rem !important;
                 padding: 0 15px 18px !important;
             }
+
+            .filtros-videos .btn-filtro {
+                flex: 1;
+                text-align: center;
+                font-size: 0.75rem !important;
+                padding: 8px 14px !important;
+            }
         }
 
         @media (max-width: 480px) {
@@ -282,7 +501,7 @@
             }
 
             .video-card .youtube-player {
-                border-radius: 10px !important;
+                border-radius: 0 !important;
             }
 
             .video-card h3 {
@@ -298,7 +517,7 @@
             }
 
             .momento-card .youtube-player {
-                border-radius: 10px !important;
+                border-radius: 0 !important;
             }
 
             .momento-card h3 {
@@ -308,9 +527,104 @@
             .momento-card p {
                 font-size: 0.8rem !important;
             }
+
+            .filtros-videos .btn-filtro {
+                font-size: 0.7rem !important;
+                padding: 6px 10px !important;
+            }
+        }
+
+        .animar {
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+            transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .animar.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        #transicion {
+            display: none !important;
+        }
+
+        .credito-web {
+            margin-top: 15px;
+            font-size: .9rem;
+            color: #999;
+            letter-spacing: .5px;
+            text-align: center;
+        }
+
+        .credito-web a {
+            color: #ffcc00;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color .3s ease, transform .3s ease, text-shadow .3s ease;
+        }
+
+        .credito-web a:hover {
+            color: #ffffff;
+            transform: translateY(-2px) scale(1.08);
+            text-shadow: 0 0 8px rgba(255, 204, 0, .8), 0 0 15px rgba(255, 204, 0, .5);
+        }
+
+        /* ============================================================
+           BOTÓN RECARGAR (ESTILO VIDEOS)
+           ============================================================ */
+        .recargar-btn {
+            margin-left: 12px;
+            background: var(--color-bg-hover);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+            border-radius: 50% !important;
+            width: 36px !important;
+            height: 36px !important;
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 0.9rem !important;
+            flex-shrink: 0 !important;
+            transition: all 0.3s ease !important;
+            cursor: pointer;
+        }
+
+        .recargar-btn:hover {
+            background: #2a2a2a;
+            transform: rotate(180deg);
+        }
+
+        .recargar-btn i {
+            transition: transform 0.5s ease;
+        }
+
+        .header-videos {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .header-videos h2 {
+            margin: 0;
+        }
+
+        .header-videos .recargar-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-videos .recargar-wrapper .videos-count {
+            font-size: 0.75rem;
+            color: #888;
         }
     </style>
-
 </head>
 
 <body>
@@ -361,59 +675,26 @@
 
         <div class="contenedor">
 
-            <div class="titulo-seccion">
-                <span>Contenido audiovisual</span>
-                <h2>Galería de Videos</h2>
+            <div class="header-videos">
+                <div class="titulo-seccion" style="margin-bottom:0;">
+                    <span>Contenido audiovisual</span>
+                    <h2>Galería de Videos</h2>
+                </div>
+                <div class="recargar-wrapper">
+                    <span class="videos-count" id="videosCount">0 videos</span>
+                    <button class="recargar-btn" onclick="recargarVideoteca()" title="Recargar lista de videos">
+                        <i class="fa-solid fa-rotate"></i>
+                    </button>
+                </div>
             </div>
 
-            <div class="videos-grid animar">
+            <!-- Filtros de categorías -->
+            <div class="filtros-videos" id="filtrosContainer">
+                <!-- Los filtros se generan dinámicamente desde JavaScript -->
+            </div>
 
-                <!-- VIDEO 1 -->
-                <div class="video-card">
-                    <div class="youtube-player">
-                        <iframe src="https://www.youtube.com/embed/7XbLvFXdjQE"
-                            title="No estamos solos ft. Gonín & MigueLion"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
-                        </iframe>
-                    </div>
-                    <h3>No estamos solos ft. Gonín & MigueLion</h3>
-                    <p>
-                        Videoclip oficial de la colaboración entre Los Hijos de Tencha, Gonín y MigueLion.
-                    </p>
-                </div>
-
-                <!-- VIDEO 2 -->
-                <div class="video-card">
-                    <div class="youtube-player">
-                        <iframe src="https://www.youtube.com/embed/ccbOePBayEg?si=TE_MNudgxnUNdWB_"
-                            title="Un Sentimiento"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
-                        </iframe>
-                    </div>
-                    <h3>Un Sentimiento</h3>
-                    <p>
-                        Videoclip oficial de la canción grabado en Casa de Jimmy Studio
-                    </p>
-                </div>
-
-                <!-- VIDEO 3 -->
-                <div class="video-card">
-                    <div class="youtube-player">
-                        <iframe src="https://www.youtube.com/embed/NUpwUT9DPfA?si=4PbBOdANi9MWbqg9"
-                            title="Sesiones del Templo"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
-                        </iframe>
-                    </div>
-                    <h3>Sesiones del Templo - En Vivo</h3>
-                    <p>
-                        Sesión grabada el 12 de octubre del 2025 con tres temas: La Cumbia Del Diablo, Hijos Del Campo
-                        & Mantequita Cacao
-                    </p>
-                </div>
-
+            <div class="videos-grid animar" id="videosGrid">
+                <!-- Los videos se cargan desde Firebase -->
             </div>
 
         </div>
@@ -421,157 +702,25 @@
     </section>
 
     <!-- =====================================
-         MOMENTOS TENCHA
+         MOMENTOS TENCHA - SOLO FIREBASE
     ===================================== -->
 
     <section id="momentos-tencha" class="momentos-tencha animar">
 
         <div class="contenedor">
 
-            <div class="titulo-seccion">
-
-                <span>EXCLUSIVO</span>
-                <h2>Momentos Tencha</h2>
-                <p>
-                    Revive conciertos, momentos especiales y escenas detrás del escenario que forman parte de la
-                    historia de Los Hijos de Tencha.
-                </p>
-
+            <div class="header-videos">
+                <div class="titulo-seccion" style="margin-bottom:0;">
+                    <span>EXCLUSIVO</span>
+                    <h2>Momentos Tencha</h2>
+                    <p style="color:#aaa; font-size:0.95rem; margin-top:4px;">
+                        Revive conciertos, momentos especiales y escenas detrás del escenario.
+                    </p>
+                </div>
             </div>
 
-            <div class="momentos-grid animar">
-
-                <!-- VIDEO 1 - Cumbia Salvaje Lanzamiento -->
-                <article class="momento-card">
-
-                    <div class="youtube-player">
-
-                        <iframe
-                            src="https://player.cloudinary.com/embed/?cloud_name=ldiiqgdp&public_id=Cumbia_Salvaje1_owfcue"
-                            width="640" height="360" style="height:auto;width:100%;aspect-ratio:640/360;"
-                            allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen
-                            frameborder="0">
-                        </iframe>
-
-                    </div>
-
-                    <h3>Lanzamiento de Cumbia Salvaje</h3>
-
-                    <p>
-                        Bar Starview · 24 Julio 2026
-                    </p>
-
-                </article>
-
-                <!-- VIDEO 2 - Cumbia Salvaje Lanzamiento -->
-                <article class="momento-card">
-
-                    <div class="youtube-player">
-
-                        <iframe
-                            src="https://player.cloudinary.com/embed/?cloud_name=ldiiqgdp&public_id=Cumbia_Salvaje_3_fc5gkn"
-                            width="640" height="360" style="height:auto;width:100%;aspect-ratio:640/360;"
-                            allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen
-                            frameborder="0">
-                        </iframe>
-
-                    </div>
-
-                    <h3>Lanzamiento de Cumbia Salvaje</h3>
-
-                    <p>
-                        Bar Starview · 24 Julio 2026
-                    </p>
-
-                </article>
-
-                <!-- VIDEO 3 - Cumbia Salvaje Lanzamiento -->
-                <article class="momento-card">
-
-                    <div class="youtube-player">
-
-                        <iframe
-                            src="https://player.cloudinary.com/embed/?cloud_name=ldiiqgdp&public_id=Cumbia_Salvaje_2_nekncb"
-                            width="640" height="360" style="height:auto;width:100%;aspect-ratio:640/360;"
-                            allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen
-                            frameborder="0">
-                        </iframe>
-
-                    </div>
-
-                    <h3>Lanzamiento de Cumbia Salvaje</h3>
-
-                    <p>
-                        Bar Starview · 24 Julio 2026
-                    </p>
-
-                </article>
-
-                <!-- VIDEO 4 - NUEVO: Los Hijos del Campo -->
-                <article class="momento-card">
-
-                    <div class="youtube-player">
-
-                        <iframe
-                            src="https://player.cloudinary.com/embed/?cloud_name=ldiiqgdp&public_id=Los_Hijos_del_Campo_ll5j1r"
-                            width="640" height="360" style="height:auto;width:100%;aspect-ratio:640/360;"
-                            allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen
-                            frameborder="0">
-                        </iframe>
-
-                    </div>
-
-                    <h3>Los Hijos del Campo - En Vivo</h3>
-
-                    <p>
-                        Sesión en vivo desde el Templo
-                    </p>
-
-                </article>
-
-                <!-- VIDEO 5 - NUEVO: Bendita -->
-                <article class="momento-card">
-
-                    <div class="youtube-player">
-
-                        <iframe src="https://player.cloudinary.com/embed/?cloud_name=ldiiqgdp&public_id=Bendita_jraogx"
-                            width="640" height="360" style="height:auto;width:100%;aspect-ratio:640/360;"
-                            allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen
-                            frameborder="0">
-                        </iframe>
-
-                    </div>
-
-                    <h3>Bendita - En Vivo</h3>
-
-                    <p>
-                        Sesión en vivo desde el Templo
-                    </p>
-
-                </article>
-
-                <!-- VIDEO 6 - NUEVO: Vocho desde arriba -->
-                <article class="momento-card">
-
-                    <div class="youtube-player">
-
-                        <iframe
-                            src="https://player.cloudinary.com/embed/?cloud_name=ldiiqgdp&public_id=Vocho_desde_arriba_c7xma6"
-                            width="640" height="360" style="height:auto;width:100%;aspect-ratio:640/360;"
-                            allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen
-                            frameborder="0">
-                        </iframe>
-
-                    </div>
-
-                    <h3>El Vocho - Desde Arriba</h3>
-
-                    <p>
-                        Videoclip oficial
-                    </p>
-
-                </article>
-
+            <div class="momentos-grid animar" id="momentosGrid">
+                <!-- Los momentos se cargan desde Firebase -->
             </div>
 
         </div>
@@ -606,6 +755,400 @@
 
     <script src="js/script.js"></script>
     <script src="js/eventos.js"></script>
+
+    <script>
+        // ============================================================
+        // CONFIGURACIÓN DE FIREBASE
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDvp_6UFymZZnqxMyL6yobJ3twLMvVkThw",
+            authDomain: "base-entradas-tenchos.firebaseapp.com",
+            projectId: "base-entradas-tenchos",
+            storageBucket: "base-entradas-tenchos.firebasestorage.app",
+            messagingSenderId: "273676503007",
+            appId: "1:273676503007:web:56180c485b648ef076a66a"
+        };
+
+        if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+            console.log('✅ Firebase inicializado en videoteca');
+        }
+
+        let dbVideos = null;
+        try {
+            if (typeof db !== 'undefined') {
+                dbVideos = db;
+                console.log('✅ Usando db desde script.js');
+            } else if (typeof firebase !== 'undefined') {
+                dbVideos = firebase.firestore();
+                console.log('✅ Firestore inicializado localmente');
+            }
+        } catch (e) {
+            console.warn('⚠️ Error al conectar con Firestore:', e);
+        }
+
+        // ============================================================
+        // VARIABLES GLOBALES
+        // ============================================================
+        let videos = [];
+        let filtroActual = 'todas';
+        let categoriasDisponibles = [];
+
+        // ============================================================
+        // MAPEO DE CATEGORÍAS A NOMBRES Y EMOJIS
+        // ============================================================
+        const categoriaMap = {
+            'oficial': { nombre: 'Oficiales', emoji: '🎥' },
+            'momentos': { nombre: 'Momentos Tencha', emoji: '🎬' },
+            'en_vivo': { nombre: 'En Vivo', emoji: '🎤' }
+        };
+
+        // ============================================================
+        // FUNCIÓN: FORMATEAR FECHA
+        // ============================================================
+        function formatearFecha(fechaStr) {
+            if (!fechaStr) return 'Fecha no disponible';
+            try {
+                const d = new Date(fechaStr + 'T00:00:00');
+                if (isNaN(d.getTime())) return fechaStr;
+                const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                ];
+                return d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear();
+            } catch (e) {
+                return fechaStr;
+            }
+        }
+
+        // ============================================================
+        // FUNCIÓN: RECARGAR VIDEOTECA
+        // ============================================================
+        function recargarVideoteca() {
+            const btn = document.querySelector('.recargar-btn');
+            const icon = btn.querySelector('i');
+            icon.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                icon.style.transform = 'rotate(0deg)';
+            }, 500);
+            mostrarToast('🔄 Recargando videoteca...', 'info');
+            cargarVideos();
+        }
+
+        // ============================================================
+        // FUNCIÓN: CARGAR CATEGORÍAS Y VIDEOS
+        // ============================================================
+        async function cargarVideos() {
+            if (!dbVideos) {
+                mostrarError('⚠️ No se pudo conectar a la base de datos');
+                return;
+            }
+
+            const grid = document.getElementById('videosGrid');
+            grid.innerHTML = `
+                <div class="videos-vacia">
+                    <i class="fa-solid fa-spinner fa-spin" style="color:#ffcc00;"></i>
+                    <p>Cargando videos...</p>
+                </div>
+            `;
+
+            try {
+                // 1. Cargar todos los videos
+                const snapshot = await dbVideos.collection('videos').get();
+
+                videos = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.url) {
+                        videos.push({
+                            id: doc.id,
+                            titulo: data.titulo || 'Video sin título',
+                            descripcion: data.descripcion || '',
+                            categoria: data.categoria || 'general',
+                            url: data.url,
+                            fecha: data.fecha || '',
+                            orden: data.orden || 0,
+                            destacado: data.destacado || false,
+                            fuente: data.fuente || 'youtube'
+                        });
+                    }
+                });
+
+                // 2. Ordenar por orden
+                videos.sort((a, b) => {
+                    const ordenA = a.orden || 999;
+                    const ordenB = b.orden || 999;
+                    if (ordenA !== ordenB) return ordenA - ordenB;
+                    return (a.titulo || '').localeCompare(b.titulo || '');
+                });
+
+                // 3. Extraer categorías disponibles
+                const cats = new Set();
+                videos.forEach(v => {
+                    if (v.categoria) cats.add(v.categoria);
+                });
+                categoriasDisponibles = Array.from(cats);
+
+                // 4. Actualizar contador
+                document.getElementById('videosCount').textContent = videos.length + ' videos';
+
+                // 5. Renderizar filtros
+                renderizarFiltros();
+
+                // 6. Renderizar videos
+                renderizarVideos();
+
+                // 7. Cargar Momentos Tencha (categoría "momentos")
+                cargarMomentos();
+
+                console.log(`✅ ${videos.length} videos cargados desde Firebase`);
+
+            } catch (error) {
+                console.error('❌ Error al cargar videos:', error);
+                grid.innerHTML = `
+                    <div class="videos-vacia">
+                        <i class="fa-solid fa-triangle-exclamation" style="color:#d32f2f;"></i>
+                        <p>❌ Error al cargar videos: ${error.message}</p>
+                        <button onclick="cargarVideos()" style="margin-top:12px; padding:10px 24px; background:#ffcc00; color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif;">
+                            <i class="fa-solid fa-rotate"></i> Reintentar
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // ============================================================
+        // FUNCIÓN: RENDERIZAR FILTROS
+        // ============================================================
+        function renderizarFiltros() {
+            const container = document.getElementById('filtrosContainer');
+            if (!container) return;
+
+            // Obtener nombres de categorías
+            const nombres = {};
+            categoriasDisponibles.forEach(cat => {
+                if (categoriaMap[cat]) {
+                    nombres[cat] = categoriaMap[cat].emoji + ' ' + categoriaMap[cat].nombre;
+                } else {
+                    nombres[cat] = '📁 ' + cat;
+                }
+            });
+
+            let html = '';
+            html += `<button class="btn-filtro ${filtroActual === 'todas' ? 'active' : ''}" data-filtro="todas" onclick="filtrarVideos('todas', this)">
+                        📸 Todas
+                    </button>`;
+
+            categoriasDisponibles.forEach(cat => {
+                const label = nombres[cat] || cat;
+                const isActive = filtroActual === cat;
+                html += `<button class="btn-filtro ${isActive ? 'active' : ''}" data-filtro="${cat}" onclick="filtrarVideos('${cat}', this)">
+                            ${label}
+                        </button>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ============================================================
+        // FUNCIÓN: FILTRAR VIDEOS
+        // ============================================================
+        function filtrarVideos(filtro, btn) {
+            filtroActual = filtro;
+
+            document.querySelectorAll('.filtros-videos .btn-filtro').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+
+            renderizarVideos();
+        }
+
+        // ============================================================
+        // FUNCIÓN: RENDERIZAR VIDEOS
+        // ============================================================
+        function renderizarVideos() {
+            const grid = document.getElementById('videosGrid');
+            if (!grid) return;
+
+            let filtrados = videos;
+            if (filtroActual !== 'todas') {
+                filtrados = videos.filter(v => v.categoria === filtroActual);
+            }
+
+            if (filtrados.length === 0) {
+                grid.innerHTML = `
+                    <div class="videos-vacia">
+                        <i class="fa-regular fa-circle-play"></i>
+                        <p>${videos.length === 0 ? 'No hay videos disponibles aún.' : 'No hay videos en esta categoría.'}</p>
+                        <p style="font-size:0.85rem; color:#555; margin-top:8px;">Pronto subiremos nuevo contenido.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Separar destacados y normales
+            const destacados = filtrados.filter(v => v.destacado);
+            const normales = filtrados.filter(v => !v.destacado);
+
+            // Mostrar destacados primero
+            const ordenados = [...destacados, ...normales];
+
+            let html = '';
+            ordenados.forEach(video => {
+                const fecha = video.fecha ? formatearFecha(video.fecha) : '';
+                const catNombre = categoriaMap[video.categoria] ? categoriaMap[video.categoria].nombre : video.categoria;
+                const fuenteIcon = video.fuente === 'cloudinary' ? '☁️' : '▶️';
+
+                html += `
+                    <div class="video-card">
+                        <div class="youtube-player">
+                            <iframe src="${video.url}" 
+                                    title="${video.titulo}"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerpolicy="strict-origin-when-cross-origin" 
+                                    allowfullscreen>
+                            </iframe>
+                        </div>
+                        <h3>${video.titulo} ${video.destacado ? '<span class="destacado">⭐ Destacado</span>' : ''}</h3>
+                        <div class="video-meta">
+                            <span><i class="fa-regular fa-folder"></i> ${catNombre}</span>
+                            ${fecha ? `<span><i class="fa-regular fa-calendar"></i> ${fecha}</span>` : ''}
+                            <span>${fuenteIcon} ${video.fuente === 'cloudinary' ? 'Cloudinary' : 'YouTube'}</span>
+                            ${video.orden > 0 ? `<span><i class="fa-regular fa-hashtag"></i> #${video.orden}</span>` : ''}
+                        </div>
+                        ${video.descripcion ? `<p>${video.descripcion}</p>` : ''}
+                    </div>
+                `;
+            });
+
+            grid.innerHTML = html;
+
+            // Animación escalonada
+            document.querySelectorAll('.video-card').forEach((el, i) => {
+                setTimeout(() => {
+                    el.classList.add('visible');
+                }, 100 + (i * 80));
+            });
+        }
+
+        // ============================================================
+        // FUNCIÓN: CARGAR MOMENTOS TENCHA
+        // ============================================================
+        async function cargarMomentos() {
+            const grid = document.getElementById('momentosGrid');
+            if (!grid) return;
+
+            // Filtrar videos con categoría "momentos"
+            const momentos = videos.filter(v => v.categoria === 'momentos');
+
+            if (momentos.length === 0) {
+                grid.innerHTML = `
+                    <div class="videos-vacia" style="grid-column:1/-1;">
+                        <i class="fa-regular fa-clock"></i>
+                        <p>No hay momentos disponibles aún.</p>
+                        <p style="font-size:0.85rem; color:#555; margin-top:8px;">Pronto compartiremos más momentos especiales.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            momentos.forEach(video => {
+                const fecha = video.fecha ? formatearFecha(video.fecha) : '';
+
+                html += `
+                    <article class="momento-card">
+                        <div class="youtube-player">
+                            <iframe src="${video.url}" 
+                                    title="${video.titulo}"
+                                    allow="autoplay; fullscreen; encrypted-media; picture-in-picture" 
+                                    allowfullscreen 
+                                    frameborder="0">
+                            </iframe>
+                        </div>
+                        <h3>${video.titulo} ${video.destacado ? '<span class="destacado">⭐ Destacado</span>' : ''}</h3>
+                        <div class="momento-meta">
+                            ${fecha ? `<span><i class="fa-regular fa-calendar"></i> ${fecha}</span>` : ''}
+                            ${video.orden > 0 ? `<span><i class="fa-regular fa-hashtag"></i> #${video.orden}</span>` : ''}
+                        </div>
+                        ${video.descripcion ? `<p>${video.descripcion}</p>` : ''}
+                    </article>
+                `;
+            });
+
+            grid.innerHTML = html;
+
+            // Animación escalonada
+            document.querySelectorAll('.momento-card').forEach((el, i) => {
+                setTimeout(() => {
+                    el.classList.add('visible');
+                }, 100 + (i * 80));
+            });
+        }
+
+        // ============================================================
+        // FUNCIÓN: MOSTRAR ERROR
+        // ============================================================
+        function mostrarError(texto) {
+            const grid = document.getElementById('videosGrid');
+            if (grid) {
+                grid.innerHTML = `
+                    <div class="videos-vacia">
+                        <i class="fa-solid fa-triangle-exclamation" style="color:#d32f2f;"></i>
+                        <p>${texto}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // ============================================================
+        // FUNCIÓN: TOAST (notificaciones)
+        // ============================================================
+        function mostrarToast(mensaje, tipo) {
+            // Verificar si existe el toast del admin
+            let toast = document.getElementById('adminToast');
+            if (!toast) {
+                // Crear toast temporal
+                toast = document.createElement('div');
+                toast.id = 'adminToast';
+                toast.style.cssText = `
+                    position: fixed;
+                    bottom: 30px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: #141414;
+                    color: #fff;
+                    padding: 14px 30px;
+                    border-radius: 16px;
+                    font-size: 0.9rem;
+                    font-family: 'Poppins', sans-serif;
+                    z-index: 99999;
+                    max-width: 90%;
+                    text-align: center;
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+                    border: 1px solid rgba(255,255,255,0.05);
+                    display: none;
+                    transition: opacity 0.3s ease;
+                `;
+                document.body.appendChild(toast);
+            }
+
+            toast.textContent = mensaje;
+            toast.className = 'admin-toast show toast-' + (tipo || 'info');
+            toast.style.display = 'block';
+
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        // ============================================================
+        // INICIALIZAR
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function () {
+            cargarVideos();
+            console.log('🚀 Videoteca: solo desde Firebase');
+        });
+    </script>
 
 </body>
 
