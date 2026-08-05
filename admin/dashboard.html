@@ -22,6 +22,9 @@
     <link rel="stylesheet" href="css/admin.css">
 
     <style>
+        /* ============================================================
+           ESTILOS PRINCIPALES
+           ============================================================ */
         .dashboard-welcome {
             margin-bottom: 25px;
         }
@@ -45,12 +48,146 @@
             margin-top: 4px;
         }
 
+        /* ============================================================
+           ICONO DEL DIABLITO
+           ============================================================ */
+        .header-icono-diablo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            flex-shrink: 0;
+        }
+
+        .header-icono-diablo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+
+        .welcome-icono-diablo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+        }
+
+        .welcome-icono-diablo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .header-left h1 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* ============================================================
+           CONFIGURACIÓN DE MÓDULOS
+           ============================================================ */
+        .modulos-config {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modulos-config .config-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--color-text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-right: 8px;
+        }
+
+        .modulos-config .toggle-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .modulos-config .toggle-btn {
+            padding: 4px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--color-border);
+            background: transparent;
+            color: var(--color-text-muted);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+        }
+
+        .modulos-config .toggle-btn.active {
+            background: var(--color-primary);
+            color: #000;
+            border-color: var(--color-primary);
+        }
+
+        .modulos-config .toggle-btn:hover:not(.active) {
+            border-color: var(--color-primary);
+            color: var(--color-text);
+        }
+
+        /* ============================================================
+           ESTADÍSTICAS - GRID DINÁMICO
+           ============================================================ */
+        .admin-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .admin-stats-grid .admin-stat-card {
+            transition: all 0.3s ease;
+        }
+
+        .admin-stats-grid .admin-stat-card.oculto {
+            display: none;
+        }
+
+        /* ============================================================
+           DASHBOARD GRID - MODULAR
+           ============================================================ */
         .dashboard-grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
+            transition: all 0.3s ease;
         }
 
+        .dashboard-grid-2 .admin-card {
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-grid-2 .admin-card.oculto {
+            display: none;
+        }
+
+        /* Cuando solo hay una tarjeta visible, que ocupe todo el ancho */
+        .dashboard-grid-2.una-columna {
+            grid-template-columns: 1fr;
+        }
+
+        /* ============================================================
+           ACTIVITY LIST
+           ============================================================ */
         .activity-list {
             list-style: none;
         }
@@ -83,10 +220,14 @@
 
         .activity-list li .activity-text {
             flex: 1;
+            min-width: 0;
         }
 
         .activity-list li .activity-text .activity-title {
             font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .activity-list li .activity-text .activity-meta {
@@ -98,8 +239,12 @@
             color: var(--color-text-muted);
             font-size: 0.7rem;
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
+        /* ============================================================
+           QUICK ACCESS
+           ============================================================ */
         .quick-access-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -147,61 +292,52 @@
             margin-top: 4px;
         }
 
-        .error-box {
-            text-align: center;
-            padding: 20px;
-            color: var(--color-danger);
-            border: 1px solid var(--color-danger);
-            border-radius: var(--radius-sm);
-            background: rgba(211, 47, 47, 0.05);
+        /* ============================================================
+           ENLACES RÁPIDOS
+           ============================================================ */
+        .enlaces-rapidos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
-        .error-box i {
-            font-size: 2rem;
-            display: block;
-            margin-bottom: 10px;
+        .enlaces-rapidos .btn-admin {
+            font-size: 0.75rem;
+            padding: 6px 14px;
         }
 
         /* ============================================================
-           ICONO DEL DIABLITO EN EL HEADER
+           TOGGLE DE MÓDULOS - BOTÓN DE CONFIGURACIÓN
            ============================================================ */
-        .header-icono-diablo {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            flex-shrink: 0;
-        }
-
-        .header-icono-diablo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            filter: brightness(0) invert(1);
-            /* Blanco sobre fondo oscuro */
-        }
-
-        /* Para el welcome */
-        .welcome-icono-diablo {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 48px;
-            height: 48px;
-            flex-shrink: 0;
-        }
-
-        .welcome-icono-diablo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .header-left h1 {
+        .btn-config-modulos {
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            transition: var(--transition);
+            font-family: 'Poppins', sans-serif;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
+        }
+
+        .btn-config-modulos:hover {
+            color: var(--color-text);
+        }
+
+        .btn-config-modulos i {
+            font-size: 0.9rem;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 992px) {
+            .dashboard-grid-2 {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 768px) {
@@ -212,6 +348,23 @@
 
             .dashboard-welcome p {
                 font-size: 0.85rem !important;
+            }
+
+            .admin-stats-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 10px !important;
+            }
+
+            .admin-stats-grid .admin-stat-card {
+                padding: 14px !important;
+            }
+
+            .admin-stats-grid .stat-number {
+                font-size: 1.5rem !important;
+            }
+
+            .admin-stats-grid .stat-label {
+                font-size: 0.65rem !important;
             }
 
             .quick-access-grid {
@@ -240,9 +393,46 @@
                 width: 36px;
                 height: 36px;
             }
+
+            .modulos-config {
+                padding: 12px 14px;
+                gap: 8px;
+            }
+
+            .modulos-config .config-label {
+                font-size: 0.7rem;
+                width: 100%;
+            }
+
+            .modulos-config .toggle-btn {
+                font-size: 0.6rem;
+                padding: 3px 10px;
+            }
+
+            .enlaces-rapidos .btn-admin {
+                font-size: 0.65rem;
+                padding: 4px 10px;
+            }
         }
 
         @media (max-width: 480px) {
+            .admin-stats-grid {
+                grid-template-columns: 1fr 1fr !important;
+                gap: 8px !important;
+            }
+
+            .admin-stats-grid .admin-stat-card {
+                padding: 12px !important;
+            }
+
+            .admin-stats-grid .stat-number {
+                font-size: 1.3rem !important;
+            }
+
+            .admin-stats-grid .stat-label {
+                font-size: 0.6rem !important;
+            }
+
             .quick-access-grid {
                 grid-template-columns: 1fr 1fr !important;
                 gap: 6px !important;
@@ -272,8 +462,38 @@
 
             .header-left h1 {
                 gap: 6px;
-                font-size: 1.1rem;
+                font-size: 1rem;
             }
+
+            .modulos-config .toggle-btn {
+                font-size: 0.55rem;
+                padding: 2px 8px;
+            }
+
+            .activity-list li {
+                padding: 8px 0;
+                font-size: 0.8rem;
+                flex-wrap: wrap;
+            }
+
+            .activity-list li .activity-time {
+                font-size: 0.6rem;
+                margin-left: auto;
+            }
+        }
+
+        /* ============================================================
+           GUARDAR CONFIGURACIÓN EN LOCALSTORAGE
+           ============================================================ */
+        .config-guardada-msg {
+            font-size: 0.65rem;
+            color: var(--color-success);
+            margin-left: 8px;
+            display: none;
+        }
+
+        .config-guardada-msg.show {
+            display: inline;
         }
     </style>
 </head>
@@ -357,27 +577,46 @@
             </p>
         </div>
 
+        <!-- CONFIGURACIÓN DE MÓDULOS -->
+        <div class="modulos-config" id="modulosConfig">
+            <span class="config-label">
+                <i class="fa-solid fa-sliders"></i> Mostrar:
+            </span>
+            <div class="toggle-group">
+                <button class="toggle-btn active" data-modulo="stats">Estadísticas</button>
+                <button class="toggle-btn active" data-modulo="actividad">Actividad</button>
+                <button class="toggle-btn active" data-modulo="acceso">Acceso Rápido</button>
+                <button class="toggle-btn active" data-modulo="enlaces">Enlaces</button>
+            </div>
+            <button class="btn-config-modulos" id="btnResetModulos" title="Restaurar configuración predeterminada">
+                <i class="fa-solid fa-rotate-left"></i> Reset
+            </button>
+            <span class="config-guardada-msg" id="configGuardadaMsg">
+                <i class="fa-solid fa-check-circle"></i> Configuración guardada
+            </span>
+        </div>
+
         <!-- ESTADÍSTICAS -->
         <div class="admin-stats-grid" id="statsGrid">
-            <div class="admin-stat-card">
+            <div class="admin-stat-card" data-modulo="stats">
                 <div class="stat-number" id="totalEventos">0</div>
                 <div class="stat-label">Eventos</div>
                 <div class="stat-icon"><i class="fa-regular fa-calendar"></i></div>
             </div>
 
-            <div class="admin-stat-card">
+            <div class="admin-stat-card" data-modulo="stats">
                 <div class="stat-number" id="totalAsistentes">0</div>
                 <div class="stat-label">Asistentes Registrados</div>
                 <div class="stat-icon"><i class="fa-regular fa-user"></i></div>
             </div>
 
-            <div class="admin-stat-card">
+            <div class="admin-stat-card" data-modulo="stats">
                 <div class="stat-number" id="ingresadosHoy">0</div>
                 <div class="stat-label">Ingresos Hoy</div>
                 <div class="stat-icon"><i class="fa-regular fa-check-circle"></i></div>
             </div>
 
-            <div class="admin-stat-card">
+            <div class="admin-stat-card" data-modulo="stats">
                 <div class="stat-number" id="totalNoticias">0</div>
                 <div class="stat-label">Noticias</div>
                 <div class="stat-icon"><i class="fa-regular fa-newspaper"></i></div>
@@ -385,10 +624,10 @@
         </div>
 
         <!-- GRID 2 COLUMNAS -->
-        <div class="dashboard-grid-2">
+        <div class="dashboard-grid-2" id="dashboardGrid">
 
             <!-- ACTIVIDAD RECIENTE -->
-            <div class="admin-card">
+            <div class="admin-card" data-modulo="actividad">
                 <div class="card-header">
                     <h3><i class="fa-regular fa-clock"></i> Actividad Reciente</h3>
                     <span style="font-size:0.7rem; color:var(--color-text-muted);">Últimos ingresos</span>
@@ -402,7 +641,7 @@
             </div>
 
             <!-- ACCESO RÁPIDO -->
-            <div class="admin-card">
+            <div class="admin-card" data-modulo="acceso">
                 <div class="card-header">
                     <h3><i class="fa-solid fa-bolt"></i> Acceso Rápido</h3>
                 </div>
@@ -451,11 +690,11 @@
         </div>
 
         <!-- ENLACES RÁPIDOS ADICIONALES -->
-        <div class="admin-card">
+        <div class="admin-card" data-modulo="enlaces">
             <div class="card-header">
                 <h3><i class="fa-solid fa-link"></i> Enlaces Rápidos</h3>
             </div>
-            <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            <div class="enlaces-rapidos">
                 <a href="eventos.html" class="btn-admin btn-secondary btn-sm"><i class="fa-solid fa-calendar"></i>
                     Eventos</a>
                 <a href="noticias.html" class="btn-admin btn-secondary btn-sm"><i class="fa-solid fa-newspaper"></i>
@@ -529,11 +768,130 @@
         })();
 
         // ============================================================
-        // CARGAR ESTADÍSTICAS - SIN orderBy
+        // CONFIGURACIÓN DE MÓDULOS - LOCALSTORAGE
+        // ============================================================
+        const MODULOS_KEY = 'dashboard_modulos_tencha';
+
+        // Estado por defecto
+        const MODULOS_DEFAULT = {
+            stats: true,
+            actividad: true,
+            acceso: true,
+            enlaces: true
+        };
+
+        // Cargar configuración guardada
+        function cargarConfigModulos() {
+            try {
+                const guardado = localStorage.getItem(MODULOS_KEY);
+                if (guardado) {
+                    const config = JSON.parse(guardado);
+                    // Mezclar con default por si faltan keys
+                    return { ...MODULOS_DEFAULT, ...config };
+                }
+            } catch (e) {
+                console.warn('Error al cargar configuración de módulos:', e);
+            }
+            return { ...MODULOS_DEFAULT };
+        }
+
+        // Guardar configuración
+        function guardarConfigModulos(config) {
+            try {
+                localStorage.setItem(MODULOS_KEY, JSON.stringify(config));
+                // Mostrar mensaje de confirmación
+                const msg = document.getElementById('configGuardadaMsg');
+                msg.classList.add('show');
+                setTimeout(() => msg.classList.remove('show'), 2000);
+            } catch (e) {
+                console.warn('Error al guardar configuración:', e);
+            }
+        }
+
+        // Aplicar configuración a la UI
+        function aplicarConfigModulos(config) {
+            // Actualizar botones toggle
+            document.querySelectorAll('.toggle-btn').forEach(btn => {
+                const modulo = btn.dataset.modulo;
+                if (config[modulo]) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Mostrar/ocultar tarjetas de estadísticas
+            document.querySelectorAll('.admin-stat-card[data-modulo="stats"]').forEach(el => {
+                if (config.stats) {
+                    el.classList.remove('oculto');
+                } else {
+                    el.classList.add('oculto');
+                }
+            });
+
+            // Mostrar/ocultar tarjetas del grid
+            document.querySelectorAll('.dashboard-grid-2 .admin-card').forEach(el => {
+                const modulo = el.dataset.modulo;
+                if (config[modulo]) {
+                    el.classList.remove('oculto');
+                } else {
+                    el.classList.add('oculto');
+                }
+            });
+
+            // Mostrar/ocultar tarjeta de enlaces
+            const enlacesCard = document.querySelector('.admin-card[data-modulo="enlaces"]');
+            if (enlacesCard) {
+                if (config.enlaces) {
+                    enlacesCard.classList.remove('oculto');
+                } else {
+                    enlacesCard.classList.add('oculto');
+                }
+            }
+
+            // Ajustar grid: si solo hay una columna visible, usar una columna
+            const grid = document.getElementById('dashboardGrid');
+            const visibles = document.querySelectorAll('.dashboard-grid-2 .admin-card:not(.oculto)');
+            if (visibles.length <= 1) {
+                grid.classList.add('una-columna');
+            } else {
+                grid.classList.remove('una-columna');
+            }
+        }
+
+        // Inicializar módulos
+        let configModulos = cargarConfigModulos();
+
+        // Eventos de los botones toggle
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const modulo = this.dataset.modulo;
+                // Toggle
+                configModulos[modulo] = !configModulos[modulo];
+                // Guardar y aplicar
+                guardarConfigModulos(configModulos);
+                aplicarConfigModulos(configModulos);
+            });
+        });
+
+        // Reset a configuración por defecto
+        document.getElementById('btnResetModulos').addEventListener('click', function () {
+            configModulos = { ...MODULOS_DEFAULT };
+            guardarConfigModulos(configModulos);
+            aplicarConfigModulos(configModulos);
+            if (typeof mostrarToast === 'function') {
+                mostrarToast('✅ Configuración restaurada', 'success');
+            }
+        });
+
+        // Aplicar configuración inicial
+        aplicarConfigModulos(configModulos);
+
+        // ============================================================
+        // CARGAR ESTADÍSTICAS
         // ============================================================
         async function cargarDashboard() {
             try {
-                // Verificar si Firestore está disponible
                 if (typeof db === 'undefined' || !db) {
                     console.warn('Firestore no disponible');
                     document.getElementById('totalEventos').textContent = '0';
@@ -548,7 +906,7 @@
                     return;
                 }
 
-                // 1. Total de eventos (sin orderBy)
+                // 1. Total de eventos
                 try {
                     const eventosSnap = await db.collection('eventos').get();
                     document.getElementById('totalEventos').textContent = eventosSnap.size || 0;
@@ -557,7 +915,7 @@
                     document.getElementById('totalEventos').textContent = '0';
                 }
 
-                // 2. Total de asistentes (sin orderBy)
+                // 2. Total de asistentes
                 try {
                     const asistentesSnap = await db.collection('asistentes').get();
                     document.getElementById('totalAsistentes').textContent = asistentesSnap.size || 0;
@@ -566,14 +924,13 @@
                     document.getElementById('totalAsistentes').textContent = '0';
                 }
 
-                // 3. Ingresados hoy (sin orderBy - filtramos en memoria)
+                // 3. Ingresados hoy
                 try {
                     const hoy = new Date();
                     hoy.setHours(0, 0, 0, 0);
                     const manana = new Date(hoy);
                     manana.setDate(manana.getDate() + 1);
 
-                    // Traer todos los asistentes y filtrar en memoria
                     const allAsistentes = await db.collection('asistentes').get();
                     let ingresadosHoy = 0;
                     allAsistentes.forEach(doc => {
@@ -591,7 +948,7 @@
                     document.getElementById('ingresadosHoy').textContent = '0';
                 }
 
-                // 4. Total de noticias (sin orderBy)
+                // 4. Total de noticias
                 try {
                     const noticiasSnap = await db.collection('noticias').get();
                     document.getElementById('totalNoticias').textContent = noticiasSnap.size || 0;
@@ -600,7 +957,7 @@
                     document.getElementById('totalNoticias').textContent = '0';
                 }
 
-                // 5. Actividad reciente (últimos 10 ingresos - sin orderBy, filtramos en memoria)
+                // 5. Actividad reciente
                 try {
                     const allAsistentes = await db.collection('asistentes').get();
                     const ingresos = [];
@@ -614,7 +971,6 @@
                         }
                     });
 
-                    // Ordenar en memoria (más reciente primero)
                     ingresos.sort((a, b) => b.fechaIngreso - a.fechaIngreso);
                     const ultimos = ingresos.slice(0, 10);
 
@@ -629,8 +985,12 @@
                     } else {
                         let html = '';
                         ultimos.forEach(item => {
-                            const tiempo = typeof formatearFechaHora === 'function' ? formatearFechaHora(item.fechaIngreso) : item.fechaIngreso.toLocaleString();
-                            const nombreLimpio = typeof sanitizar === 'function' ? sanitizar(item.nombre) : item.nombre;
+                            const tiempo = typeof formatearFechaHora === 'function' ?
+                                formatearFechaHora(item.fechaIngreso) :
+                                item.fechaIngreso.toLocaleString();
+                            const nombreLimpio = typeof sanitizar === 'function' ?
+                                sanitizar(item.nombre) :
+                                item.nombre;
                             html += `
                                         <li>
                                             <div class="activity-icon">
@@ -663,7 +1023,6 @@
                     mostrarToast('⚠️ Error al cargar algunas estadísticas', 'warning');
                 }
 
-                // Asegurar que los números no queden vacíos
                 ['totalEventos', 'totalAsistentes', 'ingresadosHoy', 'totalNoticias'].forEach(id => {
                     const el = document.getElementById(id);
                     if (el && el.textContent === '') {
@@ -691,7 +1050,7 @@
             }
         });
 
-        console.log('🚀 Dashboard de Los Hijos de Tencha cargado');
+        console.log('🚀 Dashboard modular de Los Hijos de Tencha cargado');
     </script>
 
 </body>
