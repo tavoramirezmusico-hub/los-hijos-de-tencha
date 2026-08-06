@@ -345,21 +345,19 @@ nav {
 
 /* =====================================
    CONTACTO
-===================================== */
-
-
+   ===================================== */
 #contacto {
     background: #111;
+    padding: 80px 20px;
 }
-
 
 .redes {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 25px;
+    gap: 20px;
+    flex-wrap: wrap;
 }
-
 
 .redes a {
     width: 65px;
@@ -374,10 +372,36 @@ nav {
     transition: .3s;
 }
 
-
 .redes a:hover {
     transform: scale(1.1);
     background: white;
+}
+
+/* =====================================
+   RESPONSIVE - REDES SOCIALES
+   ===================================== */
+@media (max-width: 480px) {
+    .redes {
+        gap: 12px;
+    }
+
+    .redes a {
+        width: 52px;
+        height: 52px;
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .redes {
+        gap: 8px;
+    }
+
+    .redes a {
+        width: 44px;
+        height: 44px;
+        font-size: 1.2rem;
+    }
 }
 
 /* =====================================
