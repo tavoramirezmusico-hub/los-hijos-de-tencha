@@ -1063,6 +1063,20 @@
                 margin-bottom: 10px;
             }
         }
+
+        /* BADGE DESTACADO EN TIENDA */
+        .badge-destacado {
+            display: inline-block;
+            background: #ffcc00;
+            color: #000;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
     </style>
 
 </head>
@@ -1497,7 +1511,7 @@
                 </button>
             </div>
 
-            <!-- Galería -->
+            <!-- Galería (oculta inicialmente) -->
             <div id="galeria-productos" class="galeria-camisetas"></div>
 
             <!-- Cargando -->
@@ -1644,7 +1658,6 @@
         // TIENDA - CARGAR PRODUCTOS DESDE FIREBASE
         // ============================================================
 
-        // ⚠️ NO DECLARAR db AQUÍ - usar la que ya existe globalmente (en script.js)
         let todosLosProductos = [];
         let todosVisibles = false;
 
@@ -1658,7 +1671,6 @@
             const destacado = document.getElementById('productoDestacado');
             const btnVerTodos = document.getElementById('btnVerTodos');
 
-            // Verificar que db existe (usar la global, no crear una nueva)
             if (typeof db === 'undefined' || !db) {
                 console.warn('⚠️ Firestore no disponible');
                 cargando.style.display = 'none';
@@ -1693,10 +1705,12 @@
                 }
 
                 todosLosProductos = [];
+                let productoDestacado = null;
+
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     if (data.stock === 'disponible' || !data.stock) {
-                        todosLosProductos.push({
+                        const producto = {
                             id: doc.id,
                             nombre: data.nombre || 'Producto',
                             descripcion: data.descripcion || '',
@@ -1705,8 +1719,13 @@
                             whatsapp: data.whatsapp || '',
                             imagen: data.imagen || '',
                             orden: data.orden || 0,
-                            stock: data.stock || 'disponible'
-                        });
+                            stock: data.stock || 'disponible',
+                            destacado: data.destacado || false
+                        };
+                        todosLosProductos.push(producto);
+                        if (producto.destacado) {
+                            productoDestacado = producto;
+                        }
                     }
                 });
 
@@ -1724,15 +1743,24 @@
                     return;
                 }
 
-                mostrarProductoDestacado(todosLosProductos[0]);
+                // Si no hay producto destacado, usar el primero
+                if (!productoDestacado && todosLosProductos.length > 0) {
+                    productoDestacado = todosLosProductos[0];
+                }
 
+                // Mostrar producto destacado
+                if (productoDestacado) {
+                    mostrarProductoDestacado(productoDestacado);
+                }
+
+                // Mostrar botón "Ver todos" solo si hay más de 1 producto
                 if (todosLosProductos.length > 1) {
                     btnVerTodos.style.display = 'inline-block';
                 }
 
-                renderizarProductos(todosLosProductos);
-
+                // La galería se mantiene oculta inicialmente
                 console.log('✅ ' + todosLosProductos.length + ' productos cargados');
+                console.log('⭐ Producto destacado:', productoDestacado ? productoDestacado.nombre : 'Ninguno');
 
             } catch (error) {
                 console.error('❌ Error al cargar productos:', error);
@@ -1764,6 +1792,7 @@
             const imagen = producto.imagen || 'img/logo.webp';
 
             contenedor.innerHTML = `
+                <span class="badge-destacado">⭐ Destacado</span>
                 <img src="${imagen}" alt="${producto.nombre}" onclick="abrirVisorTienda('${imagen}')" style="cursor: pointer;">
                 <h3>${producto.nombre}</h3>
                 <p>${precioFormateado}</p>
@@ -1781,7 +1810,7 @@
         }
 
         // ============================================================
-        // FUNCIÓN: RENDERIZAR PRODUCTOS
+        // FUNCIÓN: RENDERIZAR PRODUCTOS (SOLO PARA "VER TODOS")
         // ============================================================
         function renderizarProductos(productos) {
             const contenedor = document.getElementById('galeria-productos');
@@ -1792,7 +1821,20 @@
             }
 
             let html = '';
-            productos.forEach(producto => {
+            // Filtrar el destacado para no mostrarlo en la galería
+            const productosNoDestacados = productos.filter(p => !p.destacado);
+
+            if (productosNoDestacados.length === 0) {
+                contenedor.innerHTML = `
+                    <div style="text-align: center; padding: 30px 20px; color: #666; grid-column: 1 / -1;">
+                        <i class="fa-regular fa-box-open" style="font-size: 2rem; display: block; margin-bottom: 10px;"></i>
+                        <p>No hay más productos disponibles.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            productosNoDestacados.forEach(producto => {
                 const precioFormateado = '₡' + producto.precio.toLocaleString();
                 const imagen = producto.imagen || 'img/logo.webp';
 
@@ -1851,7 +1893,6 @@
             document.body.style.overflow = '';
         }
 
-        // Eventos para el visor
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 cerrarVisorTienda();
