@@ -299,6 +299,17 @@
             border-radius: 4px;
         }
 
+        .btn-ir-validador {
+            background: var(--color-primary) !important;
+            color: #000 !important;
+            border-color: var(--color-primary) !important;
+        }
+
+        .btn-ir-validador:hover {
+            background: var(--color-primary-dark) !important;
+            box-shadow: 0 8px 25px rgba(255, 204, 0, 0.2) !important;
+        }
+
         @media (max-width: 768px) {
             .asistentes-filtros {
                 flex-direction: column;
@@ -403,6 +414,9 @@
                     <i class="fa-solid fa-shield-halved"></i>
                     Administrador
                 </div>
+                <button class="btn-header btn-primary btn-ir-validador" onclick="irAValidador()">
+                    <i class="fa-solid fa-qrcode"></i> Validador
+                </button>
                 <button class="btn-header btn-danger" onclick="cerrarSesionAdmin()">
                     <i class="fa-solid fa-right-from-bracket"></i> Salir
                 </button>
@@ -515,7 +529,7 @@
         // Configuración EmailJS - USANDO EL TEMPLATE ID CORRECTO
         const EMAILJS_USER_ID = '7bmV4hpwq7pFObQ8W';
         const EMAILJS_SERVICE_ID = 'service_49w40s8';
-        const EMAILJS_TEMPLATE_ID = 'template_correos';
+        const EMAILJS_TEMPLATE_ID = 'template_rhfmmmr';
 
         // ============================================================
         // SIDEBAR
@@ -549,6 +563,24 @@
                 window.location.href = 'login.html';
             }
         })();
+
+        // ============================================================
+        // FUNCIÓN: IR AL VALIDADOR (CIERRA SESIÓN)
+        // ============================================================
+        function irAValidador() {
+            sessionStorage.removeItem('adminAuth');
+            sessionStorage.removeItem('adminLoginTime');
+            window.location.href = 'validador.html';
+        }
+
+        // ============================================================
+        // FUNCIÓN: CERRAR SESIÓN
+        // ============================================================
+        function cerrarSesionAdmin() {
+            sessionStorage.removeItem('adminAuth');
+            sessionStorage.removeItem('adminLoginTime');
+            window.location.href = 'login.html';
+        }
 
         // ============================================================
         // INICIALIZAR EMAILJS
@@ -1176,6 +1208,8 @@
         window.exportarTodosAsistentes = exportarTodosAsistentes;
         window.irPagina = irPagina;
         window.mostrarToast = mostrarToast;
+        window.irAValidador = irAValidador;
+        window.cerrarSesionAdmin = cerrarSesionAdmin;
 
         console.log('✅ admin/asistentes.html cargado correctamente (template_rhfmmmr)');
     </script>
