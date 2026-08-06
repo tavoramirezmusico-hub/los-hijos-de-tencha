@@ -324,7 +324,6 @@
             transform: scale(1.2);
         }
 
-        /* NUEVOS ESTILOS PARA EVENTOS */
         .evento-stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -640,13 +639,13 @@
                             placeholder="Descripción del evento..."></textarea>
                     </div>
 
-                    <!-- NUEVO CAMPO: ¿ES PAGO? -->
+                    <!-- CAMPO: ¿ES PAGO? -->
                     <div class="admin-form-group admin-form-group-checkbox">
                         <input type="checkbox" id="eventoEsPago">
                         <label for="eventoEsPago">💰 ¿Este evento es pago?</label>
                     </div>
 
-                    <!-- NUEVO CAMPO: CAPACIDAD MÁXIMA -->
+                    <!-- CAMPO: CAPACIDAD MÁXIMA -->
                     <div class="admin-form-group">
                         <label for="eventoCapacidad">Capacidad máxima de entradas</label>
                         <input type="number" id="eventoCapacidad" class="admin-input" min="0" value="0"
@@ -654,7 +653,7 @@
                         <small>Número total de entradas disponibles para este evento</small>
                     </div>
 
-                    <!-- NUEVO CAMPO: PRECIO (solo si es pago) -->
+                    <!-- CAMPO: PRECIO (solo si es pago) -->
                     <div class="admin-form-group" id="campoPrecio" style="display:none;">
                         <label for="eventoPrecio">Precio por entrada (₵)</label>
                         <input type="number" id="eventoPrecio" class="admin-input" min="0" step="500" value="0"
@@ -728,7 +727,7 @@
         // VARIABLES GLOBALES
         // ============================================================
         let eventosCache = [];
-        let asistentesCache = []; // <--- NUEVA: Para calcular cupos correctamente
+        let asistentesCache = [];
 
         // ============================================================
         // SIDEBAR
@@ -806,7 +805,7 @@
         });
 
         // ============================================================
-        // FUNCIÓN: CARGAR EVENTOS (CORREGIDA - CARGA ASISTENTES)
+        // FUNCIÓN: CARGAR EVENTOS
         // ============================================================
         async function cargarEventos() {
             const container = document.getElementById('listaEventos');
@@ -875,16 +874,22 @@
         // FUNCIÓN: CALCULAR CUPOS DE UN EVENTO (CORREGIDA)
         // ============================================================
         function calcularCuposEvento(eventoId) {
-            // Usar asistentesCache (variable global)
-            if (!asistentesCache || asistentesCache.length === 0) {
-                return { disponibles: 0, confirmados: 0, pendientes: 0 };
-            }
-
-            const asistentesEvento = asistentesCache.filter(a => a.eventoId === eventoId);
-
             // Buscar el evento para saber su capacidad
             const evento = eventosCache.find(e => e.id === eventoId);
             const capacidad = evento?.capacidadMaxima || 0;
+
+            // Si no hay asistentes cargados, toda la capacidad está disponible
+            if (!asistentesCache || asistentesCache.length === 0) {
+                return {
+                    disponibles: capacidad > 0 ? capacidad : Infinity,
+                    confirmados: 0,
+                    pendientes: 0,
+                    ocupados: 0,
+                    capacidad: capacidad
+                };
+            }
+
+            const asistentesEvento = asistentesCache.filter(a => a.eventoId === eventoId);
 
             let confirmados = 0;
             let pendientes = 0;
@@ -950,6 +955,8 @@
                     `${evento.capacidadMaxima} entradas` :
                     'Sin límite';
 
+                const disponiblesTexto = disponibles === Infinity ? '∞' : disponibles;
+
                 html += `
                     <div class="evento-item">
                         <div class="evento-info">
@@ -962,7 +969,7 @@
                             </div>
                             <div class="evento-stats-grid">
                                 <div class="stat-item">
-                                    <span class="stat-num">${disponibles === Infinity ? '∞' : disponibles}</span> disponibles
+                                    <span class="stat-num">${disponiblesTexto}</span> disponibles
                                 </div>
                                 <div class="stat-item">
                                     <span class="stat-num">${confirmados}</span> confirmados
