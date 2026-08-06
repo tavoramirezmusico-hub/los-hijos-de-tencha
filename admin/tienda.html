@@ -47,6 +47,13 @@
             flex-shrink: 0;
             background: var(--color-bg-card);
             border: 1px solid var(--color-border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .producto-item .producto-thumb:hover {
+            transform: scale(1.05);
+            border-color: var(--color-primary);
         }
 
         .producto-item .producto-info {
@@ -289,6 +296,172 @@
             min-width: 150px;
         }
 
+        /* ============================================================
+           PREVISUALIZACIÓN - MODAL
+           ============================================================ */
+        .preview-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(8px);
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: fadePreview 0.3s ease;
+        }
+
+        .preview-modal.active {
+            display: flex;
+        }
+
+        @keyframes fadePreview {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .preview-modal .preview-content {
+            background: var(--color-bg-card);
+            border-radius: var(--radius-lg);
+            max-width: 550px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-card);
+            position: relative;
+        }
+
+        .preview-modal .preview-content .preview-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 4px 8px;
+        }
+
+        .preview-modal .preview-content .preview-close:hover {
+            color: var(--color-text);
+            transform: rotate(90deg);
+        }
+
+        .preview-modal .preview-content .preview-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .preview-modal .preview-content .preview-header .preview-badge {
+            display: inline-block;
+            background: var(--color-primary);
+            color: #000;
+            padding: 3px 16px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .preview-modal .preview-content .preview-header h3 {
+            font-size: 1.5rem;
+            color: var(--color-text);
+            margin-bottom: 4px;
+        }
+
+        .preview-modal .preview-content .preview-header .preview-precio {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--color-primary);
+        }
+
+        .preview-modal .preview-content .preview-image {
+            width: 100%;
+            max-height: 350px;
+            object-fit: contain;
+            border-radius: var(--radius-sm);
+            background: var(--color-bg);
+            margin: 12px 0;
+            border: 1px solid var(--color-border);
+        }
+
+        .preview-modal .preview-content .preview-desc {
+            color: var(--color-text-muted);
+            font-size: 0.95rem;
+            margin: 12px 0;
+            text-align: center;
+        }
+
+        .preview-modal .preview-content .preview-meta {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 12px 0;
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+        }
+
+        .preview-modal .preview-content .preview-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .preview-modal .preview-content .preview-whatsapp {
+            display: block;
+            text-align: center;
+            margin-top: 16px;
+            padding: 12px 24px;
+            background: #25d366;
+            color: #fff;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .preview-modal .preview-content .preview-whatsapp:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.3);
+        }
+
+        .preview-modal .preview-content .preview-footer {
+            text-align: center;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--color-border);
+            color: var(--color-text-muted);
+            font-size: 0.7rem;
+        }
+
+        .btn-preview {
+            background: var(--color-info);
+            color: #fff;
+            border-color: var(--color-info);
+        }
+
+        .btn-preview:hover {
+            background: #1565c0;
+            box-shadow: 0 8px 25px rgba(25, 118, 210, 0.3);
+        }
+
         @media (max-width: 768px) {
             .producto-item {
                 flex-direction: column;
@@ -330,6 +503,19 @@
                 margin-left: 0;
                 margin-top: 6px;
             }
+
+            .preview-modal .preview-content {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .preview-modal .preview-content .preview-header h3 {
+                font-size: 1.2rem;
+            }
+
+            .preview-modal .preview-content .preview-precio {
+                font-size: 1.4rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -349,6 +535,11 @@
             .image-preview img {
                 width: 100px !important;
                 height: 100px !important;
+            }
+
+            .preview-modal .preview-content {
+                padding: 16px;
+                margin: 6px;
             }
         }
     </style>
@@ -502,9 +693,7 @@
                 </select>
             </div>
 
-            <!-- ============================================================
-                 CAMPO DESTACADO - NUEVO
-                 ============================================================ -->
+            <!-- CAMPO DESTACADO -->
             <div class="destacado-toggle" id="destacadoToggle">
                 <label for="productoDestacado">
                     <i class="fa-solid fa-star" id="destacadoIcon"></i>
@@ -551,6 +740,18 @@
         </div>
 
     </main>
+
+    <!-- ============================================================
+    MODAL DE PREVISUALIZACIÓN
+    ============================================================ -->
+    <div class="preview-modal" id="previewModal">
+        <div class="preview-content">
+            <button class="preview-close" onclick="cerrarPreview()">&times;</button>
+            <div id="previewContenido">
+                <!-- Se llena dinámicamente -->
+            </div>
+        </div>
+    </div>
 
     <!-- TOAST -->
     <div id="adminToast" class="admin-toast"></div>
@@ -857,7 +1058,7 @@
 
                 html += `
                             <div class="producto-item">
-                                <img class="producto-thumb" src="${producto.imagen || '../img/logo.webp'}" alt="${sanitizar(producto.nombre)}" onerror="this.src='../img/logo.webp'">
+                                <img class="producto-thumb" src="${producto.imagen || '../img/logo.webp'}" alt="${sanitizar(producto.nombre)}" onerror="this.src='../img/logo.webp'" onclick="previsualizarProducto('${producto.id}')" title="Click para previsualizar">
                                 <div class="producto-info">
                                     <div class="producto-nombre">${sanitizar(producto.nombre)} ${destacadoBadge}</div>
                                     <div class="producto-meta">
@@ -869,6 +1070,9 @@
                                 </div>
                                 <div class="producto-precio">${precioFormateado}</div>
                                 <div class="producto-actions">
+                                    <button class="btn-admin btn-info btn-sm btn-preview" onclick="previsualizarProducto('${producto.id}')" title="Previsualizar">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
                                     <button class="btn-admin btn-primary btn-sm" onclick="editarProducto('${producto.id}')">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
@@ -882,6 +1086,75 @@
 
             container.innerHTML = html;
         }
+
+        // ============================================================
+        // FUNCIÓN: PREVISUALIZAR PRODUCTO
+        // ============================================================
+        function previsualizarProducto(id) {
+            const producto = productos.find(p => p.id === id);
+            if (!producto) {
+                mostrarToast('❌ Producto no encontrado', 'error');
+                return;
+            }
+
+            const modal = document.getElementById('previewModal');
+            const container = document.getElementById('previewContenido');
+
+            const precioFormateado = '₡' + producto.precio.toLocaleString();
+            const imagen = producto.imagen || '../img/logo.webp';
+            const stockText = producto.stock === 'disponible' ? '✅ Disponible' : '❌ Agotado';
+            const destacadoText = producto.destacado ? '⭐ Destacado' : '';
+
+            container.innerHTML = `
+                <div class="preview-header">
+                    ${destacadoText ? '<span class="preview-badge">⭐ DESTACADO</span>' : ''}
+                    <h3>${sanitizar(producto.nombre)}</h3>
+                    <div class="preview-precio">${precioFormateado}</div>
+                </div>
+                <img class="preview-image" src="${imagen}" alt="${sanitizar(producto.nombre)}" onerror="this.src='../img/logo.webp'">
+                ${producto.descripcion ? '<div class="preview-desc">' + sanitizar(producto.descripcion) + '</div>' : ''}
+                <div class="preview-meta">
+                    <span><i class="fa-regular fa-tag"></i> ${sanitizar(producto.categoria || 'General')}</span>
+                    <span>${stockText}</span>
+                    ${producto.orden > 0 ? '<span><i class="fa-regular fa-hashtag"></i> #' + producto.orden + '</span>' : ''}
+                </div>
+                <a href="${producto.whatsapp || 'https://wa.me/50688636047?text=Hola,%20me%20interesa%20el%20producto'}" 
+                   target="_blank" 
+                   class="preview-whatsapp"
+                   onclick="gtag('event','preview_comprar_${producto.id}');">
+                    <i class="fa-brands fa-whatsapp"></i> Comprar por WhatsApp
+                </a>
+                <div class="preview-footer">
+                    <i class="fa-regular fa-clock"></i> Vista previa del producto — cómo se verá en la tienda
+                </div>
+            `;
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarPreview() {
+            document.getElementById('previewModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Cerrar con Escape
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                cerrarPreview();
+            }
+        });
+
+        // Cerrar al hacer clic fuera
+        document.getElementById('previewModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                cerrarPreview();
+            }
+        });
+
+        // ============================================================
+        // FUNCIONES CRUD (continuación)
+        // ============================================================
 
         async function editarProducto(id) {
             try {
@@ -904,7 +1177,6 @@
                 document.getElementById('productoStock').value = data.stock || 'disponible';
                 document.getElementById('productoDestacado').checked = data.destacado || false;
 
-                // Actualizar icono de estrella
                 const icon = document.getElementById('destacadoIcon');
                 if (data.destacado) {
                     icon.classList.add('active');
@@ -1059,7 +1331,7 @@
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
             cargarProductos();
-            console.log('🚀 Gestor de Tienda cargado con Cloudinary y Destacado');
+            console.log('🚀 Gestor de Tienda cargado con Cloudinary, Destacado y Previsualización');
         });
 
         document.addEventListener('keydown', function (e) {
