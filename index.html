@@ -623,7 +623,6 @@
             margin-bottom: 15px;
         }
 
-        /* Botón de compra en camisetas */
         .camiseta .btn-whatsapp-compra {
             display: inline-block;
             padding: 10px 24px;
@@ -859,7 +858,7 @@
         }
 
         /* =====================================
-           INTEGRANTES
+           INTEGRANTES - TÍTULO ACTUALIZADO
            ===================================== */
         .integrantes {
             padding: 80px 8%;
@@ -867,10 +866,28 @@
             text-align: center;
         }
 
-        .integrantes h2 {
-            font-size: 2.5rem;
+        .integrantes .titulo-seccion {
             margin-bottom: 50px;
+        }
+
+        .integrantes .titulo-seccion span {
+            color: #ffcc00;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+        }
+
+        .integrantes .titulo-seccion h2 {
+            font-size: 2.5rem;
+            margin-top: 10px;
             color: #fff;
+        }
+
+        .integrantes .titulo-seccion p {
+            color: #aaa;
+            max-width: 600px;
+            margin: 10px auto 0;
         }
 
         .grid-integrantes {
@@ -931,7 +948,7 @@
         }
 
         /* =====================================
-           CONTACTO
+           CONTACTO - REDES SOCIALES
            ===================================== */
         #contacto {
             background: #111;
@@ -942,7 +959,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 25px;
+            gap: 20px;
             flex-wrap: wrap;
         }
 
@@ -962,6 +979,33 @@
         .redes a:hover {
             transform: scale(1.1);
             background: white;
+        }
+
+        /* =====================================
+           RESPONSIVE - REDES SOCIALES
+           ===================================== */
+        @media (max-width: 480px) {
+            .redes {
+                gap: 12px;
+            }
+
+            .redes a {
+                width: 52px;
+                height: 52px;
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .redes {
+                gap: 8px;
+            }
+
+            .redes a {
+                width: 44px;
+                height: 44px;
+                font-size: 1.2rem;
+            }
         }
 
         /* =====================================
@@ -1528,7 +1572,7 @@
     </section>
 
     <!-- ==========================
-     INTEGRANTES
+     INTEGRANTES - TÍTULO ACTUALIZADO
 =========================== -->
 
     <section id="integrantes" class="integrantes animar">
@@ -1541,7 +1585,7 @@
 
                 <h2>Integrantes</h2>
 
-                <p style="color: #aaa; max-width: 600px; margin: 10px auto 0;">
+                <p>
                     Conoce a los músicos que hacen posible la magia de Los Hijos de Tencha.
                 </p>
 
