@@ -2426,35 +2426,15 @@
     <!-- ============================================= -->
     <script>
         // ============================================================
-        // CONFIGURACIÓN DE FIREBASE (ya inicializado arriba)
+        // CONFIGURACIÓN (usa variables globales ya declaradas en js/script.js)
         // ============================================================
 
         let eventosCacheRegistro = [];
         let eventoSeleccionadoId = null;
         let asistenteRegistradoId = null;
 
-        // Configuración EmailJS
-        const EMAILJS_USER_ID = '7bmV4hpwq7pFObQ8W';
-        const EMAILJS_SERVICE_ID = 'service_49w40s8';
+        // Solo declaramos la plantilla de pendiente (EMAILJS_USER_ID y EMAILJS_SERVICE_ID ya existen en js/script.js)
         const EMAILJS_TEMPLATE_PENDIENTE = 'template_registro_pendiente'; // CREAR EN EMAILJS
-
-        function initEmailJSRegistro() {
-            if (typeof emailjs !== 'undefined') {
-                try {
-                    emailjs.init(EMAILJS_USER_ID);
-                    console.log('✅ EmailJS inicializado (registro)');
-                    return true;
-                } catch (e) {
-                    console.error('❌ Error al inicializar EmailJS:', e);
-                    return false;
-                }
-            } else {
-                console.warn('⚠️ EmailJS no está cargado');
-                return false;
-            }
-        }
-
-        initEmailJSRegistro();
 
         // ============================================================
         // CARGAR EVENTOS EN EL SELECTOR
@@ -2831,7 +2811,7 @@
                     numero_entradas: asistente.numeroEntradas || 1
                 };
 
-                await emailjs.send('service_49w40s8', 'template_5ulhotx', templateParams);
+                await emailjs.send(EMAILJS_SERVICE_ID, 'template_5ulhotx', templateParams);
                 console.log('✅ Correo de confirmación enviado a', asistente.email);
 
                 await db.collection('asistentes').doc(asistenteId).update({
