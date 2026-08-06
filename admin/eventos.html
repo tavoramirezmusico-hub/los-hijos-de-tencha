@@ -84,7 +84,7 @@
             flex-shrink: 0;
         }
 
-        .evento-item .evento-actions .btn-admin {
+        .evento-item .evento-actions .btn-action {
             padding: 4px 12px;
             font-size: 0.7rem;
         }
@@ -149,7 +149,7 @@
             flex-shrink: 0;
         }
 
-        .asistente-item .asistente-actions .btn-admin {
+        .asistente-item .asistente-actions .btn-action {
             padding: 2px 10px;
             font-size: 0.65rem;
         }
@@ -584,7 +584,7 @@
                 padding: 12px !important;
             }
 
-            .evento-item .evento-actions .btn-admin {
+            .evento-item .evento-actions .btn-action {
                 padding: 4px 10px !important;
                 font-size: 0.65rem !important;
             }
@@ -721,7 +721,7 @@
                 <div class="card-header">
                     <h3><i class="fa-solid fa-users"></i> Últimos Asistentes</h3>
                     <div class="card-actions">
-                        <a href="asistentes.html" class="btn-admin btn-secondary" style="padding:4px 16px;">
+                        <a href="asistentes.html" class="btn-admin btn-secondary btn-sm" style="padding:4px 16px;">
                             Ver todos <i class="fa-solid fa-arrow-right"></i>
                         </a>
                     </div>
@@ -1142,13 +1142,13 @@
                             </div>
                         </div>
                         <div class="evento-actions">
-                            <button class="btn-admin btn-secondary" onclick="verEvento('${evento.id}')">
+                            <button class="btn-action btn-view" onclick="verEvento('${evento.id}')">
                                 <i class="fa-solid fa-eye"></i>
                             </button>
-                            <button class="btn-admin btn-primary" onclick="editarEvento('${evento.id}')">
+                            <button class="btn-action btn-edit" onclick="editarEvento('${evento.id}')">
                                 <i class="fa-solid fa-pen"></i>
                             </button>
-                            <button class="btn-admin btn-danger" onclick="abrirModalEliminar('${evento.id}')">
+                            <button class="btn-action btn-delete" onclick="abrirModalEliminar('${evento.id}')">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
