@@ -512,10 +512,10 @@
         let paginaActual = 1;
         const POR_PAGINA = 20;
 
-        // Configuración EmailJS - USANDO UNA SOLA PLANTILLA
+        // Configuración EmailJS - USANDO EL TEMPLATE ID CORRECTO
         const EMAILJS_USER_ID = '7bmV4hpwq7pFObQ8W';
         const EMAILJS_SERVICE_ID = 'service_49w40s8';
-        const EMAILJS_TEMPLATE_UNICA = 'template_5ulhotx'; // <--- UNA SOLA PLANTILLA PARA TODO
+        const EMAILJS_TEMPLATE_ID = 'template_rhfmmmr'; // <--- NUEVO TEMPLATE ID
 
         // ============================================================
         // SIDEBAR
@@ -926,14 +926,13 @@
                         console.log('📧 Enviando correo de confirmación a:', asistente.email);
                         const result = await emailjs.send(
                             EMAILJS_SERVICE_ID,
-                            EMAILJS_TEMPLATE_UNICA,
+                            EMAILJS_TEMPLATE_ID,
                             templateParams
                         );
                         console.log('✅ Correo enviado:', result);
                         emailEnviado = true;
                     } catch (emailError) {
                         console.error('❌ Error al enviar correo:', emailError);
-                        // No detener el proceso, solo mostrar advertencia
                     }
                 }
 
@@ -991,8 +990,6 @@
                     estadoPago: 'rechazado'
                 });
 
-                // Los cupos se liberan automáticamente porque el pendiente ya no cuenta
-
                 // Recargar lista
                 await cargarTodosLosAsistentes();
 
@@ -1043,7 +1040,7 @@
                     transferencia: asistente.transferencia || ''
                 };
 
-                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_UNICA, templateParams);
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
 
                 toast.textContent = '✅ QR reenviado exitosamente';
                 toast.className = 'admin-toast success';
@@ -1180,7 +1177,7 @@
         window.irPagina = irPagina;
         window.mostrarToast = mostrarToast;
 
-        console.log('✅ admin/asistentes.html cargado correctamente (usando plantilla única)');
+        console.log('✅ admin/asistentes.html cargado correctamente (template_rhfmmmr)');
     </script>
 </body>
 
