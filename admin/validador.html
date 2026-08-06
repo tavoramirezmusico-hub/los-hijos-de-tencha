@@ -675,7 +675,7 @@
     <!-- ============================================================
     CONTENIDO PRINCIPAL DEL VALIDADOR
     ============================================================ -->
-    <div id="validadorContent" style="display:none;">
+    <div id="validadorContent" style="display:none; width:100%;">
 
         <!-- SIDEBAR -->
         <aside class="admin-sidebar" id="adminSidebar">
@@ -877,20 +877,14 @@
 
         // ============================================================
         // SISTEMA DE LOGIN DEL VALIDADOR
-        // Usa la MISMA sesión y contraseña que el resto del panel admin
-        // (verificarSesionAdmin / PASSWORD_HASH vienen de js/admin.js)
+        // Usa la MISMA contraseña que el resto del panel admin (PASSWORD_HASH viene de js/admin.js),
+        // pero SIEMPRE pide la contraseña al entrar/volver al validador (no reutiliza ni otorga
+        // la sesión general 'adminAuth' de las demás secciones del panel).
         // ============================================================
 
         document.addEventListener('DOMContentLoaded', function () {
-            // Si ya hay sesión admin activa (login.html), entrar directo sin pedir contraseña otra vez
-            if (typeof verificarSesionAdmin === 'function' && verificarSesionAdmin()) {
-                document.getElementById('validadorLoginOverlay').classList.add('hidden');
-                document.getElementById('validadorContent').style.display = 'block';
-                iniciarValidador();
-            } else {
-                // Mostrar overlay de login
-                document.getElementById('validadorLoginOverlay').classList.remove('hidden');
-            }
+            // Siempre mostrar el overlay de login al cargar esta página
+            document.getElementById('validadorLoginOverlay').classList.remove('hidden');
 
             // Login
             document.getElementById('validadorLoginBtn').addEventListener('click', async function () {
@@ -898,10 +892,8 @@
                 const inputHash = await hashPassword(password);
 
                 if (inputHash === PASSWORD_HASH) {
-                    sessionStorage.setItem('adminAuth', 'authenticated');
-                    sessionStorage.setItem('adminLoginTime', Date.now().toString());
                     document.getElementById('validadorLoginOverlay').classList.add('hidden');
-                    document.getElementById('validadorContent').style.display = 'block';
+                    document.getElementById('validadorContent').style.display = 'flex';
                     document.getElementById('validadorLoginError').classList.remove('show');
                     document.getElementById('validadorPasswordInput').value = '';
                     iniciarValidador();
@@ -940,8 +932,6 @@
                             html5QrCode.stop();
                         } catch (e) { }
                     }
-                    sessionStorage.removeItem('adminAuth');
-                    sessionStorage.removeItem('adminLoginTime');
                     document.getElementById('validadorExitOverlay').classList.add('hidden');
                     document.getElementById('validadorLoginOverlay').classList.remove('hidden');
                     document.getElementById('validadorContent').style.display = 'none';
