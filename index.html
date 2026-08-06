@@ -2811,7 +2811,7 @@
                     numero_entradas: asistente.numeroEntradas || 1
                 };
 
-                await emailjs.send(EMAILJS_SERVICE_ID, 'template_5ulhotx', templateParams);
+                await emailjs.send(EMAILJS_SERVICE_ID, 'template_correos', templateParams);
                 console.log('✅ Correo de confirmación enviado a', asistente.email);
 
                 await db.collection('asistentes').doc(asistenteId).update({

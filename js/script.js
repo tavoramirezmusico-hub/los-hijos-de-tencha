@@ -328,7 +328,7 @@ try {
 // ============================================================
 const EMAILJS_USER_ID = '7bmV4hpwq7pFObQ8W';
 const EMAILJS_SERVICE_ID = 'service_49w40s8';
-const EMAILJS_TEMPLATE_ID = 'template_5ulhotx';
+const EMAILJS_TEMPLATE_ID = 'template_correos';
 
 function initEmailJS() {
     if (typeof emailjs !== 'undefined') {
