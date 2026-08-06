@@ -836,15 +836,12 @@
 
     <script>
         // ============================================================
-        // CONFIGURACIÓN DE FIREBASE (reutilizar la existente)
+        // FIREBASE (ya inicializado y disponible como variable global 'db' desde admin.js)
         // ============================================================
-        // Ya debería estar inicializada desde admin.js
-        let db;
-        try {
-            db = firebase.firestore();
+        if (!db) {
+            console.error('❌ Firestore no disponible (revisa admin.js)');
+        } else {
             console.log('✅ Firestore disponible en validador');
-        } catch (e) {
-            console.error('❌ Error al obtener Firestore:', e);
         }
 
         // ============================================================
