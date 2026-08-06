@@ -96,7 +96,7 @@
             white-space: nowrap;
         }
 
-        .asistente-row .asistente-estado.ingresado {
+        .asistente-row .asistente-estado.confirmado {
             background: rgba(0, 200, 83, 0.15);
             color: var(--color-success);
         }
@@ -122,7 +122,7 @@
             font-size: 0.65rem;
         }
 
-        .asistente-row.ingresado {
+        .asistente-row.confirmado {
             border-left: 3px solid var(--color-success);
         }
 
@@ -228,7 +228,6 @@
             margin-bottom: 12px;
         }
 
-        /* NUEVOS ESTILOS PARA BADGES DE ESTADO DE PAGO */
         .badge-pago {
             display: inline-block;
             padding: 2px 12px;
@@ -421,7 +420,7 @@
                     <div class="label">Total Asistentes</div>
                 </div>
                 <div class="stat">
-                    <div class="number" id="ingresadosGlobal">0</div>
+                    <div class="number" id="confirmadosGlobal">0</div>
                     <div class="label">Confirmados</div>
                 </div>
                 <div class="stat">
@@ -513,10 +512,10 @@
         let paginaActual = 1;
         const POR_PAGINA = 20;
 
-        // Configuración EmailJS
+        // Configuración EmailJS - USANDO UNA SOLA PLANTILLA
         const EMAILJS_USER_ID = '7bmV4hpwq7pFObQ8W';
         const EMAILJS_SERVICE_ID = 'service_49w40s8';
-        const EMAILJS_TEMPLATE_CONFIRMACION = 'template_confirmacion_pago'; // <--- CREAR EN EMAILJS
+        const EMAILJS_TEMPLATE_UNICA = 'template_5ulhotx'; // <--- UNA SOLA PLANTILLA PARA TODO
 
         // ============================================================
         // SIDEBAR
@@ -642,7 +641,7 @@
                 const eventos = Object.keys(eventosMap).length;
 
                 document.getElementById('totalAsistentesGlobal').textContent = total;
-                document.getElementById('ingresadosGlobal').textContent = confirmados;
+                document.getElementById('confirmadosGlobal').textContent = confirmados;
                 document.getElementById('pendientesGlobal').textContent = pendientes;
                 document.getElementById('rechazadosGlobal').textContent = rechazados;
                 document.getElementById('eventosGlobal').textContent = eventos;
@@ -718,7 +717,7 @@
                     estadoPago === 'rechazado' ? '❌ Rechazado' : '⏳ Pendiente';
 
                 // Fila de estado visual (borde izquierdo)
-                const rowClass = estadoPago === 'confirmado' ? 'ingresado' :
+                const rowClass = estadoPago === 'confirmado' ? 'confirmado' :
                     estadoPago === 'rechazado' ? 'rechazado' : 'pendiente';
 
                 // Mostrar SINPE y Transferencia solo si el evento es pago
@@ -906,7 +905,7 @@
                 const horaFormateada = evento?.hora || 'Hora por confirmar';
                 const lugarFormateado = evento?.lugar || '';
 
-                // Enviar correo con QR
+                // Enviar correo con QR usando la plantilla única
                 let emailEnviado = false;
                 if (typeof emailjs !== 'undefined') {
                     try {
@@ -919,13 +918,15 @@
                             event_date: fechaFormateada,
                             event_time: horaFormateada,
                             event_location: lugarFormateado,
-                            numero_entradas: asistente.numeroEntradas || 1
+                            numero_entradas: asistente.numeroEntradas || 1,
+                            sinpe: asistente.sinpe || '',
+                            transferencia: asistente.transferencia || ''
                         };
 
                         console.log('📧 Enviando correo de confirmación a:', asistente.email);
                         const result = await emailjs.send(
                             EMAILJS_SERVICE_ID,
-                            EMAILJS_TEMPLATE_CONFIRMACION,
+                            EMAILJS_TEMPLATE_UNICA,
                             templateParams
                         );
                         console.log('✅ Correo enviado:', result);
@@ -1037,10 +1038,12 @@
                     event_date: evento?.fecha || 'Fecha por confirmar',
                     event_time: evento?.hora || 'Hora por confirmar',
                     event_location: evento?.lugar || '',
-                    numero_entradas: asistente.numeroEntradas || 1
+                    numero_entradas: asistente.numeroEntradas || 1,
+                    sinpe: asistente.sinpe || '',
+                    transferencia: asistente.transferencia || ''
                 };
 
-                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_CONFIRMACION, templateParams);
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_UNICA, templateParams);
 
                 toast.textContent = '✅ QR reenviado exitosamente';
                 toast.className = 'admin-toast success';
@@ -1177,7 +1180,7 @@
         window.irPagina = irPagina;
         window.mostrarToast = mostrarToast;
 
-        console.log('✅ admin/asistentes.html cargado correctamente');
+        console.log('✅ admin/asistentes.html cargado correctamente (usando plantilla única)');
     </script>
 </body>
 
