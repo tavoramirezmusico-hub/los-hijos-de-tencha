@@ -2,833 +2,324 @@
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-    <meta name="google-site-verification" content="LW_2PctYNDbNP-0ppeMFzxLuQnbuRoVhwxbvc_y3bjY">
-
-
-    <title>
-        Los Hijos de Tencha | Banda de Cumbia y Música en Vivo en Costa Rica
-    </title>
-
-
-    <meta name="description"
-        content="Los Hijos de Tencha es una banda costarricense de cumbia, rock, reggae y ritmos latinoamericanos. Música en vivo, eventos, contrataciones, canciones, videos y contacto oficial en Costa Rica.">
-
-
-    <meta name="keywords"
-        content="Los Hijos de Tencha, banda Costa Rica, cumbia Costa Rica, música en vivo Costa Rica, agrupación musical costarricense, contrataciones musicales">
-
-
-    <meta name="author" content="Los Hijos de Tencha">
-
-
-    <meta name="robots" content="index, follow">
-
-
-    <meta name="theme-color" content="#000000">
-
-
-    <link rel="canonical" href="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/">
-
-
-
-    <!-- OPEN GRAPH FACEBOOK / WHATSAPP -->
-
-    <meta property="og:title" content="Los Hijos de Tencha | Banda Costarricense">
-
-
-    <meta property="og:description"
-        content="Cumbia, rock, reggae y ritmos latinoamericanos con sabor costarricense. Música en vivo, eventos y contrataciones oficiales.">
-
-
-    <meta property="og:image" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/img/hero.webp">
-
-
-    <meta property="og:image:width" content="1200">
-
-
-    <meta property="og:image:height" content="630">
-
-
-    <meta property="og:url" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/">
-
-
-    <meta property="og:type" content="website">
-
-
-    <meta property="og:locale" content="es_CR">
-
-
-    <meta property="og:site_name" content="Los Hijos de Tencha">
-
-
-
-    <!-- TWITTER / X CARD -->
-
-    <meta name="twitter:card" content="summary_large_image">
-
-
-    <meta name="twitter:title" content="Los Hijos de Tencha | Banda Costarricense">
-
-
-    <meta name="twitter:description"
-        content="Agrupación musical costarricense de cumbia, rock, reggae y ritmos latinoamericanos.">
-
-
-    <meta name="twitter:image" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/img/hero.webp">
-
-
-
-    <!-- FAVICON -->
-
-    <link rel="icon" type="image/webp" href="img/logo.webp">
-
-
-
-    <!-- CSS -->
-
-    <link rel="stylesheet" href="css/styles.css">
-
-
-
-    <!-- GOOGLE FONTS -->
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-
-
-
-    <!-- FONT AWESOME -->
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-
-    <!-- DATOS ESTRUCTURADOS GOOGLE -->
-
-    <script type="application/ld+json">
-
-{
- "@context":"https://schema.org",
- "@type":"MusicGroup",
-
- "name":"Los Hijos de Tencha",
-
- "description":"Agrupación musical costarricense de cumbia, rock, reggae y ritmos latinoamericanos.",
-
- "url":"https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/",
-
- "image":"https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/img/hero.webp",
-
- "genre":[
- "Cumbia",
- "Rock",
- "Reggae",
- "Música latinoamericana"
- ],
-
- "location":{
- "@type":"Place",
- "name":"Costa Rica"
- },
-
-
- "sameAs":[
-
- "https://www.instagram.com/loshijosdetencha/",
-
- "https://www.facebook.com/profile.php?id=100090956211932"
-
- ]
-
-}
-
-</script>
-
-
-    <!-- GOOGLE ANALYTICS -->
-
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YNRK4G09LN"></script>
-
-    <script>
-
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-
-            dataLayer.push(arguments);
-
-        }
-
-        gtag('js', new Date());
-
-        gtag('config', 'G-YNRK4G09LN');
-
-    </script>
-
-
+    <title>Gestión de Tienda | Los Hijos de Tencha</title>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 
-    <!-- EmailJS -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
-    <!-- Estilos adicionales -->
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="css/admin.css">
+
     <style>
-        /* =====================================
-           MENÚ CON SCROLL HORIZONTAL
-           ===================================== */
-        .menu {
+        .producto-item {
             display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            white-space: nowrap;
-            padding: 8px 0;
-            scrollbar-width: thin;
-            scrollbar-color: #ffcc00 transparent;
-            -webkit-overflow-scrolling: touch;
-            scroll-behavior: smooth;
+            gap: 16px;
+            padding: 16px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+            margin-bottom: 12px;
+            transition: var(--transition);
+            align-items: center;
+            flex-wrap: wrap;
         }
 
-        .menu::-webkit-scrollbar {
-            height: 4px;
+        .producto-item:hover {
+            border-color: rgba(255, 204, 0, 0.15);
         }
 
-        .menu::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .menu::-webkit-scrollbar-thumb {
-            background: #ffcc00;
-            border-radius: 4px;
-        }
-
-        .menu li {
+        .producto-item .producto-thumb {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
             flex-shrink: 0;
-        }
-
-        .menu li a,
-        .menu li span {
-            padding: 8px 18px;
-            font-size: 0.95rem;
-            white-space: nowrap;
-            display: block;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-        }
-
-        .menu li a:hover {
-            background: #ffcc00;
-            color: #000;
-            border-radius: 20px;
-        }
-
-        .menu-activo {
-            color: #ffcc00 !important;
-            font-weight: 600;
-        }
-
-        @media (max-width: 900px) {
-
-            .menu li a,
-            .menu li span {
-                font-size: 0.85rem;
-                padding: 6px 14px;
-            }
-        }
-
-        @media (max-width: 600px) {
-
-            .menu li a,
-            .menu li span {
-                font-size: 0.8rem;
-                padding: 6px 12px;
-            }
-        }
-
-        /* =====================================
-           HERO INDEX
-           ===================================== */
-        .hero {
-            min-height: 100vh;
-            background:
-                linear-gradient(rgba(0, 0, 0, .55), rgba(0, 0, 0, .65)),
-                url("img/hero.webp");
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .hero-contenido {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 60px 20px;
-        }
-
-        .hero-etiqueta {
-            color: #ffcc00;
-            font-size: 0.9rem;
-            font-weight: 700;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        .hero h1 {
-            font-size: 4rem;
-            line-height: 1.2;
-            margin: 10px 0 15px;
-            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 700px;
-            color: #ddd;
-            margin-bottom: 35px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-        }
-
-        @media (max-width: 900px) {
-            .hero h1 {
-                font-size: 3rem;
-            }
-
-            .hero p {
-                font-size: 1rem;
-                padding: 0 15px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .hero {
-                min-height: 100vh;
-            }
-
-            .hero-contenido {
-                padding: 40px 16px;
-            }
-
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            .hero p {
-                font-size: 0.95rem;
-                padding: 0 10px;
-            }
-
-            .hero-etiqueta {
-                font-size: 0.75rem;
-            }
-        }
-
-        /* =====================================
-           ANIMACIONES DE APARICIÓN
-           ===================================== */
-        .animar {
-            opacity: 0;
-            transform: translateY(50px) scale(0.95);
-            transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
-                transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        .animar.visible {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-
-        /* =====================================
-           BOTÓN COMUNIDAD WHATSAPP - ESTILO ROJO
-           ===================================== */
-        .btn-comunidad {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 14px;
-            padding: 18px 42px;
-            background: #d32f2f;
-            color: #ffffff;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 1.15rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(211, 47, 47, 0.4);
-            border: 2px solid #d32f2f;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .btn-comunidad:hover {
-            transform: translateY(-4px) scale(1.03);
-            box-shadow: 0 10px 35px rgba(211, 47, 47, 0.6);
-            background: #b71c1c;
-            border-color: #b71c1c;
-            color: #ffffff;
-        }
-
-        .btn-comunidad:active {
-            transform: scale(0.97);
-        }
-
-        .btn-comunidad .whatsapp-icon-bg {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 44px;
-            height: 44px;
-            background: #ffffff;
-            border-radius: 50%;
-            color: #d32f2f;
-            font-size: 1.4rem;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .btn-comunidad:hover .whatsapp-icon-bg {
-            background: #ffffff;
-            transform: scale(1.08);
-            color: #b71c1c;
-        }
-
-        .btn-comunidad .whatsapp-text {
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            color: #ffffff;
-        }
-
-        @media (max-width: 700px) {
-            .btn-comunidad {
-                padding: 14px 28px;
-                font-size: 1rem;
-                gap: 10px;
-            }
-
-            .btn-comunidad .whatsapp-icon-bg {
-                width: 38px;
-                height: 38px;
-                font-size: 1.1rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .btn-comunidad {
-                padding: 12px 20px;
-                font-size: 0.9rem;
-                gap: 8px;
-            }
-
-            .btn-comunidad .whatsapp-icon-bg {
-                width: 32px;
-                height: 32px;
-                font-size: 0.95rem;
-            }
-        }
-
-        /* =====================================
-           SECCIÓN LANZAMIENTOS
-           ===================================== */
-        .lanzamientos-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 40px;
-            align-items: center;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .lanzamiento-principal {
-            width: 100%;
-            aspect-ratio: 16/9;
-            overflow: hidden;
-            border-radius: 25px;
-            background: #000;
-            box-shadow:
-                0 20px 50px rgba(0, 0, 0, 0.7),
-                0 0 0 2px rgba(255, 204, 0, 0.3);
-            transition: all 0.4s ease;
-            position: relative;
-        }
-
-        .lanzamiento-principal:hover {
-            transform: translateY(-6px);
-            box-shadow:
-                0 30px 70px rgba(0, 0, 0, 0.8),
-                0 0 0 3px rgba(255, 204, 0, 0.5);
-        }
-
-        .lanzamiento-principal iframe {
-            width: 100%;
-            height: 100%;
-            border: 0;
-            display: block;
-        }
-
-        .lanzamiento-principal .badge-lanzamiento {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: #ffcc00;
-            color: #000;
-            padding: 6px 18px;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            z-index: 2;
-        }
-
-        .lanzamiento-secundario {
-            width: 100%;
-            max-width: 750px;
-            aspect-ratio: 16/9;
-            overflow: hidden;
-            border-radius: 20px;
-            background: #000;
-            box-shadow:
-                0 15px 40px rgba(0, 0, 0, 0.6),
-                0 0 0 1px rgba(255, 255, 255, 0.08);
-            transition: all 0.4s ease;
-        }
-
-        .lanzamiento-secundario:hover {
-            transform: translateY(-4px);
-            box-shadow:
-                0 25px 55px rgba(0, 0, 0, 0.7),
-                0 0 0 2px rgba(255, 204, 0, 0.2);
-        }
-
-        .lanzamiento-secundario iframe {
-            width: 100%;
-            height: 100%;
-            border: 0;
-            display: block;
-        }
-
-        .lanzamiento-titulo {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 1rem;
-            color: #aaa;
-            letter-spacing: 0.5px;
-        }
-
-        .lanzamiento-titulo strong {
-            color: #ffcc00;
-            font-weight: 600;
-        }
-
-        @media (max-width: 700px) {
-            .lanzamiento-principal {
-                border-radius: 18px;
-            }
-
-            .lanzamiento-secundario {
-                border-radius: 18px;
-                max-width: 100%;
-            }
-
-            .lanzamiento-principal .badge-lanzamiento {
-                top: 12px;
-                right: 12px;
-                font-size: 0.65rem;
-                padding: 4px 14px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .lanzamientos-wrapper {
-                gap: 25px;
-            }
-        }
-
-        /* Ocultar elementos temporalmente */
-        .oculto {
-            display: none;
-        }
-
-        /* =====================================
-           TEXTO JUSTIFICADO EN LA SECCIÓN BANDA
-           ===================================== */
-        .texto-banda p {
-            text-align: justify;
-        }
-
-        /* =====================================
-           TIENDA - ESTILOS ADICIONALES
-           ===================================== */
-        .galeria-camisetas {
-            display: none;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 30px;
-            margin-top: 30px;
-        }
-
-        .galeria-camisetas.mostrar {
-            display: grid;
-        }
-
-        .camiseta {
-            background: #1a1a1a;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .camiseta:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-        }
-
-        .camiseta img {
-            width: 100%;
-            border-radius: 10px;
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
             cursor: pointer;
-            transition: transform 0.3s ease;
+            transition: var(--transition);
         }
 
-        .camiseta img:hover {
+        .producto-item .producto-thumb:hover {
             transform: scale(1.05);
+            border-color: var(--color-primary);
         }
 
-        .camiseta p {
-            font-size: 18px;
-            margin: 15px 0 5px;
-            color: #fff;
+        .producto-item .producto-info {
+            flex: 1;
+            min-width: 0;
         }
 
-        .camiseta .precio-tienda {
-            font-size: 20px;
-            font-weight: 700;
-            color: #ffcc00;
-            margin-bottom: 15px;
-        }
-
-        /* Botón de compra en camisetas - MISMO ESTILO QUE EL RESTO */
-        .camiseta .btn-whatsapp-compra {
-            display: inline-block;
-            padding: 10px 24px;
-            background: #25d366;
-            color: #fff;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .camiseta .btn-whatsapp-compra:hover {
-            transform: translateY(-3px) scale(1.03);
-            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
-            background: #1ed760;
-        }
-
-        .camiseta .btn-whatsapp-compra i {
-            margin-right: 8px;
-        }
-
-        .producto-principal {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .producto-principal img {
-            width: 100%;
-            max-width: 400px;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: .3s;
-        }
-
-        .producto-principal img:hover {
-            transform: scale(1.03);
-        }
-
-        .producto-principal h3 {
-            margin-top: 20px;
-            font-size: 25px;
-            color: #fff;
-        }
-
-        .producto-principal .precio-destacado {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 15px;
-            color: #ffcc00;
-        }
-
-        /* Botón de producto destacado - MISMO ESTILO QUE EL RESTO */
-        .producto-principal .btn-destacado {
-            display: inline-block;
-            width: auto;
-            padding: 12px 30px;
-            background: #ffcc00;
-            color: #000;
-            border-radius: 40px;
-            font-weight: 700;
+        .producto-item .producto-info .producto-nombre {
+            font-weight: 600;
             font-size: 1rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            font-family: 'Poppins', sans-serif;
+            margin-bottom: 2px;
         }
 
-        .producto-principal .btn-destacado:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(255, 204, 0, 0.3);
-            background: #e6b800;
+        .producto-item .producto-info .producto-meta {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
         }
 
-        .producto-principal .btn-destacado i {
-            margin-right: 8px;
+        .producto-item .producto-info .producto-desc {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-top: 2px;
         }
 
-        /* Botón "Ver todos" - MISMO ESTILO QUE EL RESTO */
-        .btn-ver-todos {
-            display: inline-block;
-            padding: 14px 40px;
-            background: #ffcc00;
-            color: #000;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 1.05rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            font-family: 'Poppins', sans-serif;
+        .producto-item .producto-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
         }
 
-        .btn-ver-todos:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(255, 204, 0, 0.3);
-            background: #e6b800;
-        }
-
-        .btn-ver-todos i {
-            margin-right: 8px;
-        }
-
-        .badge-destacado {
-            display: inline-block;
-            background: #ffcc00;
-            color: #000;
-            padding: 4px 16px;
-            border-radius: 20px;
+        .producto-item .producto-actions .btn-admin {
+            padding: 4px 12px;
             font-size: 0.7rem;
+        }
+
+        .producto-item .producto-precio {
             font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-size: 1.1rem;
+            color: var(--color-primary);
+            white-space: nowrap;
+            padding: 0 12px;
+        }
+
+        .producto-vacia {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--color-text-muted);
+        }
+
+        .producto-vacia i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.3;
+        }
+
+        .image-preview {
+            margin: 12px 0;
+            padding: 12px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            border: 1px dashed var(--color-border);
+            display: none;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .image-preview.show {
+            display: flex;
+        }
+
+        .image-preview img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .image-preview .image-info {
+            flex: 1;
+            font-size: 0.85rem;
+        }
+
+        .image-preview .image-info .filename {
+            color: var(--color-text);
+            font-weight: 500;
+        }
+
+        .image-preview .image-info .filesize {
+            color: var(--color-text-muted);
+            font-size: 0.75rem;
+        }
+
+        .image-preview .image-remove {
+            background: none;
+            border: none;
+            color: var(--color-danger);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 4px 8px;
+            transition: var(--transition);
+        }
+
+        .image-preview .image-remove:hover {
+            transform: scale(1.2);
+        }
+
+        .error-box {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--color-danger);
+            border: 1px solid var(--color-danger);
+            border-radius: var(--radius-sm);
+            background: rgba(211, 47, 47, 0.05);
+        }
+
+        .error-box i {
+            font-size: 2.5rem;
+            display: block;
             margin-bottom: 12px;
         }
 
-        @media (max-width: 600px) {
-            .galeria-camisetas {
-                grid-template-columns: 1fr 1fr;
-                gap: 15px;
-            }
-
-            .camiseta {
-                padding: 12px;
-            }
-
-            .camiseta p {
-                font-size: 14px;
-            }
-
-            .camiseta .precio-tienda {
-                font-size: 16px;
-            }
-
-            .camiseta .btn-whatsapp-compra {
-                font-size: 0.8rem;
-                padding: 8px 16px;
-            }
-
-            .producto-principal img {
-                max-width: 280px;
-            }
-
-            .producto-principal .btn-destacado {
-                font-size: 0.9rem;
-                padding: 10px 24px;
-            }
-
-            .btn-ver-todos {
-                font-size: 0.9rem;
-                padding: 12px 30px;
-            }
+        .recargar-btn {
+            margin-left: 8px;
+            background: var(--color-bg-hover);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+            border-radius: 50% !important;
+            width: 36px !important;
+            height: 36px !important;
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 0.9rem !important;
+            flex-shrink: 0 !important;
+            transition: all 0.3s ease !important;
         }
 
-        @media (max-width: 400px) {
-            .galeria-camisetas {
-                grid-template-columns: 1fr;
-            }
+        .recargar-btn:hover {
+            background: #2a2a2a;
+            transform: rotate(180deg);
         }
 
-        /* =====================================
-           VISOR DE IMÁGENES (TIENDA)
-           ===================================== */
-        .visor-tienda {
+        .card-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .form-help {
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+            margin-top: 4px;
+        }
+
+        /* ============================================================
+           CAMPO DESTACADO - TOGGLE
+           ============================================================ */
+        .destacado-toggle {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 18px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            border: 2px solid var(--color-border);
+            margin: 8px 0;
+            transition: var(--transition);
+        }
+
+        .destacado-toggle:hover {
+            border-color: rgba(255, 204, 0, 0.2);
+        }
+
+        .destacado-toggle label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--color-text);
+        }
+
+        .destacado-toggle label .fa-star {
+            color: var(--color-text-muted);
+            transition: var(--transition);
+        }
+
+        .destacado-toggle label .fa-star.active {
+            color: var(--color-primary);
+        }
+
+        .destacado-toggle input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--color-primary);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .destacado-toggle .destacado-info {
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+            margin-left: auto;
+        }
+
+        .destacado-toggle .destacado-info .badge-destacado {
+            background: var(--color-primary);
+            color: #000;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.65rem;
+        }
+
+        /* Badge en la lista */
+        .badge-destacado-list {
+            background: var(--color-primary);
+            color: #000;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .stock-select {
+            min-width: 150px;
+        }
+
+        /* ============================================================
+           PREVISUALIZACIÓN - MODAL
+           ============================================================ */
+        .preview-modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, .95);
+            inset: 0;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(8px);
+            z-index: 99999;
             justify-content: center;
             align-items: center;
-            z-index: 99999;
-            backdrop-filter: blur(8px);
             padding: 20px;
+            animation: fadePreview 0.3s ease;
         }
 
-        .visor-tienda.active {
+        .preview-modal.active {
             display: flex;
         }
 
-        .visor-tienda img {
-            max-width: 90%;
-            max-height: 85%;
-            border-radius: 15px;
-            animation: zoomEntradaTienda .35s ease;
-        }
-
-        @keyframes zoomEntradaTienda {
+        @keyframes fadePreview {
             from {
                 opacity: 0;
-                transform: scale(.85);
+                transform: scale(0.95);
             }
 
             to {
@@ -837,1211 +328,1019 @@
             }
         }
 
-        .visor-tienda .cerrar-visor-tienda {
+        .preview-modal .preview-content {
+            background: var(--color-bg-card);
+            border-radius: var(--radius-lg);
+            max-width: 550px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-card);
+            position: relative;
+        }
+
+        .preview-modal .preview-content .preview-close {
             position: absolute;
-            top: 25px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
+            top: 15px;
+            right: 20px;
+            background: none;
             border: none;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, .12);
-            color: white;
-            font-size: 2rem;
+            color: var(--color-text-muted);
+            font-size: 1.8rem;
             cursor: pointer;
-            transition: .3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            transition: var(--transition);
+            padding: 4px 8px;
         }
 
-        .visor-tienda .cerrar-visor-tienda:hover {
-            background: #ffcc00;
-            color: #000;
+        .preview-modal .preview-content .preview-close:hover {
+            color: var(--color-text);
+            transform: rotate(90deg);
         }
 
-        /* =====================================
-           INTEGRANTES
-           ===================================== */
-        .integrantes {
-            padding: 80px 8%;
-            background: #111;
+        .preview-modal .preview-content .preview-header {
             text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--color-border);
         }
 
-        .integrantes h2 {
-            font-size: 2.5rem;
-            margin-bottom: 50px;
-            color: #fff;
-        }
-
-        .grid-integrantes {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 30px;
-        }
-
-        .grid-integrantes img {
-            width: 100%;
-            height: 280px;
-            object-fit: cover;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: .6s ease;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, .45);
-            display: block;
-        }
-
-        .grid-integrantes img:hover {
-            box-shadow:
-                0 0 15px rgba(255, 204, 0, .8),
-                0 0 35px rgba(255, 204, 0, .5);
-        }
-
-        /* =====================================
-           CREDITO DISEÑADOR
-           ===================================== */
-        .credito-web {
-            margin-top: 15px;
-            font-size: .9rem;
-            color: #999;
-            letter-spacing: .5px;
-            text-align: center;
-        }
-
-        .credito-web a {
-            color: #ffcc00;
-            text-decoration: none;
-            font-weight: 600;
+        .preview-modal .preview-content .preview-header .preview-badge {
             display: inline-block;
-            transition:
-                color .3s ease,
-                transform .3s ease,
-                text-shadow .3s ease;
-        }
-
-        .credito-web a:hover {
-            color: #ffffff;
-            transform: translateY(-2px) scale(1.08);
-            text-shadow:
-                0 0 8px rgba(255, 204, 0, .8),
-                0 0 15px rgba(255, 204, 0, .5);
-        }
-
-        .credito-web a:active {
-            transform: scale(.95);
-        }
-
-        /* =====================================
-           CONTACTO
-           ===================================== */
-        #contacto {
-            background: #111;
-            padding: 80px 20px;
-        }
-
-        .redes {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 25px;
-            flex-wrap: wrap;
-        }
-
-        .redes a {
-            width: 65px;
-            height: 65px;
-            background: #ffcc00;
+            background: var(--color-primary);
             color: #000;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2rem;
-            transition: .3s;
-        }
-
-        .redes a:hover {
-            transform: scale(1.1);
-            background: white;
-        }
-
-        /* =====================================
-           EVENTOS - REGISTRO
-           ===================================== */
-        #eventos select,
-        #eventos input {
-            width: 100%;
-            padding: 14px;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 1rem;
-            margin-bottom: 12px;
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
-            transition: border 0.3s ease;
-        }
-
-        #eventos select:focus,
-        #eventos input:focus {
-            outline: none;
-            border-color: #ffcc00;
-        }
-
-        #eventos select option {
-            background: #1a1a1a;
-            color: #fff;
-        }
-
-        .mensaje-registro {
-            margin-top: 15px;
-            text-align: center;
-            display: none;
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
-            padding: 12px;
-            border-radius: 8px;
-        }
-
-        .mensaje-registro.success {
-            display: block;
-            color: #00c853;
-            background: rgba(0, 200, 83, 0.1);
-            border: 1px solid #00c853;
-        }
-
-        .mensaje-registro.error {
-            display: block;
-            color: #d32f2f;
-            background: rgba(211, 47, 47, 0.1);
-            border: 1px solid #d32f2f;
-        }
-
-        .mensaje-registro.info {
-            display: block;
-            color: #ffcc00;
-            background: rgba(255, 204, 0, 0.1);
-            border: 1px solid #ffcc00;
-        }
-
-        /* =====================================
-           EVENTOS - TARJETAS
-           ===================================== */
-        .card-evento {
-            max-width: 1200px;
-            margin: 0 auto 40px;
-            padding: 40px;
-            background: #1c1c1c;
+            padding: 3px 16px;
             border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 30px;
-            text-align: center;
-        }
-
-        .card-evento .imagen-evento {
-            max-width: 300px;
-            width: 100%;
-            margin: auto;
-            cursor: pointer;
-        }
-
-        .card-evento .imagen-evento img {
-            width: 100%;
-            border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, .6);
-        }
-
-        .card-evento .fecha {
-            width: 130px;
-            height: 130px;
-            background: #ffcc00;
-            color: #000;
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            flex-shrink: 0;
-        }
-
-        .card-evento .fecha h3 {
-            font-size: 4rem;
-            line-height: 1;
-            margin: 0;
-        }
-
-        .card-evento .fecha span {
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        .card-evento .info-evento h3 {
-            font-size: 1.5rem;
-            color: #fff;
-        }
-
-        .card-evento .info-evento p {
-            color: #ddd;
-        }
-
-        .card-evento .boton {
-            display: inline-block;
-            padding: 12px 30px;
-            border-radius: 40px;
+            font-size: 0.65rem;
             font-weight: 700;
-            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .preview-modal .preview-content .preview-header h3 {
+            font-size: 1.5rem;
+            color: var(--color-text);
+            margin-bottom: 4px;
+        }
+
+        .preview-modal .preview-content .preview-header .preview-precio {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--color-primary);
+        }
+
+        .preview-modal .preview-content .preview-image {
+            width: 100%;
+            max-height: 350px;
+            object-fit: contain;
+            border-radius: var(--radius-sm);
+            background: var(--color-bg);
+            margin: 12px 0;
+            border: 1px solid var(--color-border);
+        }
+
+        .preview-modal .preview-content .preview-desc {
+            color: var(--color-text-muted);
+            font-size: 0.95rem;
+            margin: 12px 0;
+            text-align: center;
+        }
+
+        .preview-modal .preview-content .preview-meta {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 12px 0;
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+        }
+
+        .preview-modal .preview-content .preview-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .preview-modal .preview-content .preview-whatsapp {
+            display: block;
+            text-align: center;
+            margin-top: 16px;
+            padding: 12px 24px;
+            background: #25d366;
+            color: #fff;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
             text-decoration: none;
-            transition: .3s;
+            transition: var(--transition);
         }
 
-        .card-evento .boton:hover {
-            transform: translateY(-3px);
+        .preview-modal .preview-content .preview-whatsapp:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.3);
         }
 
-        .card-evento .boton.principal {
-            background: #ffcc00;
-            color: #000;
+        .preview-modal .preview-content .preview-footer {
+            text-align: center;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--color-border);
+            color: var(--color-text-muted);
+            font-size: 0.7rem;
         }
 
-        .card-evento .boton.secundario {
-            border: 2px solid white;
-            color: white;
+        .btn-preview {
+            background: var(--color-info);
+            color: #fff;
+            border-color: var(--color-info);
         }
 
-        .card-evento .boton.secundario:hover {
-            background: white;
-            color: #000;
-        }
-
-        .card-evento .boton:not(:last-child) {
-            margin-right: 10px;
+        .btn-preview:hover {
+            background: #1565c0;
+            box-shadow: 0 8px 25px rgba(25, 118, 210, 0.3);
         }
 
         @media (max-width: 768px) {
-            .card-evento {
-                padding: 25px 20px;
+            .producto-item {
+                flex-direction: column;
+                align-items: stretch;
             }
 
-            .card-evento .fecha {
-                width: 100px;
-                height: 100px;
-            }
-
-            .card-evento .fecha h3 {
-                font-size: 3rem;
-            }
-
-            .card-evento .info-evento h3 {
-                font-size: 1.2rem;
-            }
-
-            .card-evento .boton {
+            .producto-item .producto-thumb {
                 width: 100%;
+                height: 150px;
+            }
+
+            .producto-item .producto-actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .producto-item .producto-precio {
+                text-align: center;
+                padding: 8px 0;
+            }
+
+            .image-preview {
+                flex-direction: column;
+                align-items: center;
                 text-align: center;
             }
 
-            .card-evento .boton:not(:last-child) {
-                margin-right: 0;
-                margin-bottom: 10px;
+            .image-preview img {
+                width: 120px;
+                height: 120px;
+            }
+
+            .destacado-toggle {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .destacado-toggle .destacado-info {
+                margin-left: 0;
+                margin-top: 6px;
+            }
+
+            .preview-modal .preview-content {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .preview-modal .preview-content .preview-header h3 {
+                font-size: 1.2rem;
+            }
+
+            .preview-modal .preview-content .preview-precio {
+                font-size: 1.4rem;
             }
         }
 
-        /* =====================================
-           BOTONES GENERALES - FIX
-           ===================================== */
-        .boton {
-            display: inline-block;
-            padding: 12px 30px;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 1rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-        }
+        @media (max-width: 480px) {
+            .producto-item {
+                padding: 12px !important;
+            }
 
-        .boton:hover {
-            transform: translateY(-3px);
-        }
+            .producto-item .producto-thumb {
+                height: 120px !important;
+            }
 
-        .boton.principal {
-            background: #ffcc00;
-            color: #000;
-        }
+            .producto-item .producto-actions .btn-admin {
+                padding: 4px 10px !important;
+                font-size: 0.65rem !important;
+            }
 
-        .boton.principal:hover {
-            background: #e6b800;
-            box-shadow: 0 8px 25px rgba(255, 204, 0, 0.3);
-        }
+            .image-preview img {
+                width: 100px !important;
+                height: 100px !important;
+            }
 
-        .boton.secundario {
-            border: 2px solid white;
-            color: white;
-            background: transparent;
-        }
-
-        .boton.secundario:hover {
-            background: white;
-            color: #000;
-        }
-
-        .hero-botones {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .hero-botones .boton {
-            width: 220px;
-            min-height: 56px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.1rem;
+            .preview-modal .preview-content {
+                padding: 16px;
+                margin: 6px;
+            }
         }
     </style>
-
 </head>
 
 <body>
 
-
-    <header class="hero" id="inicio">
-
-
-        <nav>
-
-
-            <a href="#inicio" class="logo">
-
-                <img src="img/logo.webp" alt="Los Hijos de Tencha">
-
-            </a>
-
-
-            <button id="menu-btn" class="menu-btn">
-                <img src="img/menu-icono.webp" alt="Menú">
-                <span>Menú</span>
-            </button>
-
-
-            <ul class="menu">
-
-                <li><span class="menu-activo">Inicio</span></li>
-
-                <li><a href="#banda">La Banda</a></li>
-
-                <li><a href="#eventos">Eventos</a></li>
-
-                <li><a href="galeria.html">Galería</a></li>
-
-                <li><a href="#musica">Lanzamientos</a></li>
-
-                <li><a href="canciones.html">Cancionero</a></li>
-
-                <li><a href="videoteca.html">Videos</a></li>
-
-                <li><a href="noticias.html">Tencha Noticias</a></li>
-
-                <li><a href="#integrantes">Integrantes</a></li>
-
-                <li><a href="#tienda">Tienda</a></li>
-
-                <li><a href="#contacto">Contacto</a></li>
-
-                <li><a href="admin/dashboard.html" style="color: #ffcc00; font-weight: 700;">⚙️ Admin</a></li>
-
-            </ul>
-
-
-        </nav>
-
-
-
-        <div class="hero-contenido">
-
-
-            <span class="hero-etiqueta">
-
-                Sitio Oficial
-
-            </span>
-
-
-            <h1>
-                ¡La Música se Vive!
-            </h1>
-
-
-            <p>
-                Cumbia, rock, reggae y ritmos latinoamericanos con la energía y el sabor de Costa Rica.
-            </p>
-
-
-
-            <div class="hero-botones">
-
-
-                <a href="#contacto" class="boton principal">
-
-                    Contrataciones
-
-                </a>
-
-
-                <a href="#eventos" class="boton secundario">
-
-                    Agenda
-
-                </a>
-
-
-            </div>
-
-
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-brand">
+            <img src="../img/logo.webp" alt="Los Hijos de Tencha">
+            <h2>Panel <span>Admin</span></h2>
         </div>
 
+        <ul class="sidebar-nav">
+            <li class="nav-label">Menú Principal</li>
+            <li><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+            <li><a href="eventos.html"><i class="fa-solid fa-calendar"></i> Eventos</a></li>
+            <li><a href="noticias.html"><i class="fa-solid fa-newspaper"></i> Noticias</a></li>
+            <li><a href="galeria.html"><i class="fa-solid fa-images"></i> Galería</a></li>
 
-    </header>
+            <li class="nav-divider"></li>
+            <li class="nav-label">Contenido</li>
+            <li><a href="canciones.html"><i class="fa-solid fa-music"></i> Canciones</a></li>
+            <li><a href="videos.html"><i class="fa-solid fa-video"></i> Videos</a></li>
+            <li><a href="tienda.html" class="active"><i class="fa-solid fa-shirt"></i> Tienda</a></li>
 
+            <li class="nav-divider"></li>
+            <li class="nav-label">Herramientas</li>
+            <li><a href="generador.html"><i class="fa-solid fa-wand-magic-sparkles"></i> Generador WhatsApp</a></li>
 
+            <li class="nav-divider"></li>
+            <li class="nav-label">Sistema</li>
+            <li><a href="asistentes.html"><i class="fa-solid fa-users"></i> Asistentes</a></li>
+            <li><a href="validador.html"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
+            <li><a href="#" onclick="cerrarSesionAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
+        </ul>
+    </aside>
 
+    <div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
 
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="admin-main">
 
-    <section id="banda" class="animar">
-
-
-        <div class="contenedor">
-
-
-            <div class="titulo-seccion">
-
-                <span>Conócenos</span>
-
-                <h2>Los Hijos de Tencha</h2>
-
+        <!-- HEADER -->
+        <header class="admin-header">
+            <div class="header-left">
+                <button class="hamburger" id="hamburgerBtn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h1><span>👕</span> Gestión de Tienda</h1>
             </div>
-
-
-
-            <div class="banda-grid">
-
-
-                <div class="texto-banda">
-
-                    <p>
-                        Los Hijos de Tencha somos una banda orgullosamente de Costa Rica que nació para armar la fiesta.
-                    </p>
-
-                    <p>
-                        Tomamos la cumbia latinoamericana, la revolvemos con reggae, rock, folclore y otros ritmos
-                        psicodélicos, y le metemos nuestro propio sazón para que el resultado sea pura gozadera.
-                    </p>
-
-                    <p>
-                        Nuestras canciones hablan de la vida del barrio, de los compas, de los personajes que todos
-                        conocemos y de esas historias que solo pasan en Costa Rica. Nos gusta ponerle humor, picardía y
-                        buena vibra a cada tema, porque la música también es para vacilar y olvidarse de las broncas por
-                        un rato.
-                    </p>
-
-                    <p>
-                        En tarima creemos en hacer un fiestón donde todo el mundo cante, baile y termine sudando la
-                        camiseta. Al final, esa es la esencia de Los Hijos de Tencha: hacer música con el corazón, con
-                        sabor a barrio y con una buena cumbia que ponga a brincar hasta al más serio.
-                    </p>
-
-
+            <div class="header-right">
+                <div class="user-badge">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Administrador
                 </div>
-
-
-            </div>
-
-
-        </div>
-
-
-        </div>
-
-
-    </section>
-
-
-    <section id="eventos" class="animar">
-
-        <div class="contenedor">
-
-            <div class="titulo-seccion">
-
-                <span>Agenda</span>
-
-                <h2>Eventos</h2>
-
-            </div>
-
-
-            <!-- =====================================
-     MACHOTE PRÓXIMO EVENTO
-     OCULTO HASTA TENER FECHA
-===================================== -->
-
-            <div class="card-evento evento-futuro oculto">
-
-
-                <div class="imagen-evento">
-
-                    <img src="img/eventos/evento.webp" alt="Próximo evento Los Hijos de Tencha">
-
-                </div>
-
-
-                <div class="fecha">
-
-                    <h3>00</h3>
-
-                    <span>Mes</span>
-
-                </div>
-
-
-                <div class="info-evento">
-
-                    <h3>Nombre del evento</h3>
-
-                    <p>
-                        📍 Lugar del evento
-                    </p>
-
-                    <p>
-                        🕗 Hora del evento
-                    </p>
-
-                </div>
-
-
-                <a href="#" class="boton principal">
-
-                    Reservar
-
+                <a href="../index.html#tienda" target="_blank" class="btn-header btn-secondary">
+                    <i class="fa-solid fa-globe"></i> Ver Tienda
                 </a>
-
-
+                <button class="btn-header btn-danger" onclick="cerrarSesionAdmin()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Salir
+                </button>
             </div>
+        </header>
 
-
-
-            <!-- =====================================
-     ÚLTIMO REPORTAJE
-===================================== -->
-
-
-            <div class="card-evento">
-
-
-                <div class="imagen-evento">
-
-                    <img src="img/noticias/chivo-24-julio.webp" alt="Reportaje lanzamiento Cumbia Salvaje">
-
-                </div>
-
-
-
-                <div class="fecha">
-
-                    <h3>24</h3>
-
-                    <span>Julio</span>
-
-                </div>
-
-
-
-                <div class="info-evento">
-
-
-                    <h3>Último concierto</h3>
-
-
-                    <p>
-                        🎸 Mira el reportaje del lanzamiento de
-                        <strong>Cumbia Salvaje</strong> en Bar Starview.
-                    </p>
-
-
-                    <p>
-                        🔥 Una noche llena de música, invitados y mucha cumbia.
-                    </p>
-
-
-                </div>
-
-
-                <a href="noticias.html#noticia-25-julio" class="boton principal">
-                    Ver reportaje
-                </a>
-
-                <a href="videoteca.html#momentos-tencha" class="boton secundario">
-
-                    Ver videos
-
-                </a>
-
-
-
-            </div>
-
-
-            <!-- =====================================
-         REGISTRO PARA EVENTOS - SISTEMA DE ENTRADAS
-    ===================================== -->
-            <div style="margin-top: 60px; border-top: 1px solid #333; padding-top: 50px;">
-                <div class="titulo-seccion">
-                    <span>Inscríbete</span>
-                    <h2>Regístrate para el próximo evento</h2>
-                    <p style="color: #aaa; max-width: 600px; margin: 10px auto 0;">
-                        Completa el formulario y recibirás tu entrada digital con código QR.
-                    </p>
-                </div>
-
-                <div style="max-width: 500px; margin: 0 auto;">
-                    <select id="selectEventoRegistro"
-                        style="width:100%; padding:14px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#fff; font-size:1rem; margin-bottom:12px; font-family:'Poppins',sans-serif;">
-                        <option value="">Cargando eventos...</option>
-                    </select>
-
-                    <input type="text" id="nombreRegistro" placeholder="Tu nombre completo"
-                        style="width:100%; padding:14px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#fff; font-size:1rem; margin-bottom:12px; font-family:'Poppins',sans-serif;">
-
-                    <input type="email" id="emailRegistro" placeholder="Tu correo electrónico"
-                        style="width:100%; padding:14px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#fff; font-size:1rem; margin-bottom:12px; font-family:'Poppins',sans-serif;">
-
-                    <button onclick="registrarAsistentePublico()"
-                        style="width:100%; padding:16px; background:#ffcc00; color:#000; border:none; border-radius:8px; font-size:1.1rem; font-weight:700; cursor:pointer; transition:.3s; font-family:'Poppins',sans-serif;">
-                        ✅ Registrarme
+        <!-- FORMULARIO -->
+        <div class="admin-card" id="formProducto">
+            <div class="card-header">
+                <h3 id="formTitle"><i class="fa-solid fa-plus-circle"></i> Agregar Producto</h3>
+                <div class="card-actions">
+                    <button class="btn-admin btn-secondary btn-sm" id="btnCancelar" style="display:none;"
+                        onclick="cancelarEdicion()">
+                        <i class="fa-solid fa-xmark"></i> Cancelar
                     </button>
-
-                    <div id="mensajeRegistro"
-                        style="margin-top:15px; text-align:center; display:none; font-family:'Poppins',sans-serif;">
-                    </div>
                 </div>
             </div>
 
-        </div>
+            <input type="hidden" id="productoId">
 
-    </section>
-
-
-    <!-- =====================================
-         SECCIÓN LANZAMIENTOS
-    ===================================== -->
-    <section id="musica" class="animar">
-
-        <div class="contenedor">
-
-            <div class="titulo-seccion">
-
-                <span>Últimos estrenos</span>
-
-                <h2>Nuevos Lanzamientos</h2>
-
+            <div class="admin-form-group">
+                <label for="productoNombre">Nombre del producto *</label>
+                <input type="text" id="productoNombre" class="admin-input" placeholder="Ej: Camiseta diseño 1" required>
             </div>
 
-            <div class="lanzamientos-wrapper">
+            <div class="admin-form-group">
+                <label for="productoDescripcion">Descripción (opcional)</label>
+                <input type="text" id="productoDescripcion" class="admin-input"
+                    placeholder="Ej: Camiseta oficial de Los Hijos de Tencha">
+            </div>
 
-                <!-- Lanzamiento Principal -->
-                <div class="lanzamiento-principal">
-                    <span class="badge-lanzamiento">🎵 Nuevo Álbum</span>
-                    <iframe
-                        src="https://www.youtube.com/embed/videoseries?list=OLAK5uy_nYf3WKfcoDAn9eH_UkjMJR3nxTpwsAvoA"
-                        title="Los Hijos de Tencha - Cumbia Salvaje" frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen>
-                    </iframe>
+            <div class="admin-form-group">
+                <label for="productoPrecio">Precio (en colones) *</label>
+                <input type="text" id="productoPrecio" class="admin-input" placeholder="Ej: 12000" required>
+                <div class="form-help">Solo números, sin puntos ni comas</div>
+            </div>
+
+            <div class="admin-form-group">
+                <label for="productoCategoria">Categoría (opcional)</label>
+                <input type="text" id="productoCategoria" class="admin-input"
+                    placeholder="Ej: Camisetas, Accesorios, Vinilos">
+            </div>
+
+            <div class="admin-form-group">
+                <label for="productoWhatsapp">Enlace de WhatsApp para comprar</label>
+                <input type="url" id="productoWhatsapp" class="admin-input"
+                    placeholder="Ej: https://wa.me/50688636047?text=Me%20interesa%20el%20producto">
+                <div class="form-help">El enlace que se abrirá cuando el usuario haga clic en "Comprar"</div>
+            </div>
+
+            <div class="admin-form-group">
+                <label>Imagen del producto</label>
+                <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                    <input type="file" id="productoImagen" accept="image/*"
+                        style="flex:1; padding:10px; background:var(--color-bg); border:1px solid var(--color-border); border-radius:var(--radius-sm); color:var(--color-text); font-family:var(--font);">
+                    <button class="btn-admin btn-secondary" onclick="document.getElementById('productoImagen').click()">
+                        <i class="fa-solid fa-folder-open"></i> Seleccionar
+                    </button>
                 </div>
-                <p class="lanzamiento-titulo">
-                    <strong>Cumbia Salvaje</strong> — Álbum completo disponible en YouTube
-                </p>
-
-                <!-- Lanzamiento Secundario -->
-                <div class="lanzamiento-secundario">
-                    <iframe src="https://www.youtube.com/embed/Ktf96bekedA"
-                        title="Los Hijos de Tencha - Nuevo lanzamiento" frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen>
-                    </iframe>
-                </div>
-                <p class="lanzamiento-titulo">
-                    <strong>El Vocho</strong> — Nuevo sencillo disponible en todas las plataformas
-                </p>
-
-            </div>
-
-        </div>
-
-    </section>
-
-    <!-- ==========================
-     INTEGRANTES
-=========================== -->
-
-    <section id="integrantes" class="integrantes animar">
-
-        <h2>Integrantes</h2>
-
-        <div class="grid-integrantes">
-
-            <img src="img/integrantes/integrante1.webp" alt="Integrante 1" class="zoom-integrante">
-
-            <img src="img/integrantes/integrante2.webp" alt="Integrante 2" class="zoom-integrante">
-
-            <img src="img/integrantes/integrante3.webp" alt="Integrante 3" class="zoom-integrante">
-
-            <img src="img/integrantes/integrante4.webp" alt="Integrante 4" class="zoom-integrante">
-
-            <img src="img/integrantes/integrante5.webp" alt="Integrante 5" class="zoom-integrante">
-
-
-        </div>
-
-    </section>
-
-    <!-- =====================================
-         TIENDA OFICIAL - DESDE FIREBASE
-    ===================================== -->
-    <section id="tienda" class="tienda animar">
-        <div class="contenedor">
-            <div class="titulo-seccion">
-                <span>Merchandising</span>
-                <h2>Tienda Oficial</h2>
-                <p style="color: #aaa; max-width: 600px; margin: 10px auto 0;">
-                    Apoya a la banda con nuestros productos oficiales.
-                </p>
-            </div>
-
-            <!-- Producto Destacado -->
-            <div id="productoDestacado" style="display: none;">
-                <div class="producto-principal" id="productoDestacadoContenido">
-                    <!-- Se llena desde Firebase -->
+                <div class="form-help">Formatos: JPG, PNG, WEBP. Máximo 5MB. Se subirá a Cloudinary automáticamente.
                 </div>
             </div>
 
-            <!-- Botón Ver Todos -->
-            <div style="text-align: center; margin: 30px 0 20px;">
-                <button class="btn-ver-todos" onclick="mostrarTodosProductos()" id="btnVerTodos" style="display: none;">
-                    <i class="fa-solid fa-grid-2"></i> Ver todos los productos
+            <div class="image-preview" id="imagePreview">
+                <img id="previewImg" src="" alt="Vista previa">
+                <div class="image-info">
+                    <div class="filename" id="previewNombre">imagen.webp</div>
+                    <div class="filesize" id="previewTamaño">0 KB</div>
+                </div>
+                <button class="image-remove" onclick="eliminarImagenSeleccionada()">
+                    <i class="fa-solid fa-trash-can"></i>
                 </button>
             </div>
 
-            <!-- Galería (oculta inicialmente) -->
-            <div id="galeria-productos" class="galeria-camisetas"></div>
-
-            <!-- Cargando -->
-            <div id="tiendaCargando" style="text-align: center; padding: 40px 20px; color: #666;">
-                <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; color: #ffcc00;"></i>
-                <p style="margin-top: 12px;">Cargando productos...</p>
+            <div id="imagenActualContainer" style="display:none; margin: 8px 0 16px;">
+                <span style="color:var(--color-text-muted); font-size:0.75rem;">Imagen actual:</span>
+                <span id="imagenActualNombre" style="font-size:0.8rem; color:var(--color-primary);"></span>
             </div>
 
-            <!-- Vacío -->
-            <div id="tiendaVacia" style="display: none; text-align: center; padding: 40px 20px; color: #666;">
-                <i class="fa-regular fa-box-open"
-                    style="font-size: 2.5rem; display: block; margin-bottom: 12px; opacity: 0.3;"></i>
-                <p>No hay productos disponibles en la tienda.</p>
-                <p style="font-size: 0.85rem; color: #555; margin-top: 8px;">Pronto tendremos nuevos productos.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="contacto">
-
-        <div class="contenedor">
-
-            <div class="titulo-seccion">
-
-                <span>Contáctanos</span>
-
-                <h2>Redes Sociales</h2>
-
+            <div class="admin-form-group">
+                <label for="productoOrden">Orden (opcional)</label>
+                <input type="number" id="productoOrden" class="admin-input" placeholder="Ej: 1, 2, 3..." min="0">
+                <div class="form-help">Define el orden en el que aparecerá en la tienda</div>
             </div>
 
-            <div class="redes">
-
-                <a href="https://wa.me/50688636047" target="_blank" onclick="gtag('event','click_whatsapp');">
-
-                    <i class="fa-brands fa-whatsapp"></i>
-
-                </a>
-
-                <a href="https://www.facebook.com/profile.php?id=100090956211932" target="_blank"
-                    onclick="gtag('event','click_facebook');">
-
-                    <i class="fa-brands fa-facebook-f"></i>
-
-                </a>
-
-                <a href="https://www.instagram.com/loshijosdetencha/" target="_blank"
-                    onclick="gtag('event','click_instagram');">
-
-                    <i class="fa-brands fa-instagram"></i>
-
-                </a>
-
-                <a href="mailto:loshijosdetencha@gmail.com" target="_blank" rel="noopener noreferrer"
-                    onclick="gtag('event','click_email');">
-
-                    <i class="fa-solid fa-envelope"></i>
-
-                </a>
-
+            <div class="admin-form-group">
+                <label for="productoStock">Stock</label>
+                <select id="productoStock" class="admin-select">
+                    <option value="disponible">✅ Disponible</option>
+                    <option value="agotado">❌ Agotado</option>
+                </select>
             </div>
 
-            <!-- =====================================
-         BOTÓN ÚNETE A NUESTRA COMUNIDAD - WHATSAPP
-    ===================================== -->
-            <div style="text-align: center; margin-top: 30px;">
-                <a href="https://chat.whatsapp.com/H2ry6GFbBDe8Q5UsNMcDdu?s=cl&p=i&ilr=2" target="_blank"
-                    onclick="gtag('event','click_comunidad_whatsapp');" class="btn-comunidad">
-                    <span class="whatsapp-icon-bg">
-                        <i class="fa-brands fa-whatsapp"></i>
-                    </span>
-                    <span class="whatsapp-text">Únete a nuestra comunidad</span>
-                </a>
-                <p style="color: #888; font-size: 0.85rem; margin-top: 10px; letter-spacing: 0.3px;">
-                    📱 Conéctate con otros fans en nuestro grupo de WhatsApp
-                </p>
+            <!-- CAMPO DESTACADO -->
+            <div class="destacado-toggle" id="destacadoToggle">
+                <label for="productoDestacado">
+                    <i class="fa-solid fa-star" id="destacadoIcon"></i>
+                    <span>Marcar como producto destacado</span>
+                </label>
+                <input type="checkbox" id="productoDestacado">
+                <span class="destacado-info">
+                    <span class="badge-destacado">⭐ DESTACADO</span>
+                    <span style="margin-left: 8px;">Solo un producto puede ser destacado</span>
+                </span>
             </div>
 
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <button class="btn-admin btn-primary btn-lg" id="btnGuardar" onclick="guardarProducto()">
+                    <i class="fa-solid fa-save"></i> <span id="btnGuardarTexto">Guardar Producto</span>
+                </button>
+                <button class="btn-admin btn-secondary" onclick="limpiarFormulario()">
+                    <i class="fa-solid fa-eraser"></i> Limpiar
+                </button>
+            </div>
+            <div id="mensajeProducto"
+                style="margin-top:12px; display:none; padding:12px; border-radius:var(--radius-sm);"></div>
         </div>
 
-    </section>
+        <!-- LISTA DE PRODUCTOS -->
+        <div class="admin-card">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-list"></i> Productos</h3>
+                <div class="card-actions">
+                    <span id="productosCount" style="font-size:0.75rem; color:var(--color-text-muted);"></span>
+                    <button class="btn-admin btn-secondary btn-sm recargar-btn" onclick="recargarTienda()"
+                        title="Recargar lista de productos">
+                        <i class="fa-solid fa-rotate"></i>
+                    </button>
+                </div>
+            </div>
 
+            <div id="listaProductos">
+                <div class="producto-vacia">
+                    <i class="fa-solid fa-box-open"></i>
+                    <p>Cargando productos...</p>
+                </div>
+            </div>
+        </div>
 
-    <footer>
+    </main>
 
-
-        <img src="img/logo.webp" alt="Los Hijos de Tencha">
-
-
-
-        <p>
-
-            Música, energía y sabor costarricense para compartir con todos.
-
-        </p>
-
-
-
-        <small>
-            © 2026 Los Hijos de Tencha. Todos los derechos reservados.
-        </small>
-
-        <p class="credito-web">
-            Diseñado por
-            <a href="https://www.instagram.com/tavo_musico" target="_blank" rel="noopener noreferrer"
-                onclick="gtag('event','click_tavo_musico');">
-                Tavo Músico
-            </a>
-        </p>
-
-
-
-    </footer>
-
-
-
-    <button id="subir">
-
-        <i class="fa-solid fa-arrow-up"></i>
-
-    </button>
-
-    <!-- Visor de imágenes (Tienda) -->
-    <div id="visor-tienda" class="visor-tienda">
-        <button class="cerrar-visor-tienda" onclick="cerrarVisorTienda()">&times;</button>
-        <img id="imagen-tienda-visor" src="" alt="Producto ampliado">
+    <!-- ============================================================
+    MODAL DE PREVISUALIZACIÓN
+    ============================================================ -->
+    <div class="preview-modal" id="previewModal">
+        <div class="preview-content">
+            <button class="preview-close" onclick="cerrarPreview()">&times;</button>
+            <div id="previewContenido">
+                <!-- Se llena dinámicamente -->
+            </div>
+        </div>
     </div>
 
-    <!-- Pantalla de transición -->
-    <div id="transicion">
-        <img src="img/transicion.gif" alt="Transición">
-    </div>
+    <!-- TOAST -->
+    <div id="adminToast" class="admin-toast"></div>
 
-    <!-- ============================================= -->
-    <!-- SCRIPTS                                     -->
-    <!-- ============================================= -->
-    <script src="js/script.js"></script>
-    <script src="js/eventos.js"></script>
+    <!-- ============================================================
+    SCRIPTS
+    ============================================================ -->
+    <script src="js/admin.js"></script>
 
-    <!-- ============================================= -->
-    <!-- SCRIPT PARA TIENDA DESDE FIREBASE             -->
-    <!-- ============================================= -->
     <script>
         // ============================================================
-        // TIENDA - CARGAR PRODUCTOS DESDE FIREBASE
+        // CONFIGURACIÓN DE CLOUDINARY
+        // ============================================================
+        const CLOUDINARY_CONFIG = {
+            cloudName: 'ldiiqgdp',
+            uploadPreset: 'tencha_uploads',
+            uploadUrl: 'https://api.cloudinary.com/v1_1/ldiiqgdp/image/upload'
+        };
+
+        // ============================================================
+        // VARIABLES GLOBALES
+        // ============================================================
+        let productos = [];
+        let editandoId = null;
+        let imagenSeleccionada = null;
+        let imagenUrlActual = null;
+
+        // ============================================================
+        // FUNCIÓN: RECARGAR TIENDA
+        // ============================================================
+        function recargarTienda() {
+            mostrarToast('🔄 Recargando tienda...', 'info');
+            cargarProductos().then(() => {
+                mostrarToast('✅ Tienda recargada', 'success');
+            }).catch(() => {
+                mostrarToast('❌ Error al recargar tienda', 'error');
+            });
+        }
+
+        // ============================================================
+        // FUNCIÓN: SUBIR IMAGEN A CLOUDINARY
+        // ============================================================
+        async function subirImagenCloudinary(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
+            formData.append('folder', 'tienda');
+
+            try {
+                const response = await fetch(CLOUDINARY_CONFIG.uploadUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('❌ Error Cloudinary:', errorData);
+                    throw new Error(errorData.error?.message || 'Error al subir a Cloudinary');
+                }
+
+                const data = await response.json();
+                console.log('✅ Imagen subida a Cloudinary:', data.secure_url);
+                return data.secure_url;
+            } catch (error) {
+                console.error('❌ Error en subirImagenCloudinary:', error);
+                throw error;
+            }
+        }
+
+        // ============================================================
+        // SIDEBAR
+        // ============================================================
+        const sidebar = document.getElementById('adminSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        if (hamburger) hamburger.addEventListener('click', toggleSidebar);
+        if (overlay) overlay.addEventListener('click', toggleSidebar);
+
+        document.querySelectorAll('.admin-sidebar .sidebar-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 992) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+
+        // ============================================================
+        // VERIFICAR SESIÓN
+        // ============================================================
+        (function () {
+            if (!verificarSesionAdmin()) {
+                window.location.href = 'login.html';
+            }
+        })();
+
+        // ============================================================
+        // FUNCIONES - MENSAJES
         // ============================================================
 
-        let todosLosProductos = [];
-        let todosVisibles = false;
+        function mostrarMensajeProducto(elemento, texto, tipo) {
+            if (!elemento) return;
+            elemento.style.display = 'block';
+            elemento.textContent = texto;
+            elemento.className = 'admin-form-group ' + tipo;
+
+            const colors = {
+                'success': 'var(--color-success)',
+                'error': 'var(--color-danger)',
+                'warning': 'var(--color-warning)',
+                'info': 'var(--color-primary)'
+            };
+
+            elemento.style.color = colors[tipo] || 'var(--color-text)';
+            elemento.style.border = '1px solid ' + (colors[tipo] || 'var(--color-border)');
+            elemento.style.background = 'var(--color-bg)';
+
+            if (tipo === 'success' || tipo === 'error' || tipo === 'warning') {
+                setTimeout(() => {
+                    elemento.style.display = 'none';
+                }, 6000);
+            }
+        }
 
         // ============================================================
-        // FUNCIÓN: CARGAR PRODUCTOS
+        // FUNCIONES CRUD
         // ============================================================
-        async function cargarProductosTienda() {
-            const contenedor = document.getElementById('galeria-productos');
-            const cargando = document.getElementById('tiendaCargando');
-            const vacia = document.getElementById('tiendaVacia');
-            const destacado = document.getElementById('productoDestacado');
-            const btnVerTodos = document.getElementById('btnVerTodos');
 
-            if (typeof db === 'undefined' || !db) {
-                console.warn('⚠️ Firestore no disponible');
-                cargando.style.display = 'none';
-                vacia.style.display = 'block';
-                vacia.innerHTML = `
-                    <i class="fa-solid fa-triangle-exclamation" style="font-size: 2.5rem; display: block; margin-bottom: 12px; color: #d32f2f;"></i>
-                    <p>⚠️ Error de conexión con la tienda</p>
-                    <button onclick="cargarProductosTienda()" style="margin-top:12px; padding:10px 24px; background:#ffcc00; color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif;">
-                        <i class="fa-solid fa-rotate"></i> Reintentar
-                    </button>
-                `;
+        async function guardarProducto() {
+            const id = document.getElementById('productoId').value;
+            const nombre = document.getElementById('productoNombre').value.trim();
+            const descripcion = document.getElementById('productoDescripcion').value.trim();
+            const precio = document.getElementById('productoPrecio').value.trim();
+            const categoria = document.getElementById('productoCategoria').value.trim();
+            const whatsapp = document.getElementById('productoWhatsapp').value.trim();
+            const orden = parseInt(document.getElementById('productoOrden').value) || 0;
+            const stock = document.getElementById('productoStock').value;
+            const destacado = document.getElementById('productoDestacado').checked;
+
+            const mensajeEl = document.getElementById('mensajeProducto');
+
+            if (!nombre) {
+                mostrarMensajeProducto(mensajeEl, '⚠️ Ingresa el nombre del producto', 'error');
+                document.getElementById('productoNombre').focus();
                 return;
             }
 
+            if (!precio || isNaN(parseInt(precio)) || parseInt(precio) <= 0) {
+                mostrarMensajeProducto(mensajeEl, '⚠️ Ingresa un precio válido (solo números)', 'error');
+                document.getElementById('productoPrecio').focus();
+                return;
+            }
+
+            if (!imagenUrlActual && !imagenSeleccionada && !id) {
+                mostrarMensajeProducto(mensajeEl, '⚠️ Selecciona una imagen para el producto', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('btnGuardar');
+            const btnText = document.getElementById('btnGuardarTexto');
+            btn.classList.add('loading');
+            btn.disabled = true;
+            btnText.textContent = id ? 'Actualizando...' : 'Guardando...';
+            mostrarMensajeProducto(mensajeEl, '⏳ Procesando...', 'info');
+
             try {
-                cargando.style.display = 'block';
-                vacia.style.display = 'none';
-                destacado.style.display = 'none';
-                btnVerTodos.style.display = 'none';
-                contenedor.innerHTML = '';
-                contenedor.classList.remove('mostrar');
-                todosVisibles = false;
+                let imagenUrl = imagenUrlActual;
 
-                const snapshot = await db.collection('productos')
-                    .orderBy('orden', 'asc')
-                    .get();
-
-                if (snapshot.empty) {
-                    cargando.style.display = 'none';
-                    vacia.style.display = 'block';
-                    return;
+                if (imagenSeleccionada) {
+                    try {
+                        console.log('📤 Subiendo imagen a Cloudinary:', imagenSeleccionada.name);
+                        imagenUrl = await subirImagenCloudinary(imagenSeleccionada);
+                        console.log('✅ Imagen subida a Cloudinary:', imagenUrl);
+                    } catch (uploadError) {
+                        console.error('❌ Error al subir imagen a Cloudinary:', uploadError);
+                        mostrarMensajeProducto(mensajeEl, '❌ Error al subir la imagen: ' + uploadError.message, 'error');
+                        btn.classList.remove('loading');
+                        btn.disabled = false;
+                        btnText.textContent = id ? 'Actualizar Producto' : 'Guardar Producto';
+                        return;
+                    }
                 }
 
-                todosLosProductos = [];
-                let productoDestacado = null;
+                if (id && !imagenSeleccionada && imagenUrlActual) {
+                    imagenUrl = imagenUrlActual;
+                }
 
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    if (data.stock === 'disponible' || !data.stock) {
-                        const producto = {
-                            id: doc.id,
-                            nombre: data.nombre || 'Producto',
-                            descripcion: data.descripcion || '',
-                            precio: data.precio || 0,
-                            categoria: data.categoria || 'General',
-                            whatsapp: data.whatsapp || '',
-                            imagen: data.imagen || '',
-                            orden: data.orden || 0,
-                            stock: data.stock || 'disponible',
-                            destacado: data.destacado || false
-                        };
-                        todosLosProductos.push(producto);
-                        if (producto.destacado) {
-                            productoDestacado = producto;
+                // Si este producto es destacado, quitar destacado de los demás
+                if (destacado) {
+                    const snapshot = await db.collection('productos').get();
+                    const batch = db.batch();
+                    snapshot.forEach(doc => {
+                        if (doc.id !== id) {
+                            batch.update(doc.ref, { destacado: false });
                         }
-                    }
+                    });
+                    await batch.commit();
+                }
+
+                const datos = {
+                    nombre,
+                    descripcion: descripcion || '',
+                    precio: parseInt(precio),
+                    categoria: categoria || 'General',
+                    whatsapp: whatsapp || '',
+                    imagen: imagenUrl || '',
+                    orden: orden,
+                    stock: stock,
+                    destacado: destacado,
+                    actualizadoEn: new Date().toISOString()
+                };
+
+                if (id) {
+                    await db.collection('productos').doc(id).update(datos);
+                    mostrarMensajeProducto(mensajeEl, '✅ Producto actualizado con éxito', 'success');
+                } else {
+                    datos.creadoEn = new Date().toISOString();
+                    await db.collection('productos').add(datos);
+                    mostrarMensajeProducto(mensajeEl, '✅ Producto guardado con éxito', 'success');
+                }
+
+                limpiarFormulario();
+                cargarProductos();
+
+            } catch (error) {
+                console.error('❌ Error al guardar producto:', error);
+                mostrarMensajeProducto(mensajeEl, '❌ Error: ' + error.message, 'error');
+            }
+
+            btn.classList.remove('loading');
+            btn.disabled = false;
+            btnText.textContent = id ? 'Actualizar Producto' : 'Guardar Producto';
+        }
+
+        async function cargarProductos() {
+            const container = document.getElementById('listaProductos');
+
+            try {
+                if (!db) {
+                    throw new Error('Firebase no disponible');
+                }
+
+                const snapshot = await db.collection('productos')
+                    .orderBy('creadoEn', 'desc')
+                    .get();
+
+                productos = [];
+                snapshot.forEach(doc => {
+                    productos.push({ id: doc.id, ...doc.data() });
                 });
 
-                todosLosProductos.sort((a, b) => {
+                productos.sort((a, b) => {
                     const ordenA = a.orden || 999;
                     const ordenB = b.orden || 999;
                     if (ordenA !== ordenB) return ordenA - ordenB;
-                    return a.nombre.localeCompare(b.nombre);
+                    const fechaA = a.creadoEn ? new Date(a.creadoEn) : new Date(0);
+                    const fechaB = b.creadoEn ? new Date(b.creadoEn) : new Date(0);
+                    return fechaB - fechaA;
                 });
 
-                cargando.style.display = 'none';
-
-                if (todosLosProductos.length === 0) {
-                    vacia.style.display = 'block';
-                    return;
-                }
-
-                // Si no hay producto destacado, usar el primero
-                if (!productoDestacado && todosLosProductos.length > 0) {
-                    productoDestacado = todosLosProductos[0];
-                }
-
-                // Mostrar producto destacado
-                if (productoDestacado) {
-                    mostrarProductoDestacado(productoDestacado);
-                }
-
-                // Mostrar botón "Ver todos" solo si hay más de 1 producto
-                if (todosLosProductos.length > 1) {
-                    btnVerTodos.style.display = 'inline-block';
-                }
-
-                console.log('✅ ' + todosLosProductos.length + ' productos cargados');
-                console.log('⭐ Producto destacado:', productoDestacado ? productoDestacado.nombre : 'Ninguno');
+                document.getElementById('productosCount').textContent = productos.length + ' productos';
+                renderizarProductos();
 
             } catch (error) {
-                console.error('❌ Error al cargar productos:', error);
-                cargando.style.display = 'none';
-                vacia.style.display = 'block';
-                vacia.innerHTML = `
-                    <i class="fa-solid fa-triangle-exclamation" style="font-size: 2.5rem; display: block; margin-bottom: 12px; color: #d32f2f;"></i>
-                    <p>❌ Error al cargar productos: ${error.message}</p>
-                    <button onclick="cargarProductosTienda()" style="margin-top:12px; padding:10px 24px; background:#ffcc00; color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif;">
-                        <i class="fa-solid fa-rotate"></i> Reintentar
-                    </button>
-                `;
+                console.error('Error al cargar productos:', error);
+                container.innerHTML = `
+                            <div class="error-box">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <p><strong>Error al cargar productos</strong></p>
+                                <p style="font-size:0.9rem; color:var(--color-text-muted);">${error.message}</p>
+                                <button class="btn-admin btn-primary" onclick="cargarProductos()" style="margin-top:12px;">
+                                    <i class="fa-solid fa-rotate"></i> Reintentar
+                                </button>
+                            </div>
+                        `;
             }
         }
 
-        // ============================================================
-        // FUNCIÓN: MOSTRAR PRODUCTO DESTACADO
-        // ============================================================
-        function mostrarProductoDestacado(producto) {
-            const contenedor = document.getElementById('productoDestacadoContenido');
-            const destacado = document.getElementById('productoDestacado');
+        function renderizarProductos() {
+            const container = document.getElementById('listaProductos');
 
-            if (!producto) {
-                destacado.style.display = 'none';
-                return;
-            }
-
-            const precioFormateado = '₡' + producto.precio.toLocaleString();
-            const imagen = producto.imagen || 'img/logo.webp';
-
-            contenedor.innerHTML = `
-                <span class="badge-destacado">⭐ Destacado</span>
-                <img src="${imagen}" alt="${producto.nombre}" onclick="abrirVisorTienda('${imagen}')" style="cursor: pointer;">
-                <h3>${producto.nombre}</h3>
-                <p class="precio-destacado">${precioFormateado}</p>
-                <p style="font-size: 0.85rem; color: #888; margin-top: -10px;">${producto.descripcion || ''}</p>
-                <a href="${producto.whatsapp || 'https://wa.me/50688636047?text=Hola,%20me%20interesa%20el%20producto'}" 
-                   target="_blank" 
-                   class="btn-destacado"
-                   onclick="gtag('event','comprar_destacado');">
-                    <i class="fa-brands fa-whatsapp"></i> Comprar por WhatsApp
-                </a>
-            `;
-
-            destacado.style.display = 'block';
-        }
-
-        // ============================================================
-        // FUNCIÓN: RENDERIZAR PRODUCTOS (SOLO PARA "VER TODOS")
-        // ============================================================
-        function renderizarProductos(productos) {
-            const contenedor = document.getElementById('galeria-productos');
-
-            if (!productos || productos.length === 0) {
-                contenedor.innerHTML = '';
+            if (productos.length === 0) {
+                container.innerHTML = `
+                            <div class="producto-vacia">
+                                <i class="fa-solid fa-box-open"></i>
+                                <p>No hay productos en la tienda. ¡Agrega el primero!</p>
+                            </div>
+                        `;
                 return;
             }
 
             let html = '';
-            // Filtrar el destacado para no mostrarlo en la galería
-            const productosNoDestacados = productos.filter(p => !p.destacado);
+            productos.forEach(producto => {
+                const stockText = producto.stock === 'disponible' ? '✅ Disponible' : '❌ Agotado';
+                const stockBadge = producto.stock === 'disponible' ? 'badge-success' : 'badge-danger';
+                const precioFormateado = '₡' + producto.precio.toLocaleString();
+                const destacadoBadge = producto.destacado ? '<span class="badge-destacado-list">⭐ Destacado</span>' : '';
+                const imagenUrl = producto.imagen && producto.imagen !== '' ? producto.imagen : '../img/logo.webp';
 
-            if (productosNoDestacados.length === 0) {
-                contenedor.innerHTML = `
-                    <div style="text-align: center; padding: 30px 20px; color: #666; grid-column: 1 / -1;">
-                        <i class="fa-regular fa-box-open" style="font-size: 2rem; display: block; margin-bottom: 10px;"></i>
-                        <p>No hay más productos disponibles.</p>
-                    </div>
-                `;
+                html += `
+                            <div class="producto-item">
+                                <img class="producto-thumb" src="${imagenUrl}" alt="${sanitizar(producto.nombre)}" onerror="this.src='../img/logo.webp'" onclick="previsualizarProducto('${producto.id}')" title="Click para previsualizar">
+                                <div class="producto-info">
+                                    <div class="producto-nombre">${sanitizar(producto.nombre)} ${destacadoBadge}</div>
+                                    <div class="producto-meta">
+                                        <span><i class="fa-regular fa-tag"></i> ${sanitizar(producto.categoria || 'General')}</span>
+                                        <span class="badge-admin ${stockBadge}">${stockText}</span>
+                                        ${producto.orden > 0 ? '<span><i class="fa-regular fa-hashtag"></i> #' + producto.orden + '</span>' : ''}
+                                    </div>
+                                    ${producto.descripcion ? '<div class="producto-desc">' + sanitizar(producto.descripcion) + '</div>' : ''}
+                                </div>
+                                <div class="producto-precio">${precioFormateado}</div>
+                                <div class="producto-actions">
+                                    <button class="btn-admin btn-info btn-sm btn-preview" onclick="previsualizarProducto('${producto.id}')" title="Previsualizar">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+                                    <button class="btn-admin btn-primary btn-sm" onclick="editarProducto('${producto.id}')">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <button class="btn-admin btn-danger btn-sm" onclick="eliminarProducto('${producto.id}')">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ============================================================
+        // FUNCIÓN: PREVISUALIZAR PRODUCTO
+        // ============================================================
+        function previsualizarProducto(id) {
+            const producto = productos.find(p => p.id === id);
+            if (!producto) {
+                mostrarToast('❌ Producto no encontrado', 'error');
                 return;
             }
 
-            productosNoDestacados.forEach(producto => {
-                const precioFormateado = '₡' + producto.precio.toLocaleString();
-                const imagen = producto.imagen || 'img/logo.webp';
+            const modal = document.getElementById('previewModal');
+            const container = document.getElementById('previewContenido');
 
-                html += `
-                    <div class="camiseta">
-                        <img src="${imagen}" alt="${producto.nombre}" onclick="abrirVisorTienda('${imagen}')" style="cursor: pointer;">
-                        <p>${producto.nombre}</p>
-                        <div class="precio-tienda">${precioFormateado}</div>
-                        <a href="${producto.whatsapp || 'https://wa.me/50688636047?text=Hola,%20me%20interesa%20el%20producto'}" 
-                           target="_blank" 
-                           class="btn-whatsapp-compra"
-                           onclick="gtag('event','comprar_${producto.id}');">
-                            <i class="fa-brands fa-whatsapp"></i> Comprar
-                        </a>
-                    </div>
-                `;
-            });
+            const precioFormateado = '₡' + producto.precio.toLocaleString();
+            const imagenUrl = producto.imagen && producto.imagen !== '' ? producto.imagen : '../img/logo.webp';
+            const stockText = producto.stock === 'disponible' ? '✅ Disponible' : '❌ Agotado';
+            const destacadoText = producto.destacado ? '⭐ Destacado' : '';
 
-            contenedor.innerHTML = html;
-            contenedor.classList.add('mostrar');
-        }
+            container.innerHTML = `
+                <div class="preview-header">
+                    ${destacadoText ? '<span class="preview-badge">⭐ DESTACADO</span>' : ''}
+                    <h3>${sanitizar(producto.nombre)}</h3>
+                    <div class="preview-precio">${precioFormateado}</div>
+                </div>
+                <img class="preview-image" src="${imagenUrl}" alt="${sanitizar(producto.nombre)}" onerror="this.src='../img/logo.webp'">
+                ${producto.descripcion ? '<div class="preview-desc">' + sanitizar(producto.descripcion) + '</div>' : ''}
+                <div class="preview-meta">
+                    <span><i class="fa-regular fa-tag"></i> ${sanitizar(producto.categoria || 'General')}</span>
+                    <span>${stockText}</span>
+                    ${producto.orden > 0 ? '<span><i class="fa-regular fa-hashtag"></i> #' + producto.orden + '</span>' : ''}
+                </div>
+                <a href="${producto.whatsapp || 'https://wa.me/50688636047?text=Hola,%20me%20interesa%20el%20producto'}" 
+                   target="_blank" 
+                   class="preview-whatsapp"
+                   onclick="gtag('event','preview_comprar_${producto.id}');">
+                    <i class="fa-brands fa-whatsapp"></i> Comprar por WhatsApp
+                </a>
+                <div class="preview-footer">
+                    <i class="fa-regular fa-clock"></i> Vista previa del producto — cómo se verá en la tienda
+                </div>
+            `;
 
-        // ============================================================
-        // FUNCIÓN: MOSTRAR TODOS LOS PRODUCTOS
-        // ============================================================
-        function mostrarTodosProductos() {
-            const contenedor = document.getElementById('galeria-productos');
-            const btnVerTodos = document.getElementById('btnVerTodos');
-
-            if (todosVisibles) {
-                contenedor.classList.remove('mostrar');
-                contenedor.innerHTML = '';
-                btnVerTodos.innerHTML = '<i class="fa-solid fa-grid-2"></i> Ver todos los productos';
-                todosVisibles = false;
-            } else {
-                renderizarProductos(todosLosProductos);
-                btnVerTodos.innerHTML = '<i class="fa-solid fa-xmark"></i> Ocultar productos';
-                todosVisibles = true;
-                document.getElementById('tienda').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        }
-
-        // ============================================================
-        // FUNCIÓN: VISOR DE IMÁGENES (TIENDA)
-        // ============================================================
-        function abrirVisorTienda(src) {
-            const visor = document.getElementById('visor-tienda');
-            const img = document.getElementById('imagen-tienda-visor');
-            img.src = src;
-            visor.classList.add('active');
+            modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
-        function cerrarVisorTienda() {
-            const visor = document.getElementById('visor-tienda');
-            visor.classList.remove('active');
+        function cerrarPreview() {
+            document.getElementById('previewModal').classList.remove('active');
             document.body.style.overflow = '';
         }
 
+        // Cerrar con Escape
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
-                cerrarVisorTienda();
+                cerrarPreview();
             }
         });
 
-        document.addEventListener('DOMContentLoaded', function () {
-            const visor = document.getElementById('visor-tienda');
-            if (visor) {
-                visor.addEventListener('click', function (e) {
-                    if (e.target === this) {
-                        cerrarVisorTienda();
-                    }
-                });
+        // Cerrar al hacer clic fuera
+        document.getElementById('previewModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                cerrarPreview();
             }
         });
 
         // ============================================================
-        // INICIALIZAR TIENDA AL CARGAR
+        // FUNCIONES CRUD (continuación)
+        // ============================================================
+
+        async function editarProducto(id) {
+            try {
+                const doc = await db.collection('productos').doc(id).get();
+                if (!doc.exists) {
+                    mostrarToast('❌ Producto no encontrado', 'error');
+                    return;
+                }
+
+                const data = doc.data();
+
+                editandoId = id;
+                document.getElementById('productoId').value = id;
+                document.getElementById('productoNombre').value = data.nombre || '';
+                document.getElementById('productoDescripcion').value = data.descripcion || '';
+                document.getElementById('productoPrecio').value = data.precio || '';
+                document.getElementById('productoCategoria').value = data.categoria || '';
+                document.getElementById('productoWhatsapp').value = data.whatsapp || '';
+                document.getElementById('productoOrden').value = data.orden || '';
+                document.getElementById('productoStock').value = data.stock || 'disponible';
+                document.getElementById('productoDestacado').checked = data.destacado || false;
+
+                const icon = document.getElementById('destacadoIcon');
+                if (data.destacado) {
+                    icon.classList.add('active');
+                } else {
+                    icon.classList.remove('active');
+                }
+
+                if (data.imagen) {
+                    imagenUrlActual = data.imagen;
+                    document.getElementById('imagenActualContainer').style.display = 'block';
+                    document.getElementById('imagenActualNombre').textContent = obtenerNombreArchivo(data.imagen);
+                } else {
+                    imagenUrlActual = null;
+                    document.getElementById('imagenActualContainer').style.display = 'none';
+                }
+
+                document.getElementById('imagePreview').classList.remove('show');
+                imagenSeleccionada = null;
+
+                document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Editar Producto';
+                document.getElementById('btnGuardarTexto').textContent = 'Actualizar Producto';
+                document.getElementById('btnCancelar').style.display = 'inline-flex';
+                document.getElementById('mensajeProducto').style.display = 'none';
+
+                document.getElementById('formProducto').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                mostrarToast('✏️ Editando: ' + data.nombre, 'info');
+
+            } catch (error) {
+                console.error('Error al editar:', error);
+                mostrarToast('❌ Error al cargar el producto', 'error');
+            }
+        }
+
+        async function eliminarProducto(id) {
+            const producto = productos.find(p => p.id === id);
+            if (!producto) return;
+
+            if (!confirm('¿Eliminar el producto "' + producto.nombre + '"?')) {
+                return;
+            }
+
+            try {
+                await db.collection('productos').doc(id).delete();
+                mostrarToast('✅ Producto eliminado de la tienda', 'success');
+                cargarProductos();
+
+                if (editandoId === id) {
+                    limpiarFormulario();
+                }
+
+            } catch (error) {
+                console.error('Error al eliminar:', error);
+                mostrarToast('❌ Error al eliminar el producto', 'error');
+            }
+        }
+
+        function limpiarFormulario() {
+            editandoId = null;
+            document.getElementById('productoId').value = '';
+            document.getElementById('productoNombre').value = '';
+            document.getElementById('productoDescripcion').value = '';
+            document.getElementById('productoPrecio').value = '';
+            document.getElementById('productoCategoria').value = '';
+            document.getElementById('productoWhatsapp').value = '';
+            document.getElementById('productoOrden').value = '';
+            document.getElementById('productoStock').value = 'disponible';
+            document.getElementById('productoDestacado').checked = false;
+
+            const icon = document.getElementById('destacadoIcon');
+            icon.classList.remove('active');
+
+            imagenUrlActual = null;
+            imagenSeleccionada = null;
+            document.getElementById('imagePreview').classList.remove('show');
+            document.getElementById('imagenActualContainer').style.display = 'none';
+            document.getElementById('productoImagen').value = '';
+            document.getElementById('mensajeProducto').style.display = 'none';
+
+            document.getElementById('formTitle').innerHTML = '<i class="fa-solid fa-plus-circle"></i> Agregar Producto';
+            document.getElementById('btnGuardarTexto').textContent = 'Guardar Producto';
+            document.getElementById('btnCancelar').style.display = 'none';
+        }
+
+        function cancelarEdicion() {
+            if (confirm('¿Cancelar la edición? Los cambios no guardados se perderán.')) {
+                limpiarFormulario();
+            }
+        }
+
+        // ============================================================
+        // MANEJO DE IMAGEN
+        // ============================================================
+
+        document.getElementById('productoImagen').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                mostrarToast('⚠️ Selecciona una imagen válida', 'warning');
+                this.value = '';
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                mostrarToast('⚠️ La imagen no debe superar los 5MB', 'warning');
+                this.value = '';
+                return;
+            }
+
+            imagenSeleccionada = file;
+
+            const preview = document.getElementById('imagePreview');
+            const img = document.getElementById('previewImg');
+            const nombre = document.getElementById('previewNombre');
+            const tamaño = document.getElementById('previewTamaño');
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+
+            nombre.textContent = file.name;
+            tamaño.textContent = (file.size / 1024).toFixed(1) + ' KB';
+            preview.classList.add('show');
+
+            document.getElementById('imagenActualContainer').style.display = 'none';
+            imagenUrlActual = null;
+        });
+
+        function eliminarImagenSeleccionada() {
+            imagenSeleccionada = null;
+            document.getElementById('imagePreview').classList.remove('show');
+            document.getElementById('productoImagen').value = '';
+        }
+
+        // ============================================================
+        // TOGGLE DESTACADO - ICONO ESTRELLA
+        // ============================================================
+        document.getElementById('productoDestacado').addEventListener('change', function () {
+            const icon = document.getElementById('destacadoIcon');
+            if (this.checked) {
+                icon.classList.add('active');
+            } else {
+                icon.classList.remove('active');
+            }
+        });
+
+        // ============================================================
+        // INICIALIZAR
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
-            setTimeout(cargarProductosTienda, 800);
-            console.log('🛒 Tienda desde Firebase cargando...');
+            cargarProductos();
+            console.log('🚀 Gestor de Tienda cargado con Cloudinary, Destacado y Previsualización');
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
+                e.preventDefault();
+                mostrarToast('⚠️ Usa el botón "Salir" para cerrar sesión', 'warning');
+                return false;
+            }
         });
     </script>
 
