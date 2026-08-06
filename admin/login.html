@@ -473,20 +473,11 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            const auth = sessionStorage.getItem('adminAuth');
-            const loginTime = sessionStorage.getItem('adminLoginTime');
+            // SIEMPRE FORZAR LOGIN - Borrar cualquier sesión existente
+            sessionStorage.removeItem('adminAuth');
+            sessionStorage.removeItem('adminLoginTime');
 
-            if (auth === 'authenticated' && loginTime) {
-                const timeElapsed = Date.now() - parseInt(loginTime);
-                if (timeElapsed < 14400000) {
-                    window.location.href = 'dashboard.html';
-                    return;
-                } else {
-                    sessionStorage.removeItem('adminAuth');
-                    sessionStorage.removeItem('adminLoginTime');
-                }
-            }
-
+            // Verificar si hay redirect (desde validador)
             const urlParams = new URLSearchParams(window.location.search);
             const redirect = urlParams.get('redirect');
             if (redirect) {
