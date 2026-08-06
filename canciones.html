@@ -39,6 +39,9 @@
     </script>
 
     <style>
+        /* =====================================
+           MENÚ CON SCROLL HORIZONTAL
+           ===================================== */
         .menu {
             display: flex;
             gap: 8px;
@@ -184,6 +187,9 @@
             }
         }
 
+        /* =====================================
+           ESTILOS DE CANCIONES
+           ===================================== */
         .cancion {
             max-width: 900px;
             margin: 0 auto 25px;
@@ -317,6 +323,13 @@
             color: #666;
         }
 
+        .cancion-vacia i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.3;
+        }
+
         @media (max-width: 600px) {
             .cancion summary {
                 font-size: 1.2rem;
@@ -401,6 +414,105 @@
             transform: translateY(-2px) scale(1.08);
             text-shadow: 0 0 8px rgba(255, 204, 0, .8), 0 0 15px rgba(255, 204, 0, .5);
         }
+
+        /* =====================================
+           BUSCADOR DE CANCIONES
+           ===================================== */
+        .buscador-canciones {
+            max-width: 600px;
+            margin: 0 auto 35px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .buscador-canciones input {
+            flex: 1;
+            min-width: 200px;
+            padding: 14px 20px;
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 30px;
+            color: #fff;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: border 0.3s ease;
+        }
+
+        .buscador-canciones input:focus {
+            outline: none;
+            border-color: #ffcc00;
+        }
+
+        .buscador-canciones input::placeholder {
+            color: #666;
+        }
+
+        .buscador-canciones .btn-buscar {
+            padding: 14px 28px;
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .buscador-canciones .btn-buscar:hover {
+            background: #e6b800;
+            transform: scale(1.03);
+        }
+
+        .buscador-canciones .btn-limpiar {
+            padding: 14px 20px;
+            background: transparent;
+            color: #666;
+            border: 2px solid #333;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .buscador-canciones .btn-limpiar:hover {
+            border-color: #666;
+            color: #fff;
+        }
+
+        .contador-canciones {
+            text-align: center;
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+        }
+
+        .contador-canciones span {
+            color: #ffcc00;
+            font-weight: 700;
+        }
+
+        @media (max-width: 600px) {
+            .buscador-canciones input {
+                min-width: 100%;
+                font-size: 0.9rem;
+                padding: 12px 16px;
+            }
+
+            .buscador-canciones .btn-buscar {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .buscador-canciones .btn-limpiar {
+                flex: 0;
+                padding: 12px 16px;
+            }
+        }
     </style>
 </head>
 
@@ -444,244 +556,29 @@
                 <h2>Letras de Nuestras Canciones</h2>
             </div>
 
-            <div class="lista-canciones" id="cancionero">
-
-                <!-- CANCION 1 - EXISTENTE -->
-                <details class="cancion">
-                    <summary>LA COLMENA</summary>
-                    <div class="contenido-cancion">
-                        <p class="escuchar-cancion">Escuchar canción</p>
-                        <div class="spotify">
-                            <iframe style="border-radius:12px"
-                                src="https://open.spotify.com/embed/track/2uS52IfYXQVSuTj3sSJyB6" width="100%"
-                                height="152" frameBorder="0" allowfullscreen=""
-                                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                loading="lazy"></iframe>
-                        </div>
-                        <div class="letra-cancion">
-                            Vuelvo a pasar por donde siempre asustan<br>
-                            Vuelvo a caerme y a levantar<br>
-                            Vuelvo a escuchar la voz que llevo adentro<br>
-                            Vuelvo a transformarme en un animal<br>
-                            <br>
-                            Y nunca sigo la corriente / siempre tengo que luchar<br>
-                            Y siempre vuelvo a mi colmena / donde me van a cuidar<br>
-                            El guaro agita las caderas / esta noche es pa' bailar<br>
-                            Y que se sientan los de Tencha / Los hijos te cantaran<br>
-                            <br>
-                            Y se también que este vaivén te cae muy bien<br>
-                            Al ritmo de esta noche te bailare<br>
-                            Enséname tus pasos prohibidos ven<br>
-                            La noche esta joven arráncate<br>
-                            Y no puedo decirte que pasara<br>
-                            Pero esta noche juro te comerá<br>
-                            Conmigo estoy seguro que acabarás<br>
-                            Al ritmo de esta cumbia me atraparas<br>
-                            <br>
-                            Y nunca sigo la corriente / siempre tengo que luchar<br>
-                            Y siempre vuelvo a mi colmena / donde me van a cuidar<br>
-                            El guaro agita las caderas / esta noche es pa' bailar<br>
-                            Y que se sientan los de Tencha / Los hijos te cantaran
-                        </div>
-                        <button class="volver-cancionero" onclick="cerrarTodas()">↑ Volver al cancionero</button>
-                    </div>
-                </details>
-
-                <!-- CANCION 2 - EXISTENTE -->
-                <details class="cancion">
-                    <summary>QUISIERA VOLVER</summary>
-                    <div class="contenido-cancion">
-                        <p class="escuchar-cancion">Escuchar canción</p>
-                        <div class="spotify">
-                            <iframe style="border-radius:12px"
-                                src="https://open.spotify.com/embed/track/6oQfeZsZz1J0y0KQh4G0j4" width="100%"
-                                height="152" frameBorder="0" allowfullscreen=""
-                                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                loading="lazy"></iframe>
-                        </div>
-                        <div class="letra-cancion">
-                            Esa mirada de niña idiota, esa locura que no se fue<br>
-                            La situación que un día dejamos sin saberlo bien<br>
-                            Aquel silencio que me engañaba, aquel murmullo que ya no está<br>
-                            Esa ilusión que nos deja ciegos quisiera volver, quisiera volver<br>
-                            <br>
-                            Quisiera volver a donde fui<br>
-                            Quisiera volver, pero volverme a venir<br>
-                            Quisiera entrar a donde entré una vez<br>
-                            Pero volverme a salir<br>
-                            <br>
-                            Esa mirada de gas nocivo, la valentía de un maricón<br>
-                            Te quiero muerto te quiero vivo y te digo adiós<br>
-                            <br>
-                            Y si al final ya no resucitan<br>
-                            Aquellas ganas de un mundo mejor<br>
-                            Me quedo muerto me quedo vivo<br>
-                            Y te digo adiós y te digo adiós<br>
-                            <br>
-                            Quisiera volver a donde fui<br>
-                            Quisiera volver, pero volverme a venir<br>
-                            Quisiera entrar a donde entré una vez<br>
-                            Pero volverme a salir
-                        </div>
-                        <button class="volver-cancionero" onclick="cerrarTodas()">↑ Volver al cancionero</button>
-                    </div>
-                </details>
-
-                <!-- CANCION 3 - EXISTENTE -->
-                <details class="cancion">
-                    <summary>LAPAS</summary>
-                    <div class="contenido-cancion">
-                        <p class="escuchar-cancion">Escuchar canción</p>
-                        <div class="spotify">
-                            <iframe style="border-radius:12px"
-                                src="https://open.spotify.com/embed/track/42B8kbGcGjYJ6Lmublu9bb" width="100%"
-                                height="152" frameBorder="0" allowfullscreen=""
-                                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                loading="lazy"></iframe>
-                        </div>
-                        <div class="letra-cancion">
-                            Somos historias, lágrimas y desafíos<br>
-                            Somos sueños humildes y perdidos<br>
-                            Aprendimos a sanarnos las heridas con cerveza<br>
-                            Una mente que hace que se vuele tu cabeza<br>
-                            <br>
-                            Cultivando la esperanza que tenemos<br>
-                            Unos viejillos sinceros<br>
-                            No somos famosos, pero somos de los buenos<br>
-                            Malditos viejos cumbiancheros<br>
-                            <br>
-                            Empezamos a ser libres y a mejorar<br>
-                            Cuando dejamos de esperar algo de los demás<br>
-                            El puño arriba y el grito fuerte<br>
-                            Que viva la música por siempre<br>
-                            <br>
-                            Y cuidadito ya estamos presentes<br>
-                            Acá llegó el más loco de este poco de dementes<br>
-                            Tercos como mula sin dientes, el cuero nos aguanta fuerte<br>
-                            <br>
-                            Avanzaremos como un huracán con rumbo<br>
-                            Que se extiende que se siente que te hace vibrar<br>
-                            La mala vibra no cabe no acá<br>
-                            Somos un cuento sin terminar<br>
-                            <br>
-                            Aprendimos a curarnos las heridas con cerveza<br>
-                            Una mente que hace que se cuele tu cabeza<br>
-                            Cultivando la esperanza que tenemos<br>
-                            Unos viejillos sinceros…<br>
-                            <br>
-                            Esto comienza sencillo como baba de chiquillo<br>
-                            Como darle a tus nalgas con chilillo<br>
-                            Contagioso, bondadoso en ese culo hermoso reposo<br>
-                            <br>
-                            Pa adelante constante<br>
-                            Camaleón cambiante, dominante<br>
-                            <br>
-                            Cada cual para su saco jala<br>
-                            Cada cual a su gallada ampara<br>
-                            <br>
-                            Estamos perdidos en el mismo norte<br>
-                            Somos parte del mismo corte<br>
-                            <br>
-                            Y me vale verga lo que piensen de mí<br>
-                            Me vale verga lo que hablen de mí<br>
-                            <br>
-                            Yo soy el mismo sencillo bolsillo, corrido<br>
-                            Calabaza cada quien para su casa<br>
-                            <br>
-                            Los perros ladran porque uno avanza<br>
-                            <br>
-                            ¿Lapa roja, lapa verde, lapa qué?<br>
-                            <br>
-                            La panocha<br>
-                            <br>
-                            Más corriente que un eructo de salchichón<br>
-                            Pa' que me invitan si saben cómo soy huevón<br>
-                            <br>
-                            Cada cual para su saco jala<br>
-                            Cada cual a su gallada ampara<br>
-                            <br>
-                            Estamos perdidos en el mismo norte<br>
-                            Somos parte del mismo corte<br>
-                            <br>
-                            Me vale verga lo que piensen de mí<br>
-                            Me vale verga lo que hablen de mí<br>
-                            <br>
-                            Yo soy el mismo sencillo bolsillo, corrido<br>
-                            <br>
-                            Calabaza cada quien para su casa<br>
-                            <br>
-                            Los perros ladran porque uno avanza<br>
-                            <br>
-                            ¿Lapa roja, lapa verde, lapa qué?<br>
-                            <br>
-                            La panocha
-                        </div>
-                        <button class="volver-cancionero" onclick="cerrarTodas()">↑ Volver al cancionero</button>
-                    </div>
-                </details>
-
-                <!-- CANCION 4 - EXISTENTE -->
-                <details class="cancion">
-                    <summary>LA CUMBIA DEL DIABLO</summary>
-                    <div class="contenido-cancion">
-                        <p class="escuchar-cancion">Escuchar canción</p>
-                        <div class="spotify">
-                            <iframe style="border-radius:12px"
-                                src="https://open.spotify.com/embed/track/7k9m5C75TJPzk24FTtBHUo" width="100%"
-                                height="152" frameBorder="0" allowfullscreen=""
-                                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                loading="lazy"></iframe>
-                        </div>
-                        <div class="letra-cancion">
-                            Ya se escuchan sus pasos<br>
-                            El chilillo está caliente<br>
-                            El toro ya llegó<br>
-                            <br>
-                            El baile de los diablitos arrancó<br>
-                            <br>
-                            Atrápalo que se come tu alma<br>
-                            Mátalo que se come tu calma<br>
-                            <br>
-                            Somos aquellos sentenciados, olvidados, masacrados y perdidos al olvido<br>
-                            <br>
-                            Llenos de nada, rabia y convicción<br>
-                            <br>
-                            La cumbia del diablo, la cumbia del diablo<br>
-                            <br>
-                            Mamá alcánzame la lanza<br>
-                            Que hoy la máscara se ensangra<br>
-                            <br>
-                            Las Biritecas llamaron a formación<br>
-                            <br>
-                            Hoy cae el palenque de los malditos<br>
-                            <br>
-                            Y bailaremos en los cuernos del animal<br>
-                            <br>
-                            La cumbia del diablo, la cumbia del diablo<br>
-                            <br>
-                            Dame la chicha que me hierven las manos<br>
-                            Que nuestros sueños han sido masacrados<br>
-                            El baile de los diablitos arrancó<br>
-                            <br>
-                            Dame la chicha que me hierven las manos<br>
-                            Que nuestros sueños han sido masacrados<br>
-                            El juego de los diablitos comenzó<br>
-                            <br>
-                            La cumbia del diablo, la cumbia del diablo<br>
-                            <br>
-                            No hubo héroes solo asesinos<br>
-                            No hubo héroes solo asesinos<br>
-                            No hubo héroes solo asesinos<br>
-                            No hubo héroes solo bandidos
-                        </div>
-                        <button class="volver-cancionero" onclick="cerrarTodas()">↑ Volver al cancionero</button>
-                    </div>
-                </details>
-
-                <!-- CANCIONES DESDE FIREBASE -->
-                <div id="cancionesFirebaseContainer"></div>
-
+            <!-- BUSCADOR -->
+            <div class="buscador-canciones">
+                <input type="text" id="buscadorInput" placeholder="🔍 Buscar canción por título, álbum o género...">
+                <button class="btn-buscar" onclick="buscarCanciones()">
+                    <i class="fa-solid fa-search"></i> Buscar
+                </button>
+                <button class="btn-limpiar" onclick="limpiarBusqueda()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
             </div>
+
+            <div class="contador-canciones">
+                Mostrando <span id="cancionesMostradas">0</span> de <span id="cancionesTotales">0</span> canciones
+            </div>
+
+            <div class="lista-canciones" id="cancionero">
+                <!-- Las canciones se cargan desde Firebase -->
+                <div class="cancion-vacia">
+                    <i class="fa-solid fa-spinner fa-spin" style="color:#ffcc00;"></i>
+                    <p>Cargando canciones...</p>
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -714,8 +611,29 @@
             appId: "1:273676503007:web:56180c485b648ef076a66a"
         };
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+            console.log('✅ Firebase inicializado en canciones');
+        }
+
+        let dbCanciones = null;
+        try {
+            if (typeof db !== 'undefined') {
+                dbCanciones = db;
+                console.log('✅ Usando db desde script.js');
+            } else if (typeof firebase !== 'undefined') {
+                dbCanciones = firebase.firestore();
+                console.log('✅ Firestore inicializado localmente');
+            }
+        } catch (e) {
+            console.warn('⚠️ Error al conectar con Firestore:', e);
+        }
+
+        // ============================================================
+        // VARIABLES GLOBALES
+        // ============================================================
+        let todasLasCanciones = [];
+        let cancionesFiltradas = [];
 
         // ============================================================
         // FUNCIÓN: EXTRAER ID DE SPOTIFY
@@ -730,98 +648,260 @@
         }
 
         // ============================================================
-        // CARGAR CANCIONES DESDE FIREBASE
+        // FUNCIÓN: FORMATEAR FECHA
+        // ============================================================
+        function formatearFecha(fechaStr) {
+            if (!fechaStr) return '';
+            try {
+                const d = new Date(fechaStr + 'T00:00:00');
+                if (isNaN(d.getTime())) return fechaStr;
+                const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                ];
+                return d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear();
+            } catch (e) {
+                return fechaStr;
+            }
+        }
+
+        // ============================================================
+        // FUNCIÓN: SANITIZAR TEXTO
+        // ============================================================
+        function sanitizar(texto) {
+            if (!texto) return '';
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return texto.replace(/[&<>"']/g, function (m) { return map[m]; });
+        }
+
+        // ============================================================
+        // FUNCIÓN: CARGAR CANCIONES DESDE FIREBASE
         // ============================================================
         async function cargarCancionesFirebase() {
-            const container = document.getElementById('cancionesFirebaseContainer');
+            const container = document.getElementById('cancionero');
+
+            if (!dbCanciones) {
+                container.innerHTML = `
+                    <div class="cancion-vacia">
+                        <i class="fa-solid fa-triangle-exclamation" style="color:#d32f2f;"></i>
+                        <p>⚠️ No se pudo conectar a la base de datos</p>
+                        <button onclick="cargarCancionesFirebase()" style="margin-top:12px; padding:10px 24px; background:#ffcc00; color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif;">
+                            <i class="fa-solid fa-rotate"></i> Reintentar
+                        </button>
+                    </div>
+                `;
+                return;
+            }
 
             try {
-                const snapshot = await db.collection('canciones')
+                container.innerHTML = `
+                    <div class="cancion-vacia">
+                        <i class="fa-solid fa-spinner fa-spin" style="color:#ffcc00;"></i>
+                        <p>Cargando canciones...</p>
+                    </div>
+                `;
+
+                const snapshot = await dbCanciones.collection('canciones')
                     .orderBy('orden', 'asc')
                     .get();
 
                 if (snapshot.empty) {
-                    container.innerHTML = '';
+                    container.innerHTML = `
+                        <div class="cancion-vacia">
+                            <i class="fa-regular fa-music"></i>
+                            <p>🎵 No hay canciones en el cancionero aún.</p>
+                            <p style="font-size:0.85rem; color:#555; margin-top:8px;">Pronto agregaremos nuevas canciones.</p>
+                        </div>
+                    `;
+                    document.getElementById('cancionesTotales').textContent = '0';
+                    document.getElementById('cancionesMostradas').textContent = '0';
                     return;
                 }
 
-                let canciones = [];
+                todasLasCanciones = [];
                 snapshot.forEach(doc => {
-                    canciones.push({ id: doc.id, ...doc.data() });
+                    const data = doc.data();
+                    todasLasCanciones.push({
+                        id: doc.id,
+                        titulo: data.titulo || 'Sin título',
+                        album: data.album || '',
+                        genero: data.genero || '',
+                        anio: data.anio || '',
+                        spotify: data.spotify || '',
+                        youtube: data.youtube || '',
+                        letra: data.letra || 'Letra no disponible.',
+                        orden: data.orden || 0,
+                        creadoEn: data.creadoEn || null
+                    });
                 });
 
-                canciones.sort((a, b) => {
+                // Ordenar por orden (si no hay orden, por título)
+                todasLasCanciones.sort((a, b) => {
                     const ordenA = a.orden || 999;
                     const ordenB = b.orden || 999;
                     if (ordenA !== ordenB) return ordenA - ordenB;
-                    return (a.titulo || '').localeCompare(b.titulo || '');
+                    return a.titulo.localeCompare(b.titulo);
                 });
 
-                let html = '';
-                canciones.forEach(cancion => {
-                    const titulo = cancion.titulo || 'Sin título';
-                    const letra = cancion.letra || 'Letra no disponible.';
-                    const spotifyUrl = cancion.spotify || '';
-                    const spotifyId = extraerIdSpotify(spotifyUrl);
-                    const spotifyEmbed = spotifyId ? `https://open.spotify.com/embed/track/${spotifyId}` : '';
+                console.log('✅ ' + todasLasCanciones.length + ' canciones cargadas desde Firebase');
 
-                    const album = cancion.album ? cancion.album : '';
-                    const genero = cancion.genero ? cancion.genero : '';
-                    const anio = cancion.anio ? cancion.anio : '';
+                cancionesFiltradas = [...todasLasCanciones];
+                document.getElementById('cancionesTotales').textContent = todasLasCanciones.length;
+                document.getElementById('cancionesMostradas').textContent = todasLasCanciones.length;
 
-                    let metaHTML = '';
-                    if (album || genero || anio) {
-                        metaHTML = `
-                                    <div style="text-align:center; color:#888; font-size:0.85rem; margin-bottom:15px;">
-                                        ${album ? `<span><i class="fa-regular fa-cd"></i> ${album}</span>` : ''}
-                                        ${genero ? `<span style="margin-left:12px;"><i class="fa-regular fa-tag"></i> ${genero}</span>` : ''}
-                                        ${anio ? `<span style="margin-left:12px;"><i class="fa-regular fa-calendar"></i> ${anio}</span>` : ''}
-                                        <span class="badge-firebase">📌 Admin</span>
-                                    </div>
-                                `;
-                    }
-
-                    let spotifyHTML = '';
-                    if (spotifyEmbed) {
-                        spotifyHTML = `
-                                    <div class="spotify">
-                                        <iframe src="${spotifyEmbed}" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                                    </div>
-                                `;
-                    } else {
-                        spotifyHTML = `
-                                    <p style="text-align:center; color:#666; margin:15px 0;">
-                                        <i class="fa-regular fa-circle-play"></i> No disponible en Spotify
-                                    </p>
-                                `;
-                    }
-
-                    html += `
-                                <details class="cancion cancion-firebase">
-                                    <summary>${titulo}</summary>
-                                    <div class="contenido-cancion">
-                                        <p class="escuchar-cancion">🎵 Escuchar canción</p>
-                                        ${metaHTML}
-                                        ${spotifyHTML}
-                                        <div class="letra-cancion">${letra}</div>
-                                        <button class="volver-cancionero" onclick="cerrarTodas()">↑ Volver al cancionero</button>
-                                    </div>
-                                </details>
-                            `;
-                });
-
-                container.innerHTML = html;
-
-                document.querySelectorAll('#cancionesFirebaseContainer .cancion').forEach((el, i) => {
-                    setTimeout(() => {
-                        el.classList.add('visible');
-                    }, 100 + (i * 80));
-                });
+                renderizarCanciones(cancionesFiltradas);
 
             } catch (error) {
-                console.error('Error al cargar canciones de Firebase:', error);
-                container.innerHTML = '';
+                console.error('❌ Error al cargar canciones:', error);
+                container.innerHTML = `
+                    <div class="cancion-vacia">
+                        <i class="fa-solid fa-triangle-exclamation" style="color:#d32f2f;"></i>
+                        <p>❌ Error al cargar canciones: ${error.message}</p>
+                        <button onclick="cargarCancionesFirebase()" style="margin-top:12px; padding:10px 24px; background:#ffcc00; color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif;">
+                            <i class="fa-solid fa-rotate"></i> Reintentar
+                        </button>
+                    </div>
+                `;
             }
+        }
+
+        // ============================================================
+        // FUNCIÓN: RENDERIZAR CANCIONES
+        // ============================================================
+        function renderizarCanciones(canciones) {
+            const container = document.getElementById('cancionero');
+
+            if (!canciones || canciones.length === 0) {
+                container.innerHTML = `
+                    <div class="cancion-vacia">
+                        <i class="fa-regular fa-music"></i>
+                        <p>🎵 No se encontraron canciones que coincidan con tu búsqueda.</p>
+                        <button onclick="limpiarBusqueda()" style="margin-top:12px; padding:10px 24px; background:#ffcc00; color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif;">
+                            <i class="fa-solid fa-arrow-left"></i> Ver todas las canciones
+                        </button>
+                    </div>
+                `;
+                document.getElementById('cancionesMostradas').textContent = '0';
+                return;
+            }
+
+            document.getElementById('cancionesMostradas').textContent = canciones.length;
+
+            let html = '';
+
+            canciones.forEach((cancion, index) => {
+                const spotifyId = extraerIdSpotify(cancion.spotify);
+                const spotifyEmbed = spotifyId ? `https://open.spotify.com/embed/track/${spotifyId}` : '';
+                const tieneSpotify = !!spotifyEmbed;
+
+                let metaHTML = '';
+                if (cancion.album || cancion.genero || cancion.anio) {
+                    metaHTML = `
+                        <div style="text-align:center; color:#888; font-size:0.85rem; margin-bottom:15px;">
+                            ${cancion.album ? `<span><i class="fa-regular fa-cd"></i> ${sanitizar(cancion.album)}</span>` : ''}
+                            ${cancion.genero ? `<span style="margin-left:12px;"><i class="fa-regular fa-tag"></i> ${sanitizar(cancion.genero)}</span>` : ''}
+                            ${cancion.anio ? `<span style="margin-left:12px;"><i class="fa-regular fa-calendar"></i> ${cancion.anio}</span>` : ''}
+                            <span class="badge-firebase">📌 Cancionero</span>
+                        </div>
+                    `;
+                }
+
+                let spotifyHTML = '';
+                if (tieneSpotify) {
+                    spotifyHTML = `
+                        <div class="spotify">
+                            <iframe src="${spotifyEmbed}" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        </div>
+                    `;
+                } else {
+                    spotifyHTML = `
+                        <p style="text-align:center; color:#666; margin:15px 0;">
+                            <i class="fa-regular fa-circle-play"></i> No disponible en Spotify
+                        </p>
+                    `;
+                }
+
+                // Animación escalonada
+                const delay = index * 60;
+
+                html += `
+                    <details class="cancion cancion-firebase" style="animation-delay: ${delay}ms;">
+                        <summary>${sanitizar(cancion.titulo)}</summary>
+                        <div class="contenido-cancion">
+                            <p class="escuchar-cancion">🎵 Escuchar canción</p>
+                            ${metaHTML}
+                            ${spotifyHTML}
+                            <div class="letra-cancion">${cancion.letra}</div>
+                            <button class="volver-cancionero" onclick="cerrarTodas()">↑ Volver al cancionero</button>
+                        </div>
+                    </details>
+                `;
+            });
+
+            container.innerHTML = html;
+
+            // Aplicar animación visible
+            document.querySelectorAll('.cancion').forEach((el, i) => {
+                setTimeout(() => {
+                    el.classList.add('visible');
+                }, 100 + (i * 60));
+            });
+        }
+
+        // ============================================================
+        // FUNCIÓN: BUSCAR CANCIONES
+        // ============================================================
+        function buscarCanciones() {
+            const input = document.getElementById('buscadorInput');
+            const termino = input.value.toLowerCase().trim();
+
+            if (!termino) {
+                cancionesFiltradas = [...todasLasCanciones];
+                renderizarCanciones(cancionesFiltradas);
+                document.getElementById('cancionesMostradas').textContent = cancionesFiltradas.length;
+                return;
+            }
+
+            const resultados = todasLasCanciones.filter(cancion => {
+                const titulo = (cancion.titulo || '').toLowerCase();
+                const album = (cancion.album || '').toLowerCase();
+                const genero = (cancion.genero || '').toLowerCase();
+                const letra = (cancion.letra || '').toLowerCase();
+
+                return titulo.includes(termino) ||
+                    album.includes(termino) ||
+                    genero.includes(termino) ||
+                    letra.includes(termino);
+            });
+
+            cancionesFiltradas = resultados;
+            renderizarCanciones(resultados);
+            document.getElementById('cancionesMostradas').textContent = resultados.length;
+
+            if (resultados.length > 0) {
+                // Scroll al primer resultado
+                const primerResultado = document.querySelector('.cancion');
+                if (primerResultado) {
+                    setTimeout(() => {
+                        primerResultado.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 300);
+                }
+            }
+        }
+
+        // ============================================================
+        // FUNCIÓN: LIMPIAR BÚSQUEDA
+        // ============================================================
+        function limpiarBusqueda() {
+            document.getElementById('buscadorInput').value = '';
+            cancionesFiltradas = [...todasLasCanciones];
+            renderizarCanciones(cancionesFiltradas);
+            document.getElementById('cancionesMostradas').textContent = cancionesFiltradas.length;
         }
 
         // ============================================================
@@ -835,11 +915,26 @@
         }
 
         // ============================================================
+        // FUNCIÓN: BUSCAR CON ENTER
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function () {
+            const input = document.getElementById('buscadorInput');
+            if (input) {
+                input.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        buscarCanciones();
+                    }
+                });
+            }
+        });
+
+        // ============================================================
         // INICIALIZAR
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
             cargarCancionesFirebase();
-            console.log('🚀 Cancionero: contenido existente + Firebase');
+            console.log('🚀 Cancionero: solo contenido desde Firebase con buscador');
         });
     </script>
 
