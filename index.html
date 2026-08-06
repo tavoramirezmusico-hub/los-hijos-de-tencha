@@ -1009,7 +1009,7 @@
         }
 
         /* =====================================
-           EVENTOS - REGISTRO
+           EVENTOS - REGISTRO (NUEVOS ESTILOS)
            ===================================== */
         #eventos select,
         #eventos input {
@@ -1064,6 +1064,168 @@
             color: #ffcc00;
             background: rgba(255, 204, 0, 0.1);
             border: 1px solid #ffcc00;
+        }
+
+        .mensaje-registro.warning {
+            display: block;
+            color: #ff9800;
+            background: rgba(255, 152, 0, 0.1);
+            border: 1px solid #ff9800;
+        }
+
+        /* Estado de evento */
+        .estado-evento {
+            text-align: center;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .estado-evento.agotado {
+            background: rgba(211, 47, 47, 0.1);
+            border: 1px solid rgba(211, 47, 47, 0.2);
+            color: #d32f2f;
+        }
+
+        .estado-evento.agotado i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .estado-evento.agotado h3 {
+            font-size: 1.3rem;
+            margin-bottom: 4px;
+        }
+
+        .estado-evento.sin-eventos {
+            background: rgba(33, 150, 243, 0.05);
+            border: 1px solid rgba(33, 150, 243, 0.1);
+            color: #42a5f5;
+        }
+
+        .estado-evento.sin-eventos i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .estado-evento.sin-eventos h3 {
+            font-size: 1.3rem;
+            margin-bottom: 4px;
+        }
+
+        .estado-evento.disponible {
+            background: rgba(0, 200, 83, 0.05);
+            border: 1px solid rgba(0, 200, 83, 0.1);
+            color: #00c853;
+        }
+
+        .estado-evento.disponible i {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .estado-evento.disponible h3 {
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        /* Botón WhatsApp después del registro */
+        .btn-whatsapp-pendiente {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: #25d366;
+            color: #fff;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            margin-top: 12px;
+        }
+
+        .btn-whatsapp-pendiente:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+            background: #1ed760;
+        }
+
+        .btn-whatsapp-pendiente i {
+            font-size: 1.3rem;
+        }
+
+        .info-evento-form {
+            background: rgba(255, 204, 0, 0.05);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 204, 0, 0.08);
+        }
+
+        .info-evento-form .nombre-evento-form {
+            font-weight: 700;
+            color: #ffcc00;
+            font-size: 1.1rem;
+        }
+
+        .info-evento-form .fecha-evento-form {
+            color: #aaa;
+            font-size: 0.85rem;
+        }
+
+        .info-evento-form .precio-evento-form {
+            display: inline-block;
+            background: rgba(255, 204, 0, 0.1);
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: #ffcc00;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .info-evento-form .cupos-evento-form {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .campo-pago {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 12px;
+            margin-top: 4px;
+        }
+
+        .btn-registrar-form {
+            width: 100%;
+            padding: 16px;
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-registrar-form:hover {
+            background: #e6b800;
+            transform: translateY(-2px);
+        }
+
+        .btn-registrar-form:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
 
         /* =====================================
@@ -1483,7 +1645,7 @@
             </div>
 
             <!-- =====================================
-         REGISTRO PARA EVENTOS - SISTEMA DE ENTRADAS
+         REGISTRO PARA EVENTOS - SISTEMA DE ENTRADAS (ACTUALIZADO)
     ===================================== -->
             <div style="margin-top: 60px; border-top: 1px solid #333; padding-top: 50px;">
                 <div class="titulo-seccion">
@@ -1494,25 +1656,121 @@
                     </p>
                 </div>
 
-                <div style="max-width: 500px; margin: 0 auto;">
+                <div id="formularioContainer" style="max-width: 500px; margin: 0 auto;">
+
+                    <!-- Selector de eventos -->
                     <select id="selectEventoRegistro"
                         style="width:100%; padding:14px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#fff; font-size:1rem; margin-bottom:12px; font-family:'Poppins',sans-serif;">
                         <option value="">Cargando eventos...</option>
                     </select>
 
-                    <input type="text" id="nombreRegistro" placeholder="Tu nombre completo"
-                        style="width:100%; padding:14px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#fff; font-size:1rem; margin-bottom:12px; font-family:'Poppins',sans-serif;">
+                    <!-- Contenedor de estado del evento -->
+                    <div id="estadoEventoContainer">
+                        <div id="eventoAgotado" class="estado-evento agotado" style="display:none;">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            <h3>🚫 ENTRADAS AGOTADAS</h3>
+                            <p>Este evento ya no tiene entradas disponibles. Gracias por tu interés.</p>
+                        </div>
 
-                    <input type="email" id="emailRegistro" placeholder="Tu correo electrónico"
-                        style="width:100%; padding:14px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#fff; font-size:1rem; margin-bottom:12px; font-family:'Poppins',sans-serif;">
+                        <div id="noEventos" class="estado-evento sin-eventos" style="display:none;">
+                            <i class="fa-solid fa-calendar-xmark"></i>
+                            <h3>📅 No hay eventos disponibles</h3>
+                            <p>Pronto tendremos nuevos eventos. Síguenos en redes para más información.</p>
+                        </div>
+                    </div>
 
-                    <button onclick="registrarAsistentePublico()"
-                        style="width:100%; padding:16px; background:#ffcc00; color:#000; border:none; border-radius:8px; font-size:1.1rem; font-weight:700; cursor:pointer; transition:.3s; font-family:'Poppins',sans-serif;">
-                        ✅ Registrarme
-                    </button>
+                    <!-- El formulario de registro (oculto inicialmente) -->
+                    <div id="formularioRegistro" style="display:none;">
 
-                    <div id="mensajeRegistro"
-                        style="margin-top:15px; text-align:center; display:none; font-family:'Poppins',sans-serif;">
+                        <!-- Información del evento seleccionado -->
+                        <div class="info-evento-form">
+                            <div class="nombre-evento-form" id="nombreEventoMostrar">Evento</div>
+                            <div class="fecha-evento-form" id="fechaEventoMostrar">Fecha</div>
+                            <div id="precioEventoMostrar"></div>
+                            <div class="cupos-evento-form" id="cuposDisponiblesMostrar">Cargando cupos...</div>
+                        </div>
+
+                        <!-- Campo: Nombre -->
+                        <input type="text" id="nombreRegistro" placeholder="Tu nombre completo"
+                            style="width:100%; padding:14px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#fff; font-size:1rem; margin-bottom:12px; font-family:'Poppins',sans-serif;">
+
+                        <!-- Campo: Correo -->
+                        <input type="email" id="emailRegistro" placeholder="Tu correo electrónico"
+                            style="width:100%; padding:14px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#fff; font-size:1rem; margin-bottom:12px; font-family:'Poppins',sans-serif;">
+
+                        <!-- Campo: Número de entradas -->
+                        <div style="margin-bottom:12px;">
+                            <label for="numeroEntradas"
+                                style="color:#aaa; font-size:0.85rem; display:block; margin-bottom:4px;">🎫 Número de
+                                entradas</label>
+                            <select id="numeroEntradas"
+                                style="width:100%; padding:14px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#fff; font-size:1rem; font-family:'Poppins',sans-serif;">
+                                <option value="1">1 entrada</option>
+                                <option value="2">2 entradas</option>
+                                <option value="3">3 entradas</option>
+                                <option value="4">4 entradas</option>
+                                <option value="5">5 entradas</option>
+                            </select>
+                            <small id="entradasDisponiblesInfo"
+                                style="color:#888; font-size:0.7rem; display:block; margin-top:4px;"></small>
+                        </div>
+
+                        <!-- Campos de pago (ocultos por defecto) -->
+                        <div id="camposPago" style="display:none;">
+                            <div class="campo-pago">
+                                <div style="margin-bottom:12px;">
+                                    <label for="sinpeRegistro"
+                                        style="color:#aaa; font-size:0.85rem; display:block; margin-bottom:4px;">💳
+                                        Número de SINPE</label>
+                                    <input type="text" id="sinpeRegistro" placeholder="Ej: 8888-8888"
+                                        style="width:100%; padding:14px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#fff; font-size:1rem; font-family:'Poppins',sans-serif;">
+                                    <small style="color:#666; font-size:0.65rem; display:block; margin-top:4px;">El
+                                        número de teléfono o correo asociado a tu cuenta SINPE</small>
+                                </div>
+
+                                <div style="margin-bottom:12px;">
+                                    <label for="transferenciaRegistro"
+                                        style="color:#aaa; font-size:0.85rem; display:block; margin-bottom:4px;">🧾
+                                        Número de transferencia</label>
+                                    <input type="text" id="transferenciaRegistro" placeholder="Ej: 123456789"
+                                        style="width:100%; padding:14px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#fff; font-size:1rem; font-family:'Poppins',sans-serif;">
+                                    <small style="color:#666; font-size:0.65rem; display:block; margin-top:4px;">El
+                                        número de comprobante de tu transferencia</small>
+                                </div>
+
+                                <div style="text-align:center; margin-bottom:8px;">
+                                    <span
+                                        style="display:inline-block; background:rgba(255,204,0,0.1); padding:4px 16px; border-radius:12px; font-size:0.85rem; color:#ffcc00; font-weight:600;"
+                                        id="precioTotalInfo">💰 Total: ₵0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botón de registro -->
+                        <button class="btn-registrar-form" id="btnRegistrar" onclick="registrarAsistentePublico()">
+                            <i class="fa-solid fa-ticket"></i> Registrarme
+                        </button>
+
+                        <!-- Mensaje de respuesta -->
+                        <div id="mensajeRegistro" class="mensaje-registro"></div>
+
+                        <!-- Botón de WhatsApp (solo para pagos pendientes) -->
+                        <div id="whatsappContainer"
+                            style="display:none; text-align:center; margin-top:16px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.05);">
+                            <p style="font-size:0.85rem; color:#aaa; margin-bottom:8px;">
+                                📱 <strong>¿Ya pagaste y no recibiste tu entrada?</strong>
+                            </p>
+                            <p style="font-size:0.8rem; color:#888; margin-bottom:12px;">
+                                Si realizaste el pago y no has recibido tu entrada, contáctanos directamente.
+                            </p>
+                            <a id="btnWhatsApp" href="#" target="_blank" class="btn-whatsapp-pendiente">
+                                <i class="fa-brands fa-whatsapp"></i> Ya pagué, no he recibido mi entrada
+                            </a>
+                            <small style="display:block; font-size:0.65rem; color:#666; margin-top:6px;">
+                                Al hacer clic se abrirá WhatsApp con un mensaje automático
+                            </small>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -2161,6 +2419,557 @@
             setTimeout(cargarProductosTienda, 800);
             console.log('🛒 Tienda desde Firebase cargando...');
         });
+    </script>
+
+    <!-- ============================================= -->
+    <!-- SCRIPT DEL FORMULARIO DE REGISTRO ACTUALIZADO -->
+    <!-- ============================================= -->
+    <script>
+        // ============================================================
+        // CONFIGURACIÓN DE FIREBASE (ya inicializado arriba)
+        // ============================================================
+
+        let eventosCacheRegistro = [];
+        let eventoSeleccionadoId = null;
+        let asistenteRegistradoId = null;
+
+        // Configuración EmailJS
+        const EMAILJS_USER_ID = '7bmV4hpwq7pFObQ8W';
+        const EMAILJS_SERVICE_ID = 'service_49w40s8';
+        const EMAILJS_TEMPLATE_PENDIENTE = 'template_registro_pendiente'; // CREAR EN EMAILJS
+
+        function initEmailJSRegistro() {
+            if (typeof emailjs !== 'undefined') {
+                try {
+                    emailjs.init(EMAILJS_USER_ID);
+                    console.log('✅ EmailJS inicializado (registro)');
+                    return true;
+                } catch (e) {
+                    console.error('❌ Error al inicializar EmailJS:', e);
+                    return false;
+                }
+            } else {
+                console.warn('⚠️ EmailJS no está cargado');
+                return false;
+            }
+        }
+
+        initEmailJSRegistro();
+
+        // ============================================================
+        // CARGAR EVENTOS EN EL SELECTOR
+        // ============================================================
+
+        async function cargarEventosRegistro() {
+            const select = document.getElementById('selectEventoRegistro');
+            if (!select) return;
+
+            if (!db) {
+                select.innerHTML = '<option value="">Error: Firebase no disponible</option>';
+                return;
+            }
+
+            try {
+                const snapshot = await db.collection('eventos')
+                    .orderBy('creadoEn', 'desc')
+                    .get();
+
+                eventosCacheRegistro = [];
+
+                if (snapshot.empty) {
+                    select.innerHTML = '<option value="">No hay eventos disponibles</option>';
+                    document.getElementById('noEventos').style.display = 'block';
+                    document.getElementById('formularioRegistro').style.display = 'none';
+                    document.getElementById('eventoAgotado').style.display = 'none';
+                    return;
+                }
+
+                let options = '<option value="">Selecciona un evento</option>';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const evento = { id: doc.id, ...data };
+                    eventosCacheRegistro.push(evento);
+                    options += `<option value="${doc.id}">${data.nombre || 'Evento'}</option>`;
+                });
+
+                select.innerHTML = options;
+                document.getElementById('noEventos').style.display = 'none';
+
+                // Si hay eventos, seleccionar el primero automáticamente
+                if (eventosCacheRegistro.length > 0) {
+                    select.value = eventosCacheRegistro[0].id;
+                    await actualizarFormularioSegunEvento();
+                }
+
+                console.log('✅ ' + eventosCacheRegistro.length + ' eventos cargados para registro');
+
+            } catch (error) {
+                console.error('❌ Error al cargar eventos:', error);
+                select.innerHTML = '<option value="">Error al cargar eventos</option>';
+            }
+        }
+
+        // ============================================================
+        // ACTUALIZAR FORMULARIO SEGÚN EVENTO SELECCIONADO
+        // ============================================================
+
+        async function actualizarFormularioSegunEvento() {
+            const select = document.getElementById('selectEventoRegistro');
+            const eventoId = select.value;
+
+            if (!eventoId) {
+                document.getElementById('formularioRegistro').style.display = 'none';
+                document.getElementById('eventoAgotado').style.display = 'none';
+                document.getElementById('noEventos').style.display = 'block';
+                return;
+            }
+
+            try {
+                const evento = eventosCacheRegistro.find(e => e.id === eventoId);
+                if (!evento) {
+                    document.getElementById('formularioRegistro').style.display = 'none';
+                    return;
+                }
+
+                eventoSeleccionadoId = eventoId;
+
+                // Mostrar información del evento
+                document.getElementById('nombreEventoMostrar').textContent = evento.nombre || 'Evento';
+                document.getElementById('fechaEventoMostrar').textContent = evento.fecha || 'Fecha por confirmar';
+
+                // Mostrar precio si es pago
+                const precioDiv = document.getElementById('precioEventoMostrar');
+                if (evento.esPago && evento.precio > 0) {
+                    precioDiv.innerHTML = `<span class="precio-evento-form">💰 ₵${evento.precio.toLocaleString()} por entrada</span>`;
+                } else if (evento.esPago) {
+                    precioDiv.innerHTML = `<span class="precio-evento-form">💰 Pago (consultar precio)</span>`;
+                } else {
+                    precioDiv.innerHTML = `<span class="precio-evento-form">🎁 Evento gratuito</span>`;
+                }
+
+                // Calcular cupos disponibles
+                const cupos = await calcularCuposDisponibles(eventoId);
+
+                // Verificar si hay cupo
+                const hayCupo = cupos.disponibles === Infinity || cupos.disponibles > 0;
+
+                if (!hayCupo && evento.capacidadMaxima > 0) {
+                    document.getElementById('eventoAgotado').style.display = 'block';
+                    document.getElementById('formularioRegistro').style.display = 'none';
+                    document.getElementById('cuposDisponiblesMostrar').textContent = '🎫 Entradas agotadas';
+                    return;
+                }
+
+                // Si hay cupo, mostrar formulario
+                document.getElementById('eventoAgotado').style.display = 'none';
+                document.getElementById('formularioRegistro').style.display = 'block';
+
+                // Mostrar cupos disponibles
+                const cuposInfo = document.getElementById('cuposDisponiblesMostrar');
+                if (evento.capacidadMaxima > 0) {
+                    cuposInfo.textContent = `🎫 ${cupos.disponibles} entradas disponibles`;
+                } else {
+                    cuposInfo.textContent = '🎫 Sin límite de entradas';
+                }
+
+                // Actualizar selector de entradas
+                actualizarSelectorEntradas(cupos.disponibles);
+
+                // Mostrar u ocultar campos de pago
+                const camposPago = document.getElementById('camposPago');
+                if (evento.esPago) {
+                    camposPago.style.display = 'block';
+                    actualizarTotalPago();
+                } else {
+                    camposPago.style.display = 'none';
+                }
+
+                // Ocultar WhatsApp si estaba visible
+                document.getElementById('whatsappContainer').style.display = 'none';
+
+                // Resetear mensaje de registro
+                const mensaje = document.getElementById('mensajeRegistro');
+                mensaje.style.display = 'none';
+                mensaje.className = 'mensaje-registro';
+
+            } catch (error) {
+                console.error('Error al actualizar formulario:', error);
+            }
+        }
+
+        // ============================================================
+        // CALCULAR CUPOS DISPONIBLES
+        // ============================================================
+
+        async function calcularCuposDisponibles(eventoId) {
+            try {
+                const evento = eventosCacheRegistro.find(e => e.id === eventoId);
+                if (!evento || !evento.capacidadMaxima) {
+                    return { disponibles: Infinity, confirmados: 0, pendientes: 0 };
+                }
+
+                const asistentesSnap = await db.collection('asistentes')
+                    .where('eventoId', '==', eventoId)
+                    .get();
+
+                let confirmados = 0;
+                let pendientes = 0;
+
+                asistentesSnap.forEach(doc => {
+                    const data = doc.data();
+                    const entradas = data.numeroEntradas || 1;
+                    const estado = data.estadoPago || 'pendiente';
+                    if (estado === 'confirmado' || data.ingresado === true) {
+                        confirmados += entradas;
+                    } else if (estado === 'pendiente') {
+                        pendientes += entradas;
+                    }
+                });
+
+                const ocupados = confirmados + pendientes;
+                const disponibles = evento.capacidadMaxima - ocupados;
+
+                return {
+                    disponibles: Math.max(0, disponibles),
+                    confirmados: confirmados,
+                    pendientes: pendientes,
+                    ocupados: ocupados,
+                    capacidad: evento.capacidadMaxima
+                };
+
+            } catch (error) {
+                console.error('Error al calcular cupos:', error);
+                return { disponibles: Infinity, confirmados: 0, pendientes: 0 };
+            }
+        }
+
+        // ============================================================
+        // ACTUALIZAR SELECTOR DE ENTRADAS
+        // ============================================================
+
+        function actualizarSelectorEntradas(disponibles) {
+            const select = document.getElementById('numeroEntradas');
+            const info = document.getElementById('entradasDisponiblesInfo');
+
+            const maximo = disponibles === Infinity ? 10 : Math.min(disponibles, 10);
+
+            const valorActual = parseInt(select.value) || 1;
+
+            let options = '';
+            for (let i = 1; i <= maximo; i++) {
+                const selected = i === valorActual ? 'selected' : '';
+                options += `<option value="${i}" ${selected}>${i} entrada${i > 1 ? 's' : ''}</option>`;
+            }
+
+            select.innerHTML = options;
+
+            if (disponibles === Infinity) {
+                info.textContent = '🎫 Sin límite de entradas';
+            } else if (disponibles > 0) {
+                info.textContent = `🎫 ${disponibles} entradas disponibles`;
+            } else {
+                info.textContent = '🎫 Sin entradas disponibles';
+            }
+
+            actualizarTotalPago();
+        }
+
+        // ============================================================
+        // ACTUALIZAR TOTAL DE PAGO
+        // ============================================================
+
+        function actualizarTotalPago() {
+            const evento = eventosCacheRegistro.find(e => e.id === eventoSeleccionadoId);
+            if (!evento || !evento.esPago) return;
+
+            const entradas = parseInt(document.getElementById('numeroEntradas').value) || 1;
+            const precio = evento.precio || 0;
+            const total = entradas * precio;
+
+            const info = document.getElementById('precioTotalInfo');
+            info.textContent = `💰 Total: ₵${total.toLocaleString()} (${entradas} × ₵${precio.toLocaleString()})`;
+        }
+
+        // ============================================================
+        // REGISTRAR ASISTENTE
+        // ============================================================
+
+        async function registrarAsistentePublico() {
+            const eventoId = document.getElementById('selectEventoRegistro').value;
+            const nombre = document.getElementById('nombreRegistro').value.trim();
+            const email = document.getElementById('emailRegistro').value.trim();
+            const numeroEntradas = parseInt(document.getElementById('numeroEntradas').value) || 1;
+
+            const mensaje = document.getElementById('mensajeRegistro');
+            const btn = document.getElementById('btnRegistrar');
+
+            if (!eventoId) {
+                mostrarMensajeRegistro('⚠️ Selecciona un evento', 'error');
+                return;
+            }
+            if (!nombre) {
+                mostrarMensajeRegistro('⚠️ Ingresa tu nombre completo', 'error');
+                return;
+            }
+            if (!email || !email.includes('@')) {
+                mostrarMensajeRegistro('⚠️ Ingresa un correo válido', 'error');
+                return;
+            }
+
+            const cupos = await calcularCuposDisponibles(eventoId);
+            if (cupos.disponibles !== Infinity && cupos.disponibles < numeroEntradas) {
+                mostrarMensajeRegistro(`⚠️ Solo quedan ${cupos.disponibles} entradas disponibles`, 'error');
+                return;
+            }
+
+            const evento = eventosCacheRegistro.find(e => e.id === eventoId);
+            if (!evento) {
+                mostrarMensajeRegistro('❌ Evento no encontrado', 'error');
+                return;
+            }
+
+            const asistenteData = {
+                nombre: nombre,
+                email: email,
+                eventoId: eventoId,
+                numeroEntradas: numeroEntradas,
+                usosDisponibles: numeroEntradas,
+                ingresado: false,
+                fechaIngreso: null,
+                creadoEn: new Date().toISOString(),
+                banda: 'Los Hijos de Tencha',
+                registradoDesde: 'formulario_publico',
+                emailEnviado: false,
+                qrGenerado: false
+            };
+
+            if (evento.esPago) {
+                const sinpe = document.getElementById('sinpeRegistro').value.trim();
+                const transferencia = document.getElementById('transferenciaRegistro').value.trim();
+
+                if (!sinpe) {
+                    mostrarMensajeRegistro('⚠️ Ingresa tu número de SINPE', 'error');
+                    return;
+                }
+                if (!transferencia) {
+                    mostrarMensajeRegistro('⚠️ Ingresa tu número de transferencia', 'error');
+                    return;
+                }
+
+                asistenteData.sinpe = sinpe;
+                asistenteData.transferencia = transferencia;
+                asistenteData.estadoPago = 'pendiente';
+                asistenteData.qrGenerado = false;
+
+            } else {
+                asistenteData.estadoPago = 'confirmado';
+                asistenteData.qrGenerado = true;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registrando...';
+
+            mostrarMensajeRegistro('⏳ Procesando registro...', 'info');
+
+            try {
+                const docRef = await db.collection('asistentes').add(asistenteData);
+                const asistenteId = docRef.id;
+                asistenteRegistradoId = asistenteId;
+
+                if (!evento.esPago) {
+                    await enviarCorreoConfirmacion(asistenteId, asistenteData, evento);
+                } else {
+                    await enviarCorreoPendiente(asistenteId, asistenteData, evento);
+                    mostrarWhatsApp(asistenteId, asistenteData, evento);
+                }
+
+                await db.collection('eventos').doc(eventoId).update({
+                    entradasVendidas: firebase.firestore.FieldValue.increment(numeroEntradas)
+                });
+
+                const mensajeExito = evento.esPago ?
+                    `✅ ¡Registro exitoso! Hemos recibido tus datos de pago. En las próximas 24-48 horas revisaremos tu transferencia y te enviaremos tu entrada.` :
+                    `✅ ¡Registro exitoso! Revisa tu correo (${email}) para recibir tu entrada digital.`;
+
+                mostrarMensajeRegistro(mensajeExito, 'success');
+
+                document.getElementById('nombreRegistro').value = '';
+                document.getElementById('emailRegistro').value = '';
+                if (!evento.esPago) {
+                    document.getElementById('sinpeRegistro').value = '';
+                    document.getElementById('transferenciaRegistro').value = '';
+                }
+
+                await cargarEventosRegistro();
+
+            } catch (error) {
+                console.error('❌ Error al registrar:', error);
+                mostrarMensajeRegistro('❌ Error al registrar: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-ticket"></i> Registrarme';
+            }
+        }
+
+        // ============================================================
+        // ENVIAR CORREO DE CONFIRMACIÓN (con QR)
+        // ============================================================
+
+        async function enviarCorreoConfirmacion(asistenteId, asistente, evento) {
+            try {
+                const qrUrl = `https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=${asistenteId}`;
+
+                const templateParams = {
+                    to_email: asistente.email,
+                    to_name: asistente.nombre,
+                    event_name: evento?.nombre || 'Evento',
+                    asistente_id: asistenteId,
+                    qr_url: qrUrl,
+                    event_date: evento?.fecha || 'Fecha por confirmar',
+                    event_time: evento?.hora || 'Hora por confirmar',
+                    event_location: evento?.lugar || '',
+                    numero_entradas: asistente.numeroEntradas || 1
+                };
+
+                await emailjs.send('service_49w40s8', 'template_5ulhotx', templateParams);
+                console.log('✅ Correo de confirmación enviado a', asistente.email);
+
+                await db.collection('asistentes').doc(asistenteId).update({
+                    emailEnviado: true,
+                    emailEnviadoEn: new Date().toISOString()
+                });
+
+            } catch (error) {
+                console.error('❌ Error al enviar correo de confirmación:', error);
+            }
+        }
+
+        // ============================================================
+        // ENVIAR CORREO DE PENDIENTE (sin QR)
+        // ============================================================
+
+        async function enviarCorreoPendiente(asistenteId, asistente, evento) {
+            try {
+                const templateParams = {
+                    to_email: asistente.email,
+                    to_name: asistente.nombre,
+                    event_name: evento?.nombre || 'Evento',
+                    asistente_id: asistenteId,
+                    event_date: evento?.fecha || 'Fecha por confirmar',
+                    event_time: evento?.hora || 'Hora por confirmar',
+                    event_location: evento?.lugar || '',
+                    numero_entradas: asistente.numeroEntradas || 1,
+                    sinpe: asistente.sinpe || '',
+                    transferencia: asistente.transferencia || ''
+                };
+
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_PENDIENTE, templateParams);
+                console.log('✅ Correo de pendiente enviado a', asistente.email);
+
+                await db.collection('asistentes').doc(asistenteId).update({
+                    emailEnviado: true,
+                    emailEnviadoEn: new Date().toISOString()
+                });
+
+            } catch (error) {
+                console.error('❌ Error al enviar correo de pendiente:', error);
+            }
+        }
+
+        // ============================================================
+        // MOSTRAR BOTÓN DE WHATSAPP
+        // ============================================================
+
+        function mostrarWhatsApp(asistenteId, asistente, evento) {
+            const container = document.getElementById('whatsappContainer');
+            const btn = document.getElementById('btnWhatsApp');
+
+            const mensaje = encodeURIComponent(
+                `Hola, compré entrada(s) para ${evento.nombre || 'el evento'}. ` +
+                `Mi nombre es ${asistente.nombre}, correo ${asistente.email}, ` +
+                `compré ${asistente.numeroEntradas || 1} entrada(s). ` +
+                `SINPE: ${asistente.sinpe || 'No especificado'}, ` +
+                `Transferencia: ${asistente.transferencia || 'No especificada'}. ` +
+                `No he recibido mi entrada. Por favor revisen.`
+            );
+
+            const numero = '50688636047';
+
+            btn.href = `https://wa.me/${numero}?text=${mensaje}`;
+            container.style.display = 'block';
+
+            setTimeout(() => {
+                container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 500);
+        }
+
+        // ============================================================
+        // MOSTRAR MENSAJE DE REGISTRO
+        // ============================================================
+
+        function mostrarMensajeRegistro(texto, tipo) {
+            const mensaje = document.getElementById('mensajeRegistro');
+            mensaje.textContent = texto;
+            mensaje.className = 'mensaje-registro ' + (tipo || 'info');
+            mensaje.style.display = 'block';
+
+            if (tipo === 'success' || tipo === 'error') {
+                clearTimeout(mensaje._timeout);
+                mensaje._timeout = setTimeout(() => {
+                    mensaje.style.display = 'none';
+                }, 8000);
+            }
+        }
+
+        // ============================================================
+        // EVENT LISTENERS
+        // ============================================================
+
+        document.addEventListener('DOMContentLoaded', function () {
+            cargarEventosRegistro();
+
+            document.getElementById('selectEventoRegistro').addEventListener('change', function () {
+                actualizarFormularioSegunEvento();
+            });
+
+            document.getElementById('numeroEntradas').addEventListener('change', function () {
+                actualizarTotalPago();
+            });
+
+            document.getElementById('sinpeRegistro').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('btnRegistrar').click();
+                }
+            });
+            document.getElementById('transferenciaRegistro').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('btnRegistrar').click();
+                }
+            });
+            document.getElementById('nombreRegistro').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('btnRegistrar').click();
+                }
+            });
+            document.getElementById('emailRegistro').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('btnRegistrar').click();
+                }
+            });
+        });
+
+        // ============================================================
+        // EXPONER FUNCIONES GLOBALES
+        // ============================================================
+
+        window.registrarAsistentePublico = registrarAsistentePublico;
+        window.cargarEventosRegistro = cargarEventosRegistro;
+        window.actualizarFormularioSegunEvento = actualizarFormularioSegunEvento;
+        window.calcularCuposDisponibles = calcularCuposDisponibles;
+        window.actualizarSelectorEntradas = actualizarSelectorEntradas;
+        window.actualizarTotalPago = actualizarTotalPago;
+
+        console.log('✅ Formulario de registro actualizado cargado correctamente');
     </script>
 
 </body>
