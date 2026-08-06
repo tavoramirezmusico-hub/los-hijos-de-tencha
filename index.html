@@ -443,7 +443,7 @@
         }
 
         /* =====================================
-           SECCIÓN LANZAMIENTOS MEJORADA
+           SECCIÓN LANZAMIENTOS
            ===================================== */
         .lanzamientos-wrapper {
             display: flex;
@@ -576,7 +576,7 @@
            TIENDA - ESTILOS ADICIONALES
            ===================================== */
         .galeria-camisetas {
-            display: grid;
+            display: none;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 30px;
             margin-top: 30px;
@@ -672,6 +672,7 @@
             font-size: 24px;
             font-weight: bold;
             margin: 15px;
+            color: #ffcc00;
         }
 
         .producto-principal .boton {
@@ -936,6 +937,131 @@
             color: #ffcc00;
             background: rgba(255, 204, 0, 0.1);
             border: 1px solid #ffcc00;
+        }
+
+        /* =====================================
+           EVENTOS - TARJETAS
+           ===================================== */
+        .card-evento {
+            max-width: 1200px;
+            margin: 0 auto 40px;
+            padding: 40px;
+            background: #1c1c1c;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            text-align: center;
+        }
+
+        .card-evento .imagen-evento {
+            max-width: 300px;
+            width: 100%;
+            margin: auto;
+            cursor: pointer;
+        }
+
+        .card-evento .imagen-evento img {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, .6);
+        }
+
+        .card-evento .fecha {
+            width: 130px;
+            height: 130px;
+            background: #ffcc00;
+            color: #000;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .card-evento .fecha h3 {
+            font-size: 4rem;
+            line-height: 1;
+            margin: 0;
+        }
+
+        .card-evento .fecha span {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .card-evento .info-evento h3 {
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .card-evento .info-evento p {
+            color: #ddd;
+        }
+
+        .card-evento .boton {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: .3s;
+        }
+
+        .card-evento .boton:hover {
+            transform: translateY(-3px);
+        }
+
+        .card-evento .boton.principal {
+            background: #ffcc00;
+            color: #000;
+        }
+
+        .card-evento .boton.secundario {
+            border: 2px solid white;
+            color: white;
+        }
+
+        .card-evento .boton.secundario:hover {
+            background: white;
+            color: #000;
+        }
+
+        .card-evento .boton:not(:last-child) {
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .card-evento {
+                padding: 25px 20px;
+            }
+
+            .card-evento .fecha {
+                width: 100px;
+                height: 100px;
+            }
+
+            .card-evento .fecha h3 {
+                font-size: 3rem;
+            }
+
+            .card-evento .info-evento h3 {
+                font-size: 1.2rem;
+            }
+
+            .card-evento .boton {
+                width: 100%;
+                text-align: center;
+            }
+
+            .card-evento .boton:not(:last-child) {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
         }
     </style>
 
@@ -1515,37 +1641,10 @@
     <!-- ============================================= -->
     <script>
         // ============================================================
-        // CONFIGURACIÓN DE FIREBASE
+        // TIENDA - CARGAR PRODUCTOS DESDE FIREBASE
         // ============================================================
-        const firebaseConfig = {
-            apiKey: "AIzaSyDvp_6UFymZZnqxMyL6yobJ3twLMvVkThw",
-            authDomain: "base-entradas-tenchos.firebaseapp.com",
-            projectId: "base-entradas-tenchos",
-            storageBucket: "base-entradas-tenchos.firebasestorage.app",
-            messagingSenderId: "273676503007",
-            appId: "1:273676503007:web:56180c485b648ef076a66a"
-        };
 
-        let db = null;
-
-        // Inicializar Firebase si no está ya inicializado
-        if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-            console.log('✅ Firebase inicializado en index');
-        }
-
-        try {
-            if (typeof firebase !== 'undefined') {
-                db = firebase.firestore();
-                console.log('✅ Firestore disponible');
-            }
-        } catch (e) {
-            console.warn('⚠️ Error al conectar con Firestore:', e);
-        }
-
-        // ============================================================
-        // TIENDA - VARIABLES GLOBALES
-        // ============================================================
+        // ⚠️ NO DECLARAR db AQUÍ - usar la que ya existe globalmente (en script.js)
         let todosLosProductos = [];
         let todosVisibles = false;
 
@@ -1559,7 +1658,8 @@
             const destacado = document.getElementById('productoDestacado');
             const btnVerTodos = document.getElementById('btnVerTodos');
 
-            if (!db) {
+            // Verificar que db existe (usar la global, no crear una nueva)
+            if (typeof db === 'undefined' || !db) {
                 console.warn('⚠️ Firestore no disponible');
                 cargando.style.display = 'none';
                 vacia.style.display = 'block';
@@ -1595,7 +1695,6 @@
                 todosLosProductos = [];
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    // Solo mostrar productos disponibles
                     if (data.stock === 'disponible' || !data.stock) {
                         todosLosProductos.push({
                             id: doc.id,
@@ -1611,7 +1710,6 @@
                     }
                 });
 
-                // Ordenar por orden
                 todosLosProductos.sort((a, b) => {
                     const ordenA = a.orden || 999;
                     const ordenB = b.orden || 999;
@@ -1626,15 +1724,12 @@
                     return;
                 }
 
-                // Mostrar producto destacado (el primero)
                 mostrarProductoDestacado(todosLosProductos[0]);
 
-                // Si hay más de 1 producto, mostrar botón "Ver todos"
                 if (todosLosProductos.length > 1) {
                     btnVerTodos.style.display = 'inline-block';
                 }
 
-                // Mostrar todos inicialmente
                 renderizarProductos(todosLosProductos);
 
                 console.log('✅ ' + todosLosProductos.length + ' productos cargados');
@@ -1727,18 +1822,14 @@
             const btnVerTodos = document.getElementById('btnVerTodos');
 
             if (todosVisibles) {
-                // Ocultar
                 contenedor.classList.remove('mostrar');
                 contenedor.innerHTML = '';
                 btnVerTodos.innerHTML = '<i class="fa-solid fa-grid-2"></i> Ver todos los productos';
                 todosVisibles = false;
             } else {
-                // Mostrar
                 renderizarProductos(todosLosProductos);
                 btnVerTodos.innerHTML = '<i class="fa-solid fa-xmark"></i> Ocultar productos';
                 todosVisibles = true;
-
-                // Scroll a la tienda
                 document.getElementById('tienda').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
@@ -1760,17 +1851,21 @@
             document.body.style.overflow = '';
         }
 
-        // Cerrar visor con Escape
+        // Eventos para el visor
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 cerrarVisorTienda();
             }
         });
 
-        // Cerrar visor al hacer clic fuera
-        document.getElementById('visor-tienda').addEventListener('click', function (e) {
-            if (e.target === this) {
-                cerrarVisorTienda();
+        document.addEventListener('DOMContentLoaded', function () {
+            const visor = document.getElementById('visor-tienda');
+            if (visor) {
+                visor.addEventListener('click', function (e) {
+                    if (e.target === this) {
+                        cerrarVisorTienda();
+                    }
+                });
             }
         });
 
@@ -1778,8 +1873,7 @@
         // INICIALIZAR TIENDA AL CARGAR
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
-            // Esperar a que Firebase esté listo
-            setTimeout(cargarProductosTienda, 500);
+            setTimeout(cargarProductosTienda, 800);
             console.log('🛒 Tienda desde Firebase cargando...');
         });
     </script>
