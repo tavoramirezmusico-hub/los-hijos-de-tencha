@@ -78,34 +78,22 @@ async function hashPassword(password) {
 }
 
 function verificarSesionAdmin() {
+    // Sesión de UN SOLO USO: solo sirve para la página que se abre justo
+    // después de escribir la contraseña. Se consume al leerla, así que
+    // cualquier otra navegación (a otra sección, o al volver más tarde)
+    // vuelve a exigir la contraseña. Esto evita que una sesión quede
+    // "abierta" en el dispositivo si luego se usa para el validador.
     const auth = sessionStorage.getItem('adminAuth');
-    const loginTime = sessionStorage.getItem('adminLoginTime');
-
-    if (auth === 'authenticated' && loginTime) {
-        const timeElapsed = Date.now() - parseInt(loginTime);
-        if (timeElapsed < 14400000) {
-            return true;
-        } else {
-            sessionStorage.removeItem('adminAuth');
-            sessionStorage.removeItem('adminLoginTime');
-        }
-    }
-    return false;
+    sessionStorage.removeItem('adminAuth');
+    sessionStorage.removeItem('adminLoginTime');
+    return auth === 'authenticated';
 }
 
 function verificarSesionValidador() {
-    const auth = sessionStorage.getItem('validadorAuth');
-    const loginTime = sessionStorage.getItem('validadorLoginTime');
-
-    if (auth === 'authenticated' && loginTime) {
-        const timeElapsed = Date.now() - parseInt(loginTime);
-        if (timeElapsed < 14400000) {
-            return true;
-        } else {
-            sessionStorage.removeItem('validadorAuth');
-            sessionStorage.removeItem('validadorLoginTime');
-        }
-    }
+    // Ya no se usa (el validador tiene su propio login independiente
+    // que siempre pide contraseña), se deja aquí por compatibilidad.
+    sessionStorage.removeItem('validadorAuth');
+    sessionStorage.removeItem('validadorLoginTime');
     return false;
 }
 

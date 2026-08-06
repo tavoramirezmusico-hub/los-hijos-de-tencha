@@ -603,10 +603,10 @@
     MODAL: CREAR/EDITAR EVENTO
     ============================================================ -->
     <div class="admin-modal" id="modalEvento">
-        <div class="admin-modal-content">
-            <div class="admin-modal-header">
+        <div class="admin-modal-content modal-content">
+            <div class="admin-modal-header modal-header">
                 <h3 id="modalEventoTitulo">Crear Evento</h3>
-                <button class="admin-modal-close" onclick="cerrarModalEvento()">&times;</button>
+                <button class="admin-modal-close modal-close" onclick="cerrarModalEvento()">&times;</button>
             </div>
             <div class="admin-modal-body">
                 <form id="formEvento">
@@ -675,7 +675,7 @@
                         </div>
                     </div>
 
-                    <div class="admin-modal-footer">
+                    <div class="admin-modal-footer modal-footer">
                         <button type="button" class="btn-admin btn-secondary"
                             onclick="cerrarModalEvento()">Cancelar</button>
                         <button type="submit" class="btn-admin btn-primary" id="btnGuardarEvento">
@@ -691,11 +691,11 @@
     MODAL: ELIMINAR EVENTO
     ============================================================ -->
     <div class="admin-modal" id="modalEliminarEvento">
-        <div class="admin-modal-content" style="max-width:450px;">
-            <div class="admin-modal-header">
+        <div class="admin-modal-content modal-content" style="max-width:450px;">
+            <div class="admin-modal-header modal-header">
                 <h3><i class="fa-solid fa-triangle-exclamation" style="color:var(--color-danger);"></i> Eliminar Evento
                 </h3>
-                <button class="admin-modal-close" onclick="cerrarModalEliminar()">&times;</button>
+                <button class="admin-modal-close modal-close" onclick="cerrarModalEliminar()">&times;</button>
             </div>
             <div class="admin-modal-body">
                 <p>¿Estás seguro de que quieres eliminar este evento?</p>
@@ -705,7 +705,7 @@
                 </p>
                 <input type="hidden" id="eliminarEventoId">
             </div>
-            <div class="admin-modal-footer">
+            <div class="admin-modal-footer modal-footer">
                 <button type="button" class="btn-admin btn-secondary" onclick="cerrarModalEliminar()">Cancelar</button>
                 <button type="button" class="btn-admin btn-danger" onclick="confirmarEliminarEvento()">
                     <i class="fa-solid fa-trash"></i> Eliminar
