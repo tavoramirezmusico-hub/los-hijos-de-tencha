@@ -273,6 +273,58 @@
             margin-bottom: 12px;
         }
 
+        .image-preview {
+            margin: 12px 0;
+            padding: 12px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            border: 1px dashed var(--color-border);
+            display: none;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .image-preview.show {
+            display: flex;
+        }
+
+        .image-preview img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .image-preview .image-info {
+            flex: 1;
+            font-size: 0.85rem;
+        }
+
+        .image-preview .image-info .filename {
+            color: var(--color-text);
+            font-weight: 500;
+        }
+
+        .image-preview .image-info .filesize {
+            color: var(--color-text-muted);
+            font-size: 0.75rem;
+        }
+
+        .image-preview .image-remove {
+            background: none;
+            border: none;
+            color: var(--color-danger);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 4px 8px;
+            transition: var(--transition);
+        }
+
+        .image-preview .image-remove:hover {
+            transform: scale(1.2);
+        }
+
         @media (max-width: 768px) {
             .evento-item {
                 flex-direction: column;
@@ -301,6 +353,17 @@
                 text-align: center;
                 font-size: 0.7rem !important;
                 padding: 6px 12px !important;
+            }
+
+            .image-preview {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .image-preview img {
+                width: 120px;
+                height: 120px;
             }
         }
 
@@ -332,6 +395,11 @@
                 font-size: 0.65rem !important;
                 padding: 5px 8px !important;
                 min-width: 50px !important;
+            }
+
+            .image-preview img {
+                width: 100px !important;
+                height: 100px !important;
             }
         }
     </style>
@@ -508,6 +576,36 @@
                         rows="2"></textarea>
                 </div>
 
+                <div class="admin-form-group">
+                    <label>Imagen del evento (opcional)</label>
+                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <input type="file" id="eventoImagen" accept="image/*"
+                            style="flex:1; padding:10px; background:var(--color-bg); border:1px solid var(--color-border); border-radius:var(--radius-sm); color:var(--color-text); font-family:var(--font);">
+                        <button class="btn-admin btn-secondary"
+                            onclick="document.getElementById('eventoImagen').click()">
+                            <i class="fa-solid fa-folder-open"></i> Seleccionar
+                        </button>
+                    </div>
+                    <div class="form-help">Formatos: JPG, PNG, WEBP. Máximo 5MB. Se subirá a Cloudinary automáticamente.
+                        Proporción recomendada: 1200x630 (Facebook/Instagram).</div>
+                </div>
+
+                <div class="image-preview" id="imagePreview">
+                    <img id="previewImg" src="" alt="Vista previa">
+                    <div class="image-info">
+                        <div class="filename" id="previewNombre">imagen.webp</div>
+                        <div class="filesize" id="previewTamaño">0 KB</div>
+                    </div>
+                    <button class="image-remove" onclick="eliminarImagenSeleccionada()">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+
+                <div id="imagenActualContainer" style="display:none; margin: 8px 0 16px;">
+                    <span style="color:var(--color-text-muted); font-size:0.75rem;">Imagen actual:</span>
+                    <span id="imagenActualNombre" style="font-size:0.8rem; color:var(--color-primary);"></span>
+                </div>
+
                 <button class="btn-admin btn-primary btn-lg" onclick="crearEvento()">
                     <i class="fa-solid fa-plus"></i> Crear Evento
                 </button>
@@ -618,11 +716,53 @@
 
     <script>
         // ============================================================
+        // CONFIGURACIÓN DE CLOUDINARY
+        // ============================================================
+        const CLOUDINARY_CONFIG = {
+            cloudName: 'ldiiqgdp',
+            uploadPreset: 'tencha_uploads',
+            uploadUrl: 'https://api.cloudinary.com/v1_1/ldiiqgdp/image/upload'
+        };
+
+        // ============================================================
         // VARIABLES GLOBALES
         // ============================================================
         let eventos = [];
         let asistentes = [];
         let asistenteActual = null;
+        let imagenSeleccionada = null;
+        let imagenUrlActual = null;
+        let editandoEventoId = null;
+
+        // ============================================================
+        // FUNCIÓN: SUBIR IMAGEN A CLOUDINARY
+        // ============================================================
+        async function subirImagenCloudinary(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
+            formData.append('folder', 'eventos');
+
+            try {
+                const response = await fetch(CLOUDINARY_CONFIG.uploadUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('❌ Error Cloudinary:', errorData);
+                    throw new Error(errorData.error?.message || 'Error al subir a Cloudinary');
+                }
+
+                const data = await response.json();
+                console.log('✅ Imagen subida a Cloudinary:', data.secure_url);
+                return data.secure_url;
+            } catch (error) {
+                console.error('❌ Error en subirImagenCloudinary:', error);
+                throw error;
+            }
+        }
 
         // ============================================================
         // SIDEBAR
@@ -700,6 +840,53 @@
         }
 
         // ============================================================
+        // MANEJO DE IMAGEN
+        // ============================================================
+
+        document.getElementById('eventoImagen').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                mostrarToast('⚠️ Selecciona una imagen válida', 'warning');
+                this.value = '';
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                mostrarToast('⚠️ La imagen no debe superar los 5MB', 'warning');
+                this.value = '';
+                return;
+            }
+
+            imagenSeleccionada = file;
+
+            const preview = document.getElementById('imagePreview');
+            const img = document.getElementById('previewImg');
+            const nombre = document.getElementById('previewNombre');
+            const tamaño = document.getElementById('previewTamaño');
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+
+            nombre.textContent = file.name;
+            tamaño.textContent = (file.size / 1024).toFixed(1) + ' KB';
+            preview.classList.add('show');
+
+            document.getElementById('imagenActualContainer').style.display = 'none';
+            imagenUrlActual = null;
+        });
+
+        function eliminarImagenSeleccionada() {
+            imagenSeleccionada = null;
+            document.getElementById('imagePreview').classList.remove('show');
+            document.getElementById('eventoImagen').value = '';
+        }
+
+        // ============================================================
         // FUNCIONES - EVENTOS
         // ============================================================
 
@@ -709,7 +896,6 @@
                     throw new Error('Firebase no disponible');
                 }
 
-                // SIN orderBy - traemos todos y ordenamos en memoria
                 const snapshot = await db.collection('eventos').get();
 
                 eventos = [];
@@ -717,7 +903,6 @@
                     eventos.push({ id: doc.id, ...doc.data() });
                 });
 
-                // Ordenar en memoria por fecha de creación (más reciente primero)
                 eventos.sort((a, b) => {
                     const fechaA = a.creadoEn ? new Date(a.creadoEn) : new Date(0);
                     const fechaB = b.creadoEn ? new Date(b.creadoEn) : new Date(0);
@@ -769,10 +954,14 @@
                                         ${fecha ? '<span><i class="fa-regular fa-calendar"></i> ' + fecha + '</span>' : ''}
                                         ${hora ? '<span><i class="fa-regular fa-clock"></i> ' + hora + '</span>' : ''}
                                         ${e.lugar ? '<span><i class="fa-regular fa-location-dot"></i> ' + sanitizar(e.lugar) + '</span>' : ''}
+                                        ${e.imagen ? '<span><i class="fa-regular fa-image"></i> Con imagen</span>' : ''}
                                     </div>
                                 </div>
                                 <div class="evento-count">🎫 ${count}</div>
                                 <div class="evento-actions">
+                                    <button class="btn-admin btn-primary btn-sm" onclick="event.stopPropagation(); editarEvento('${e.id}')">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
                                     <button class="btn-admin btn-danger btn-sm" onclick="event.stopPropagation(); eliminarEvento('${e.id}')">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
@@ -790,6 +979,53 @@
             cargarAsistentes();
         }
 
+        async function editarEvento(id) {
+            try {
+                const doc = await db.collection('eventos').doc(id).get();
+                if (!doc.exists) {
+                    mostrarToast('❌ Evento no encontrado', 'error');
+                    return;
+                }
+
+                const data = doc.data();
+                editandoEventoId = id;
+
+                document.getElementById('eventoNombre').value = data.nombre || '';
+                document.getElementById('eventoFecha').value = data.fecha || '';
+                document.getElementById('eventoHora').value = data.hora || '';
+                document.getElementById('eventoLugar').value = data.lugar || '';
+                document.getElementById('eventoDescripcion').value = data.descripcion || '';
+
+                if (data.imagen) {
+                    imagenUrlActual = data.imagen;
+                    document.getElementById('imagenActualContainer').style.display = 'block';
+                    document.getElementById('imagenActualNombre').textContent = data.imagen.split('/').pop().split('?')[0] || 'imagen';
+                } else {
+                    imagenUrlActual = null;
+                    document.getElementById('imagenActualContainer').style.display = 'none';
+                }
+
+                document.getElementById('imagePreview').classList.remove('show');
+                imagenSeleccionada = null;
+
+                // Cambiar texto del botón y título
+                const btn = document.querySelector('#subTab-crear .btn-admin.btn-primary');
+                if (btn) {
+                    btn.innerHTML = '<i class="fa-solid fa-save"></i> Actualizar Evento';
+                }
+
+                // Ir al tab de crear
+                document.querySelector('.sub-tabs button:nth-child(3)').click();
+
+                document.getElementById('formProducto')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                mostrarToast('✏️ Editando: ' + data.nombre, 'info');
+
+            } catch (error) {
+                console.error('Error al editar:', error);
+                mostrarToast('❌ Error al cargar el evento', 'error');
+            }
+        }
+
         async function crearEvento() {
             const nombre = document.getElementById('eventoNombre').value.trim();
             const fecha = document.getElementById('eventoFecha').value;
@@ -804,26 +1040,64 @@
                 return;
             }
 
+            const btn = document.querySelector('#subTab-crear .btn-admin.btn-primary');
+            btn.classList.add('loading');
+            btn.disabled = true;
+
             try {
-                const evento = {
+                let imagenUrl = imagenUrlActual;
+
+                if (imagenSeleccionada) {
+                    try {
+                        console.log('📤 Subiendo imagen a Cloudinary:', imagenSeleccionada.name);
+                        imagenUrl = await subirImagenCloudinary(imagenSeleccionada);
+                        console.log('✅ Imagen subida a Cloudinary:', imagenUrl);
+                    } catch (uploadError) {
+                        console.error('❌ Error al subir imagen:', uploadError);
+                        mostrarMensajeEvento(mensajeEl, '❌ Error al subir la imagen: ' + uploadError.message, 'error');
+                        btn.classList.remove('loading');
+                        btn.disabled = false;
+                        return;
+                    }
+                }
+
+                if (editandoEventoId && !imagenSeleccionada && imagenUrlActual) {
+                    imagenUrl = imagenUrlActual;
+                }
+
+                const eventoData = {
                     nombre,
                     fecha: fecha || '',
                     hora: hora || '',
                     lugar: lugar || '',
                     descripcion: descripcion || '',
-                    creadoEn: new Date().toISOString(),
-                    asistentes: []
+                    imagen: imagenUrl || '',
+                    actualizadoEn: new Date().toISOString()
                 };
 
-                await db.collection('eventos').add(evento);
-
-                mostrarMensajeEvento(mensajeEl, '✅ Evento "' + nombre + '" creado con éxito', 'success');
+                if (editandoEventoId) {
+                    await db.collection('eventos').doc(editandoEventoId).update(eventoData);
+                    mostrarMensajeEvento(mensajeEl, '✅ Evento "' + nombre + '" actualizado con éxito', 'success');
+                    editandoEventoId = null;
+                    // Restaurar botón
+                    btn.innerHTML = '<i class="fa-solid fa-plus"></i> Crear Evento';
+                } else {
+                    eventoData.creadoEn = new Date().toISOString();
+                    eventoData.asistentes = [];
+                    await db.collection('eventos').add(eventoData);
+                    mostrarMensajeEvento(mensajeEl, '✅ Evento "' + nombre + '" creado con éxito', 'success');
+                }
 
                 document.getElementById('eventoNombre').value = '';
                 document.getElementById('eventoFecha').value = '';
                 document.getElementById('eventoHora').value = '';
                 document.getElementById('eventoLugar').value = '';
                 document.getElementById('eventoDescripcion').value = '';
+                document.getElementById('imagePreview').classList.remove('show');
+                document.getElementById('imagenActualContainer').style.display = 'none';
+                imagenSeleccionada = null;
+                imagenUrlActual = null;
+                document.getElementById('eventoImagen').value = '';
 
                 cargarEventos();
                 cargarSelects();
@@ -832,6 +1106,9 @@
                 console.error('Error al crear evento:', error);
                 mostrarMensajeEvento(mensajeEl, '❌ Error: ' + error.message, 'error');
             }
+
+            btn.classList.remove('loading');
+            btn.disabled = false;
         }
 
         async function eliminarEvento(id) {
@@ -877,7 +1154,6 @@
                     eventosList.push({ id: doc.id, ...doc.data() });
                 });
 
-                // Ordenar en memoria
                 eventosList.sort((a, b) => {
                     const fechaA = a.creadoEn ? new Date(a.creadoEn) : new Date(0);
                     const fechaB = b.creadoEn ? new Date(b.creadoEn) : new Date(0);
@@ -1250,7 +1526,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             cargarEventos();
             cargarSelects();
-            console.log('🚀 Gestor de Eventos cargado');
+            console.log('🚀 Gestor de Eventos cargado con Cloudinary');
         });
 
         // Cerrar modal con Escape

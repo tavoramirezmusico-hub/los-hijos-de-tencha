@@ -1145,6 +1145,10 @@
                 margin-right: 0;
                 margin-bottom: 10px;
             }
+
+            .card-evento .imagen-evento {
+                max-width: 100%;
+            }
         }
 
         /* =====================================
@@ -1715,7 +1719,7 @@
     <script src="js/eventos.js"></script>
 
     <!-- ============================================= -->
-    <!-- SCRIPT PARA EVENTOS DESDE FIREBASE           -->
+    <!-- SCRIPT PARA EVENTOS DESDE FIREBASE             -->
     <!-- ============================================= -->
     <script>
         // ============================================================
@@ -1813,9 +1817,6 @@
                                 ${lugar ? '<p>📍 ' + lugar + '</p>' : ''}
                                 ${descripcion ? '<p style="color:#aaa; font-size:0.95rem; margin-top:8px;">' + descripcion + '</p>' : ''}
                             </div>
-                            <a href="#" class="boton principal" onclick="event.preventDefault(); alert('Próximamente disponible');">
-                                Reservar
-                            </a>
                         </div>
                     `;
                 });
