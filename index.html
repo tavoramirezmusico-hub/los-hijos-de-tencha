@@ -177,7 +177,15 @@
 
 
 
-    <!-- Estilos adicionales para menú scroll horizontal -->
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+
+    <!-- Estilos adicionales -->
     <style>
         /* =====================================
            MENÚ CON SCROLL HORIZONTAL
@@ -251,7 +259,7 @@
         }
 
         /* =====================================
-           HERO INDEX - MEJORADO (MISMA PROPORCIÓN QUE GALERÍA)
+           HERO INDEX
            ===================================== */
         .hero {
             min-height: 100vh;
@@ -563,6 +571,372 @@
         .texto-banda p {
             text-align: justify;
         }
+
+        /* =====================================
+           TIENDA - ESTILOS ADICIONALES
+           ===================================== */
+        .galeria-camisetas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .galeria-camisetas.mostrar {
+            display: grid;
+        }
+
+        .camiseta {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .camiseta:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .camiseta img {
+            width: 100%;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .camiseta img:hover {
+            transform: scale(1.05);
+        }
+
+        .camiseta p {
+            font-size: 18px;
+            margin: 15px 0 5px;
+            color: #fff;
+        }
+
+        .camiseta .precio-tienda {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffcc00;
+            margin-bottom: 15px;
+        }
+
+        .camiseta a {
+            display: inline-block;
+            background: #25d366;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .camiseta a:hover {
+            opacity: .8;
+            transform: scale(1.05);
+        }
+
+        .producto-principal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .producto-principal img {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        .producto-principal img:hover {
+            transform: scale(1.03);
+        }
+
+        .producto-principal h3 {
+            margin-top: 20px;
+            font-size: 25px;
+            color: #fff;
+        }
+
+        .producto-principal p {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 15px;
+        }
+
+        .producto-principal .boton {
+            display: inline-block;
+            width: auto;
+            padding: 12px 30px;
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+            .galeria-camisetas {
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+            }
+
+            .camiseta {
+                padding: 12px;
+            }
+
+            .camiseta p {
+                font-size: 14px;
+            }
+
+            .camiseta .precio-tienda {
+                font-size: 16px;
+            }
+
+            .producto-principal img {
+                max-width: 280px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .galeria-camisetas {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* =====================================
+           VISOR DE IMÁGENES (TIENDA)
+           ===================================== */
+        .visor-tienda {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .95);
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            backdrop-filter: blur(8px);
+            padding: 20px;
+        }
+
+        .visor-tienda.active {
+            display: flex;
+        }
+
+        .visor-tienda img {
+            max-width: 90%;
+            max-height: 85%;
+            border-radius: 15px;
+            animation: zoomEntradaTienda .35s ease;
+        }
+
+        @keyframes zoomEntradaTienda {
+            from {
+                opacity: 0;
+                transform: scale(.85);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .visor-tienda .cerrar-visor-tienda {
+            position: absolute;
+            top: 25px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .12);
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .visor-tienda .cerrar-visor-tienda:hover {
+            background: #ffcc00;
+            color: #000;
+        }
+
+        /* =====================================
+           INTEGRANTES
+           ===================================== */
+        .integrantes {
+            padding: 80px 8%;
+            background: #111;
+            text-align: center;
+        }
+
+        .integrantes h2 {
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: #fff;
+        }
+
+        .grid-integrantes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 30px;
+        }
+
+        .grid-integrantes img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: .6s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, .45);
+            display: block;
+        }
+
+        .grid-integrantes img:hover {
+            box-shadow:
+                0 0 15px rgba(255, 204, 0, .8),
+                0 0 35px rgba(255, 204, 0, .5);
+        }
+
+        /* =====================================
+           CREDITO DISEÑADOR
+           ===================================== */
+        .credito-web {
+            margin-top: 15px;
+            font-size: .9rem;
+            color: #999;
+            letter-spacing: .5px;
+            text-align: center;
+        }
+
+        .credito-web a {
+            color: #ffcc00;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            transition:
+                color .3s ease,
+                transform .3s ease,
+                text-shadow .3s ease;
+        }
+
+        .credito-web a:hover {
+            color: #ffffff;
+            transform: translateY(-2px) scale(1.08);
+            text-shadow:
+                0 0 8px rgba(255, 204, 0, .8),
+                0 0 15px rgba(255, 204, 0, .5);
+        }
+
+        .credito-web a:active {
+            transform: scale(.95);
+        }
+
+        /* =====================================
+           CONTACTO
+           ===================================== */
+        #contacto {
+            background: #111;
+            padding: 80px 20px;
+        }
+
+        .redes {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .redes a {
+            width: 65px;
+            height: 65px;
+            background: #ffcc00;
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            transition: .3s;
+        }
+
+        .redes a:hover {
+            transform: scale(1.1);
+            background: white;
+        }
+
+        /* =====================================
+           EVENTOS - REGISTRO
+           ===================================== */
+        #eventos select,
+        #eventos input {
+            width: 100%;
+            padding: 14px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            transition: border 0.3s ease;
+        }
+
+        #eventos select:focus,
+        #eventos input:focus {
+            outline: none;
+            border-color: #ffcc00;
+        }
+
+        #eventos select option {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .mensaje-registro {
+            margin-top: 15px;
+            text-align: center;
+            display: none;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .mensaje-registro.success {
+            display: block;
+            color: #00c853;
+            background: rgba(0, 200, 83, 0.1);
+            border: 1px solid #00c853;
+        }
+
+        .mensaje-registro.error {
+            display: block;
+            color: #d32f2f;
+            background: rgba(211, 47, 47, 0.1);
+            border: 1px solid #d32f2f;
+        }
+
+        .mensaje-registro.info {
+            display: block;
+            color: #ffcc00;
+            background: rgba(255, 204, 0, 0.1);
+            border: 1px solid #ffcc00;
+        }
     </style>
 
 </head>
@@ -857,7 +1231,6 @@
 
             <!-- =====================================
          REGISTRO PARA EVENTOS - SISTEMA DE ENTRADAS
-         (MOVIDO AQUÍ, DESPUÉS DEL BOTÓN "VER VIDEOS")
     ===================================== -->
             <div style="margin-top: 60px; border-top: 1px solid #333; padding-top: 50px;">
                 <div class="titulo-seccion">
@@ -897,7 +1270,7 @@
 
 
     <!-- =====================================
-         SECCIÓN LANZAMIENTOS MEJORADA
+         SECCIÓN LANZAMIENTOS
     ===================================== -->
     <section id="musica" class="animar">
 
@@ -970,83 +1343,51 @@
 
     </section>
 
+    <!-- =====================================
+         TIENDA OFICIAL - DESDE FIREBASE
+    ===================================== -->
     <section id="tienda" class="tienda animar">
+        <div class="contenedor">
+            <div class="titulo-seccion">
+                <span>Merchandising</span>
+                <h2>Tienda Oficial</h2>
+                <p style="color: #aaa; max-width: 600px; margin: 10px auto 0;">
+                    Apoya a la banda con nuestros productos oficiales.
+                </p>
+            </div>
 
-        <h2>Tienda Oficial</h2>
+            <!-- Producto Destacado -->
+            <div id="productoDestacado" style="display: none;">
+                <div class="producto-principal" id="productoDestacadoContenido">
+                    <!-- Se llena desde Firebase -->
+                </div>
+            </div>
 
-        <div class="producto-principal">
+            <!-- Botón Ver Todos -->
+            <div style="text-align: center; margin: 30px 0 20px;">
+                <button class="boton principal" onclick="mostrarTodosProductos()" id="btnVerTodos"
+                    style="display: none;">
+                    <i class="fa-solid fa-grid-2"></i> Ver todos los productos
+                </button>
+            </div>
 
-            <img src="img/tienda/camisetas.webp" alt="Camisetas Los Hijos de Tencha" id="abrir-tienda"
-                onclick="mostrarCamisetas()">
+            <!-- Galería -->
+            <div id="galeria-productos" class="galeria-camisetas"></div>
 
-            <h3>Camisetas oficiales</h3>
+            <!-- Cargando -->
+            <div id="tiendaCargando" style="text-align: center; padding: 40px 20px; color: #666;">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; color: #ffcc00;"></i>
+                <p style="margin-top: 12px;">Cargando productos...</p>
+            </div>
 
-            <p>₡12.000</p>
-
-            <button onclick="mostrarCamisetas(); gtag('event','ver_disenos_camisetas');">
-                Ver diseños
-            </button>
-
+            <!-- Vacío -->
+            <div id="tiendaVacia" style="display: none; text-align: center; padding: 40px 20px; color: #666;">
+                <i class="fa-regular fa-box-open"
+                    style="font-size: 2.5rem; display: block; margin-bottom: 12px; opacity: 0.3;"></i>
+                <p>No hay productos disponibles en la tienda.</p>
+                <p style="font-size: 0.85rem; color: #555; margin-top: 8px;">Pronto tendremos nuevos productos.</p>
+            </div>
         </div>
-
-
-        <div id="galeria-camisetas" class="galeria-camisetas">
-
-
-            <div class="camiseta">
-
-                <img src="img/tienda/camiseta1.webp">
-
-                <p>Camiseta diseño 1</p>
-
-                <a href="https://wa.me/50688636047?text=Hola,%20me%20gustaría%20adquirir%20una%20camiseta%20oficial%20de%20Los%20Hijos%20de%20Tencha.%20Me%20interesa%20el%20diseño%201"
-                    target="_blank" onclick="gtag('event','comprar_camiseta_1');">
-
-                    Comprar por WhatsApp
-
-                </a>
-
-            </div>
-
-
-
-            <div class="camiseta">
-
-                <img src="img/tienda/camiseta2.webp">
-
-                <p>Camiseta diseño 2</p>
-
-                <a href="https://wa.me/50688636047?text=Hola,%20me%20gustaría%20adquirir%20una%20camiseta%20oficial%20de%20Los%20Hijos%20de%20Tencha.%20Me%20interesa%20el%20diseño%202"
-                    target="_blank" onclick="gtag('event','comprar_camiseta_2');">
-
-                    Comprar por WhatsApp
-
-                </a>
-
-            </div>
-
-
-
-            <div class="camiseta">
-
-                <img src="img/tienda/camiseta3.webp">
-
-                <p>Camiseta diseño 3</p>
-
-
-                <a href="https://wa.me/50688636047?text=Hola,%20me%20gustaría%20adquirir%20una%20camiseta%20oficial%20de%20Los%20Hijos%20de%20Tencha.%20Me%20interesa%20el%20diseño%203"
-                    target="_blank" onclick="gtag('event','comprar_camiseta_3');">
-
-                    Comprar por WhatsApp
-
-                </a>
-
-
-            </div>
-
-
-        </div>
-
     </section>
 
     <section id="contacto">
@@ -1094,7 +1435,6 @@
 
             <!-- =====================================
          BOTÓN ÚNETE A NUESTRA COMUNIDAD - WHATSAPP
-         ESTILO ROJO
     ===================================== -->
             <div style="text-align: center; margin-top: 30px;">
                 <a href="https://chat.whatsapp.com/H2ry6GFbBDe8Q5UsNMcDdu?s=cl&p=i&ilr=2" target="_blank"
@@ -1153,12 +1493,10 @@
 
     </button>
 
-    <div id="visor-camiseta" class="visor-camiseta">
-
-        <span id="cerrar-visor">&times;</span>
-
-        <img id="imagen-ampliada" src="" alt="Camiseta ampliada">
-
+    <!-- Visor de imágenes (Tienda) -->
+    <div id="visor-tienda" class="visor-tienda">
+        <button class="cerrar-visor-tienda" onclick="cerrarVisorTienda()">&times;</button>
+        <img id="imagen-tienda-visor" src="" alt="Producto ampliado">
     </div>
 
     <!-- Pantalla de transición -->
@@ -1167,16 +1505,284 @@
     </div>
 
     <!-- ============================================= -->
-    <!-- FIREBASE SDKs - SISTEMA DE ENTRADAS           -->
+    <!-- SCRIPTS                                     -->
     <!-- ============================================= -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
-    <!-- EMAILJS -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-
     <script src="js/script.js"></script>
     <script src="js/eventos.js"></script>
+
+    <!-- ============================================= -->
+    <!-- SCRIPT PARA TIENDA DESDE FIREBASE             -->
+    <!-- ============================================= -->
+    <script>
+        // ============================================================
+        // CONFIGURACIÓN DE FIREBASE
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDvp_6UFymZZnqxMyL6yobJ3twLMvVkThw",
+            authDomain: "base-entradas-tenchos.firebaseapp.com",
+            projectId: "base-entradas-tenchos",
+            storageBucket: "base-entradas-tenchos.firebasestorage.app",
+            messagingSenderId: "273676503007",
+            appId: "1:273676503007:web:56180c485b648ef076a66a"
+        };
+
+        let db = null;
+
+        // Inicializar Firebase si no está ya inicializado
+        if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+            console.log('✅ Firebase inicializado en index');
+        }
+
+        try {
+            if (typeof firebase !== 'undefined') {
+                db = firebase.firestore();
+                console.log('✅ Firestore disponible');
+            }
+        } catch (e) {
+            console.warn('⚠️ Error al conectar con Firestore:', e);
+        }
+
+        // ============================================================
+        // TIENDA - VARIABLES GLOBALES
+        // ============================================================
+        let todosLosProductos = [];
+        let todosVisibles = false;
+
+        // ============================================================
+        // FUNCIÓN: CARGAR PRODUCTOS
+        // ============================================================
+        async function cargarProductosTienda() {
+            const contenedor = document.getElementById('galeria-productos');
+            const cargando = document.getElementById('tiendaCargando');
+            const vacia = document.getElementById('tiendaVacia');
+            const destacado = document.getElementById('productoDestacado');
+            const btnVerTodos = document.getElementById('btnVerTodos');
+
+            if (!db) {
+                console.warn('⚠️ Firestore no disponible');
+                cargando.style.display = 'none';
+                vacia.style.display = 'block';
+                vacia.innerHTML = `
+                    <i class="fa-solid fa-triangle-exclamation" style="font-size: 2.5rem; display: block; margin-bottom: 12px; color: #d32f2f;"></i>
+                    <p>⚠️ Error de conexión con la tienda</p>
+                    <button onclick="cargarProductosTienda()" style="margin-top:12px; padding:10px 24px; background:#ffcc00; color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif;">
+                        <i class="fa-solid fa-rotate"></i> Reintentar
+                    </button>
+                `;
+                return;
+            }
+
+            try {
+                cargando.style.display = 'block';
+                vacia.style.display = 'none';
+                destacado.style.display = 'none';
+                btnVerTodos.style.display = 'none';
+                contenedor.innerHTML = '';
+                contenedor.classList.remove('mostrar');
+                todosVisibles = false;
+
+                const snapshot = await db.collection('productos')
+                    .orderBy('orden', 'asc')
+                    .get();
+
+                if (snapshot.empty) {
+                    cargando.style.display = 'none';
+                    vacia.style.display = 'block';
+                    return;
+                }
+
+                todosLosProductos = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    // Solo mostrar productos disponibles
+                    if (data.stock === 'disponible' || !data.stock) {
+                        todosLosProductos.push({
+                            id: doc.id,
+                            nombre: data.nombre || 'Producto',
+                            descripcion: data.descripcion || '',
+                            precio: data.precio || 0,
+                            categoria: data.categoria || 'General',
+                            whatsapp: data.whatsapp || '',
+                            imagen: data.imagen || '',
+                            orden: data.orden || 0,
+                            stock: data.stock || 'disponible'
+                        });
+                    }
+                });
+
+                // Ordenar por orden
+                todosLosProductos.sort((a, b) => {
+                    const ordenA = a.orden || 999;
+                    const ordenB = b.orden || 999;
+                    if (ordenA !== ordenB) return ordenA - ordenB;
+                    return a.nombre.localeCompare(b.nombre);
+                });
+
+                cargando.style.display = 'none';
+
+                if (todosLosProductos.length === 0) {
+                    vacia.style.display = 'block';
+                    return;
+                }
+
+                // Mostrar producto destacado (el primero)
+                mostrarProductoDestacado(todosLosProductos[0]);
+
+                // Si hay más de 1 producto, mostrar botón "Ver todos"
+                if (todosLosProductos.length > 1) {
+                    btnVerTodos.style.display = 'inline-block';
+                }
+
+                // Mostrar todos inicialmente
+                renderizarProductos(todosLosProductos);
+
+                console.log('✅ ' + todosLosProductos.length + ' productos cargados');
+
+            } catch (error) {
+                console.error('❌ Error al cargar productos:', error);
+                cargando.style.display = 'none';
+                vacia.style.display = 'block';
+                vacia.innerHTML = `
+                    <i class="fa-solid fa-triangle-exclamation" style="font-size: 2.5rem; display: block; margin-bottom: 12px; color: #d32f2f;"></i>
+                    <p>❌ Error al cargar productos: ${error.message}</p>
+                    <button onclick="cargarProductosTienda()" style="margin-top:12px; padding:10px 24px; background:#ffcc00; color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif;">
+                        <i class="fa-solid fa-rotate"></i> Reintentar
+                    </button>
+                `;
+            }
+        }
+
+        // ============================================================
+        // FUNCIÓN: MOSTRAR PRODUCTO DESTACADO
+        // ============================================================
+        function mostrarProductoDestacado(producto) {
+            const contenedor = document.getElementById('productoDestacadoContenido');
+            const destacado = document.getElementById('productoDestacado');
+
+            if (!producto) {
+                destacado.style.display = 'none';
+                return;
+            }
+
+            const precioFormateado = '₡' + producto.precio.toLocaleString();
+            const imagen = producto.imagen || 'img/logo.webp';
+
+            contenedor.innerHTML = `
+                <img src="${imagen}" alt="${producto.nombre}" onclick="abrirVisorTienda('${imagen}')" style="cursor: pointer;">
+                <h3>${producto.nombre}</h3>
+                <p>${precioFormateado}</p>
+                <p style="font-size: 0.85rem; color: #888; margin-top: -10px;">${producto.descripcion || ''}</p>
+                <a href="${producto.whatsapp || 'https://wa.me/50688636047?text=Hola,%20me%20interesa%20el%20producto'}" 
+                   target="_blank" 
+                   class="boton principal" 
+                   style="display: inline-block; width: auto; padding: 12px 30px; text-decoration: none;"
+                   onclick="gtag('event','comprar_destacado');">
+                    <i class="fa-brands fa-whatsapp"></i> Comprar por WhatsApp
+                </a>
+            `;
+
+            destacado.style.display = 'block';
+        }
+
+        // ============================================================
+        // FUNCIÓN: RENDERIZAR PRODUCTOS
+        // ============================================================
+        function renderizarProductos(productos) {
+            const contenedor = document.getElementById('galeria-productos');
+
+            if (!productos || productos.length === 0) {
+                contenedor.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            productos.forEach(producto => {
+                const precioFormateado = '₡' + producto.precio.toLocaleString();
+                const imagen = producto.imagen || 'img/logo.webp';
+
+                html += `
+                    <div class="camiseta">
+                        <img src="${imagen}" alt="${producto.nombre}" onclick="abrirVisorTienda('${imagen}')" style="cursor: pointer;">
+                        <p>${producto.nombre}</p>
+                        <div class="precio-tienda">${precioFormateado}</div>
+                        <a href="${producto.whatsapp || 'https://wa.me/50688636047?text=Hola,%20me%20interesa%20el%20producto'}" 
+                           target="_blank" 
+                           onclick="gtag('event','comprar_${producto.id}');">
+                            <i class="fa-brands fa-whatsapp"></i> Comprar
+                        </a>
+                    </div>
+                `;
+            });
+
+            contenedor.innerHTML = html;
+            contenedor.classList.add('mostrar');
+        }
+
+        // ============================================================
+        // FUNCIÓN: MOSTRAR TODOS LOS PRODUCTOS
+        // ============================================================
+        function mostrarTodosProductos() {
+            const contenedor = document.getElementById('galeria-productos');
+            const btnVerTodos = document.getElementById('btnVerTodos');
+
+            if (todosVisibles) {
+                // Ocultar
+                contenedor.classList.remove('mostrar');
+                contenedor.innerHTML = '';
+                btnVerTodos.innerHTML = '<i class="fa-solid fa-grid-2"></i> Ver todos los productos';
+                todosVisibles = false;
+            } else {
+                // Mostrar
+                renderizarProductos(todosLosProductos);
+                btnVerTodos.innerHTML = '<i class="fa-solid fa-xmark"></i> Ocultar productos';
+                todosVisibles = true;
+
+                // Scroll a la tienda
+                document.getElementById('tienda').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // ============================================================
+        // FUNCIÓN: VISOR DE IMÁGENES (TIENDA)
+        // ============================================================
+        function abrirVisorTienda(src) {
+            const visor = document.getElementById('visor-tienda');
+            const img = document.getElementById('imagen-tienda-visor');
+            img.src = src;
+            visor.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarVisorTienda() {
+            const visor = document.getElementById('visor-tienda');
+            visor.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Cerrar visor con Escape
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                cerrarVisorTienda();
+            }
+        });
+
+        // Cerrar visor al hacer clic fuera
+        document.getElementById('visor-tienda').addEventListener('click', function (e) {
+            if (e.target === this) {
+                cerrarVisorTienda();
+            }
+        });
+
+        // ============================================================
+        // INICIALIZAR TIENDA AL CARGAR
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function () {
+            // Esperar a que Firebase esté listo
+            setTimeout(cargarProductosTienda, 500);
+            console.log('🛒 Tienda desde Firebase cargando...');
+        });
+    </script>
 
 </body>
 
