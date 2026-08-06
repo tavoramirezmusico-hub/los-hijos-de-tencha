@@ -623,19 +623,30 @@
             margin-bottom: 15px;
         }
 
-        .camiseta a {
+        /* Botón de compra en camisetas - MISMO ESTILO QUE EL RESTO */
+        .camiseta .btn-whatsapp-compra {
             display: inline-block;
+            padding: 10px 24px;
             background: #25d366;
-            color: white;
+            color: #fff;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.9rem;
             text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 25px;
             transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
         }
 
-        .camiseta a:hover {
-            opacity: .8;
-            transform: scale(1.05);
+        .camiseta .btn-whatsapp-compra:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+            background: #1ed760;
+        }
+
+        .camiseta .btn-whatsapp-compra i {
+            margin-right: 8px;
         }
 
         .producto-principal {
@@ -668,18 +679,64 @@
             color: #fff;
         }
 
-        .producto-principal p {
+        .producto-principal .precio-destacado {
             font-size: 24px;
             font-weight: bold;
             margin: 15px;
             color: #ffcc00;
         }
 
-        .producto-principal .boton {
+        /* Botón de producto destacado - MISMO ESTILO QUE EL RESTO */
+        .producto-principal .btn-destacado {
             display: inline-block;
             width: auto;
             padding: 12px 30px;
+            background: #ffcc00;
+            color: #000;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1rem;
             text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .producto-principal .btn-destacado:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 204, 0, 0.3);
+            background: #e6b800;
+        }
+
+        .producto-principal .btn-destacado i {
+            margin-right: 8px;
+        }
+
+        /* Botón "Ver todos" - MISMO ESTILO QUE EL RESTO */
+        .btn-ver-todos {
+            display: inline-block;
+            padding: 14px 40px;
+            background: #ffcc00;
+            color: #000;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-ver-todos:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 204, 0, 0.3);
+            background: #e6b800;
+        }
+
+        .btn-ver-todos i {
+            margin-right: 8px;
         }
 
         .badge-destacado {
@@ -713,8 +770,23 @@
                 font-size: 16px;
             }
 
+            .camiseta .btn-whatsapp-compra {
+                font-size: 0.8rem;
+                padding: 8px 16px;
+            }
+
             .producto-principal img {
                 max-width: 280px;
+            }
+
+            .producto-principal .btn-destacado {
+                font-size: 0.9rem;
+                padding: 10px 24px;
+            }
+
+            .btn-ver-todos {
+                font-size: 0.9rem;
+                padding: 12px 30px;
             }
         }
 
@@ -1075,6 +1147,63 @@
                 margin-right: 0;
                 margin-bottom: 10px;
             }
+        }
+
+        /* =====================================
+           BOTONES GENERALES - FIX
+           ===================================== */
+        .boton {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .boton:hover {
+            transform: translateY(-3px);
+        }
+
+        .boton.principal {
+            background: #ffcc00;
+            color: #000;
+        }
+
+        .boton.principal:hover {
+            background: #e6b800;
+            box-shadow: 0 8px 25px rgba(255, 204, 0, 0.3);
+        }
+
+        .boton.secundario {
+            border: 2px solid white;
+            color: white;
+            background: transparent;
+        }
+
+        .boton.secundario:hover {
+            background: white;
+            color: #000;
+        }
+
+        .hero-botones {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero-botones .boton {
+            width: 220px;
+            min-height: 56px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.1rem;
         }
     </style>
 
@@ -1504,8 +1633,7 @@
 
             <!-- Botón Ver Todos -->
             <div style="text-align: center; margin: 30px 0 20px;">
-                <button class="boton principal" onclick="mostrarTodosProductos()" id="btnVerTodos"
-                    style="display: none;">
+                <button class="btn-ver-todos" onclick="mostrarTodosProductos()" id="btnVerTodos" style="display: none;">
                     <i class="fa-solid fa-grid-2"></i> Ver todos los productos
                 </button>
             </div>
@@ -1793,12 +1921,11 @@
                 <span class="badge-destacado">⭐ Destacado</span>
                 <img src="${imagen}" alt="${producto.nombre}" onclick="abrirVisorTienda('${imagen}')" style="cursor: pointer;">
                 <h3>${producto.nombre}</h3>
-                <p>${precioFormateado}</p>
+                <p class="precio-destacado">${precioFormateado}</p>
                 <p style="font-size: 0.85rem; color: #888; margin-top: -10px;">${producto.descripcion || ''}</p>
                 <a href="${producto.whatsapp || 'https://wa.me/50688636047?text=Hola,%20me%20interesa%20el%20producto'}" 
                    target="_blank" 
-                   class="boton principal" 
-                   style="display: inline-block; width: auto; padding: 12px 30px; text-decoration: none;"
+                   class="btn-destacado"
                    onclick="gtag('event','comprar_destacado');">
                     <i class="fa-brands fa-whatsapp"></i> Comprar por WhatsApp
                 </a>
@@ -1843,6 +1970,7 @@
                         <div class="precio-tienda">${precioFormateado}</div>
                         <a href="${producto.whatsapp || 'https://wa.me/50688636047?text=Hola,%20me%20interesa%20el%20producto'}" 
                            target="_blank" 
+                           class="btn-whatsapp-compra"
                            onclick="gtag('event','comprar_${producto.id}');">
                             <i class="fa-brands fa-whatsapp"></i> Comprar
                         </a>
