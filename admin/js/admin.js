@@ -46,7 +46,7 @@ try {
 const EMAILJS_CONFIG = {
     userId: '7bmV4hpwq7pFObQ8W',
     serviceId: 'service_49w40s8',
-    templateId: 'template_5ulhotx'
+    templateId: 'template_correos'
 };
 
 if (typeof emailjs !== 'undefined') {
