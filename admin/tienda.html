@@ -1055,10 +1055,11 @@
                 const stockBadge = producto.stock === 'disponible' ? 'badge-success' : 'badge-danger';
                 const precioFormateado = '₡' + producto.precio.toLocaleString();
                 const destacadoBadge = producto.destacado ? '<span class="badge-destacado-list">⭐ Destacado</span>' : '';
+                const imagenUrl = producto.imagen && producto.imagen !== '' ? producto.imagen : '../img/logo.webp';
 
                 html += `
                             <div class="producto-item">
-                                <img class="producto-thumb" src="${producto.imagen || '../img/logo.webp'}" alt="${sanitizar(producto.nombre)}" onerror="this.src='../img/logo.webp'" onclick="previsualizarProducto('${producto.id}')" title="Click para previsualizar">
+                                <img class="producto-thumb" src="${imagenUrl}" alt="${sanitizar(producto.nombre)}" onerror="this.src='../img/logo.webp'" onclick="previsualizarProducto('${producto.id}')" title="Click para previsualizar">
                                 <div class="producto-info">
                                     <div class="producto-nombre">${sanitizar(producto.nombre)} ${destacadoBadge}</div>
                                     <div class="producto-meta">
@@ -1101,7 +1102,7 @@
             const container = document.getElementById('previewContenido');
 
             const precioFormateado = '₡' + producto.precio.toLocaleString();
-            const imagen = producto.imagen || '../img/logo.webp';
+            const imagenUrl = producto.imagen && producto.imagen !== '' ? producto.imagen : '../img/logo.webp';
             const stockText = producto.stock === 'disponible' ? '✅ Disponible' : '❌ Agotado';
             const destacadoText = producto.destacado ? '⭐ Destacado' : '';
 
@@ -1111,7 +1112,7 @@
                     <h3>${sanitizar(producto.nombre)}</h3>
                     <div class="preview-precio">${precioFormateado}</div>
                 </div>
-                <img class="preview-image" src="${imagen}" alt="${sanitizar(producto.nombre)}" onerror="this.src='../img/logo.webp'">
+                <img class="preview-image" src="${imagenUrl}" alt="${sanitizar(producto.nombre)}" onerror="this.src='../img/logo.webp'">
                 ${producto.descripcion ? '<div class="preview-desc">' + sanitizar(producto.descripcion) + '</div>' : ''}
                 <div class="preview-meta">
                     <span><i class="fa-regular fa-tag"></i> ${sanitizar(producto.categoria || 'General')}</span>
