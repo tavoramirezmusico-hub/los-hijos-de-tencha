@@ -728,7 +728,7 @@
         // VARIABLES GLOBALES
         // ============================================================
         let eventosCache = [];
-        let asistentesCache = [];
+        let asistentesCache = []; // <--- NUEVA: Para calcular cupos correctamente
 
         // ============================================================
         // SIDEBAR
@@ -806,7 +806,7 @@
         });
 
         // ============================================================
-        // FUNCIÓN: CARGAR EVENTOS
+        // FUNCIÓN: CARGAR EVENTOS (CORREGIDA - CARGA ASISTENTES)
         // ============================================================
         async function cargarEventos() {
             const container = document.getElementById('listaEventos');
@@ -826,6 +826,7 @@
             }
 
             try {
+                // 1. Cargar eventos
                 const snapshot = await db.collection('eventos')
                     .orderBy('creadoEn', 'desc')
                     .get();
@@ -834,6 +835,18 @@
                 if (!snapshot.empty) {
                     snapshot.forEach(doc => {
                         eventosCache.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
+                    });
+                }
+
+                // 2. Cargar asistentes para calcular cupos
+                const asistentesSnap = await db.collection('asistentes').get();
+                asistentesCache = [];
+                if (!asistentesSnap.empty) {
+                    asistentesSnap.forEach(doc => {
+                        asistentesCache.push({
                             id: doc.id,
                             ...doc.data()
                         });
@@ -856,6 +869,46 @@
                     </div>
                 `;
             }
+        }
+
+        // ============================================================
+        // FUNCIÓN: CALCULAR CUPOS DE UN EVENTO (CORREGIDA)
+        // ============================================================
+        function calcularCuposEvento(eventoId) {
+            // Usar asistentesCache (variable global)
+            if (!asistentesCache || asistentesCache.length === 0) {
+                return { disponibles: 0, confirmados: 0, pendientes: 0 };
+            }
+
+            const asistentesEvento = asistentesCache.filter(a => a.eventoId === eventoId);
+
+            // Buscar el evento para saber su capacidad
+            const evento = eventosCache.find(e => e.id === eventoId);
+            const capacidad = evento?.capacidadMaxima || 0;
+
+            let confirmados = 0;
+            let pendientes = 0;
+
+            asistentesEvento.forEach(a => {
+                const entradas = a.numeroEntradas || 1;
+                const estado = a.estadoPago || 'pendiente';
+                if (estado === 'confirmado' || a.ingresado === true) {
+                    confirmados += entradas;
+                } else if (estado === 'pendiente') {
+                    pendientes += entradas;
+                }
+            });
+
+            const ocupados = confirmados + pendientes;
+            const disponibles = capacidad > 0 ? Math.max(0, capacidad - ocupados) : Infinity;
+
+            return {
+                disponibles: disponibles,
+                confirmados: confirmados,
+                pendientes: pendientes,
+                ocupados: ocupados,
+                capacidad: capacidad
+            };
         }
 
         // ============================================================
@@ -909,7 +962,7 @@
                             </div>
                             <div class="evento-stats-grid">
                                 <div class="stat-item">
-                                    <span class="stat-num">${disponibles}</span> disponibles
+                                    <span class="stat-num">${disponibles === Infinity ? '∞' : disponibles}</span> disponibles
                                 </div>
                                 <div class="stat-item">
                                     <span class="stat-num">${confirmados}</span> confirmados
@@ -944,45 +997,6 @@
         }
 
         // ============================================================
-        // FUNCIÓN: CALCULAR CUPOS DE UN EVENTO
-        // ============================================================
-        function calcularCuposEvento(eventoId) {
-            if (!asistentesCache || asistentesCache.length === 0) {
-                return { disponibles: 0, confirmados: 0, pendientes: 0 };
-            }
-
-            const asistentesEvento = asistentesCache.filter(a => a.eventoId === eventoId);
-
-            // Buscar el evento para saber su capacidad
-            const evento = eventosCache.find(e => e.id === eventoId);
-            const capacidad = evento?.capacidadMaxima || 0;
-
-            let confirmados = 0;
-            let pendientes = 0;
-
-            asistentesEvento.forEach(a => {
-                const entradas = a.numeroEntradas || 1;
-                if (a.estadoPago === 'confirmado') {
-                    confirmados += entradas;
-                } else if (a.estadoPago === 'pendiente' || !a.estadoPago) {
-                    // Si no tiene estadoPago, lo tratamos como pendiente (compatibilidad)
-                    pendientes += entradas;
-                }
-            });
-
-            const ocupados = confirmados + pendientes;
-            const disponibles = capacidad > 0 ? Math.max(0, capacidad - ocupados) : Infinity;
-
-            return {
-                disponibles: disponibles,
-                confirmados: confirmados,
-                pendientes: pendientes,
-                ocupados: ocupados,
-                capacidad: capacidad
-            };
-        }
-
-        // ============================================================
         // FUNCIÓN: CARGAR ASISTENTES RÁPIDOS
         // ============================================================
         async function cargarAsistentesRapidos() {
@@ -1004,21 +1018,7 @@
                     .limit(10)
                     .get();
 
-                asistentesCache = [];
-                if (!snapshot.empty) {
-                    snapshot.forEach(doc => {
-                        asistentesCache.push({
-                            id: doc.id,
-                            ...doc.data()
-                        });
-                    });
-                }
-
-                // Recargar eventos para actualizar estadísticas
-                // (los asistentes ya están en cache)
-                renderizarEventos();
-
-                if (asistentesCache.length === 0) {
+                if (snapshot.empty) {
                     container.innerHTML = `
                         <div class="evento-vacia">
                             <i class="fa-solid fa-users-slash"></i>
@@ -1029,7 +1029,8 @@
                 }
 
                 let html = '';
-                asistentesCache.forEach(a => {
+                snapshot.forEach(doc => {
+                    const a = doc.data();
                     const nombreEvento = eventosCache.find(e => e.id === a.eventoId)?.nombre || 'Evento';
                     const estadoPago = a.estadoPago || 'pendiente';
                     const badgeColor = estadoPago === 'confirmado' ? 'ingresado' :
@@ -1336,6 +1337,7 @@
         window.switchSubTab = switchSubTab;
         window.mostrarToast = mostrarToast;
         window.calcularCuposEvento = calcularCuposEvento;
+        window.cargarAsistentesRapidos = cargarAsistentesRapidos;
 
         console.log('✅ admin/eventos.html cargado correctamente');
     </script>
