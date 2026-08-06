@@ -880,17 +880,29 @@
 
         // ============================================================
         // SISTEMA DE LOGIN DEL VALIDADOR
+        // Usa la MISMA sesión y contraseña que el resto del panel admin
+        // (verificarSesionAdmin / PASSWORD_HASH vienen de js/admin.js)
         // ============================================================
-        const CONTRASENA_VALIDADOR = 'tencha2024'; // Cambiar por la contraseña deseada
 
         document.addEventListener('DOMContentLoaded', function () {
-            // Mostrar overlay de login
-            document.getElementById('validadorLoginOverlay').classList.remove('hidden');
+            // Si ya hay sesión admin activa (login.html), entrar directo sin pedir contraseña otra vez
+            if (typeof verificarSesionAdmin === 'function' && verificarSesionAdmin()) {
+                document.getElementById('validadorLoginOverlay').classList.add('hidden');
+                document.getElementById('validadorContent').style.display = 'block';
+                iniciarValidador();
+            } else {
+                // Mostrar overlay de login
+                document.getElementById('validadorLoginOverlay').classList.remove('hidden');
+            }
 
             // Login
-            document.getElementById('validadorLoginBtn').addEventListener('click', function () {
+            document.getElementById('validadorLoginBtn').addEventListener('click', async function () {
                 const password = document.getElementById('validadorPasswordInput').value;
-                if (password === CONTRASENA_VALIDADOR) {
+                const inputHash = await hashPassword(password);
+
+                if (inputHash === PASSWORD_HASH) {
+                    sessionStorage.setItem('adminAuth', 'authenticated');
+                    sessionStorage.setItem('adminLoginTime', Date.now().toString());
                     document.getElementById('validadorLoginOverlay').classList.add('hidden');
                     document.getElementById('validadorContent').style.display = 'block';
                     document.getElementById('validadorLoginError').classList.remove('show');
@@ -921,14 +933,18 @@
             document.getElementById('btnSalirValidadorHeader').addEventListener('click', salirHandler);
 
             // Confirmar salida
-            document.getElementById('validadorExitConfirmBtn').addEventListener('click', function () {
+            document.getElementById('validadorExitConfirmBtn').addEventListener('click', async function () {
                 const password = document.getElementById('validadorExitPasswordInput').value;
-                if (password === CONTRASENA_VALIDADOR) {
+                const inputHash = await hashPassword(password);
+
+                if (inputHash === PASSWORD_HASH) {
                     if (html5QrCode) {
                         try {
                             html5QrCode.stop();
                         } catch (e) { }
                     }
+                    sessionStorage.removeItem('adminAuth');
+                    sessionStorage.removeItem('adminLoginTime');
                     document.getElementById('validadorExitOverlay').classList.add('hidden');
                     document.getElementById('validadorLoginOverlay').classList.remove('hidden');
                     document.getElementById('validadorContent').style.display = 'none';
