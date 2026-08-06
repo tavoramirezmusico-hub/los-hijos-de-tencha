@@ -66,6 +66,7 @@
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .producto-item .producto-info .producto-desc {
@@ -182,11 +183,110 @@
             background: var(--color-bg-hover);
             color: var(--color-text);
             border: 1px solid var(--color-border);
+            border-radius: 50% !important;
+            width: 36px !important;
+            height: 36px !important;
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 0.9rem !important;
+            flex-shrink: 0 !important;
+            transition: all 0.3s ease !important;
         }
 
         .recargar-btn:hover {
             background: #2a2a2a;
             transform: rotate(180deg);
+        }
+
+        .card-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .form-help {
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+            margin-top: 4px;
+        }
+
+        /* ============================================================
+           CAMPO DESTACADO - TOGGLE
+           ============================================================ */
+        .destacado-toggle {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 18px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            border: 2px solid var(--color-border);
+            margin: 8px 0;
+            transition: var(--transition);
+        }
+
+        .destacado-toggle:hover {
+            border-color: rgba(255, 204, 0, 0.2);
+        }
+
+        .destacado-toggle label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--color-text);
+        }
+
+        .destacado-toggle label .fa-star {
+            color: var(--color-text-muted);
+            transition: var(--transition);
+        }
+
+        .destacado-toggle label .fa-star.active {
+            color: var(--color-primary);
+        }
+
+        .destacado-toggle input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--color-primary);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .destacado-toggle .destacado-info {
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+            margin-left: auto;
+        }
+
+        .destacado-toggle .destacado-info .badge-destacado {
+            background: var(--color-primary);
+            color: #000;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.65rem;
+        }
+
+        /* Badge en la lista */
+        .badge-destacado-list {
+            background: var(--color-primary);
+            color: #000;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .stock-select {
+            min-width: 150px;
         }
 
         @media (max-width: 768px) {
@@ -219,6 +319,16 @@
             .image-preview img {
                 width: 120px;
                 height: 120px;
+            }
+
+            .destacado-toggle {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .destacado-toggle .destacado-info {
+                margin-left: 0;
+                margin-top: 6px;
             }
         }
 
@@ -390,6 +500,21 @@
                     <option value="disponible">✅ Disponible</option>
                     <option value="agotado">❌ Agotado</option>
                 </select>
+            </div>
+
+            <!-- ============================================================
+                 CAMPO DESTACADO - NUEVO
+                 ============================================================ -->
+            <div class="destacado-toggle" id="destacadoToggle">
+                <label for="productoDestacado">
+                    <i class="fa-solid fa-star" id="destacadoIcon"></i>
+                    <span>Marcar como producto destacado</span>
+                </label>
+                <input type="checkbox" id="productoDestacado">
+                <span class="destacado-info">
+                    <span class="badge-destacado">⭐ DESTACADO</span>
+                    <span style="margin-left: 8px;">Solo un producto puede ser destacado</span>
+                </span>
             </div>
 
             <div style="display:flex; gap:12px; flex-wrap:wrap;">
@@ -569,6 +694,7 @@
             const whatsapp = document.getElementById('productoWhatsapp').value.trim();
             const orden = parseInt(document.getElementById('productoOrden').value) || 0;
             const stock = document.getElementById('productoStock').value;
+            const destacado = document.getElementById('productoDestacado').checked;
 
             const mensajeEl = document.getElementById('mensajeProducto');
 
@@ -618,6 +744,18 @@
                     imagenUrl = imagenUrlActual;
                 }
 
+                // Si este producto es destacado, quitar destacado de los demás
+                if (destacado) {
+                    const snapshot = await db.collection('productos').get();
+                    const batch = db.batch();
+                    snapshot.forEach(doc => {
+                        if (doc.id !== id) {
+                            batch.update(doc.ref, { destacado: false });
+                        }
+                    });
+                    await batch.commit();
+                }
+
                 const datos = {
                     nombre,
                     descripcion: descripcion || '',
@@ -627,6 +765,7 @@
                     imagen: imagenUrl || '',
                     orden: orden,
                     stock: stock,
+                    destacado: destacado,
                     actualizadoEn: new Date().toISOString()
                 };
 
@@ -714,12 +853,13 @@
                 const stockText = producto.stock === 'disponible' ? '✅ Disponible' : '❌ Agotado';
                 const stockBadge = producto.stock === 'disponible' ? 'badge-success' : 'badge-danger';
                 const precioFormateado = '₡' + producto.precio.toLocaleString();
+                const destacadoBadge = producto.destacado ? '<span class="badge-destacado-list">⭐ Destacado</span>' : '';
 
                 html += `
                             <div class="producto-item">
                                 <img class="producto-thumb" src="${producto.imagen || '../img/logo.webp'}" alt="${sanitizar(producto.nombre)}" onerror="this.src='../img/logo.webp'">
                                 <div class="producto-info">
-                                    <div class="producto-nombre">${sanitizar(producto.nombre)}</div>
+                                    <div class="producto-nombre">${sanitizar(producto.nombre)} ${destacadoBadge}</div>
                                     <div class="producto-meta">
                                         <span><i class="fa-regular fa-tag"></i> ${sanitizar(producto.categoria || 'General')}</span>
                                         <span class="badge-admin ${stockBadge}">${stockText}</span>
@@ -762,6 +902,15 @@
                 document.getElementById('productoWhatsapp').value = data.whatsapp || '';
                 document.getElementById('productoOrden').value = data.orden || '';
                 document.getElementById('productoStock').value = data.stock || 'disponible';
+                document.getElementById('productoDestacado').checked = data.destacado || false;
+
+                // Actualizar icono de estrella
+                const icon = document.getElementById('destacadoIcon');
+                if (data.destacado) {
+                    icon.classList.add('active');
+                } else {
+                    icon.classList.remove('active');
+                }
 
                 if (data.imagen) {
                     imagenUrlActual = data.imagen;
@@ -823,6 +972,10 @@
             document.getElementById('productoWhatsapp').value = '';
             document.getElementById('productoOrden').value = '';
             document.getElementById('productoStock').value = 'disponible';
+            document.getElementById('productoDestacado').checked = false;
+
+            const icon = document.getElementById('destacadoIcon');
+            icon.classList.remove('active');
 
             imagenUrlActual = null;
             imagenSeleccionada = null;
@@ -890,11 +1043,23 @@
         }
 
         // ============================================================
+        // TOGGLE DESTACADO - ICONO ESTRELLA
+        // ============================================================
+        document.getElementById('productoDestacado').addEventListener('change', function () {
+            const icon = document.getElementById('destacadoIcon');
+            if (this.checked) {
+                icon.classList.add('active');
+            } else {
+                icon.classList.remove('active');
+            }
+        });
+
+        // ============================================================
         // INICIALIZAR
         // ============================================================
         document.addEventListener('DOMContentLoaded', function () {
             cargarProductos();
-            console.log('🚀 Gestor de Tienda cargado con Cloudinary');
+            console.log('🚀 Gestor de Tienda cargado con Cloudinary y Destacado');
         });
 
         document.addEventListener('keydown', function (e) {
