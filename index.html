@@ -623,7 +623,7 @@
             margin-bottom: 15px;
         }
 
-        /* Botón de compra en camisetas - MISMO ESTILO QUE EL RESTO */
+        /* Botón de compra en camisetas */
         .camiseta .btn-whatsapp-compra {
             display: inline-block;
             padding: 10px 24px;
@@ -686,7 +686,6 @@
             color: #ffcc00;
         }
 
-        /* Botón de producto destacado - MISMO ESTILO QUE EL RESTO */
         .producto-principal .btn-destacado {
             display: inline-block;
             width: auto;
@@ -713,7 +712,6 @@
             margin-right: 8px;
         }
 
-        /* Botón "Ver todos" - MISMO ESTILO QUE EL RESTO */
         .btn-ver-todos {
             display: inline-block;
             padding: 14px 40px;
@@ -1205,6 +1203,43 @@
             align-items: center;
             font-size: 1.1rem;
         }
+
+        /* =====================================
+           EVENTOS - CONTENEDOR DE LISTA
+           ===================================== */
+        #eventosLista {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .evento-vacio {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .evento-vacio i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.3;
+        }
+
+        .evento-firebase {
+            border-left: 3px solid #ffcc00;
+        }
+
+        .badge-firebase-evento {
+            display: inline-block;
+            background: rgba(255, 204, 0, 0.12);
+            color: #ffcc00;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
     </style>
 
 </head>
@@ -1373,6 +1408,9 @@
     </section>
 
 
+    <!-- =====================================
+         EVENTOS / AGENDA - DESDE FIREBASE
+    ===================================== -->
     <section id="eventos" class="animar">
 
         <div class="contenedor">
@@ -1382,120 +1420,19 @@
                 <span>Agenda</span>
 
                 <h2>Eventos</h2>
+                <p style="color: #aaa; max-width: 600px; margin: 10px auto 0;">
+                    Conoce nuestros próximos conciertos y presentaciones.
+                </p>
 
             </div>
 
-
-            <!-- =====================================
-     MACHOTE PRÓXIMO EVENTO
-     OCULTO HASTA TENER FECHA
-===================================== -->
-
-            <div class="card-evento evento-futuro oculto">
-
-
-                <div class="imagen-evento">
-
-                    <img src="img/eventos/evento.webp" alt="Próximo evento Los Hijos de Tencha">
-
+            <!-- Contenedor de eventos desde Firebase -->
+            <div id="eventosLista">
+                <div class="evento-vacio">
+                    <i class="fa-solid fa-spinner fa-spin" style="color: #ffcc00;"></i>
+                    <p>Cargando eventos...</p>
                 </div>
-
-
-                <div class="fecha">
-
-                    <h3>00</h3>
-
-                    <span>Mes</span>
-
-                </div>
-
-
-                <div class="info-evento">
-
-                    <h3>Nombre del evento</h3>
-
-                    <p>
-                        📍 Lugar del evento
-                    </p>
-
-                    <p>
-                        🕗 Hora del evento
-                    </p>
-
-                </div>
-
-
-                <a href="#" class="boton principal">
-
-                    Reservar
-
-                </a>
-
-
             </div>
-
-
-
-            <!-- =====================================
-     ÚLTIMO REPORTAJE
-===================================== -->
-
-
-            <div class="card-evento">
-
-
-                <div class="imagen-evento">
-
-                    <img src="img/noticias/chivo-24-julio.webp" alt="Reportaje lanzamiento Cumbia Salvaje">
-
-                </div>
-
-
-
-                <div class="fecha">
-
-                    <h3>24</h3>
-
-                    <span>Julio</span>
-
-                </div>
-
-
-
-                <div class="info-evento">
-
-
-                    <h3>Último concierto</h3>
-
-
-                    <p>
-                        🎸 Mira el reportaje del lanzamiento de
-                        <strong>Cumbia Salvaje</strong> en Bar Starview.
-                    </p>
-
-
-                    <p>
-                        🔥 Una noche llena de música, invitados y mucha cumbia.
-                    </p>
-
-
-                </div>
-
-
-                <a href="noticias.html#noticia-25-julio" class="boton principal">
-                    Ver reportaje
-                </a>
-
-                <a href="videoteca.html#momentos-tencha" class="boton secundario">
-
-                    Ver videos
-
-                </a>
-
-
-
-            </div>
-
 
             <!-- =====================================
          REGISTRO PARA EVENTOS - SISTEMA DE ENTRADAS
@@ -1778,6 +1715,146 @@
     <script src="js/eventos.js"></script>
 
     <!-- ============================================= -->
+    <!-- SCRIPT PARA EVENTOS DESDE FIREBASE           -->
+    <!-- ============================================= -->
+    <script>
+        // ============================================================
+        // EVENTOS - CARGAR DESDE FIREBASE
+        // ============================================================
+
+        async function cargarEventosFirebase() {
+            const container = document.getElementById('eventosLista');
+
+            if (!db) {
+                console.warn('⚠️ Firestore no disponible');
+                container.innerHTML = `
+                    <div class="evento-vacio">
+                        <i class="fa-solid fa-triangle-exclamation" style="color:#d32f2f;"></i>
+                        <p>⚠️ Error de conexión con la base de datos</p>
+                        <button onclick="cargarEventosFirebase()" style="margin-top:12px; padding:10px 24px; background:#ffcc00; color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif;">
+                            <i class="fa-solid fa-rotate"></i> Reintentar
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                const snapshot = await db.collection('eventos')
+                    .orderBy('fecha', 'desc')
+                    .get();
+
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <div class="evento-vacio">
+                            <i class="fa-regular fa-calendar"></i>
+                            <p>📅 No hay eventos programados próximamente.</p>
+                            <p style="font-size:0.85rem; color:#555; margin-top:8px;">Sigue nuestras redes para conocer los próximos conciertos.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                let contador = 0;
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const id = doc.id;
+                    contador++;
+
+                    // Formatear fecha
+                    let fechaFormateada = 'Fecha por confirmar';
+                    let fechaNumero = '';
+                    let fechaMes = '';
+
+                    if (data.fecha) {
+                        try {
+                            const d = new Date(data.fecha + 'T00:00:00');
+                            if (!isNaN(d.getTime())) {
+                                const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                                    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                                ];
+                                fechaNumero = d.getDate();
+                                fechaMes = meses[d.getMonth()];
+                                fechaFormateada = fechaNumero + ' de ' + fechaMes + ' ' + d.getFullYear();
+                            }
+                        } catch (e) {
+                            fechaFormateada = data.fecha;
+                        }
+                    }
+
+                    const hora = data.hora || '';
+                    const lugar = data.lugar || '';
+                    const descripcion = data.descripcion || '';
+                    const nombre = data.nombre || 'Evento sin nombre';
+                    const imagen = data.imagen || '';
+
+                    let imagenHTML = '';
+                    if (imagen) {
+                        imagenHTML = `
+                            <div class="imagen-evento">
+                                <img src="${imagen}" alt="${nombre}" loading="lazy" onerror="this.style.display='none'">
+                            </div>
+                        `;
+                    }
+
+                    html += `
+                        <div class="card-evento evento-firebase" data-id="${id}">
+                            ${imagenHTML}
+                            <div class="fecha">
+                                <h3>${fechaNumero || '00'}</h3>
+                                <span>${fechaMes || 'Mes'}</span>
+                            </div>
+                            <div class="info-evento">
+                                <h3>${nombre} <span class="badge-firebase-evento">📌 ${contador}</span></h3>
+                                ${fechaFormateada ? '<p>📅 ' + fechaFormateada + '</p>' : ''}
+                                ${hora ? '<p>🕗 ' + hora + '</p>' : ''}
+                                ${lugar ? '<p>📍 ' + lugar + '</p>' : ''}
+                                ${descripcion ? '<p style="color:#aaa; font-size:0.95rem; margin-top:8px;">' + descripcion + '</p>' : ''}
+                            </div>
+                            <a href="#" class="boton principal" onclick="event.preventDefault(); alert('Próximamente disponible');">
+                                Reservar
+                            </a>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+
+                // Animación escalonada
+                document.querySelectorAll('.card-evento').forEach((el, i) => {
+                    setTimeout(() => {
+                        el.classList.add('visible');
+                    }, 100 + (i * 100));
+                });
+
+                console.log('✅ ' + snapshot.size + ' eventos cargados desde Firebase');
+
+            } catch (error) {
+                console.error('❌ Error al cargar eventos:', error);
+                container.innerHTML = `
+                    <div class="evento-vacio">
+                        <i class="fa-solid fa-triangle-exclamation" style="color:#d32f2f;"></i>
+                        <p>❌ Error al cargar eventos: ${error.message}</p>
+                        <button onclick="cargarEventosFirebase()" style="margin-top:12px; padding:10px 24px; background:#ffcc00; color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif;">
+                            <i class="fa-solid fa-rotate"></i> Reintentar
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // ============================================================
+        // INICIALIZAR
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(cargarEventosFirebase, 500);
+            console.log('📅 Eventos desde Firebase cargando...');
+        });
+    </script>
+
+    <!-- ============================================= -->
     <!-- SCRIPT PARA TIENDA DESDE FIREBASE             -->
     <!-- ============================================= -->
     <script>
@@ -1870,23 +1947,19 @@
                     return;
                 }
 
-                // Si no hay producto destacado, usar el primero
                 if (!productoDestacado && todosLosProductos.length > 0) {
                     productoDestacado = todosLosProductos[0];
                 }
 
-                // Mostrar producto destacado
                 if (productoDestacado) {
                     mostrarProductoDestacado(productoDestacado);
                 }
 
-                // Mostrar botón "Ver todos" solo si hay más de 1 producto
                 if (todosLosProductos.length > 1) {
                     btnVerTodos.style.display = 'inline-block';
                 }
 
                 console.log('✅ ' + todosLosProductos.length + ' productos cargados');
-                console.log('⭐ Producto destacado:', productoDestacado ? productoDestacado.nombre : 'Ninguno');
 
             } catch (error) {
                 console.error('❌ Error al cargar productos:', error);
@@ -1902,9 +1975,6 @@
             }
         }
 
-        // ============================================================
-        // FUNCIÓN: MOSTRAR PRODUCTO DESTACADO
-        // ============================================================
         function mostrarProductoDestacado(producto) {
             const contenedor = document.getElementById('productoDestacadoContenido');
             const destacado = document.getElementById('productoDestacado');
@@ -1934,9 +2004,6 @@
             destacado.style.display = 'block';
         }
 
-        // ============================================================
-        // FUNCIÓN: RENDERIZAR PRODUCTOS (SOLO PARA "VER TODOS")
-        // ============================================================
         function renderizarProductos(productos) {
             const contenedor = document.getElementById('galeria-productos');
 
@@ -1946,7 +2013,6 @@
             }
 
             let html = '';
-            // Filtrar el destacado para no mostrarlo en la galería
             const productosNoDestacados = productos.filter(p => !p.destacado);
 
             if (productosNoDestacados.length === 0) {
@@ -1982,9 +2048,6 @@
             contenedor.classList.add('mostrar');
         }
 
-        // ============================================================
-        // FUNCIÓN: MOSTRAR TODOS LOS PRODUCTOS
-        // ============================================================
         function mostrarTodosProductos() {
             const contenedor = document.getElementById('galeria-productos');
             const btnVerTodos = document.getElementById('btnVerTodos');
@@ -2002,9 +2065,6 @@
             }
         }
 
-        // ============================================================
-        // FUNCIÓN: VISOR DE IMÁGENES (TIENDA)
-        // ============================================================
         function abrirVisorTienda(src) {
             const visor = document.getElementById('visor-tienda');
             const img = document.getElementById('imagen-tienda-visor');
