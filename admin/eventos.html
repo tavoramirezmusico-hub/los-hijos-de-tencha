@@ -409,6 +409,130 @@
             box-shadow: 0 8px 25px rgba(255, 204, 0, 0.2) !important;
         }
 
+        /* ============================================================
+           FIX MODAL EN CELULAR
+           ============================================================ */
+        .admin-modal .admin-modal-content {
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .admin-modal .admin-modal-content {
+                max-width: 95%;
+                padding: 16px;
+                margin: 10px;
+                border-radius: 16px;
+                max-height: 95vh;
+            }
+
+            .admin-modal .admin-modal-body {
+                padding: 0;
+                overflow-x: hidden;
+            }
+
+            .admin-modal .admin-modal-body .admin-form-group {
+                margin-bottom: 12px;
+            }
+
+            .admin-modal .admin-modal-body .admin-form-group label {
+                font-size: 0.8rem;
+            }
+
+            .admin-modal .admin-modal-body .admin-input,
+            .admin-modal .admin-modal-body .admin-select,
+            .admin-modal .admin-modal-body .admin-textarea {
+                font-size: 14px !important;
+                padding: 10px 12px !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+
+            .admin-modal .admin-modal-footer {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .admin-modal .admin-modal-footer .btn-admin {
+                width: 100% !important;
+                justify-content: center !important;
+            }
+
+            .admin-modal .admin-modal-header h3 {
+                font-size: 1rem !important;
+            }
+
+            .admin-modal .admin-modal-header .admin-modal-close {
+                font-size: 1.3rem !important;
+            }
+
+            .admin-form-group-checkbox {
+                flex-wrap: wrap !important;
+            }
+
+            .admin-form-group-checkbox input[type="checkbox"] {
+                width: 18px !important;
+                height: 18px !important;
+            }
+
+            .admin-form-group-checkbox label {
+                font-size: 0.85rem !important;
+            }
+
+            .image-preview {
+                flex-direction: column !important;
+                align-items: center !important;
+                text-align: center !important;
+            }
+
+            .image-preview img {
+                width: 80px !important;
+                height: 80px !important;
+            }
+
+            input[type="number"] {
+                -moz-appearance: textfield;
+            }
+
+            input[type="number"]::-webkit-outer-spin-button,
+            input[type="number"]::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .admin-modal .admin-modal-content {
+                max-width: 98%;
+                padding: 12px;
+                margin: 6px;
+                border-radius: 12px;
+            }
+
+            .admin-modal .admin-modal-body .admin-input,
+            .admin-modal .admin-modal-body .admin-select,
+            .admin-modal .admin-modal-body .admin-textarea {
+                font-size: 13px !important;
+                padding: 8px 10px !important;
+            }
+
+            .admin-modal .admin-modal-header h3 {
+                font-size: 0.9rem !important;
+            }
+
+            .admin-modal .admin-modal-footer .btn-admin {
+                font-size: 13px !important;
+                padding: 10px !important;
+            }
+
+            .admin-form-group-checkbox label {
+                font-size: 0.8rem !important;
+            }
+        }
+
         @media (max-width: 768px) {
             .evento-item {
                 flex-direction: column;
