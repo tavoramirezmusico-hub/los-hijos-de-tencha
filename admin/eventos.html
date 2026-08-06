@@ -325,6 +325,177 @@
             transform: scale(1.2);
         }
 
+        /* ============================================================
+           MODAL DE VISTA PREVIA
+           ============================================================ */
+        .preview-modal-evento {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(8px);
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: fadePreview 0.3s ease;
+        }
+
+        .preview-modal-evento.active {
+            display: flex;
+        }
+
+        @keyframes fadePreview {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .preview-modal-evento .preview-content {
+            background: var(--color-bg-card);
+            border-radius: var(--radius-lg);
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-card);
+            position: relative;
+        }
+
+        .preview-modal-evento .preview-content .preview-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 4px 8px;
+            z-index: 10;
+        }
+
+        .preview-modal-evento .preview-content .preview-close:hover {
+            color: var(--color-text);
+            transform: rotate(90deg);
+        }
+
+        .preview-modal-evento .preview-content .preview-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .preview-modal-evento .preview-content .preview-header .preview-badge {
+            display: inline-block;
+            background: var(--color-primary);
+            color: #000;
+            padding: 3px 16px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .preview-modal-evento .preview-content .preview-header h3 {
+            font-size: 1.5rem;
+            color: var(--color-text);
+            margin-bottom: 4px;
+        }
+
+        .preview-modal-evento .preview-content .preview-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .preview-modal-evento .preview-content .preview-body .preview-imagen {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+        }
+
+        .preview-modal-evento .preview-content .preview-body .preview-fecha-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--color-primary);
+            color: #000;
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            min-width: 100px;
+        }
+
+        .preview-modal-evento .preview-content .preview-body .preview-fecha-box .preview-dia {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .preview-modal-evento .preview-content .preview-body .preview-fecha-box .preview-mes {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .preview-modal-evento .preview-content .preview-body .preview-info {
+            text-align: center;
+            flex: 1;
+        }
+
+        .preview-modal-evento .preview-content .preview-body .preview-info .preview-nombre {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--color-text);
+        }
+
+        .preview-modal-evento .preview-content .preview-body .preview-info .preview-detail {
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+            margin: 4px 0;
+        }
+
+        .preview-modal-evento .preview-content .preview-body .preview-info .preview-desc {
+            color: #aaa;
+            font-size: 0.95rem;
+            margin-top: 8px;
+        }
+
+        .preview-modal-evento .preview-content .preview-footer {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--color-border);
+            color: var(--color-text-muted);
+            font-size: 0.7rem;
+        }
+
+        .btn-preview-evento {
+            background: var(--color-info);
+            color: #fff;
+            border-color: var(--color-info);
+        }
+
+        .btn-preview-evento:hover {
+            background: #1565c0;
+            box-shadow: 0 8px 25px rgba(25, 118, 210, 0.3);
+        }
+
         @media (max-width: 768px) {
             .evento-item {
                 flex-direction: column;
@@ -365,6 +536,20 @@
                 width: 120px;
                 height: 120px;
             }
+
+            .preview-modal-evento .preview-content {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .preview-modal-evento .preview-content .preview-body .preview-fecha-box {
+                padding: 8px 16px;
+                min-width: 80px;
+            }
+
+            .preview-modal-evento .preview-content .preview-body .preview-fecha-box .preview-dia {
+                font-size: 2rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -400,6 +585,19 @@
             .image-preview img {
                 width: 100px !important;
                 height: 100px !important;
+            }
+
+            .preview-modal-evento .preview-content {
+                padding: 16px;
+                margin: 6px;
+            }
+
+            .preview-modal-evento .preview-content .preview-header h3 {
+                font-size: 1.2rem;
+            }
+
+            .preview-modal-evento .preview-content .preview-body .preview-fecha-box .preview-dia {
+                font-size: 1.6rem;
             }
         }
     </style>
@@ -546,8 +744,10 @@
         <div id="subTab-crear" class="sub-tab-content">
             <div class="admin-card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-plus-circle"></i> Crear Nuevo Evento</h3>
+                    <h3 id="formEventoTitulo"><i class="fa-solid fa-plus-circle"></i> Crear Nuevo Evento</h3>
                 </div>
+
+                <input type="hidden" id="eventoIdEdit" value="">
 
                 <div class="admin-form-group">
                     <label for="eventoNombre">Nombre del evento *</label>
@@ -606,9 +806,17 @@
                     <span id="imagenActualNombre" style="font-size:0.8rem; color:var(--color-primary);"></span>
                 </div>
 
-                <button class="btn-admin btn-primary btn-lg" onclick="crearEvento()">
-                    <i class="fa-solid fa-plus"></i> Crear Evento
-                </button>
+                <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                    <button class="btn-admin btn-primary btn-lg" id="btnGuardarEvento" onclick="guardarEvento()">
+                        <i class="fa-solid fa-save"></i> <span id="btnGuardarTexto">Crear Evento</span>
+                    </button>
+                    <button class="btn-admin btn-secondary btn-lg" onclick="limpiarFormularioEvento()">
+                        <i class="fa-solid fa-eraser"></i> Limpiar
+                    </button>
+                    <button class="btn-admin btn-info btn-lg btn-preview-evento" onclick="previsualizarEvento()">
+                        <i class="fa-regular fa-eye"></i> Vista Previa
+                    </button>
+                </div>
                 <div id="mensajeEvento"
                     style="margin-top:12px; display:none; padding:12px; border-radius:var(--radius-sm);"></div>
             </div>
@@ -702,6 +910,18 @@
                     <i class="fa-solid fa-download"></i> Descargar
                 </button>
                 <button class="btn-admin btn-secondary" onclick="cerrarQR()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    MODAL DE VISTA PREVIA DE EVENTO
+    ============================================================ -->
+    <div class="preview-modal-evento" id="previewModalEvento">
+        <div class="preview-content">
+            <button class="preview-close" onclick="cerrarPreviewEvento()">&times;</button>
+            <div id="previewEventoContenido">
+                <!-- Se llena dinámicamente -->
             </div>
         </div>
     </div>
@@ -962,6 +1182,9 @@
                                     <button class="btn-admin btn-primary btn-sm" onclick="event.stopPropagation(); editarEvento('${e.id}')">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
+                                    <button class="btn-admin btn-info btn-sm btn-preview-evento" onclick="event.stopPropagation(); previsualizarEventoExistente('${e.id}')" title="Vista previa">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
                                     <button class="btn-admin btn-danger btn-sm" onclick="event.stopPropagation(); eliminarEvento('${e.id}')">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
@@ -990,6 +1213,7 @@
                 const data = doc.data();
                 editandoEventoId = id;
 
+                document.getElementById('eventoIdEdit').value = id;
                 document.getElementById('eventoNombre').value = data.nombre || '';
                 document.getElementById('eventoFecha').value = data.fecha || '';
                 document.getElementById('eventoHora').value = data.hora || '';
@@ -1008,16 +1232,13 @@
                 document.getElementById('imagePreview').classList.remove('show');
                 imagenSeleccionada = null;
 
-                // Cambiar texto del botón y título
-                const btn = document.querySelector('#subTab-crear .btn-admin.btn-primary');
-                if (btn) {
-                    btn.innerHTML = '<i class="fa-solid fa-save"></i> Actualizar Evento';
-                }
+                document.getElementById('formEventoTitulo').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Editar Evento';
+                document.getElementById('btnGuardarTexto').textContent = 'Actualizar Evento';
 
                 // Ir al tab de crear
                 document.querySelector('.sub-tabs button:nth-child(3)').click();
 
-                document.getElementById('formProducto')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                document.getElementById('subTab-crear').scrollIntoView({ behavior: 'smooth', block: 'start' });
                 mostrarToast('✏️ Editando: ' + data.nombre, 'info');
 
             } catch (error) {
@@ -1026,13 +1247,32 @@
             }
         }
 
-        async function crearEvento() {
+        function limpiarFormularioEvento() {
+            editandoEventoId = null;
+            document.getElementById('eventoIdEdit').value = '';
+            document.getElementById('eventoNombre').value = '';
+            document.getElementById('eventoFecha').value = '';
+            document.getElementById('eventoHora').value = '';
+            document.getElementById('eventoLugar').value = '';
+            document.getElementById('eventoDescripcion').value = '';
+            document.getElementById('imagePreview').classList.remove('show');
+            document.getElementById('imagenActualContainer').style.display = 'none';
+            imagenSeleccionada = null;
+            imagenUrlActual = null;
+            document.getElementById('eventoImagen').value = '';
+            document.getElementById('mensajeEvento').style.display = 'none';
+            document.getElementById('formEventoTitulo').innerHTML = '<i class="fa-solid fa-plus-circle"></i> Crear Nuevo Evento';
+            document.getElementById('btnGuardarTexto').textContent = 'Crear Evento';
+        }
+
+        async function guardarEvento() {
             const nombre = document.getElementById('eventoNombre').value.trim();
             const fecha = document.getElementById('eventoFecha').value;
             const hora = document.getElementById('eventoHora').value;
             const lugar = document.getElementById('eventoLugar').value.trim();
             const descripcion = document.getElementById('eventoDescripcion').value.trim();
             const mensajeEl = document.getElementById('mensajeEvento');
+            const id = document.getElementById('eventoIdEdit').value;
 
             if (!nombre) {
                 mostrarMensajeEvento(mensajeEl, '⚠️ Ingresa el nombre del evento', 'error');
@@ -1040,7 +1280,7 @@
                 return;
             }
 
-            const btn = document.querySelector('#subTab-crear .btn-admin.btn-primary');
+            const btn = document.getElementById('btnGuardarEvento');
             btn.classList.add('loading');
             btn.disabled = true;
 
@@ -1061,7 +1301,7 @@
                     }
                 }
 
-                if (editandoEventoId && !imagenSeleccionada && imagenUrlActual) {
+                if (id && !imagenSeleccionada && imagenUrlActual) {
                     imagenUrl = imagenUrlActual;
                 }
 
@@ -1075,12 +1315,9 @@
                     actualizadoEn: new Date().toISOString()
                 };
 
-                if (editandoEventoId) {
-                    await db.collection('eventos').doc(editandoEventoId).update(eventoData);
+                if (id) {
+                    await db.collection('eventos').doc(id).update(eventoData);
                     mostrarMensajeEvento(mensajeEl, '✅ Evento "' + nombre + '" actualizado con éxito', 'success');
-                    editandoEventoId = null;
-                    // Restaurar botón
-                    btn.innerHTML = '<i class="fa-solid fa-plus"></i> Crear Evento';
                 } else {
                     eventoData.creadoEn = new Date().toISOString();
                     eventoData.asistentes = [];
@@ -1088,22 +1325,12 @@
                     mostrarMensajeEvento(mensajeEl, '✅ Evento "' + nombre + '" creado con éxito', 'success');
                 }
 
-                document.getElementById('eventoNombre').value = '';
-                document.getElementById('eventoFecha').value = '';
-                document.getElementById('eventoHora').value = '';
-                document.getElementById('eventoLugar').value = '';
-                document.getElementById('eventoDescripcion').value = '';
-                document.getElementById('imagePreview').classList.remove('show');
-                document.getElementById('imagenActualContainer').style.display = 'none';
-                imagenSeleccionada = null;
-                imagenUrlActual = null;
-                document.getElementById('eventoImagen').value = '';
-
+                limpiarFormularioEvento();
                 cargarEventos();
                 cargarSelects();
 
             } catch (error) {
-                console.error('Error al crear evento:', error);
+                console.error('Error al guardar evento:', error);
                 mostrarMensajeEvento(mensajeEl, '❌ Error: ' + error.message, 'error');
             }
 
@@ -1140,6 +1367,121 @@
                 mostrarToast('❌ Error: ' + error.message, 'error');
             }
         }
+
+        // ============================================================
+        // FUNCIÓN: PREVISUALIZAR EVENTO (DESDE EL FORMULARIO)
+        // ============================================================
+        function previsualizarEvento() {
+            const nombre = document.getElementById('eventoNombre').value.trim() || 'Evento sin nombre';
+            const fecha = document.getElementById('eventoFecha').value;
+            const hora = document.getElementById('eventoHora').value;
+            const lugar = document.getElementById('eventoLugar').value.trim();
+            const descripcion = document.getElementById('eventoDescripcion').value.trim();
+            const imagen = document.getElementById('previewImg').src || imagenUrlActual || '';
+
+            mostrarPreviewEvento(nombre, fecha, hora, lugar, descripcion, imagen);
+        }
+
+        // ============================================================
+        // FUNCIÓN: PREVISUALIZAR EVENTO EXISTENTE
+        // ============================================================
+        function previsualizarEventoExistente(id) {
+            const evento = eventos.find(e => e.id === id);
+            if (!evento) {
+                mostrarToast('❌ Evento no encontrado', 'error');
+                return;
+            }
+
+            mostrarPreviewEvento(
+                evento.nombre || 'Evento sin nombre',
+                evento.fecha || '',
+                evento.hora || '',
+                evento.lugar || '',
+                evento.descripcion || '',
+                evento.imagen || ''
+            );
+        }
+
+        // ============================================================
+        // FUNCIÓN: MOSTRAR MODAL DE PREVISUALIZACIÓN
+        // ============================================================
+        function mostrarPreviewEvento(nombre, fecha, hora, lugar, descripcion, imagen) {
+            const modal = document.getElementById('previewModalEvento');
+            const container = document.getElementById('previewEventoContenido');
+
+            // Formatear fecha
+            let fechaFormateada = 'Fecha por confirmar';
+            let fechaNumero = '00';
+            let fechaMes = 'Mes';
+
+            if (fecha) {
+                try {
+                    const d = new Date(fecha + 'T00:00:00');
+                    if (!isNaN(d.getTime())) {
+                        const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                            'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                        ];
+                        fechaNumero = d.getDate();
+                        fechaMes = meses[d.getMonth()];
+                        fechaFormateada = fechaNumero + ' de ' + fechaMes + ' ' + d.getFullYear();
+                    }
+                } catch (e) {
+                    fechaFormateada = fecha;
+                }
+            }
+
+            let imagenHTML = '';
+            if (imagen && imagen !== '') {
+                imagenHTML = `<img class="preview-imagen" src="${imagen}" alt="${nombre}" onerror="this.style.display='none'">`;
+            }
+
+            container.innerHTML = `
+                <div class="preview-header">
+                    <span class="preview-badge">📅 Vista previa del evento</span>
+                    <h3>${nombre}</h3>
+                </div>
+                <div class="preview-body">
+                    ${imagenHTML}
+                    <div class="preview-fecha-box">
+                        <span class="preview-dia">${fechaNumero}</span>
+                        <span class="preview-mes">${fechaMes}</span>
+                    </div>
+                    <div class="preview-info">
+                        <div class="preview-nombre">${nombre}</div>
+                        ${fechaFormateada ? '<div class="preview-detail">📅 ' + fechaFormateada + '</div>' : ''}
+                        ${hora ? '<div class="preview-detail">🕗 ' + hora + '</div>' : ''}
+                        ${lugar ? '<div class="preview-detail">📍 ' + lugar + '</div>' : ''}
+                        ${descripcion ? '<div class="preview-desc">' + descripcion + '</div>' : ''}
+                    </div>
+                </div>
+                <div class="preview-footer">
+                    <i class="fa-regular fa-clock"></i> Vista previa — cómo se verá el evento en la página principal
+                </div>
+            `;
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarPreviewEvento() {
+            document.getElementById('previewModalEvento').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Cerrar con Escape
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                cerrarPreviewEvento();
+                cerrarQR();
+            }
+        });
+
+        // Cerrar al hacer clic fuera
+        document.getElementById('previewModalEvento').addEventListener('click', function (e) {
+            if (e.target === this) {
+                cerrarPreviewEvento();
+            }
+        });
 
         // ============================================================
         // FUNCIONES - SELECTS
@@ -1526,17 +1868,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             cargarEventos();
             cargarSelects();
-            console.log('🚀 Gestor de Eventos cargado con Cloudinary');
-        });
-
-        // Cerrar modal con Escape
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') cerrarQR();
-            if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
-                e.preventDefault();
-                mostrarToast('⚠️ Usa el botón "Salir" para cerrar sesión', 'warning');
-                return false;
-            }
+            console.log('🚀 Gestor de Eventos cargado con Cloudinary y Vista Previa');
         });
     </script>
 
