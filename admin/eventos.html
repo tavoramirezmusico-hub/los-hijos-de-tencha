@@ -944,10 +944,21 @@
 
     <script>
         // ============================================================
+        // CONFIGURACIÓN DE CLOUDINARY
+        // ============================================================
+        const CLOUDINARY_CONFIG = {
+            cloudName: 'ldiiqgdp',
+            uploadPreset: 'tencha_uploads',
+            uploadUrl: 'https://api.cloudinary.com/v1_1/ldiiqgdp/image/upload'
+        };
+
+        // ============================================================
         // VARIABLES GLOBALES
         // ============================================================
         let eventosCache = [];
         let asistentesCache = [];
+        let imagenSeleccionada = null;
+        let imagenUrlActual = null;
 
         // ============================================================
         // SIDEBAR
@@ -985,6 +996,36 @@
         })();
 
         // ============================================================
+        // FUNCIÓN: SUBIR IMAGEN A CLOUDINARY
+        // ============================================================
+        async function subirImagenCloudinary(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
+            formData.append('folder', 'eventos');
+
+            try {
+                const response = await fetch(CLOUDINARY_CONFIG.uploadUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('❌ Error Cloudinary:', errorData);
+                    throw new Error(errorData.error?.message || 'Error al subir a Cloudinary');
+                }
+
+                const data = await response.json();
+                console.log('✅ Imagen subida a Cloudinary:', data.secure_url);
+                return data.secure_url;
+            } catch (error) {
+                console.error('❌ Error en subirImagenCloudinary:', error);
+                throw error;
+            }
+        }
+
+        // ============================================================
         // FUNCIÓN: IR AL VALIDADOR (CIERRA SESIÓN)
         // ============================================================
         function irAValidador() {
@@ -1020,6 +1061,9 @@
             document.getElementById('eventoImagen').addEventListener('change', function (e) {
                 const file = e.target.files[0];
                 if (file) {
+                    // Guardar la imagen seleccionada
+                    imagenSeleccionada = file;
+
                     const reader = new FileReader();
                     reader.onload = function (e) {
                         document.getElementById('previewImg').src = e.target.result;
@@ -1318,6 +1362,8 @@
             document.getElementById('imagePreview').classList.remove('show');
             document.getElementById('campoPrecio').style.display = 'none';
             document.getElementById('eventoEsPago').checked = false;
+            imagenSeleccionada = null;
+            imagenUrlActual = null;
             document.getElementById('btnGuardarEvento').innerHTML = '<i class="fa-solid fa-save"></i> Guardar Evento';
             document.getElementById('modalEvento').classList.add('active');
         }
@@ -1346,6 +1392,17 @@
                 document.getElementById('eventoCapacidad').value = data.capacidadMaxima || 0;
                 document.getElementById('eventoPrecio').value = data.precio || 0;
 
+                if (data.imagen) {
+                    imagenUrlActual = data.imagen;
+                    document.getElementById('previewImg').src = data.imagen;
+                    document.getElementById('previewFilename').textContent = 'Imagen actual';
+                    document.getElementById('previewFilesize').textContent = '';
+                    document.getElementById('imagePreview').classList.add('show');
+                } else {
+                    imagenUrlActual = null;
+                    document.getElementById('imagePreview').classList.remove('show');
+                }
+
                 if (data.esPago) {
                     document.getElementById('campoPrecio').style.display = 'block';
                 } else {
@@ -1369,7 +1426,7 @@
         }
 
         // ============================================================
-        // FUNCIÓN: GUARDAR EVENTO
+        // FUNCIÓN: GUARDAR EVENTO (CORREGIDO CON CLOUDINARY)
         // ============================================================
         async function guardarEvento() {
             const id = document.getElementById('eventoIdEdit').value;
@@ -1391,21 +1448,45 @@
                 return;
             }
 
-            const data = {
-                nombre: nombre,
-                fecha: fecha,
-                hora: hora,
-                lugar: lugar,
-                descripcion: descripcion,
-                esPago: esPago,
-                capacidadMaxima: capacidadMaxima,
-                precio: precio
-            };
+            const btn = document.getElementById('btnGuardarEvento');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
 
             try {
-                const btn = document.getElementById('btnGuardarEvento');
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+                let imagenUrl = imagenUrlActual || '';
+
+                // Subir imagen a Cloudinary si hay una nueva seleccionada
+                if (imagenSeleccionada) {
+                    try {
+                        console.log('📤 Subiendo imagen a Cloudinary:', imagenSeleccionada.name);
+                        imagenUrl = await subirImagenCloudinary(imagenSeleccionada);
+                        console.log('✅ Imagen subida a Cloudinary:', imagenUrl);
+                    } catch (uploadError) {
+                        console.error('❌ Error al subir imagen a Cloudinary:', uploadError);
+                        mostrarToast('❌ Error al subir la imagen: ' + uploadError.message, 'error');
+                        btn.disabled = false;
+                        btn.innerHTML = id ? '<i class="fa-solid fa-save"></i> Actualizar Evento' :
+                            '<i class="fa-solid fa-save"></i> Guardar Evento';
+                        return;
+                    }
+                }
+
+                // Si es edición y no hay nueva imagen, mantener la existente
+                if (id && !imagenSeleccionada && imagenUrlActual) {
+                    imagenUrl = imagenUrlActual;
+                }
+
+                const data = {
+                    nombre: nombre,
+                    fecha: fecha,
+                    hora: hora,
+                    lugar: lugar,
+                    descripcion: descripcion,
+                    esPago: esPago,
+                    capacidadMaxima: capacidadMaxima,
+                    precio: precio,
+                    imagen: imagenUrl || ''
+                };
 
                 if (id) {
                     // Actualizar
@@ -1421,6 +1502,8 @@
                 }
 
                 cerrarModalEvento();
+                imagenSeleccionada = null;
+                imagenUrlActual = null;
                 cargarEventos();
                 cargarAsistentesRapidos();
 
@@ -1519,6 +1602,7 @@
         // FUNCIÓN: ELIMINAR IMAGEN PREVIEW
         // ============================================================
         function eliminarImagenPreview() {
+            imagenSeleccionada = null;
             document.getElementById('eventoImagen').value = '';
             document.getElementById('imagePreview').classList.remove('show');
         }
@@ -1585,8 +1669,9 @@
         window.cargarAsistentesRapidos = cargarAsistentesRapidos;
         window.irAValidador = irAValidador;
         window.cerrarSesionAdmin = cerrarSesionAdmin;
+        window.subirImagenCloudinary = subirImagenCloudinary;
 
-        console.log('✅ admin/eventos.html cargado correctamente');
+        console.log('✅ admin/eventos.html cargado correctamente con Cloudinary');
     </script>
 </body>
 
