@@ -153,6 +153,16 @@
             box-shadow: 0 4px 12px rgba(255, 204, 0, 0.3);
         }
 
+        .lanzamiento-card .lanzamiento-es-playlist {
+            font-size: 0.6rem;
+            color: var(--color-warning);
+            background: rgba(255, 152, 0, 0.1);
+            padding: 2px 8px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 4px;
+        }
+
         .lanzamiento-vacio {
             text-align: center;
             padding: 40px 20px;
@@ -300,6 +310,15 @@
             color: var(--color-text);
         }
 
+        .url-preview .url-badge {
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 12px;
+            background: rgba(255, 152, 0, 0.15);
+            color: var(--color-warning);
+        }
+
         @media (max-width: 768px) {
             .form-row {
                 grid-template-columns: 1fr;
@@ -396,7 +415,7 @@
             </div>
         </header>
 
-        <!-- REPRODUCTOR PREVIEW - MÁS COMPACTO -->
+        <!-- REPRODUCTOR PREVIEW -->
         <div class="reproductor-preview">
             <div class="reproductor-header">
                 <h4><i class="fa-solid fa-play" style="color:var(--color-primary);"></i> Vista previa del reproductor
@@ -475,12 +494,17 @@
                 <label for="lanzamientoUrl">URL de YouTube *</label>
                 <input type="url" id="lanzamientoUrl" class="admin-input"
                     placeholder="https://www.youtube.com/watch?v=..." required oninput="previsualizarUrl()">
-                <div class="form-help">Pega la URL completa del video de YouTube</div>
+                <div class="form-help">
+                    <strong>Importante:</strong> Usa la URL de un <strong>video individual</strong> (no de una
+                    playlist).
+                    Para agregar un EP, agrega cada canción por separado.
+                </div>
                 <div class="url-preview" id="urlPreview" style="display:none;">
                     <img id="urlThumbnail" src="" alt="Vista previa">
                     <div class="url-info">
                         <div><strong id="urlTituloPreview">Título</strong></div>
                         <div id="urlCanalPreview" style="font-size:0.7rem;">Canal</div>
+                        <div id="urlPlaylistBadge" class="url-badge" style="display:none;">⚠️ Es una playlist</div>
                     </div>
                 </div>
             </div>
@@ -572,15 +596,30 @@
         })();
 
         // ============================================================
-        // FUNCIONES - EXTRAER INFO DE YOUTUBE (OEmbed)
+        // FUNCIONES - EXTRAER INFO DE YOUTUBE
         // ============================================================
+
+        function extraerVideoId(url) {
+            if (!url) return null;
+            const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?]+)/);
+            return match ? match[1] : null;
+        }
+
+        function extraerPlaylistId(url) {
+            if (!url) return null;
+            const match = url.match(/[?&]list=([^&]+)/);
+            return match ? match[1] : null;
+        }
+
+        function esPlaylist(url) {
+            return url && (url.includes('list=') || url.includes('playlist'));
+        }
 
         async function obtenerInfoYouTube(url) {
             try {
                 const videoId = extraerVideoId(url);
                 if (!videoId) return null;
 
-                // Usar la API de oEmbed de YouTube
                 const response = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
                 if (!response.ok) return null;
 
@@ -594,18 +633,6 @@
                 console.error('Error al obtener info de YouTube:', error);
                 return null;
             }
-        }
-
-        function extraerVideoId(url) {
-            if (!url) return null;
-            const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?]+)/);
-            return match ? match[1] : null;
-        }
-
-        function extraerPlaylistId(url) {
-            if (!url) return null;
-            const match = url.match(/[?&]list=([^&]+)/);
-            return match ? match[1] : null;
         }
 
         // ============================================================
@@ -624,6 +651,21 @@
             if (!url || !url.includes('youtube.com') && !url.includes('youtu.be')) {
                 previewContainer.style.display = 'none';
                 return;
+            }
+
+            // Verificar si es una playlist
+            const isPlaylist = esPlaylist(url);
+            const playlistBadge = document.getElementById('urlPlaylistBadge');
+
+            if (isPlaylist) {
+                playlistBadge.style.display = 'inline-block';
+                document.getElementById('urlTituloPreview').textContent = '📋 Lista de reproducción';
+                document.getElementById('urlCanalPreview').textContent = 'No se puede reproducir directamente';
+                document.getElementById('urlThumbnail').src = '';
+                previewContainer.style.display = 'flex';
+                return;
+            } else {
+                playlistBadge.style.display = 'none';
             }
 
             urlPreviewTimeout = setTimeout(async () => {
@@ -669,12 +711,10 @@
                         destacado: data.destacado || false,
                         orden: data.orden || 0,
                         creadoEn: data.creadoEn || null,
-                        // Portada obtenida desde YouTube
                         portada: data.portada || ''
                     });
                 });
 
-                // Ordenar si no hay orden definido
                 if (lanzamientos.length > 0 && lanzamientos.every(l => l.orden === 0)) {
                     lanzamientos.sort((a, b) => a.titulo.localeCompare(b.titulo));
                 }
@@ -708,7 +748,9 @@
                 const tipoClass = item.tipo === 'ep' ? 'ep' : 'sencillo';
                 const destacadoBadge = item.destacado ? '<span class="lanzamiento-destacado">⭐ Destacado</span>' : '';
                 const videoId = extraerVideoId(item.url);
+                const isPlaylist = esPlaylist(item.url);
                 const thumbUrl = item.portada || (videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : '');
+                const playlistBadge = isPlaylist ? '<span class="lanzamiento-es-playlist"><i class="fa-solid fa-list"></i> Playlist</span>' : '';
 
                 html += `
                             <div class="lanzamiento-card">
@@ -724,12 +766,13 @@
                                         </button>
                                     </div>
                                 </div>
-                                ${thumbUrl ? `<img class="lanzamiento-thumb" src="${thumbUrl}" alt="${sanitizar(item.titulo)}" loading="lazy" onerror="this.style.display='none'">` : ''}
+                                ${thumbUrl && !isPlaylist ? `<img class="lanzamiento-thumb" src="${thumbUrl}" alt="${sanitizar(item.titulo)}" loading="lazy" onerror="this.style.display='none'">` : ''}
                                 <div class="lanzamiento-titulo">${sanitizar(item.titulo)}</div>
                                 <div class="lanzamiento-artista">${sanitizar(item.artista)}</div>
+                                ${playlistBadge}
                                 <div class="lanzamiento-youtube">
                                     <i class="fa-brands fa-youtube"></i>
-                                    <a href="${item.url}" target="_blank">${videoId ? 'Ver en YouTube' : item.url}</a>
+                                    <a href="${item.url}" target="_blank">${isPlaylist ? 'Abrir playlist' : 'Ver en YouTube'}</a>
                                 </div>
                                 <div class="lanzamiento-fecha">
                                     ${item.creadoEn ? 'Agregado: ' + formatearFecha(item.creadoEn) : ''}
@@ -747,7 +790,9 @@
         // ============================================================
 
         function actualizarPlaylist() {
+            // Solo usar videos individuales, ignorar playlists
             const videoIds = lanzamientos
+                .filter(item => !esPlaylist(item.url))
                 .map(item => extraerVideoId(item.url))
                 .filter(id => id !== null);
 
@@ -755,7 +800,13 @@
 
             if (videoIds.length === 0) {
                 embed.innerHTML = `
-                            <iframe src="https://www.youtube.com/embed?listType=playlist&list=${playlistId}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--color-text-muted); background:#111; font-size:0.9rem;">
+                                <div style="text-align:center;">
+                                    <i class="fa-solid fa-music" style="font-size:2rem; display:block; margin-bottom:8px; opacity:0.3;"></i>
+                                    <p>Agrega videos individuales para reproducir</p>
+                                    <p style="font-size:0.7rem; opacity:0.5;">Las playlists no se pueden reproducir aquí</p>
+                                </div>
+                            </div>
                         `;
                 return;
             }
@@ -767,7 +818,6 @@
                             <iframe src="https://www.youtube.com/embed/videoseries?list=${playlistParam}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         `;
             } else {
-                // Solo un video
                 embed.innerHTML = `
                             <iframe src="https://www.youtube.com/embed/${videoIds[0]}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         `;
@@ -776,18 +826,20 @@
 
         function actualizarListaReproduccion() {
             const lista = document.getElementById('listaReproduccion');
+            // Solo mostrar videos individuales en la lista
+            const itemsReproducibles = lanzamientos.filter(item => !esPlaylist(item.url));
 
-            if (lanzamientos.length === 0) {
+            if (itemsReproducibles.length === 0) {
                 lista.innerHTML = `
                             <div style="text-align:center; padding:12px; color:var(--color-text-muted); font-size:0.8rem;">
-                                <i class="fa-regular fa-record-vinyl"></i> No hay canciones en la lista
+                                <i class="fa-regular fa-record-vinyl"></i> No hay canciones individuales
                             </div>
                         `;
                 return;
             }
 
             let html = '';
-            lanzamientos.forEach((item, index) => {
+            itemsReproducibles.forEach((item, index) => {
                 const tipoLabel = item.tipo === 'ep' ? 'EP' : 'Sencillo';
                 const tipoClass = item.tipo === 'ep' ? 'ep' : 'sencillo';
                 const isActivo = index === 0 ? 'activo' : '';
@@ -844,7 +896,6 @@
             document.getElementById('lanzamientoOrden').value = item.orden || '';
             document.getElementById('lanzamientoDestacado').checked = item.destacado || false;
 
-            // Previsualizar la URL existente
             if (item.url) {
                 setTimeout(() => previsualizarUrl(), 300);
             } else {
@@ -888,12 +939,22 @@
                 return;
             }
 
+            // Advertencia si es una playlist
+            if (esPlaylist(url)) {
+                const confirmar = confirm(
+                    '⚠️ Has ingresado una URL de playlist.\n\n' +
+                    'Las playlists NO se pueden reproducir directamente en el reproductor.\n\n' +
+                    'Para el EP "Cumbia Salvaje", te recomiendo agregar CADA CANCIÓN por separado.\n\n' +
+                    '¿Deseas continuar de todas formas? (No se reproducirá)'
+                );
+                if (!confirmar) return;
+            }
+
             const btn = document.getElementById('btnGuardarLanzamiento');
             btn.classList.add('loading');
             btn.disabled = true;
 
             try {
-                // Obtener la portada automáticamente desde YouTube
                 let portada = '';
                 const videoId = extraerVideoId(url);
                 if (videoId) {
@@ -979,7 +1040,6 @@
             console.log('🚀 Gestor de Lanzamientos cargado');
         });
 
-        // Prevenir cierre con Ctrl+W
         document.addEventListener('keydown', function (e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
                 e.preventDefault();
