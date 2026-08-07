@@ -23,11 +23,12 @@
 
     <style>
         /* ============================================================
-           ESTILOS PROPIOS DEL GENERADOR (usan las variables de admin.css)
+           ESTILOS PROPIOS DEL GENERADOR
            ============================================================ */
         .generador-wrap {
             max-width: 100%;
             width: 100%;
+            padding: 0;
         }
 
         .generador-grid {
@@ -35,6 +36,14 @@
             grid-template-columns: 1fr 1fr;
             gap: 20px;
             align-items: start;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        /* Columnas internas también ocupan todo */
+        .generador-grid>div {
+            width: 100%;
+            min-width: 0;
         }
 
         .generador-wrap .card-header p {
@@ -84,6 +93,8 @@
             border: 1px solid var(--color-border);
             min-height: 60px;
             white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
 
         .result-text.loading {
@@ -229,10 +240,25 @@
             font-size: 1rem;
         }
 
+        .admin-card .card-actions .btn-admin.btn-sm {
+            white-space: nowrap;
+        }
+
+        @media (max-width: 1100px) {
+            .generador-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+        }
+
         @media (max-width: 992px) {
             .generador-grid {
                 grid-template-columns: 1fr;
                 gap: 20px;
+            }
+
+            .generador-grid>div {
+                width: 100%;
             }
         }
 
@@ -539,8 +565,6 @@
 
         // ============================================================
         // TOAST / SANITIZAR / FECHAS
-        // Usa las utilidades globales de js/admin.js si existen;
-        // si no, cae en un respaldo local mínimo.
         // ============================================================
         function toast(texto, tipo = 'info') {
             if (typeof mostrarToast === 'function') { mostrarToast(texto, tipo); return; }
@@ -583,22 +607,12 @@
         function limpiarTextoWhatsApp(texto) {
             if (!texto) return '';
 
-            // Eliminar caracteres de control
             let textoLimpio = texto.replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
-
-            // Eliminar caracteres de reemplazo
             textoLimpio = textoLimpio.replace(/\uFFFD/g, '');
-
-            // Normalizar caracteres Unicode
             try {
                 textoLimpio = textoLimpio.normalize('NFC');
-            } catch (e) {
-                // Si falla, continuamos con el texto actual
-            }
-
-            // Reemplazar emojis con variación de género (como 👕🔥) que pueden causar problemas
+            } catch (e) { }
             textoLimpio = textoLimpio.replace(/\uFE0F/g, '');
-
             return textoLimpio.trim();
         }
 
