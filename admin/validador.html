@@ -348,7 +348,6 @@
             color: #fff;
         }
 
-        /* NUEVO: Información de usos restantes */
         .usos-restantes {
             display: inline-block;
             margin-top: 8px;
@@ -411,6 +410,17 @@
         .mini-asistente .mini-info .mini-email {
             font-size: 0.75rem;
             color: var(--color-text-muted);
+        }
+
+        .mini-asistente .mini-info .mini-usos {
+            font-size: 0.7rem;
+            color: var(--color-primary);
+            font-weight: 600;
+            background: rgba(255, 204, 0, 0.08);
+            padding: 2px 10px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 2px;
         }
 
         .mini-asistente .mini-estado {
@@ -544,7 +554,6 @@
             margin-bottom: 12px;
         }
 
-        /* NUEVO: Resultado con usos */
         .resultado-usos {
             margin-top: 10px;
             padding: 10px;
@@ -564,6 +573,12 @@
             font-size: 1.8rem;
             font-weight: 800;
             color: var(--color-primary);
+        }
+
+        .mini-fecha {
+            font-size: 0.6rem;
+            color: var(--color-text-muted);
+            white-space: nowrap;
         }
 
         @media (max-width: 768px) {
@@ -619,6 +634,10 @@
 
             .mini-asistente .mini-estado {
                 text-align: center;
+            }
+
+            .mini-fecha {
+                text-align: right;
             }
         }
     </style>
@@ -1113,7 +1132,7 @@
         }
 
         // ============================================================
-        // PROCESAR ASISTENTE (CORREGIDO)
+        // PROCESAR ASISTENTE
         // ============================================================
 
         async function procesarAsistente(id, origen) {
@@ -1125,7 +1144,7 @@
             const usosId = origen === 'manual' ? 'resultadoManualUsos' : 'resultadoUsos';
             const numeroUsosId = origen === 'manual' ? 'resultadoManualNumeroUsos' : 'resultadoNumeroUsos';
 
-            // 🔧 CORRECCIÓN: Si viene como URL completa, extraer el ID
+            // Si viene como URL completa, extraer el ID
             if (typeof id === 'string' && id.includes('validador.html')) {
                 try {
                     const urlParams = new URLSearchParams(id.split('?')[1]);
@@ -1184,14 +1203,12 @@
                     }
                 } catch (e) { }
 
-                // Verificar si el asistente ya ingresó (para compatibilidad)
-                const yaIngreso = asistente.ingresado === true;
-
                 // Determinar estado
                 let estadoValido = false;
                 let mensajeEstado = '';
                 let claseEstado = '';
                 let iconoEstado = '';
+                let usosRestantes = 0;
 
                 if (estadoPago === 'rechazado') {
                     estadoValido = false;
@@ -1216,6 +1233,7 @@
 
                         // Restar 1 uso
                         const nuevosUsos = usos - 1;
+                        usosRestantes = nuevosUsos;
                         await db.collection('asistentes').doc(id).update({
                             usosDisponibles: nuevosUsos,
                             ingresado: true,
@@ -1231,14 +1249,17 @@
                             numeroUsos.textContent = '0 - ÚLTIMA ENTRADA';
                         }
 
-                        // Agregar a lista de escaneos
-                        agregarEscaneo(asistente, '✅ Ingreso registrado');
+                        // ✅ NUEVO: Agregar a lista de escaneos con los usos restantes
+                        agregarEscaneo(asistente, '✅ Ingreso registrado', usosRestantes);
 
                     } else {
                         estadoValido = false;
                         mensajeEstado = 'ENTRADA AGOTADA';
                         claseEstado = 'ya-ingreso';
                         iconoEstado = '⚠️';
+                        usosRestantes = 0;
+                        // ✅ NUEVO: También mostrar en la lista cuando no tiene usos
+                        agregarEscaneo(asistente, '⚠️ Sin usos disponibles', 0);
                     }
                 } else {
                     // Estado desconocido
@@ -1288,14 +1309,15 @@
         }
 
         // ============================================================
-        // AGREGAR ESCANEO A LISTA
+        // AGREGAR ESCANEO A LISTA (ACTUALIZADO CON USOS)
         // ============================================================
 
-        function agregarEscaneo(asistente, mensaje) {
+        function agregarEscaneo(asistente, mensaje, usosRestantes) {
             ultimosEscaneos.unshift({
                 nombre: asistente.nombre || 'Anónimo',
                 email: asistente.email || '',
                 mensaje: mensaje,
+                usos: usosRestantes !== undefined ? usosRestantes : (asistente.usosDisponibles || 0),
                 fecha: new Date().toLocaleString()
             });
 
@@ -1307,7 +1329,7 @@
         }
 
         // ============================================================
-        // RENDERIZAR ÚLTIMOS ESCANEOS
+        // RENDERIZAR ÚLTIMOS ESCANEOS (ACTUALIZADO CON USOS)
         // ============================================================
 
         function renderizarUltimosEscaneos() {
@@ -1325,13 +1347,15 @@
 
             let html = '';
             ultimosEscaneos.forEach(item => {
+                const usosTexto = item.usos > 0 ? `🎫 ${item.usos} usos restantes` : '🚫 Sin usos';
                 html += `
                     <div class="mini-asistente confirmado">
                         <div class="mini-info">
                             <div class="mini-nombre">${sanitizar(item.nombre)}</div>
                             <div class="mini-email">${sanitizar(item.email)} • ${item.mensaje}</div>
+                            <div class="mini-usos">${usosTexto}</div>
                         </div>
-                        <span style="font-size:0.65rem; color:var(--color-text-muted);">${item.fecha}</span>
+                        <span class="mini-fecha">${item.fecha}</span>
                     </div>
                 `;
             });
