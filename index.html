@@ -2192,16 +2192,13 @@
                     const lugar = data.lugar || '';
                     const descripcion = data.descripcion || '';
                     const nombre = data.nombre || 'Evento sin nombre';
-                    const imagen = data.imagen || '';
+                    const imagen = data.imagen || 'img/logo.webp';
 
-                    let imagenHTML = '';
-                    if (imagen) {
-                        imagenHTML = `
-                            <div class="imagen-evento">
-                                <img src="${imagen}" alt="${nombre}" loading="lazy" onerror="this.style.display='none'">
-                            </div>
-                        `;
-                    }
+                    const imagenHTML = `
+                        <div class="imagen-evento">
+                            <img src="${imagen}" alt="${nombre}" loading="lazy" onerror="this.onerror=null; this.src='img/logo.webp';">
+                        </div>
+                    `;
 
                     html += `
                         <div class="card-evento evento-firebase" data-id="${id}">
