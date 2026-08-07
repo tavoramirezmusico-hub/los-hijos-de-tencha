@@ -631,6 +631,7 @@
         // VARIABLES GLOBALES
         // ============================================================
         let lanzamientos = [];
+        let cancionActivaIndex = null; // índice de la canción activa en el reproductor de vista previa
 
         // ============================================================
         // SIDEBAR
@@ -793,8 +794,8 @@
                 }
 
                 renderizarLanzamientos();
-                actualizarListaReproduccion();
                 actualizarReproductor();
+                actualizarListaReproduccion();
 
             } catch (error) {
                 console.error('Error al cargar lanzamientos:', error);
@@ -866,6 +867,7 @@
             const player = document.getElementById('reproductorPlayer');
 
             if (lanzamientos.length === 0) {
+                cancionActivaIndex = null;
                 player.innerHTML = `
                             <div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--color-text-muted); background:#111; flex-direction:column; gap:12px;">
                                 <i class="fa-solid fa-music" style="font-size:3rem; opacity:0.3;"></i>
@@ -876,22 +878,60 @@
                 return;
             }
 
-            // Tomar la primera canción (o la destacada si existe)
-            let cancionPrincipal = lanzamientos.find(item => item.destacado) || lanzamientos[0];
-            const videoId = extraerVideoId(cancionPrincipal.url);
-            const thumbUrl = cancionPrincipal.portada || (videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : '');
+            // Si no hay índice activo válido, elegir la destacada o la primera
+            if (cancionActivaIndex === null || cancionActivaIndex >= lanzamientos.length || cancionActivaIndex < 0) {
+                const idxDestacado = lanzamientos.findIndex(item => item.destacado);
+                cancionActivaIndex = idxDestacado !== -1 ? idxDestacado : 0;
+            }
 
-            // Si no hay maxres, usar mqdefault
-            const finalThumb = thumbUrl || `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+            mostrarMiniaturaEnPlayer(cancionActivaIndex);
+        }
+
+        // Muestra la miniatura + botón de play (estado inicial, sin reproducir aún)
+        function mostrarMiniaturaEnPlayer(index) {
+            const player = document.getElementById('reproductorPlayer');
+            const cancion = lanzamientos[index];
+            if (!cancion) return;
+
+            const videoId = extraerVideoId(cancion.url);
+            const thumbUrl = cancion.portada || (videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : '');
+            const finalThumb = thumbUrl || (videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : '');
 
             player.innerHTML = `
-                        <img src="${finalThumb}" alt="${sanitizar(cancionPrincipal.titulo)}" loading="lazy" onerror="this.style.display='none'">
-                        <div class="play-overlay" onclick="window.open('${cancionPrincipal.url}', '_blank')">
+                        <img src="${finalThumb}" alt="${sanitizar(cancion.titulo)}" loading="lazy" onerror="this.style.display='none'">
+                        <div class="play-overlay" onclick="reproducirEnPreview(${index})">
                             <i class="fa-brands fa-youtube"></i>
-                            <div class="play-text">Reproducir en YouTube</div>
-                            <div class="play-sub">${sanitizar(cancionPrincipal.titulo)}</div>
+                            <div class="play-text">Reproducir</div>
+                            <div class="play-sub">${sanitizar(cancion.titulo)}</div>
                         </div>
                     `;
+        }
+
+        // Reproduce la canción seleccionada directamente en la vista previa (iframe embebido)
+        function reproducirEnPreview(index) {
+            const cancion = lanzamientos[index];
+            if (!cancion) return;
+
+            const videoId = extraerVideoId(cancion.url);
+            if (!videoId) {
+                mostrarToast('❌ No se pudo reproducir este video', 'error');
+                return;
+            }
+
+            cancionActivaIndex = index;
+            const player = document.getElementById('reproductorPlayer');
+
+            player.innerHTML = `
+                        <iframe
+                            src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0"
+                            title="${sanitizar(cancion.titulo)}"
+                            style="position:absolute; inset:0; width:100%; height:100%; border:0;"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                        </iframe>
+                    `;
+
+            actualizarListaReproduccion();
         }
 
         function actualizarListaReproduccion() {
@@ -910,11 +950,11 @@
             lanzamientos.forEach((item, index) => {
                 const tipoLabel = item.tipo === 'ep' ? 'EP' : 'Sencillo';
                 const tipoClass = item.tipo === 'ep' ? 'ep' : 'sencillo';
-                const isActivo = index === 0 ? 'activo' : '';
+                const isActivo = index === cancionActivaIndex ? 'activo' : '';
                 const isDestacado = item.destacado ? '⭐ ' : '';
 
                 html += `
-                            <div class="item-lista ${isActivo}" onclick="window.open('${item.url}', '_blank')">
+                            <div class="item-lista ${isActivo}" onclick="reproducirEnPreview(${index})" title="Reproducir en la vista previa">
                                 <div style="display:flex; align-items:center; gap:6px; flex:1; min-width:0;">
                                     <span class="item-numero">${index + 1}</span>
                                     <span style="font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${isDestacado}${sanitizar(item.titulo)}</span>
