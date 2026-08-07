@@ -22,7 +22,6 @@
     <link rel="stylesheet" href="css/admin.css">
 
     <style>
-        /* Estilos específicos para lanzamientos */
         .lanzamientos-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -116,6 +115,12 @@
             background: rgba(255, 0, 0, 0.05);
             border-radius: var(--radius-sm);
             border: 1px solid rgba(255, 0, 0, 0.08);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .lanzamiento-card .lanzamiento-youtube:hover {
+            background: rgba(255, 0, 0, 0.1);
         }
 
         .lanzamiento-card .lanzamiento-youtube i {
@@ -153,16 +158,6 @@
             box-shadow: 0 4px 12px rgba(255, 204, 0, 0.3);
         }
 
-        .lanzamiento-card .lanzamiento-es-playlist {
-            font-size: 0.6rem;
-            color: var(--color-warning);
-            background: rgba(255, 152, 0, 0.1);
-            padding: 2px 8px;
-            border-radius: 12px;
-            display: inline-block;
-            margin-top: 4px;
-        }
-
         .lanzamiento-vacio {
             text-align: center;
             padding: 40px 20px;
@@ -177,7 +172,7 @@
             opacity: 0.3;
         }
 
-        /* Reproductor más compacto */
+        /* Reproductor */
         .reproductor-preview {
             background: var(--color-bg);
             border-radius: var(--radius-sm);
@@ -212,7 +207,7 @@
             height: 0;
             overflow: hidden;
             border-radius: var(--radius-sm);
-            background: #000;
+            background: #0a0a0a;
             max-width: 100%;
         }
 
@@ -243,6 +238,12 @@
             border-radius: var(--radius-sm);
             font-size: 0.75rem;
             border-left: 3px solid transparent;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .reproductor-preview .reproductor-lista .item-lista:hover {
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .reproductor-preview .reproductor-lista .item-lista.activo {
@@ -281,42 +282,60 @@
             gap: 16px;
         }
 
-        /* Estilo para el campo de URL con detección automática */
+        /* Preview de URL */
         .url-preview {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-top: 6px;
-            padding: 8px 12px;
+            margin-top: 8px;
+            padding: 10px 14px;
             background: var(--color-bg);
             border-radius: var(--radius-sm);
             border: 1px solid var(--color-border);
         }
 
         .url-preview img {
-            width: 80px;
-            height: 45px;
+            width: 120px;
+            height: 68px;
             object-fit: cover;
             border-radius: 4px;
             background: var(--color-bg-hover);
         }
 
         .url-preview .url-info {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             color: var(--color-text-muted);
+            flex: 1;
         }
 
         .url-preview .url-info strong {
             color: var(--color-text);
+            display: block;
         }
 
         .url-preview .url-badge {
             font-size: 0.6rem;
             font-weight: 700;
-            padding: 2px 10px;
+            padding: 3px 12px;
             border-radius: 12px;
             background: rgba(255, 152, 0, 0.15);
             color: var(--color-warning);
+        }
+
+        .url-preview .url-badge.success {
+            background: rgba(0, 200, 83, 0.15);
+            color: var(--color-success);
+        }
+
+        .form-help {
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+            margin-top: 4px;
+        }
+
+        .form-help .importante {
+            color: var(--color-warning);
+            font-weight: 600;
         }
 
         @media (max-width: 768px) {
@@ -440,7 +459,7 @@
                 <h3><i class="fa-solid fa-list"></i> Lanzamientos</h3>
                 <div class="card-actions">
                     <button class="btn-admin btn-primary btn-sm" onclick="mostrarModalLanzamiento()">
-                        <i class="fa-solid fa-plus"></i> Agregar Lanzamiento
+                        <i class="fa-solid fa-plus"></i> Agregar Canción
                     </button>
                 </div>
             </div>
@@ -459,13 +478,13 @@
     <div class="admin-modal" id="modalLanzamiento">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modalLanzamientoTitulo"><i class="fa-solid fa-record-vinyl"></i> Nuevo Lanzamiento</h3>
+                <h3 id="modalLanzamientoTitulo"><i class="fa-solid fa-record-vinyl"></i> Nueva Canción</h3>
                 <button class="modal-close" onclick="cerrarModalLanzamiento()">&times;</button>
             </div>
             <input type="hidden" id="lanzamientoIdEdit">
 
             <div class="admin-form-group">
-                <label for="lanzamientoTitulo">Título *</label>
+                <label for="lanzamientoTitulo">Título de la canción *</label>
                 <input type="text" id="lanzamientoTitulo" class="admin-input" placeholder="Ej: Cumbia Salvaje" required>
             </div>
 
@@ -484,28 +503,28 @@
                     </select>
                 </div>
                 <div class="admin-form-group">
-                    <label for="lanzamientoOrden">Orden (número)</label>
+                    <label for="lanzamientoOrden">Orden en el EP</label>
                     <input type="number" id="lanzamientoOrden" class="admin-input" placeholder="1" min="0">
                     <div class="form-help">Número menor = aparece primero</div>
                 </div>
             </div>
 
             <div class="admin-form-group">
-                <label for="lanzamientoUrl">URL de YouTube *</label>
+                <label for="lanzamientoUrl">URL del video en YouTube *</label>
                 <input type="url" id="lanzamientoUrl" class="admin-input"
                     placeholder="https://www.youtube.com/watch?v=..." required oninput="previsualizarUrl()">
                 <div class="form-help">
-                    <strong>Importante:</strong> Usa la URL de un <strong>video individual</strong> (no de una
-                    playlist).
-                    Para agregar un EP, agrega cada canción por separado.
+                    <span class="importante">⚠️ IMPORTANTE:</span> Usa la URL de un <strong>video individual</strong>.
+                    <br>Ejemplo: <code>https://www.youtube.com/watch?v=ABCD1234</code>
+                    <br>No uses URLs de playlists (contienen <code>list=</code>)
                 </div>
                 <div class="url-preview" id="urlPreview" style="display:none;">
                     <img id="urlThumbnail" src="" alt="Vista previa">
                     <div class="url-info">
-                        <div><strong id="urlTituloPreview">Título</strong></div>
-                        <div id="urlCanalPreview" style="font-size:0.7rem;">Canal</div>
-                        <div id="urlPlaylistBadge" class="url-badge" style="display:none;">⚠️ Es una playlist</div>
+                        <strong id="urlTituloPreview">Título</strong>
+                        <span id="urlCanalPreview">Canal</span>
                     </div>
+                    <span class="url-badge success"><i class="fa-solid fa-check"></i> Video válido</span>
                 </div>
             </div>
 
@@ -530,8 +549,8 @@
     <div class="admin-modal" id="modalEliminarLanzamiento">
         <div class="modal-content" style="max-width:450px;">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-triangle-exclamation" style="color:var(--color-danger);"></i> Eliminar
-                    Lanzamiento</h3>
+                <h3><i class="fa-solid fa-triangle-exclamation" style="color:var(--color-danger);"></i> Eliminar Canción
+                </h3>
                 <button class="modal-close" onclick="cerrarModalEliminarLanzamiento()">&times;</button>
             </div>
             <p style="color:var(--color-text-muted); margin-bottom:16px;">
@@ -560,7 +579,6 @@
         // VARIABLES GLOBALES
         // ============================================================
         let lanzamientos = [];
-        let playlistId = 'PLTuBmL8D1R_lJ8BjJZ5-MvATfL4IztteA';
 
         // ============================================================
         // SIDEBAR
@@ -596,7 +614,7 @@
         })();
 
         // ============================================================
-        // FUNCIONES - EXTRAER INFO DE YOUTUBE
+        // FUNCIONES - EXTRACCIÓN DE YOUTUBE
         // ============================================================
 
         function extraerVideoId(url) {
@@ -605,14 +623,9 @@
             return match ? match[1] : null;
         }
 
-        function extraerPlaylistId(url) {
-            if (!url) return null;
-            const match = url.match(/[?&]list=([^&]+)/);
-            return match ? match[1] : null;
-        }
-
         function esPlaylist(url) {
-            return url && (url.includes('list=') || url.includes('playlist'));
+            if (!url) return false;
+            return url.includes('list=') && !url.includes('watch?v=');
         }
 
         async function obtenerInfoYouTube(url) {
@@ -636,7 +649,7 @@
         }
 
         // ============================================================
-        // FUNCIONES - PREVISUALIZAR URL EN MODAL
+        // FUNCIONES - PREVISUALIZAR URL
         // ============================================================
 
         let urlPreviewTimeout = null;
@@ -648,24 +661,24 @@
 
             clearTimeout(urlPreviewTimeout);
 
+            // Ocultar si está vacío o no es YouTube
             if (!url || !url.includes('youtube.com') && !url.includes('youtu.be')) {
                 previewContainer.style.display = 'none';
                 return;
             }
 
             // Verificar si es una playlist
-            const isPlaylist = esPlaylist(url);
-            const playlistBadge = document.getElementById('urlPlaylistBadge');
-
-            if (isPlaylist) {
-                playlistBadge.style.display = 'inline-block';
-                document.getElementById('urlTituloPreview').textContent = '📋 Lista de reproducción';
-                document.getElementById('urlCanalPreview').textContent = 'No se puede reproducir directamente';
-                document.getElementById('urlThumbnail').src = '';
+            if (esPlaylist(url)) {
                 previewContainer.style.display = 'flex';
+                document.getElementById('urlThumbnail').src = '';
+                document.getElementById('urlTituloPreview').textContent = '❌ No se permiten playlists';
+                document.getElementById('urlCanalPreview').textContent = 'Usa la URL de un video individual';
+                const badge = previewContainer.querySelector('.url-badge');
+                badge.className = 'url-badge';
+                badge.textContent = '⚠️ Playlist no válida';
+                badge.style.background = 'rgba(211,47,47,0.15)';
+                badge.style.color = 'var(--color-danger)';
                 return;
-            } else {
-                playlistBadge.style.display = 'none';
             }
 
             urlPreviewTimeout = setTimeout(async () => {
@@ -676,13 +689,27 @@
                         document.getElementById('urlTituloPreview').textContent = info.titulo || 'Sin título';
                         document.getElementById('urlCanalPreview').textContent = info.canal || 'Canal desconocido';
                         previewContainer.style.display = 'flex';
+
+                        const badge = previewContainer.querySelector('.url-badge');
+                        badge.className = 'url-badge success';
+                        badge.innerHTML = '<i class="fa-solid fa-check"></i> Video válido';
+                        badge.style.background = 'rgba(0,200,83,0.15)';
+                        badge.style.color = 'var(--color-success)';
                     } else {
-                        previewContainer.style.display = 'none';
+                        previewContainer.style.display = 'flex';
+                        document.getElementById('urlThumbnail').src = '';
+                        document.getElementById('urlTituloPreview').textContent = '❌ No se pudo cargar la vista previa';
+                        document.getElementById('urlCanalPreview').textContent = 'Verifica la URL';
+                        const badge = previewContainer.querySelector('.url-badge');
+                        badge.className = 'url-badge';
+                        badge.textContent = '⚠️ Error';
+                        badge.style.background = 'rgba(211,47,47,0.15)';
+                        badge.style.color = 'var(--color-danger)';
                     }
                 } catch (error) {
                     previewContainer.style.display = 'none';
                 }
-            }, 500);
+            }, 600);
         }
 
         // ============================================================
@@ -715,6 +742,9 @@
                     });
                 });
 
+                // Solo mostrar canciones individuales (no playlists)
+                lanzamientos = lanzamientos.filter(item => !esPlaylist(item.url));
+
                 if (lanzamientos.length > 0 && lanzamientos.every(l => l.orden === 0)) {
                     lanzamientos.sort((a, b) => a.titulo.localeCompare(b.titulo));
                 }
@@ -736,7 +766,10 @@
                 grid.innerHTML = `
                             <div class="lanzamiento-vacio">
                                 <i class="fa-regular fa-record-vinyl"></i>
-                                <p>No hay lanzamientos. ¡Agrega el primero!</p>
+                                <p>No hay canciones agregadas. ¡Agrega la primera!</p>
+                                <p style="font-size:0.8rem; color:#555; margin-top:8px;">
+                                    Recuerda: cada canción debe tener su propia URL de YouTube
+                                </p>
                             </div>
                         `;
                 return;
@@ -748,9 +781,7 @@
                 const tipoClass = item.tipo === 'ep' ? 'ep' : 'sencillo';
                 const destacadoBadge = item.destacado ? '<span class="lanzamiento-destacado">⭐ Destacado</span>' : '';
                 const videoId = extraerVideoId(item.url);
-                const isPlaylist = esPlaylist(item.url);
                 const thumbUrl = item.portada || (videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : '');
-                const playlistBadge = isPlaylist ? '<span class="lanzamiento-es-playlist"><i class="fa-solid fa-list"></i> Playlist</span>' : '';
 
                 html += `
                             <div class="lanzamiento-card">
@@ -766,13 +797,12 @@
                                         </button>
                                     </div>
                                 </div>
-                                ${thumbUrl && !isPlaylist ? `<img class="lanzamiento-thumb" src="${thumbUrl}" alt="${sanitizar(item.titulo)}" loading="lazy" onerror="this.style.display='none'">` : ''}
+                                ${thumbUrl ? `<img class="lanzamiento-thumb" src="${thumbUrl}" alt="${sanitizar(item.titulo)}" loading="lazy" onerror="this.style.display='none'">` : ''}
                                 <div class="lanzamiento-titulo">${sanitizar(item.titulo)}</div>
                                 <div class="lanzamiento-artista">${sanitizar(item.artista)}</div>
-                                ${playlistBadge}
-                                <div class="lanzamiento-youtube">
+                                <div class="lanzamiento-youtube" onclick="window.open('${item.url}', '_blank')">
                                     <i class="fa-brands fa-youtube"></i>
-                                    <a href="${item.url}" target="_blank">${isPlaylist ? 'Abrir playlist' : 'Ver en YouTube'}</a>
+                                    <span>${videoId ? '▶️ Reproducir en YouTube' : item.url}</span>
                                 </div>
                                 <div class="lanzamiento-fecha">
                                     ${item.creadoEn ? 'Agregado: ' + formatearFecha(item.creadoEn) : ''}
@@ -786,13 +816,11 @@
         }
 
         // ============================================================
-        // FUNCIONES - PLAYLIST Y REPRODUCTOR
+        // FUNCIONES - REPRODUCTOR
         // ============================================================
 
         function actualizarPlaylist() {
-            // Solo usar videos individuales, ignorar playlists
             const videoIds = lanzamientos
-                .filter(item => !esPlaylist(item.url))
                 .map(item => extraerVideoId(item.url))
                 .filter(id => id !== null);
 
@@ -800,12 +828,10 @@
 
             if (videoIds.length === 0) {
                 embed.innerHTML = `
-                            <div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--color-text-muted); background:#111; font-size:0.9rem;">
-                                <div style="text-align:center;">
-                                    <i class="fa-solid fa-music" style="font-size:2rem; display:block; margin-bottom:8px; opacity:0.3;"></i>
-                                    <p>Agrega videos individuales para reproducir</p>
-                                    <p style="font-size:0.7rem; opacity:0.5;">Las playlists no se pueden reproducir aquí</p>
-                                </div>
+                            <div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--color-text-muted); background:#111; font-size:0.9rem; flex-direction:column; gap:8px;">
+                                <i class="fa-solid fa-music" style="font-size:2.5rem; opacity:0.3;"></i>
+                                <p>Agrega canciones individuales</p>
+                                <p style="font-size:0.7rem; opacity:0.5;">Cada canción debe tener su propia URL de YouTube</p>
                             </div>
                         `;
                 return;
@@ -826,26 +852,24 @@
 
         function actualizarListaReproduccion() {
             const lista = document.getElementById('listaReproduccion');
-            // Solo mostrar videos individuales en la lista
-            const itemsReproducibles = lanzamientos.filter(item => !esPlaylist(item.url));
 
-            if (itemsReproducibles.length === 0) {
+            if (lanzamientos.length === 0) {
                 lista.innerHTML = `
                             <div style="text-align:center; padding:12px; color:var(--color-text-muted); font-size:0.8rem;">
-                                <i class="fa-regular fa-record-vinyl"></i> No hay canciones individuales
+                                <i class="fa-regular fa-record-vinyl"></i> No hay canciones en la lista
                             </div>
                         `;
                 return;
             }
 
             let html = '';
-            itemsReproducibles.forEach((item, index) => {
+            lanzamientos.forEach((item, index) => {
                 const tipoLabel = item.tipo === 'ep' ? 'EP' : 'Sencillo';
                 const tipoClass = item.tipo === 'ep' ? 'ep' : 'sencillo';
                 const isActivo = index === 0 ? 'activo' : '';
 
                 html += `
-                            <div class="item-lista ${isActivo}">
+                            <div class="item-lista ${isActivo}" onclick="window.open('${item.url}', '_blank')">
                                 <div style="display:flex; align-items:center; gap:6px; flex:1; min-width:0;">
                                     <span class="item-numero">${index + 1}</span>
                                     <span style="font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${sanitizar(item.titulo)}</span>
@@ -862,7 +886,7 @@
         }
 
         // ============================================================
-        // FUNCIONES - MODAL LANZAMIENTO
+        // FUNCIONES - MODAL
         // ============================================================
 
         function mostrarModalLanzamiento() {
@@ -874,7 +898,7 @@
             document.getElementById('lanzamientoOrden').value = '';
             document.getElementById('lanzamientoDestacado').checked = false;
             document.getElementById('urlPreview').style.display = 'none';
-            document.getElementById('modalLanzamientoTitulo').innerHTML = '<i class="fa-solid fa-record-vinyl"></i> Nuevo Lanzamiento';
+            document.getElementById('modalLanzamientoTitulo').innerHTML = '<i class="fa-solid fa-record-vinyl"></i> Nueva Canción';
             document.getElementById('btnGuardarLanzamiento').innerHTML = '<i class="fa-solid fa-save"></i> Guardar';
             document.getElementById('modalLanzamiento').classList.add('active');
             setTimeout(() => document.getElementById('lanzamientoTitulo').focus(), 100);
@@ -902,7 +926,7 @@
                 document.getElementById('urlPreview').style.display = 'none';
             }
 
-            document.getElementById('modalLanzamientoTitulo').innerHTML = '<i class="fa-solid fa-pen"></i> Editar Lanzamiento';
+            document.getElementById('modalLanzamientoTitulo').innerHTML = '<i class="fa-solid fa-pen"></i> Editar Canción';
             document.getElementById('btnGuardarLanzamiento').innerHTML = '<i class="fa-solid fa-save"></i> Actualizar';
             document.getElementById('modalLanzamiento').classList.add('active');
             setTimeout(() => document.getElementById('lanzamientoTitulo').focus(), 100);
@@ -939,15 +963,19 @@
                 return;
             }
 
-            // Advertencia si es una playlist
+            // Validar que NO sea una playlist
             if (esPlaylist(url)) {
-                const confirmar = confirm(
-                    '⚠️ Has ingresado una URL de playlist.\n\n' +
-                    'Las playlists NO se pueden reproducir directamente en el reproductor.\n\n' +
-                    'Para el EP "Cumbia Salvaje", te recomiendo agregar CADA CANCIÓN por separado.\n\n' +
-                    '¿Deseas continuar de todas formas? (No se reproducirá)'
-                );
-                if (!confirmar) return;
+                mostrarToast('❌ No se permiten playlists. Usa la URL de un video individual.', 'error');
+                document.getElementById('lanzamientoUrl').focus();
+                return;
+            }
+
+            // Validar que el video existe
+            const info = await obtenerInfoYouTube(url);
+            if (!info) {
+                mostrarToast('❌ No se pudo verificar el video. Revisa la URL.', 'error');
+                document.getElementById('lanzamientoUrl').focus();
+                return;
             }
 
             const btn = document.getElementById('btnGuardarLanzamiento');
@@ -955,11 +983,8 @@
             btn.disabled = true;
 
             try {
-                let portada = '';
                 const videoId = extraerVideoId(url);
-                if (videoId) {
-                    portada = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
-                }
+                const portada = videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : '';
 
                 const datos = {
                     titulo,
@@ -974,18 +999,18 @@
 
                 if (id) {
                     await db.collection('lanzamientos').doc(id).update(datos);
-                    mostrarToast('✅ Lanzamiento actualizado', 'success');
+                    mostrarToast('✅ Canción actualizada', 'success');
                 } else {
                     datos.creadoEn = new Date().toISOString();
                     await db.collection('lanzamientos').add(datos);
-                    mostrarToast('✅ Lanzamiento creado', 'success');
+                    mostrarToast('✅ Canción agregada', 'success');
                 }
 
                 cerrarModalLanzamiento();
                 await cargarLanzamientos();
 
             } catch (error) {
-                console.error('Error al guardar lanzamiento:', error);
+                console.error('Error al guardar:', error);
                 mostrarToast('❌ Error: ' + error.message, 'error');
             }
 
@@ -1019,11 +1044,11 @@
             try {
                 await db.collection('lanzamientos').doc(id).delete();
                 cerrarModalEliminarLanzamiento();
-                mostrarToast('✅ Lanzamiento eliminado', 'success');
+                mostrarToast('✅ Canción eliminada', 'success');
                 await cargarLanzamientos();
 
             } catch (error) {
-                console.error('Error al eliminar lanzamiento:', error);
+                console.error('Error al eliminar:', error);
                 mostrarToast('❌ Error: ' + error.message, 'error');
             }
 
@@ -1037,7 +1062,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             cargarLanzamientos();
-            console.log('🚀 Gestor de Lanzamientos cargado');
+            console.log('🚀 Gestor de Lanzamientos cargado - Solo canciones individuales');
         });
 
         document.addEventListener('keydown', function (e) {
