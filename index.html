@@ -443,13 +443,9 @@
         }
 
         /* =====================================
-           SECCIÓN LANZAMIENTOS
+           SECCIÓN LANZAMIENTOS - DESDE FIREBASE
            ===================================== */
-        .lanzamientos-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 40px;
-            align-items: center;
+        #lanzamientosContainer {
             max-width: 1000px;
             margin: 0 auto;
         }
@@ -460,18 +456,14 @@
             overflow: hidden;
             border-radius: 25px;
             background: #000;
-            box-shadow:
-                0 20px 50px rgba(0, 0, 0, 0.7),
-                0 0 0 2px rgba(255, 204, 0, 0.3);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 0 2px rgba(255, 204, 0, 0.3);
             transition: all 0.4s ease;
             position: relative;
         }
 
         .lanzamiento-principal:hover {
             transform: translateY(-6px);
-            box-shadow:
-                0 30px 70px rgba(0, 0, 0, 0.8),
-                0 0 0 3px rgba(255, 204, 0, 0.5);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8), 0 0 0 3px rgba(255, 204, 0, 0.5);
         }
 
         .lanzamiento-principal iframe {
@@ -496,33 +488,6 @@
             z-index: 2;
         }
 
-        .lanzamiento-secundario {
-            width: 100%;
-            max-width: 750px;
-            aspect-ratio: 16/9;
-            overflow: hidden;
-            border-radius: 20px;
-            background: #000;
-            box-shadow:
-                0 15px 40px rgba(0, 0, 0, 0.6),
-                0 0 0 1px rgba(255, 255, 255, 0.08);
-            transition: all 0.4s ease;
-        }
-
-        .lanzamiento-secundario:hover {
-            transform: translateY(-4px);
-            box-shadow:
-                0 25px 55px rgba(0, 0, 0, 0.7),
-                0 0 0 2px rgba(255, 204, 0, 0.2);
-        }
-
-        .lanzamiento-secundario iframe {
-            width: 100%;
-            height: 100%;
-            border: 0;
-            display: block;
-        }
-
         .lanzamiento-titulo {
             text-align: center;
             margin-top: 15px;
@@ -536,14 +501,101 @@
             font-weight: 600;
         }
 
+        /* =====================================
+           LISTA DE REPRODUCCIÓN - INDEX
+           ===================================== */
+        .lista-reproduccion-index {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 20px;
+            max-width: 750px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+
+        .item-lista-index {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 16px;
+            background: #1a1a1a;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #aaa;
+        }
+
+        .item-lista-index:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .item-lista-index.activo {
+            border-left-color: #ffcc00;
+            background: rgba(255, 204, 0, 0.08);
+            color: #fff;
+        }
+
+        .item-lista-index .item-numero {
+            font-weight: 700;
+            color: #555;
+            margin-right: 10px;
+            font-size: 0.7rem;
+            min-width: 22px;
+        }
+
+        .item-lista-index .item-titulo {
+            flex: 1;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .item-lista-index .item-tipo {
+            font-size: 0.55rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 2px 10px;
+            border-radius: 12px;
+            flex-shrink: 0;
+            margin-left: 8px;
+        }
+
+        .item-lista-index .item-tipo.ep {
+            background: rgba(0, 200, 83, 0.15);
+            color: #00c853;
+        }
+
+        .item-lista-index .item-tipo.sencillo {
+            background: rgba(25, 118, 210, 0.15);
+            color: #1976d2;
+        }
+
+        .item-lista-index .item-destacado {
+            color: #ffcc00;
+            font-size: 0.75rem;
+            margin-left: 6px;
+        }
+
+        .item-lista-index .item-artista {
+            font-size: 0.7rem;
+            color: #666;
+            flex-shrink: 0;
+            max-width: 80px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-left: 10px;
+        }
+
         @media (max-width: 700px) {
             .lanzamiento-principal {
                 border-radius: 18px;
-            }
-
-            .lanzamiento-secundario {
-                border-radius: 18px;
-                max-width: 100%;
             }
 
             .lanzamiento-principal .badge-lanzamiento {
@@ -554,15 +606,51 @@
             }
         }
 
-        @media (max-width: 480px) {
-            .lanzamientos-wrapper {
-                gap: 25px;
+        @media (max-width: 600px) {
+            .item-lista-index {
+                padding: 8px 12px;
+                font-size: 0.75rem;
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+
+            .item-lista-index .item-artista {
+                max-width: 60px;
+                font-size: 0.6rem;
+            }
+
+            .item-lista-index .item-titulo {
+                font-size: 0.75rem;
+            }
+
+            .item-lista-index .item-tipo {
+                font-size: 0.5rem;
+                padding: 1px 8px;
             }
         }
 
-        /* Ocultar elementos temporalmente */
-        .oculto {
-            display: none;
+        @media (max-width: 480px) {
+            #lanzamientosContainer {
+                padding: 0 4px;
+            }
+
+            .lanzamiento-principal {
+                border-radius: 14px;
+            }
+        }
+
+        .lanzamiento-vacio-index {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+            grid-column: 1 / -1;
+        }
+
+        .lanzamiento-vacio-index i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.3;
         }
 
         /* =====================================
@@ -1781,47 +1869,44 @@
 
 
     <!-- =====================================
-         SECCIÓN LANZAMIENTOS
+         SECCIÓN LANZAMIENTOS - DESDE FIREBASE
     ===================================== -->
     <section id="musica" class="animar">
 
         <div class="contenedor">
 
             <div class="titulo-seccion">
-
                 <span>Últimos estrenos</span>
-
                 <h2>Nuevos Lanzamientos</h2>
-
+                <p style="color: #aaa; max-width: 600px; margin: 10px auto 0;">
+                    Escucha nuestras canciones más recientes directamente desde YouTube.
+                </p>
             </div>
 
-            <div class="lanzamientos-wrapper">
+            <!-- CONTENEDOR DE LANZAMIENTOS DESDE FIREBASE -->
+            <div id="lanzamientosContainer">
 
-                <!-- Lanzamiento Principal -->
-                <div class="lanzamiento-principal">
-                    <span class="badge-lanzamiento">🎵 Nuevo Álbum</span>
-                    <iframe
-                        src="https://www.youtube.com/embed/videoseries?list=OLAK5uy_nYf3WKfcoDAn9eH_UkjMJR3nxTpwsAvoA"
-                        title="Los Hijos de Tencha - Cumbia Salvaje" frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen>
-                    </iframe>
+                <!-- Reproductor Principal -->
+                <div id="lanzamientoPrincipal" class="lanzamiento-principal">
+                    <div
+                        style="display:flex; align-items:center; justify-content:center; height:100%; color:#666; background:#111; flex-direction:column; gap:12px;">
+                        <i class="fa-solid fa-music" style="font-size:3rem; opacity:0.3;"></i>
+                        <p style="font-size:1rem; font-weight:600;">Cargando canciones...</p>
+                        <p style="font-size:0.8rem; opacity:0.7;">Espera un momento</p>
+                    </div>
                 </div>
-                <p class="lanzamiento-titulo">
-                    <strong>Cumbia Salvaje</strong> — Álbum completo disponible en YouTube
+
+                <!-- Título del video actual -->
+                <p id="lanzamientoTituloActual" class="lanzamiento-titulo">
+                    <strong style="color:#ffcc00;">Cargando...</strong>
                 </p>
 
-                <!-- Lanzamiento Secundario -->
-                <div class="lanzamiento-secundario">
-                    <iframe src="https://www.youtube.com/embed/Ktf96bekedA"
-                        title="Los Hijos de Tencha - Nuevo lanzamiento" frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen>
-                    </iframe>
+                <!-- Lista de reproducción -->
+                <div id="listaReproduccionIndex" class="lista-reproduccion-index">
+                    <div style="text-align:center; padding:20px; color:#555;">
+                        <i class="fa-solid fa-spinner fa-spin"></i> Cargando lista...
+                    </div>
                 </div>
-                <p class="lanzamiento-titulo">
-                    <strong>El Vocho</strong> — Nuevo sencillo disponible en todas las plataformas
-                </p>
 
             </div>
 
@@ -2167,6 +2252,212 @@
         document.addEventListener('DOMContentLoaded', function () {
             setTimeout(cargarEventosFirebase, 500);
             console.log('📅 Eventos desde Firebase cargando...');
+        });
+    </script>
+
+    <!-- ============================================= -->
+    <!-- SCRIPT PARA LANZAMIENTOS DESDE FIREBASE       -->
+    <!-- ============================================= -->
+    <script>
+        // ============================================================
+        // LANZAMIENTOS - CARGAR DESDE FIREBASE
+        // ============================================================
+
+        let lanzamientosIndex = [];
+        let cancionActivaIndex = 0;
+
+        function extraerVideoId(url) {
+            if (!url) return null;
+            const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?]+)/);
+            return match ? match[1] : null;
+        }
+
+        function esPlaylist(url) {
+            if (!url) return false;
+            return url.includes('list=') && !url.includes('watch?v=');
+        }
+
+        function obtenerTituloVideo(url) {
+            if (!url) return '';
+            const videoId = extraerVideoId(url);
+            if (!videoId) return '';
+            return `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+        }
+
+        async function cargarLanzamientosIndex() {
+            const player = document.getElementById('lanzamientoPrincipal');
+            const tituloActual = document.getElementById('lanzamientoTituloActual');
+            const lista = document.getElementById('listaReproduccionIndex');
+
+            if (!db) {
+                console.warn('⚠️ Firestore no disponible para lanzamientos');
+                player.innerHTML = `
+                    <div style="display:flex; align-items:center; justify-content:center; height:100%; color:#666; background:#111; flex-direction:column; gap:12px;">
+                        <i class="fa-solid fa-triangle-exclamation" style="font-size:3rem; color:#d32f2f;"></i>
+                        <p style="font-size:1rem; font-weight:600; color:#d32f2f;">Error de conexión</p>
+                        <p style="font-size:0.8rem; opacity:0.7;">No se pudo cargar la música</p>
+                    </div>
+                `;
+                lista.innerHTML = `
+                    <div style="text-align:center; padding:20px; color:#555;">
+                        ⚠️ Error al cargar lanzamientos
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                console.log('🔄 Cargando lanzamientos desde Firebase...');
+
+                const snapshot = await db.collection('lanzamientos')
+                    .orderBy('orden', 'asc')
+                    .get();
+
+                lanzamientosIndex = [];
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const url = data.url || '';
+                    if (url && !esPlaylist(url)) {
+                        lanzamientosIndex.push({
+                            id: doc.id,
+                            titulo: data.titulo || 'Sin título',
+                            artista: data.artista || 'Los Hijos de Tencha',
+                            tipo: data.tipo || 'sencillo',
+                            url: url,
+                            destacado: data.destacado || false,
+                            orden: data.orden || 0,
+                            portada: data.portada || ''
+                        });
+                    }
+                });
+
+                if (lanzamientosIndex.length === 0) {
+                    player.innerHTML = `
+                        <div style="display:flex; align-items:center; justify-content:center; height:100%; color:#666; background:#111; flex-direction:column; gap:12px;">
+                            <i class="fa-regular fa-record-vinyl" style="font-size:3rem; opacity:0.3;"></i>
+                            <p style="font-size:1rem; font-weight:600;">No hay lanzamientos</p>
+                            <p style="font-size:0.8rem; opacity:0.7;">Pronto tendremos nueva música</p>
+                        </div>
+                    `;
+                    tituloActual.innerHTML = '<strong style="color:#ffcc00;">Sin lanzamientos disponibles</strong>';
+                    lista.innerHTML = `
+                        <div style="text-align:center; padding:20px; color:#555;">
+                            <i class="fa-regular fa-record-vinyl"></i> No hay canciones disponibles
+                        </div>
+                    `;
+                    return;
+                }
+
+                console.log('✅ ' + lanzamientosIndex.length + ' lanzamientos cargados');
+
+                // Elegir el primer video (destacado o el primero)
+                const idxDestacado = lanzamientosIndex.findIndex(item => item.destacado);
+                cancionActivaIndex = idxDestacado !== -1 ? idxDestacado : 0;
+
+                // Reproducir el primer video
+                reproducirEnIndex(cancionActivaIndex);
+
+                // Renderizar lista
+                renderizarListaIndex();
+
+            } catch (error) {
+                console.error('❌ Error al cargar lanzamientos:', error);
+                player.innerHTML = `
+                    <div style="display:flex; align-items:center; justify-content:center; height:100%; color:#666; background:#111; flex-direction:column; gap:12px;">
+                        <i class="fa-solid fa-triangle-exclamation" style="font-size:3rem; color:#d32f2f;"></i>
+                        <p style="font-size:1rem; font-weight:600; color:#d32f2f;">Error al cargar</p>
+                        <p style="font-size:0.8rem; opacity:0.7;">${error.message}</p>
+                    </div>
+                `;
+                lista.innerHTML = `
+                    <div style="text-align:center; padding:20px; color:#555;">
+                        ❌ Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function reproducirEnIndex(index) {
+            const cancion = lanzamientosIndex[index];
+            if (!cancion) return;
+
+            const videoId = extraerVideoId(cancion.url);
+            if (!videoId) {
+                console.warn('⚠️ No se pudo extraer el ID del video:', cancion.url);
+                return;
+            }
+
+            cancionActivaIndex = index;
+            const player = document.getElementById('lanzamientoPrincipal');
+            const tituloActual = document.getElementById('lanzamientoTituloActual');
+
+            // Crear badge para destacado
+            const badgeHTML = cancion.destacado ?
+                `<span class="badge-lanzamiento">⭐ Destacado</span>` :
+                '';
+
+            player.innerHTML = `
+                ${badgeHTML}
+                <iframe
+                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0"
+                    title="${cancion.titulo}"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            `;
+
+            // Actualizar título
+            tituloActual.innerHTML = `
+                <strong>${cancion.titulo}</strong>
+                ${cancion.artista ? ' — ' + cancion.artista : ''}
+            `;
+
+            // Actualizar lista
+            renderizarListaIndex();
+        }
+
+        function renderizarListaIndex() {
+            const lista = document.getElementById('listaReproduccionIndex');
+
+            if (lanzamientosIndex.length === 0) {
+                lista.innerHTML = `
+                    <div style="text-align:center; padding:20px; color:#555;">
+                        <i class="fa-regular fa-record-vinyl"></i> No hay canciones disponibles
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            lanzamientosIndex.forEach((item, index) => {
+                const isActivo = index === cancionActivaIndex ? 'activo' : '';
+                const tipoLabel = item.tipo === 'ep' ? 'EP' : 'Sencillo';
+                const tipoClass = item.tipo === 'ep' ? 'ep' : 'sencillo';
+                const destacadoIcon = item.destacado ? '⭐' : '';
+                const numero = (index + 1).toString().padStart(2, '0');
+
+                html += `
+                    <div class="item-lista-index ${isActivo}" onclick="reproducirEnIndex(${index})">
+                        <span class="item-numero">${numero}</span>
+                        <span class="item-titulo">${item.titulo}</span>
+                        <span class="item-destacado">${destacadoIcon}</span>
+                        <span class="item-tipo ${tipoClass}">${tipoLabel}</span>
+                        <span class="item-artista">${item.artista}</span>
+                    </div>
+                `;
+            });
+
+            lista.innerHTML = html;
+        }
+
+        // ============================================================
+        // INICIALIZAR LANZAMIENTOS
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(cargarLanzamientosIndex, 600);
+            console.log('🎵 Lanzamientos desde Firebase cargando...');
         });
     </script>
 
