@@ -26,7 +26,15 @@
            ESTILOS PROPIOS DEL GENERADOR (usan las variables de admin.css)
            ============================================================ */
         .generador-wrap {
-            max-width: 720px;
+            max-width: 100%;
+            width: 100%;
+        }
+
+        .generador-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start;
         }
 
         .generador-wrap .card-header p {
@@ -92,7 +100,7 @@
 
         .historial-list {
             list-style: none;
-            max-height: 260px;
+            max-height: 400px;
             overflow-y: auto;
         }
 
@@ -203,6 +211,31 @@
             color: var(--color-text);
         }
 
+        .dashboard-welcome {
+            margin-bottom: 25px;
+        }
+
+        .dashboard-welcome h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .dashboard-welcome h1 span {
+            color: var(--color-primary);
+        }
+
+        .dashboard-welcome p {
+            color: var(--color-text-muted);
+            font-size: 1rem;
+        }
+
+        @media (max-width: 992px) {
+            .generador-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
         @media (max-width: 768px) {
             .form-row-2 {
                 grid-template-columns: 1fr;
@@ -213,6 +246,57 @@
             .result-actions .btn-admin {
                 flex: 1;
                 justify-content: center;
+            }
+
+            .dashboard-welcome h1 {
+                font-size: 1.4rem;
+            }
+
+            .dashboard-welcome p {
+                font-size: 0.85rem;
+            }
+
+            .generador-grid {
+                gap: 16px;
+            }
+
+            .historial-list {
+                max-height: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-welcome h1 {
+                font-size: 1.2rem;
+            }
+
+            .dashboard-welcome p {
+                font-size: 0.8rem;
+            }
+
+            .historial-list {
+                max-height: 250px;
+            }
+
+            .historial-list li {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .historial-list li .h-text {
+                width: 100%;
+                white-space: normal;
+                overflow: visible;
+            }
+
+            .historial-list li .h-fecha {
+                font-size: 0.6rem;
+            }
+
+            .result-actions .btn-admin {
+                font-size: 0.7rem !important;
+                padding: 6px 10px !important;
+                height: 30px !important;
             }
         }
     </style>
@@ -288,84 +372,97 @@
 
         <div class="generador-wrap">
 
-            <!-- FORMULARIO -->
-            <div class="admin-card">
-                <div class="card-header">
-                    <h3><i class="fa-solid fa-pen-nib"></i> Nuevo mensaje</h3>
-                </div>
+            <!-- GRID: Formulario + Resultado -->
+            <div class="generador-grid">
 
-                <div class="admin-form-group">
-                    <label><i class="fa-solid fa-pen"></i> Tema del mensaje</label>
-                    <input type="text" id="tema" class="admin-input"
-                        placeholder="Ej: Oferta de camisetas, Recordatorio de evento...">
-                </div>
+                <!-- COLUMNA IZQUIERDA: FORMULARIO -->
+                <div>
 
-                <div class="form-row-2">
-                    <div class="admin-form-group">
-                        <label><i class="fa-solid fa-face-smile"></i> Tono</label>
-                        <select id="tono" class="admin-select">
-                            <option value="formal">Formal</option>
-                            <option value="amigable" selected>Amigable</option>
-                            <option value="urgente">Urgente</option>
-                            <option value="inspirador">Inspirador</option>
-                        </select>
+                    <div class="admin-card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-pen-nib"></i> Nuevo mensaje</h3>
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label><i class="fa-solid fa-pen"></i> Tema del mensaje</label>
+                            <input type="text" id="tema" class="admin-input"
+                                placeholder="Ej: Oferta de camisetas, Recordatorio de evento...">
+                        </div>
+
+                        <div class="form-row-2">
+                            <div class="admin-form-group">
+                                <label><i class="fa-solid fa-face-smile"></i> Tono</label>
+                                <select id="tono" class="admin-select">
+                                    <option value="formal">Formal</option>
+                                    <option value="amigable" selected>Amigable</option>
+                                    <option value="urgente">Urgente</option>
+                                    <option value="inspirador">Inspirador</option>
+                                </select>
+                            </div>
+                            <div class="admin-form-group">
+                                <label><i class="fa-solid fa-ruler"></i> Longitud</label>
+                                <select id="longitud" class="admin-select">
+                                    <option value="corto">Corto</option>
+                                    <option value="medio" selected>Medio</option>
+                                    <option value="largo">Largo</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label><i class="fa-solid fa-circle-info"></i> Contexto (opcional)</label>
+                            <textarea id="contexto" class="admin-textarea" rows="2"
+                                placeholder="Ej: Descuento del 20% para clientes frecuentes"></textarea>
+                        </div>
+
+                        <button class="btn-admin btn-primary btn-lg" id="btnGenerar"
+                            style="width:100%; justify-content:center;">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Generar mensaje
+                        </button>
                     </div>
-                    <div class="admin-form-group">
-                        <label><i class="fa-solid fa-ruler"></i> Longitud</label>
-                        <select id="longitud" class="admin-select">
-                            <option value="corto">Corto</option>
-                            <option value="medio" selected>Medio</option>
-                            <option value="largo">Largo</option>
-                        </select>
+
+                    <!-- HISTORIAL -->
+                    <div class="admin-card">
+                        <div class="card-header">
+                            <h3><i class="fa-regular fa-clock"></i> Historial</h3>
+                            <div class="card-actions">
+                                <button class="btn-admin btn-danger btn-sm" id="btnBorrar"><i
+                                        class="fa-regular fa-trash-can"></i> Borrar todo</button>
+                            </div>
+                        </div>
+                        <ul class="historial-list" id="historialList">
+                            <li class="empty-state"><i class="fa-regular fa-inbox"></i> No hay mensajes guardados</li>
+                        </ul>
                     </div>
+
                 </div>
 
-                <div class="admin-form-group">
-                    <label><i class="fa-solid fa-circle-info"></i> Contexto (opcional)</label>
-                    <textarea id="contexto" class="admin-textarea" rows="2"
-                        placeholder="Ej: Descuento del 20% para clientes frecuentes"></textarea>
-                </div>
+                <!-- COLUMNA DERECHA: RESULTADO -->
+                <div>
 
-                <button class="btn-admin btn-primary btn-lg" id="btnGenerar"
-                    style="width:100%; justify-content:center;">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generar mensaje
-                </button>
-            </div>
-
-            <!-- RESULTADO -->
-            <div class="admin-card result-box" id="resultado">
-                <div class="result-header">
-                    <strong><i class="fa-solid fa-message"></i> Mensaje generado</strong>
-                    <span id="tiempo"></span>
-                </div>
-                <div class="result-text" id="mensaje">✍️ Escribe un tema y haz clic en "Generar"</div>
-                <div class="result-actions">
-                    <button class="btn-admin btn-primary btn-sm" id="btnCopiar"><i class="fa-regular fa-clipboard"></i>
-                        Copiar</button>
-                    <button class="btn-admin btn-success btn-sm" id="btnWhatsApp"><i class="fa-brands fa-whatsapp"></i>
-                        WhatsApp</button>
-                    <button class="btn-admin btn-secondary btn-sm" id="btnGuardar"><i
-                            class="fa-regular fa-floppy-disk"></i> Guardar</button>
-                    <button class="btn-admin btn-secondary btn-sm" id="btnLimpiar"><i
-                            class="fa-regular fa-trash-can"></i> Limpiar</button>
-                </div>
-                <span class="debug-toggle" id="debugToggle"><i class="fa-solid fa-terminal"></i> Ver detalles
-                    técnicos</span>
-                <div class="debug-info" id="debugInfo"></div>
-            </div>
-
-            <!-- HISTORIAL -->
-            <div class="admin-card">
-                <div class="card-header">
-                    <h3><i class="fa-regular fa-clock"></i> Historial</h3>
-                    <div class="card-actions">
-                        <button class="btn-admin btn-danger btn-sm" id="btnBorrar"><i
-                                class="fa-regular fa-trash-can"></i> Borrar todo</button>
+                    <div class="admin-card result-box" id="resultado">
+                        <div class="result-header">
+                            <strong><i class="fa-solid fa-message"></i> Mensaje generado</strong>
+                            <span id="tiempo"></span>
+                        </div>
+                        <div class="result-text" id="mensaje">✍️ Escribe un tema y haz clic en "Generar"</div>
+                        <div class="result-actions">
+                            <button class="btn-admin btn-primary btn-sm" id="btnCopiar"><i
+                                    class="fa-regular fa-clipboard"></i> Copiar</button>
+                            <button class="btn-admin btn-success btn-sm" id="btnWhatsApp"><i
+                                    class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+                            <button class="btn-admin btn-secondary btn-sm" id="btnGuardar"><i
+                                    class="fa-regular fa-floppy-disk"></i> Guardar</button>
+                            <button class="btn-admin btn-secondary btn-sm" id="btnLimpiar"><i
+                                    class="fa-regular fa-trash-can"></i> Limpiar</button>
+                        </div>
+                        <span class="debug-toggle" id="debugToggle"><i class="fa-solid fa-terminal"></i> Ver detalles
+                            técnicos</span>
+                        <div class="debug-info" id="debugInfo"></div>
                     </div>
+
                 </div>
-                <ul class="historial-list" id="historialList">
-                    <li class="empty-state"><i class="fa-regular fa-inbox"></i> No hay mensajes guardados</li>
-                </ul>
+
             </div>
 
         </div>
@@ -500,8 +597,7 @@
             }
 
             // Reemplazar emojis con variación de género (como 👕🔥) que pueden causar problemas
-            // Estos son caracteres combinados que a veces se rompen en URLs
-            textoLimpio = textoLimpio.replace(/\uFE0F/g, ''); // Eliminar selector de variación
+            textoLimpio = textoLimpio.replace(/\uFE0F/g, '');
 
             return textoLimpio.trim();
         }
@@ -547,7 +643,6 @@
 
                 if (data.success) {
                     mensaje.className = 'result-text';
-                    // Limpiamos el texto para WhatsApp
                     const textoLimpio = limpiarTextoWhatsApp(data.texto);
                     mensaje.textContent = textoLimpio;
                     tiempo.textContent = '✅ ' + new Date().toLocaleString();
@@ -593,7 +688,7 @@
         }
 
         // ============================================================
-        // WHATSAPP (VERSIÓN CORREGIDA)
+        // WHATSAPP
         // ============================================================
         function whatsapp() {
             const txt = mensaje.textContent;
@@ -603,21 +698,15 @@
             }
 
             try {
-                // Método 1: Limpiar y codificar el texto
                 const textoLimpio = limpiarTextoWhatsApp(txt);
                 const textoCodificado = encodeURIComponent(textoLimpio);
-
-                // Abrir WhatsApp
                 const url = 'https://wa.me/?text=' + textoCodificado;
                 window.open(url, '_blank');
                 toast('📱 Abriendo WhatsApp...', 'success');
-
             } catch (e) {
-                // Fallback: Si falla la codificación estándar, intentamos con un método alternativo
                 try {
-                    // Eliminar todos los caracteres no ASCII y codificar
                     const textoSimple = txt
-                        .replace(/[^\x00-\x7F]/g, '') // Elimina emojis y caracteres especiales
+                        .replace(/[^\x00-\x7F]/g, '')
                         .trim();
                     const textoCodificado = encodeURIComponent(textoSimple);
                     window.open('https://wa.me/?text=' + textoCodificado, '_blank');
@@ -625,44 +714,6 @@
                 } catch (e2) {
                     toast('❌ Error al abrir WhatsApp. Intenta copiar el mensaje.', 'error');
                 }
-            }
-        }
-
-        // ============================================================
-        // WHATSAPP (VERSIÓN ALTERNATIVA CON EMOJIS PRESERVADOS)
-        // Esta versión intenta preservar los emojis usando un método
-        // diferente de codificación
-        // ============================================================
-        function whatsappConEmojis() {
-            const txt = mensaje.textContent;
-            if (!txt || txt.includes('❌') || txt.includes('⏳')) {
-                toast('⚠️ No hay mensaje válido', 'warning');
-                return;
-            }
-
-            // Primero limpiamos el texto
-            let textoLimpio = limpiarTextoWhatsApp(txt);
-
-            // Reemplazamos caracteres especiales que pueden causar problemas en la URL
-            // pero mantenemos los emojis que son soportados por WhatsApp
-            textoLimpio = textoLimpio
-                .replace(/\uFE0F/g, '') // Eliminar selector de variación de emoji
-                .replace(/\u200D/g, ''); // Eliminar joiners de emoji
-
-            // Codificamos el texto de manera segura
-            try {
-                // Usamos encodeURIComponent estándar
-                const textoCodificado = encodeURIComponent(textoLimpio);
-                window.open('https://wa.me/?text=' + textoCodificado, '_blank');
-                toast('📱 Abriendo WhatsApp...', 'success');
-            } catch (e) {
-                // Si falla, usamos el método de fallback
-                const textoSimple = txt
-                    .replace(/[^\x00-\x7F]/g, '')
-                    .trim();
-                const textoCodificado = encodeURIComponent(textoSimple);
-                window.open('https://wa.me/?text=' + textoCodificado, '_blank');
-                toast('📱 Abriendo WhatsApp (modo simple)...', 'success');
             }
         }
 
@@ -705,7 +756,8 @@
         // ============================================================
         async function cargarHistorial() {
             if (!(typeof db !== "undefined" && db)) {
-                historial.innerHTML = '<li class="empty-state"><i class="fa-solid fa-triangle-exclamation"></i> Firestore no disponible</li>';
+                historial.innerHTML =
+                    '<li class="empty-state"><i class="fa-solid fa-triangle-exclamation"></i> Firestore no disponible</li>';
                 return;
             }
             try {
@@ -715,7 +767,8 @@
                     .get();
 
                 if (snap.empty) {
-                    historial.innerHTML = '<li class="empty-state"><i class="fa-regular fa-inbox"></i> No hay mensajes guardados</li>';
+                    historial.innerHTML =
+                        '<li class="empty-state"><i class="fa-regular fa-inbox"></i> No hay mensajes guardados</li>';
                     return;
                 }
 
@@ -745,7 +798,8 @@
                 });
 
             } catch (e) {
-                historial.innerHTML = '<li class="empty-state"><i class="fa-solid fa-triangle-exclamation"></i> Error al cargar</li>';
+                historial.innerHTML =
+                    '<li class="empty-state"><i class="fa-solid fa-triangle-exclamation"></i> Error al cargar</li>';
             }
         }
 
