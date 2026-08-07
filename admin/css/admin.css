@@ -270,7 +270,7 @@ body {
 }
 
 /* ============================================================
-   BOTONES UNIFICADOS
+   BOTONES UNIFICADOS - MISMO ANCHO EN TODAS LAS PÁGINAS
    ============================================================ */
 
 /* === BOTONES DEL HEADER === */
@@ -288,6 +288,9 @@ body {
     gap: 6px;
     text-decoration: none;
     height: 36px;
+    min-width: 80px;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .btn-header:hover {
@@ -344,7 +347,9 @@ body {
     color: var(--color-text);
     border-color: var(--color-border);
     height: 40px;
+    min-width: 100px;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .btn-admin:hover {
@@ -425,12 +430,14 @@ body {
     padding: 4px 12px;
     font-size: 0.75rem;
     height: 32px;
+    min-width: 60px;
 }
 
 .btn-admin.btn-lg {
     padding: 12px 28px;
     font-size: 1rem;
     height: 48px;
+    min-width: 140px;
 }
 
 .btn-admin:disabled {
@@ -452,9 +459,12 @@ body {
     transition: var(--transition);
     font-family: var(--font);
     height: 36px;
+    min-width: 80px;
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .btn-filter:hover {
@@ -483,7 +493,9 @@ body {
     gap: 6px;
     text-decoration: none;
     height: 32px;
+    min-width: 50px;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .btn-action:hover {
@@ -531,37 +543,45 @@ body {
 }
 
 /* ============================================================
-   RESPONSIVE - BOTONES
+   RESPONSIVE - BOTONES UNIFICADOS
    ============================================================ */
 @media (max-width: 768px) {
     .btn-header {
         font-size: 0.7rem;
         padding: 6px 12px;
         height: 32px;
+        min-width: 60px;
+        flex: 1;
     }
 
     .btn-admin {
         font-size: 0.8rem;
         padding: 6px 14px;
         height: 36px;
+        min-width: 80px;
+        flex: 1;
     }
 
     .btn-admin.btn-lg {
         padding: 10px 20px;
         font-size: 0.9rem;
         height: 42px;
+        min-width: 100px;
     }
 
     .btn-filter {
         font-size: 0.7rem;
         padding: 4px 12px;
         height: 32px;
+        min-width: 60px;
+        flex: 1;
     }
 
     .btn-action {
         font-size: 0.7rem;
         padding: 2px 10px;
         height: 28px;
+        min-width: 40px;
     }
 }
 
@@ -570,18 +590,24 @@ body {
         font-size: 0.65rem;
         padding: 4px 10px;
         height: 28px;
+        min-width: 50px;
+        flex: 1;
     }
 
     .btn-admin {
         font-size: 0.75rem;
         padding: 6px 12px;
         height: 34px;
+        min-width: 100%;
         width: 100% !important;
         justify-content: center !important;
+        flex: none;
     }
 
     .btn-admin.btn-sm {
+        min-width: auto;
         width: auto !important;
+        flex: none;
     }
 
     .btn-filter {
@@ -591,12 +617,107 @@ body {
         font-size: 0.65rem;
         padding: 4px 10px;
         height: 30px;
+        min-width: 50px;
     }
 
     .btn-action {
         font-size: 0.65rem;
         padding: 2px 8px;
         height: 26px;
+        min-width: 36px;
+    }
+
+    /* Grupos de botones en móvil */
+    .btn-group-botones {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .btn-group-botones .btn-admin {
+        width: 100% !important;
+        min-width: 100%;
+        flex: none;
+    }
+
+    .admin-header .header-right {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+        width: 100%;
+    }
+
+    .admin-header .header-right .btn-header {
+        flex: 1;
+        min-width: 60px;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .sub-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        width: 100%;
+    }
+
+    .sub-tabs button {
+        flex: 1;
+        min-width: 50px;
+        font-size: 0.65rem;
+        padding: 6px 8px;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .asistentes-filtros {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .asistentes-filtros .admin-input,
+    .asistentes-filtros .admin-select {
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+
+    .asistentes-filtros .btn-admin {
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+
+    .scanner-controls {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .scanner-controls .btn-admin {
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+
+    .validacion-manual {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .validacion-manual input {
+        width: 100% !important;
+        min-width: 100% !important;
+        margin-bottom: 0 !important;
+    }
+
+    .validacion-manual .btn-admin {
+        width: 100% !important;
+        min-width: 100% !important;
     }
 }
 
@@ -693,6 +814,7 @@ body {
     flex: 1 1 auto;
     min-width: 70px;
     max-width: 100%;
+    justify-content: center;
 }
 
 .sub-tabs button:hover {
@@ -728,7 +850,7 @@ body {
 }
 
 /* ============================================================
-   FORMULARIOS (COMO GALERÍA)
+   FORMULARIOS
    ============================================================ */
 .admin-form-group {
     margin-bottom: 16px;
@@ -815,7 +937,7 @@ body {
 }
 
 /* ============================================================
-   ESTADÍSTICAS (STATS) - COMO GALERÍA
+   ESTADÍSTICAS (STATS)
    ============================================================ */
 .admin-stats-grid {
     display: grid;
@@ -859,7 +981,6 @@ body {
     color: rgba(255, 204, 0, 0.1);
 }
 
-/* Stats en grid (para asistentes, eventos, etc.) */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -890,7 +1011,7 @@ body {
 }
 
 /* ============================================================
-   TABLAS / LISTAS - COMO GALERÍA
+   TABLAS / LISTAS
    ============================================================ */
 .admin-table-wrapper {
     overflow-x: auto;
@@ -968,7 +1089,7 @@ body {
 }
 
 /* ============================================================
-   MODALES (COMO GALERÍA)
+   MODALES
    ============================================================ */
 .admin-modal {
     display: none;
@@ -1113,7 +1234,7 @@ body {
 }
 
 /* ============================================================
-   GRID DE GALERÍA (ADMIN)
+   GALERÍA - CATEGORÍAS Y FOTOS
    ============================================================ */
 .categorias-grid {
     display: grid;
@@ -1168,6 +1289,8 @@ body {
 .categoria-item .cat-actions .btn-admin {
     padding: 2px 10px;
     font-size: 0.6rem;
+    min-width: 30px;
+    height: 28px;
 }
 
 .fotos-grid {
@@ -1220,6 +1343,8 @@ body {
 .foto-item .foto-overlay .btn-admin {
     font-size: 0.65rem;
     padding: 4px 12px;
+    min-width: 40px;
+    height: 28px;
 }
 
 .foto-item .foto-badge {
@@ -1260,9 +1385,6 @@ body {
     opacity: 0.3;
 }
 
-/* ============================================================
-   DROPZONE (GALERÍA)
-   ============================================================ */
 .galeria-dropzone {
     border: 2px dashed var(--color-border);
     border-radius: var(--radius);
@@ -1306,7 +1428,7 @@ body {
 }
 
 /* ============================================================
-   LISTAS DE ELEMENTOS (Eventos, Noticias, etc.)
+   LISTAS DE ELEMENTOS
    ============================================================ */
 .evento-item,
 .noticia-item,
@@ -1377,7 +1499,73 @@ body {
 }
 
 /* ============================================================
-   RESPONSIVE - CORREGIDO
+   FILTROS
+   ============================================================ */
+.asistentes-filtros {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    align-items: center;
+}
+
+.asistentes-filtros .admin-input,
+.asistentes-filtros .admin-select {
+    flex: 1;
+    min-width: 150px;
+    margin-bottom: 0;
+}
+
+.asistentes-filtros .btn-admin {
+    flex-shrink: 0;
+}
+
+/* ============================================================
+   PAGINACIÓN
+   ============================================================ */
+.asistentes-paginacion {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+.asistentes-paginacion button {
+    padding: 6px 14px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: var(--font);
+    font-size: 0.8rem;
+    min-width: 40px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.asistentes-paginacion button:hover {
+    border-color: var(--color-primary);
+    color: var(--color-text);
+}
+
+.asistentes-paginacion button.active {
+    background: var(--color-primary);
+    color: #000;
+    border-color: var(--color-primary);
+}
+
+.asistentes-paginacion button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* ============================================================
+   RESPONSIVE - GENERAL
    ============================================================ */
 @media (max-width: 992px) {
     .admin-sidebar {
@@ -1463,42 +1651,38 @@ body {
         max-width: 100% !important;
     }
 
-    .btn-admin {
-        width: 100% !important;
-        justify-content: center !important;
-        padding: 12px !important;
-        font-size: 14px !important;
-        white-space: normal !important;
-    }
-
-    .btn-admin.btn-sm {
-        width: auto !important;
-        padding: 6px 12px !important;
-        font-size: 12px !important;
-    }
-
-    .btn-admin.btn-lg {
-        padding: 14px !important;
-        font-size: 15px !important;
-    }
-
-    .btn-group-botones,
-    .scanner-controls,
-    .validacion-manual {
+    .admin-header {
         flex-direction: column !important;
-        width: 100% !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+        padding: 12px 16px !important;
+        border-radius: 12px !important;
     }
 
-    .btn-group-botones .btn-admin,
-    .scanner-controls .btn-admin {
-        width: 100% !important;
-        min-width: unset !important;
+    .admin-header .header-left {
+        justify-content: space-between !important;
     }
 
-    .validacion-manual input {
-        width: 100% !important;
-        min-width: unset !important;
-        margin-bottom: 8px !important;
+    .admin-header .header-left h1 {
+        font-size: 1rem !important;
+    }
+
+    .admin-header .header-right {
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        gap: 6px !important;
+    }
+
+    .admin-header .header-right .btn-header {
+        font-size: 11px !important;
+        padding: 6px 12px !important;
+        flex: 1;
+        min-width: 60px;
+    }
+
+    .admin-header .header-right .user-badge {
+        font-size: 11px !important;
+        padding: 4px 12px !important;
     }
 
     .admin-stats-grid,
@@ -1544,38 +1728,6 @@ body {
 
     .galeria-dropzone p {
         font-size: 0.85rem !important;
-    }
-
-    .admin-header {
-        flex-direction: column !important;
-        align-items: stretch !important;
-        gap: 10px !important;
-        padding: 12px 16px !important;
-        border-radius: 12px !important;
-    }
-
-    .admin-header .header-left {
-        justify-content: space-between !important;
-    }
-
-    .admin-header .header-left h1 {
-        font-size: 1rem !important;
-    }
-
-    .admin-header .header-right {
-        flex-wrap: wrap !important;
-        justify-content: center !important;
-        gap: 6px !important;
-    }
-
-    .admin-header .header-right .btn-header {
-        font-size: 11px !important;
-        padding: 6px 12px !important;
-    }
-
-    .admin-header .header-right .user-badge {
-        font-size: 11px !important;
-        padding: 4px 12px !important;
     }
 
     .sub-tabs {
@@ -1710,6 +1862,8 @@ body {
     .asistentes-paginacion button {
         padding: 4px 10px !important;
         font-size: 12px !important;
+        min-width: 36px;
+        height: 32px;
     }
 
     .quick-access-grid {
@@ -1783,6 +1937,8 @@ body {
     .admin-header .header-right .btn-header {
         font-size: 10px !important;
         padding: 4px 10px !important;
+        min-width: 50px;
+        flex: 1;
     }
 
     .admin-header .header-right .user-badge {
@@ -1794,16 +1950,22 @@ body {
         font-size: 10px !important;
         padding: 6px 8px !important;
         min-width: 50px !important;
+        flex: 1;
     }
 
     .btn-admin {
         font-size: 12px !important;
         padding: 10px !important;
+        min-width: 100% !important;
+        width: 100% !important;
+        justify-content: center !important;
+        flex: none !important;
     }
 
     .btn-admin.btn-sm {
-        font-size: 10px !important;
-        padding: 4px 10px !important;
+        min-width: auto !important;
+        width: auto !important;
+        flex: none !important;
     }
 
     .admin-input,
@@ -1847,6 +2009,8 @@ body {
     .evento-item .evento-actions .btn-action {
         font-size: 0.65rem !important;
         padding: 4px 8px !important;
+        min-width: 36px;
+        height: 28px;
     }
 
     .noticia-item .noticia-thumb {
@@ -1862,6 +2026,27 @@ body {
     .producto-item .producto-thumb {
         width: 100% !important;
         height: 120px !important;
+    }
+
+    .asistentes-paginacion button {
+        padding: 4px 8px !important;
+        font-size: 11px !important;
+        min-width: 32px;
+        height: 28px;
+    }
+
+    .categoria-item .cat-actions .btn-admin {
+        padding: 2px 8px !important;
+        font-size: 0.55rem !important;
+        min-width: 28px;
+        height: 24px;
+    }
+
+    .foto-item .foto-overlay .btn-admin {
+        padding: 2px 8px !important;
+        font-size: 0.55rem !important;
+        min-width: 32px;
+        height: 24px;
     }
 }
 
