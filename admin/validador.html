@@ -581,6 +581,11 @@
             white-space: nowrap;
         }
 
+        /* Ocultar resultado mientras se escanea */
+        .resultado-validacion.oculto {
+            display: none !important;
+        }
+
         @media (max-width: 768px) {
             .mini-stats {
                 grid-template-columns: 1fr 1fr;
@@ -790,7 +795,7 @@
                         </div>
 
                         <!-- Resultado de validación -->
-                        <div id="resultadoValidacion" class="resultado-validacion" style="display:none;">
+                        <div id="resultadoValidacion" class="resultado-validacion oculto">
                             <div class="icono" id="resultadoIcono">✅</div>
                             <div class="nombre" id="resultadoNombre">Nombre</div>
                             <div class="detalle" id="resultadoDetalle">Detalle</div>
@@ -874,6 +879,7 @@
         let html5QrCode = null;
         let scannerActivo = false;
         let ultimosEscaneos = [];
+        let reiniciandoScanner = false;
 
         // ============================================================
         // SIDEBAR
@@ -1089,8 +1095,6 @@
                 status.className = 'scanner-status inactive';
                 status.innerHTML = '<i class="fa-regular fa-circle"></i> Cámara apagada';
 
-                mostrarToast('⏹️ Cámara detenida', 'info');
-
             } catch (error) {
                 console.error('Error al detener scanner:', error);
             }
@@ -1101,12 +1105,17 @@
         // ============================================================
 
         function onScanSuccess(decodedText, decodedResult) {
-            // Evitar escaneos duplicados mientras se procesa
-            if (document.getElementById('resultadoValidacion').style.display !== 'none') {
+            // Si ya hay un resultado visible o se está reiniciando, ignorar
+            const resultado = document.getElementById('resultadoValidacion');
+            if (!resultado.classList.contains('oculto') || reiniciandoScanner) {
                 return;
             }
 
             console.log('📱 QR escaneado:', decodedText);
+
+            // Ocultar resultado mientras se procesa
+            resultado.classList.add('oculto');
+
             procesarAsistente(decodedText, 'scanner');
         }
 
@@ -1166,7 +1175,8 @@
             const usosContainer = document.getElementById(usosId);
             const numeroUsos = document.getElementById(numeroUsosId);
 
-            // Mostrar loading
+            // Mostrar resultado
+            resultado.classList.remove('oculto');
             resultado.style.display = 'block';
             resultado.className = 'resultado-validacion';
             icono.textContent = '⏳';
@@ -1188,6 +1198,11 @@
                     badge.textContent = 'ERROR';
                     badge.className = 'estado-badge error';
                     usosContainer.style.display = 'none';
+                    mostrarToast('❌ Asistente no encontrado', 'error');
+                    // Esperar y reiniciar scanner
+                    if (origen === 'scanner') {
+                        reiniciarScannerAutomatico();
+                    }
                     return;
                 }
 
@@ -1249,7 +1264,7 @@
                             numeroUsos.textContent = '0 - ÚLTIMA ENTRADA';
                         }
 
-                        // ✅ NUEVO: Agregar a lista de escaneos con los usos restantes
+                        // Agregar a lista de escaneos
                         agregarEscaneo(asistente, '✅ Ingreso registrado', usosRestantes);
 
                     } else {
@@ -1258,7 +1273,6 @@
                         claseEstado = 'ya-ingreso';
                         iconoEstado = '⚠️';
                         usosRestantes = 0;
-                        // ✅ NUEVO: También mostrar en la lista cuando no tiene usos
                         agregarEscaneo(asistente, '⚠️ Sin usos disponibles', 0);
                     }
                 } else {
@@ -1273,7 +1287,8 @@
                 resultado.className = 'resultado-validacion ' + claseEstado;
                 icono.textContent = iconoEstado;
                 nombre.textContent = asistente.nombre || 'Anónimo';
-                detalle.textContent = `${asistente.email || 'Sin email'} • ${nombreEvento} • ${asistente.numeroEntradas || 1} entrada(s)`;
+                detalle.textContent =
+                    `${asistente.email || 'Sin email'} • ${nombreEvento} • ${asistente.numeroEntradas || 1} entrada(s)`;
                 badge.textContent = mensajeEstado;
                 badge.className = 'estado-badge ' + claseEstado;
 
@@ -1281,19 +1296,16 @@
                     usosContainer.style.display = 'none';
                 }
 
-                // Si es válido, mostrar toast
+                // Mostrar toast
                 if (estadoValido) {
                     mostrarToast(`✅ ${asistente.nombre || 'Asistente'} ha ingresado`, 'success');
                 } else {
                     mostrarToast(`⛔ ${mensajeEstado} - ${asistente.nombre || 'Asistente'}`, 'error');
                 }
 
-                // Si el origen es scanner, detener el scanner por 3 segundos para evitar escaneos repetidos
+                // Si el origen es scanner, reiniciar automáticamente después de 2 segundos
                 if (origen === 'scanner') {
-                    await detenerScanner();
-                    setTimeout(() => {
-                        iniciarScanner();
-                    }, 3000);
+                    reiniciarScannerAutomatico();
                 }
 
             } catch (error) {
@@ -1305,11 +1317,64 @@
                 badge.textContent = 'ERROR';
                 badge.className = 'estado-badge error';
                 usosContainer.style.display = 'none';
+
+                if (origen === 'scanner') {
+                    reiniciarScannerAutomatico();
+                }
             }
         }
 
         // ============================================================
-        // AGREGAR ESCANEO A LISTA (ACTUALIZADO CON USOS)
+        // REINICIAR SCANNER AUTOMÁTICAMENTE (NUEVO)
+        // ============================================================
+
+        function reiniciarScannerAutomatico() {
+            if (reiniciandoScanner) return;
+            reiniciandoScanner = true;
+
+            // Ocultar el resultado después de 2 segundos
+            setTimeout(async () => {
+                const resultado = document.getElementById('resultadoValidacion');
+                resultado.classList.add('oculto');
+                resultado.style.display = 'none';
+
+                // Si el scanner está activo, detenerlo y reiniciarlo
+                if (scannerActivo && html5QrCode) {
+                    try {
+                        await html5QrCode.stop();
+                        scannerActivo = false;
+                        document.getElementById('btnIniciarScanner').disabled = false;
+                        document.getElementById('btnDetenerScanner').disabled = true;
+
+                        const status = document.getElementById('scannerStatus');
+                        status.className = 'scanner-status inactive';
+                        status.innerHTML = '<i class="fa-regular fa-circle"></i> Cámara apagada';
+
+                        // Esperar un momento y reiniciar
+                        setTimeout(() => {
+                            iniciarScanner();
+                            reiniciandoScanner = false;
+                        }, 500);
+                    } catch (e) {
+                        console.warn('Error al reiniciar scanner:', e);
+                        // Intentar iniciar de nuevo
+                        setTimeout(() => {
+                            iniciarScanner();
+                            reiniciandoScanner = false;
+                        }, 1000);
+                    }
+                } else {
+                    // Si no está activo, simplemente iniciar
+                    setTimeout(() => {
+                        iniciarScanner();
+                        reiniciandoScanner = false;
+                    }, 500);
+                }
+            }, 2000);
+        }
+
+        // ============================================================
+        // AGREGAR ESCANEO A LISTA
         // ============================================================
 
         function agregarEscaneo(asistente, mensaje, usosRestantes) {
@@ -1329,7 +1394,7 @@
         }
 
         // ============================================================
-        // RENDERIZAR ÚLTIMOS ESCANEOS (ACTUALIZADO CON USOS)
+        // RENDERIZAR ÚLTIMOS ESCANEOS
         // ============================================================
 
         function renderizarUltimosEscaneos() {
