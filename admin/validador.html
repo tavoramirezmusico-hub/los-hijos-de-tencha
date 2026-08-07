@@ -1113,7 +1113,7 @@
         }
 
         // ============================================================
-        // PROCESAR ASISTENTE
+        // PROCESAR ASISTENTE (CORREGIDO)
         // ============================================================
 
         async function procesarAsistente(id, origen) {
@@ -1124,6 +1124,20 @@
             const badgeId = origen === 'manual' ? 'resultadoManualBadge' : 'resultadoBadge';
             const usosId = origen === 'manual' ? 'resultadoManualUsos' : 'resultadoUsos';
             const numeroUsosId = origen === 'manual' ? 'resultadoManualNumeroUsos' : 'resultadoNumeroUsos';
+
+            // 🔧 CORRECCIÓN: Si viene como URL completa, extraer el ID
+            if (typeof id === 'string' && id.includes('validador.html')) {
+                try {
+                    const urlParams = new URLSearchParams(id.split('?')[1]);
+                    const extractedId = urlParams.get('id');
+                    if (extractedId) {
+                        id = extractedId;
+                        console.log('📌 ID extraído de URL:', id);
+                    }
+                } catch (e) {
+                    console.warn('⚠️ No se pudo extraer ID de URL:', e);
+                }
+            }
 
             const resultado = document.getElementById(resultadoId);
             const icono = document.getElementById(iconoId);

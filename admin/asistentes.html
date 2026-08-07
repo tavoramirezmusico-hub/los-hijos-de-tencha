@@ -931,8 +931,8 @@
                 const eventoDoc = await db.collection('eventos').doc(asistente.eventoId).get();
                 const evento = eventoDoc.data();
 
-                // Generar URL del QR
-                const qrUrl = `https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=${asistenteId}`;
+                // ✅ CORREGIDO: Generar URL del QR con encodeURIComponent
+                const qrUrl = `https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=${encodeURIComponent(asistenteId)}`;
 
                 // Preparar datos para el correo
                 const fechaFormateada = evento?.fecha || 'Fecha por confirmar';
@@ -978,7 +978,7 @@
                     fechaConfirmacion: new Date().toISOString()
                 });
 
-                // 🔧 CORREGIDO: Actualizar contador de entradas vendidas en el evento
+                // Actualizar contador de entradas vendidas en el evento
                 const eventoRef = db.collection('eventos').doc(asistente.eventoId);
                 try {
                     await eventoRef.update({
@@ -1075,7 +1075,8 @@
                 }
                 const evento = eventoDoc.data();
 
-                const qrUrl = `https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=${asistenteId}`;
+                // ✅ CORREGIDO: Generar URL del QR con encodeURIComponent
+                const qrUrl = `https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=${encodeURIComponent(asistenteId)}`;
 
                 const templateParams = {
                     to_email: asistente.email,
@@ -1240,7 +1241,7 @@
         window.irAValidador = irAValidador;
         window.cerrarSesionAdmin = cerrarSesionAdmin;
 
-        console.log('✅ admin/asistentes.html cargado correctamente (template_rhfmmmr)');
+        console.log('✅ admin/asistentes.html cargado correctamente (template_correos)');
     </script>
 </body>
 
