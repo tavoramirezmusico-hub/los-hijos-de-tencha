@@ -173,7 +173,7 @@
             opacity: 0.3;
         }
 
-        /* Reproductor */
+        /* Reproductor con miniatura */
         .reproductor-preview {
             background: var(--color-bg);
             border-radius: var(--radius-sm);
@@ -202,64 +202,65 @@
             border-radius: 20px;
         }
 
-        .reproductor-preview .reproductor-embed {
+        .reproductor-preview .reproductor-player {
             position: relative;
-            padding-bottom: 42%;
-            height: 0;
-            overflow: hidden;
+            width: 100%;
+            aspect-ratio: 16/9;
             border-radius: var(--radius-sm);
+            overflow: hidden;
             background: #0a0a0a;
-            max-width: 100%;
+            cursor: pointer;
+            transition: var(--transition);
         }
 
-        .reproductor-preview .reproductor-embed iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .reproductor-preview .reproductor-player:hover {
+            transform: scale(1.01);
+        }
+
+        .reproductor-preview .reproductor-player img {
             width: 100%;
             height: 100%;
-            border: none;
+            object-fit: cover;
         }
 
-        .reproductor-preview .reproductor-embed .reproductor-error {
+        .reproductor-preview .reproductor-player .play-overlay {
             position: absolute;
             inset: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: var(--color-text-muted);
-            padding: 20px;
-            text-align: center;
-            background: #0a0a0a;
-        }
-
-        .reproductor-preview .reproductor-embed .reproductor-error i {
-            font-size: 2.5rem;
-            margin-bottom: 12px;
-            opacity: 0.5;
-        }
-
-        .reproductor-preview .reproductor-embed .reproductor-error .btn-abrir-youtube {
-            margin-top: 12px;
-            padding: 10px 24px;
-            background: #ff0000;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 0.85rem;
+            background: rgba(0, 0, 0, 0.5);
             transition: var(--transition);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
         }
 
-        .reproductor-preview .reproductor-embed .reproductor-error .btn-abrir-youtube:hover {
-            background: #cc0000;
-            transform: scale(1.05);
+        .reproductor-preview .reproductor-player .play-overlay:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .reproductor-preview .reproductor-player .play-overlay i {
+            font-size: 4rem;
+            color: #fff;
+            filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.5));
+            transition: var(--transition);
+        }
+
+        .reproductor-preview .reproductor-player .play-overlay:hover i {
+            transform: scale(1.1);
+            color: #ff0000;
+        }
+
+        .reproductor-preview .reproductor-player .play-overlay .play-text {
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 8px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .reproductor-preview .reproductor-player .play-overlay .play-sub {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.7rem;
         }
 
         .reproductor-preview .reproductor-lista {
@@ -402,10 +403,6 @@
                 align-items: flex-start;
             }
 
-            .reproductor-preview .reproductor-embed {
-                padding-bottom: 56%;
-            }
-
             .url-preview {
                 flex-direction: column;
                 align-items: flex-start;
@@ -415,6 +412,10 @@
                 width: 100%;
                 height: auto;
                 aspect-ratio: 16/9;
+            }
+
+            .reproductor-preview .reproductor-player .play-overlay i {
+                font-size: 3rem;
             }
         }
     </style>
@@ -490,11 +491,12 @@
                 </h4>
                 <span class="badge-count" id="totalLanzamientos">0 canciones</span>
             </div>
-            <div class="reproductor-embed" id="reproductorEmbed">
-                <div class="reproductor-error">
-                    <i class="fa-solid fa-circle-play"></i>
-                    <p style="font-size:1rem; font-weight:600;">Sin canciones para reproducir</p>
-                    <p style="font-size:0.8rem; opacity:0.7;">Agrega canciones individuales para verlas aquí</p>
+            <div class="reproductor-player" id="reproductorPlayer">
+                <div
+                    style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--color-text-muted); background:#111; flex-direction:column; gap:12px;">
+                    <i class="fa-solid fa-music" style="font-size:3rem; opacity:0.3;"></i>
+                    <p style="font-size:1rem; font-weight:600;">Sin canciones</p>
+                    <p style="font-size:0.8rem; opacity:0.7;">Agrega canciones para verlas aquí</p>
                 </div>
             </div>
             <div class="reproductor-lista" id="listaReproduccion">
@@ -861,81 +863,35 @@
         // ============================================================
 
         function actualizarReproductor() {
-            const embed = document.getElementById('reproductorEmbed');
-            const videoIds = lanzamientos
-                .map(item => extraerVideoId(item.url))
-                .filter(id => id !== null);
+            const player = document.getElementById('reproductorPlayer');
 
-            if (videoIds.length === 0) {
-                embed.innerHTML = `
-                            <div class="reproductor-error">
-                                <i class="fa-solid fa-circle-play"></i>
-                                <p style="font-size:1rem; font-weight:600;">Sin canciones para reproducir</p>
-                                <p style="font-size:0.8rem; opacity:0.7;">Agrega canciones individuales para verlas aquí</p>
+            if (lanzamientos.length === 0) {
+                player.innerHTML = `
+                            <div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--color-text-muted); background:#111; flex-direction:column; gap:12px;">
+                                <i class="fa-solid fa-music" style="font-size:3rem; opacity:0.3;"></i>
+                                <p style="font-size:1rem; font-weight:600;">Sin canciones</p>
+                                <p style="font-size:0.8rem; opacity:0.7;">Agrega canciones para verlas aquí</p>
                             </div>
                         `;
                 return;
             }
 
-            // Intentar con el primer video
-            const firstId = videoIds[0];
+            // Tomar la primera canción (o la destacada si existe)
+            let cancionPrincipal = lanzamientos.find(item => item.destacado) || lanzamientos[0];
+            const videoId = extraerVideoId(cancionPrincipal.url);
+            const thumbUrl = cancionPrincipal.portada || (videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : '');
 
-            // Usar el formato estándar de embed
-            let iframeSrc;
-            if (videoIds.length > 1) {
-                // Múltiples videos - usar playlist
-                const playlistParam = videoIds.join(',');
-                iframeSrc = `https://www.youtube.com/embed/videoseries?list=${playlistParam}`;
-            } else {
-                // Un solo video
-                iframeSrc = `https://www.youtube.com/embed/${firstId}`;
-            }
+            // Si no hay maxres, usar mqdefault
+            const finalThumb = thumbUrl || `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
 
-            // Añadir parámetros para mejor compatibilidad
-            iframeSrc += '&enablejsapi=1&rel=0&modestbranding=1';
-
-            embed.innerHTML = `
-                        <iframe src="${iframeSrc}" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                                allowfullscreen
-                                referrerpolicy="strict-origin-when-cross-origin">
-                        </iframe>
+            player.innerHTML = `
+                        <img src="${finalThumb}" alt="${sanitizar(cancionPrincipal.titulo)}" loading="lazy" onerror="this.style.display='none'">
+                        <div class="play-overlay" onclick="window.open('${cancionPrincipal.url}', '_blank')">
+                            <i class="fa-brands fa-youtube"></i>
+                            <div class="play-text">Reproducir en YouTube</div>
+                            <div class="play-sub">${sanitizar(cancionPrincipal.titulo)}</div>
+                        </div>
                     `;
-
-            // Si el iframe falla, mostrar mensaje después de 5 segundos
-            setTimeout(() => {
-                const iframe = embed.querySelector('iframe');
-                if (iframe) {
-                    // Verificar si el iframe cargó correctamente (no podemos detectar directamente)
-                    // Mostramos un mensaje de ayuda
-                    if (!embed.querySelector('.reproductor-help')) {
-                        const help = document.createElement('div');
-                        help.className = 'reproductor-help';
-                        help.style.cssText = `
-                                    position: absolute;
-                                    bottom: 10px;
-                                    right: 10px;
-                                    background: rgba(0,0,0,0.8);
-                                    padding: 6px 12px;
-                                    border-radius: 6px;
-                                    font-size: 0.6rem;
-                                    color: #888;
-                                    cursor: pointer;
-                                    transition: var(--transition);
-                                    z-index: 10;
-                                `;
-                        help.innerHTML = `
-                                    <i class="fa-brands fa-youtube" style="color:#ff0000;"></i>
-                                    ¿No se reproduce? <span style="color:var(--color-primary);font-weight:600;">Abrir en YouTube</span>
-                                `;
-                        help.onclick = () => {
-                            const url = lanzamientos[0]?.url;
-                            if (url) window.open(url, '_blank');
-                        };
-                        embed.appendChild(help);
-                    }
-                }
-            }, 3000);
         }
 
         function actualizarListaReproduccion() {
@@ -955,12 +911,13 @@
                 const tipoLabel = item.tipo === 'ep' ? 'EP' : 'Sencillo';
                 const tipoClass = item.tipo === 'ep' ? 'ep' : 'sencillo';
                 const isActivo = index === 0 ? 'activo' : '';
+                const isDestacado = item.destacado ? '⭐ ' : '';
 
                 html += `
                             <div class="item-lista ${isActivo}" onclick="window.open('${item.url}', '_blank')">
                                 <div style="display:flex; align-items:center; gap:6px; flex:1; min-width:0;">
                                     <span class="item-numero">${index + 1}</span>
-                                    <span style="font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${sanitizar(item.titulo)}</span>
+                                    <span style="font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${isDestacado}${sanitizar(item.titulo)}</span>
                                     <span class="item-tipo ${tipoClass}">${tipoLabel}</span>
                                 </div>
                                 <span style="font-size:0.6rem; color:var(--color-text-muted); flex-shrink:0; max-width:80px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
