@@ -2195,7 +2195,7 @@
                     const imagen = data.imagen || 'img/logo.webp';
 
                     const imagenHTML = `
-                        <div class="imagen-evento">
+                        <div class="imagen-evento" onclick="abrirVisorTienda('${imagen}')">
                             <img src="${imagen}" alt="${nombre}" loading="lazy" onerror="this.onerror=null; this.src='img/logo.webp';">
                         </div>
                     `;
