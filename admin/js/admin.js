@@ -1,6 +1,6 @@
 // ============================================================
 // ADMIN - LOS HIJOS DE TENCHA
-// LÓGICA COMPARTIDA Y UTILIDADES (VERSIÓN CORREGIDA - FIX MENÚ MÓVIL + MODO CLARO)
+// LÓGICA COMPARTIDA Y UTILIDADES (VERSIÓN CORREGIDA - FIX MENÚ MÓVIL)
 // ============================================================
 
 // ============================================================
@@ -524,97 +524,8 @@ async function enviarCorreoAsistente(nombre, email, nombreEvento, asistenteId, e
 }
 
 // ============================================================
-// MODO CLARO / OSCURO - TOGGLE AUTOMÁTICO
-// ============================================================
-document.addEventListener('DOMContentLoaded', function () {
-    // ============================================================
-    // INYECTAR BOTÓN DE MODO CLARO AUTOMÁTICAMENTE
-    // ============================================================
-    const headerRight = document.querySelector('.admin-header .header-right');
-    if (headerRight) {
-        // Verificar si ya existe el botón (para no duplicarlo)
-        if (!document.getElementById('themeToggle')) {
-            // Crear el botón
-            const btn = document.createElement('button');
-            btn.id = 'themeToggle';
-            btn.className = 'btn-header btn-secondary';
-            btn.style.minWidth = '60px';
-            btn.innerHTML = `<i class="fa-regular fa-moon"></i> <span>Modo</span>`;
-
-            // Insertarlo ANTES del botón "Salir" (o al final)
-            const salirBtn = headerRight.querySelector('.btn-danger');
-            if (salirBtn) {
-                headerRight.insertBefore(btn, salirBtn);
-            } else {
-                headerRight.appendChild(btn);
-            }
-
-            // ============================================================
-            // TOGGLE MODO CLARO / OSCURO
-            // ============================================================
-            const icon = btn.querySelector('i');
-            const textSpan = btn.querySelector('span');
-
-            // Cargar preferencia guardada
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'light') {
-                document.body.classList.add('light-mode');
-                if (icon) icon.className = 'fa-regular fa-sun';
-                if (textSpan) textSpan.textContent = 'Claro';
-            }
-
-            // Evento click
-            btn.addEventListener('click', function () {
-                const isLight = document.body.classList.toggle('light-mode');
-                localStorage.setItem('theme', isLight ? 'light' : 'dark');
-
-                if (isLight) {
-                    if (icon) icon.className = 'fa-regular fa-sun';
-                    if (textSpan) textSpan.textContent = 'Claro';
-                } else {
-                    if (icon) icon.className = 'fa-regular fa-moon';
-                    if (textSpan) textSpan.textContent = 'Modo';
-                }
-            });
-        }
-    }
-
-    // ============================================================
-    // SIDEBAR TOGGLE (para móvil)
-    // ============================================================
-    const sidebar = document.getElementById('adminSidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    const hamburger = document.getElementById('hamburgerBtn');
-
-    if (hamburger) {
-        hamburger.addEventListener('click', function () {
-            if (sidebar) sidebar.classList.toggle('open');
-            if (overlay) overlay.classList.toggle('active');
-        });
-    }
-
-    if (overlay) {
-        overlay.addEventListener('click', function () {
-            if (sidebar) sidebar.classList.remove('open');
-            if (overlay) overlay.classList.remove('active');
-        });
-    }
-
-    // Cerrar sidebar al hacer clic en un enlace (en móvil)
-    document.querySelectorAll('.admin-sidebar .sidebar-nav a').forEach(link => {
-        link.addEventListener('click', function () {
-            if (window.innerWidth <= 992) {
-                if (sidebar) sidebar.classList.remove('open');
-                if (overlay) overlay.classList.remove('active');
-            }
-        });
-    });
-});
-
-// ============================================================
 // INICIALIZACIÓN
 // ============================================================
 
 console.log('✅ Admin JS cargado correctamente');
 console.log('🔥 Firebase disponible:', firebaseInicializado);
-console.log('🌓 Modo claro/oscuro activado');
