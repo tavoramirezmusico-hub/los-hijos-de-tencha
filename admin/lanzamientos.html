@@ -102,6 +102,12 @@
             border-radius: 4px;
             margin: 6px 0;
             background: var(--color-bg-hover);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .lanzamiento-card .lanzamiento-thumb:hover {
+            opacity: 0.8;
         }
 
         .lanzamiento-card .lanzamiento-youtube {
@@ -111,16 +117,18 @@
             font-size: 0.7rem;
             color: var(--color-text-muted);
             margin-top: 6px;
-            padding: 4px 10px;
-            background: rgba(255, 0, 0, 0.05);
+            padding: 6px 10px;
+            background: rgba(255, 0, 0, 0.08);
             border-radius: var(--radius-sm);
-            border: 1px solid rgba(255, 0, 0, 0.08);
+            border: 1px solid rgba(255, 0, 0, 0.15);
             cursor: pointer;
             transition: var(--transition);
+            justify-content: center;
         }
 
         .lanzamiento-card .lanzamiento-youtube:hover {
-            background: rgba(255, 0, 0, 0.1);
+            background: rgba(255, 0, 0, 0.15);
+            transform: scale(1.02);
         }
 
         .lanzamiento-card .lanzamiento-youtube i {
@@ -128,15 +136,8 @@
             font-size: 0.9rem;
         }
 
-        .lanzamiento-card .lanzamiento-youtube a {
-            color: var(--color-text);
-            text-decoration: none;
-            word-break: break-all;
-            font-size: 0.7rem;
-        }
-
-        .lanzamiento-card .lanzamiento-youtube a:hover {
-            color: var(--color-primary);
+        .lanzamiento-card .lanzamiento-youtube span {
+            font-weight: 600;
         }
 
         .lanzamiento-card .lanzamiento-fecha {
@@ -220,6 +221,47 @@
             border: none;
         }
 
+        .reproductor-preview .reproductor-embed .reproductor-error {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-muted);
+            padding: 20px;
+            text-align: center;
+            background: #0a0a0a;
+        }
+
+        .reproductor-preview .reproductor-embed .reproductor-error i {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        .reproductor-preview .reproductor-embed .reproductor-error .btn-abrir-youtube {
+            margin-top: 12px;
+            padding: 10px 24px;
+            background: #ff0000;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reproductor-preview .reproductor-embed .reproductor-error .btn-abrir-youtube:hover {
+            background: #cc0000;
+            transform: scale(1.05);
+        }
+
         .reproductor-preview .reproductor-lista {
             display: flex;
             flex-direction: column;
@@ -282,7 +324,6 @@
             gap: 16px;
         }
 
-        /* Preview de URL */
         .url-preview {
             display: flex;
             align-items: center;
@@ -318,13 +359,13 @@
             font-weight: 700;
             padding: 3px 12px;
             border-radius: 12px;
-            background: rgba(255, 152, 0, 0.15);
-            color: var(--color-warning);
-        }
-
-        .url-preview .url-badge.success {
             background: rgba(0, 200, 83, 0.15);
             color: var(--color-success);
+        }
+
+        .url-preview .url-badge.error {
+            background: rgba(211, 47, 47, 0.15);
+            color: var(--color-danger);
         }
 
         .form-help {
@@ -336,6 +377,14 @@
         .form-help .importante {
             color: var(--color-warning);
             font-weight: 600;
+        }
+
+        .form-help code {
+            background: var(--color-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: var(--color-primary);
         }
 
         @media (max-width: 768px) {
@@ -442,9 +491,11 @@
                 <span class="badge-count" id="totalLanzamientos">0 canciones</span>
             </div>
             <div class="reproductor-embed" id="reproductorEmbed">
-                <iframe src="https://www.youtube.com/embed?listType=playlist&list=PLTuBmL8D1R_lJ8BjJZ5-MvATfL4IztteA"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen></iframe>
+                <div class="reproductor-error">
+                    <i class="fa-solid fa-circle-play"></i>
+                    <p style="font-size:1rem; font-weight:600;">Sin canciones para reproducir</p>
+                    <p style="font-size:0.8rem; opacity:0.7;">Agrega canciones individuales para verlas aquí</p>
+                </div>
             </div>
             <div class="reproductor-lista" id="listaReproduccion">
                 <div style="text-align:center; padding:12px; color:var(--color-text-muted); font-size:0.8rem;">
@@ -456,7 +507,7 @@
         <!-- LISTA DE LANZAMIENTOS -->
         <div class="admin-card">
             <div class="card-header">
-                <h3><i class="fa-solid fa-list"></i> Lanzamientos</h3>
+                <h3><i class="fa-solid fa-list"></i> Canciones</h3>
                 <div class="card-actions">
                     <button class="btn-admin btn-primary btn-sm" onclick="mostrarModalLanzamiento()">
                         <i class="fa-solid fa-plus"></i> Agregar Canción
@@ -467,7 +518,7 @@
             <div class="lanzamientos-grid" id="lanzamientosGrid">
                 <div class="lanzamiento-vacio">
                     <i class="fa-solid fa-spinner fa-spin"></i>
-                    <p>Cargando lanzamientos...</p>
+                    <p>Cargando canciones...</p>
                 </div>
             </div>
         </div>
@@ -516,7 +567,6 @@
                 <div class="form-help">
                     <span class="importante">⚠️ IMPORTANTE:</span> Usa la URL de un <strong>video individual</strong>.
                     <br>Ejemplo: <code>https://www.youtube.com/watch?v=ABCD1234</code>
-                    <br>No uses URLs de playlists (contienen <code>list=</code>)
                 </div>
                 <div class="url-preview" id="urlPreview" style="display:none;">
                     <img id="urlThumbnail" src="" alt="Vista previa">
@@ -524,7 +574,7 @@
                         <strong id="urlTituloPreview">Título</strong>
                         <span id="urlCanalPreview">Canal</span>
                     </div>
-                    <span class="url-badge success"><i class="fa-solid fa-check"></i> Video válido</span>
+                    <span class="url-badge" id="urlBadge"><i class="fa-solid fa-check"></i> Video válido</span>
                 </div>
             </div>
 
@@ -661,23 +711,19 @@
 
             clearTimeout(urlPreviewTimeout);
 
-            // Ocultar si está vacío o no es YouTube
             if (!url || !url.includes('youtube.com') && !url.includes('youtu.be')) {
                 previewContainer.style.display = 'none';
                 return;
             }
 
-            // Verificar si es una playlist
             if (esPlaylist(url)) {
                 previewContainer.style.display = 'flex';
                 document.getElementById('urlThumbnail').src = '';
                 document.getElementById('urlTituloPreview').textContent = '❌ No se permiten playlists';
-                document.getElementById('urlCanalPreview').textContent = 'Usa la URL de un video individual';
-                const badge = previewContainer.querySelector('.url-badge');
-                badge.className = 'url-badge';
+                document.getElementById('urlCanalPreview').textContent = 'Usa un video individual';
+                const badge = document.getElementById('urlBadge');
+                badge.className = 'url-badge error';
                 badge.textContent = '⚠️ Playlist no válida';
-                badge.style.background = 'rgba(211,47,47,0.15)';
-                badge.style.color = 'var(--color-danger)';
                 return;
             }
 
@@ -689,22 +735,17 @@
                         document.getElementById('urlTituloPreview').textContent = info.titulo || 'Sin título';
                         document.getElementById('urlCanalPreview').textContent = info.canal || 'Canal desconocido';
                         previewContainer.style.display = 'flex';
-
-                        const badge = previewContainer.querySelector('.url-badge');
-                        badge.className = 'url-badge success';
+                        const badge = document.getElementById('urlBadge');
+                        badge.className = 'url-badge';
                         badge.innerHTML = '<i class="fa-solid fa-check"></i> Video válido';
-                        badge.style.background = 'rgba(0,200,83,0.15)';
-                        badge.style.color = 'var(--color-success)';
                     } else {
                         previewContainer.style.display = 'flex';
                         document.getElementById('urlThumbnail').src = '';
-                        document.getElementById('urlTituloPreview').textContent = '❌ No se pudo cargar la vista previa';
+                        document.getElementById('urlTituloPreview').textContent = '❌ No se pudo cargar';
                         document.getElementById('urlCanalPreview').textContent = 'Verifica la URL';
-                        const badge = previewContainer.querySelector('.url-badge');
-                        badge.className = 'url-badge';
+                        const badge = document.getElementById('urlBadge');
+                        badge.className = 'url-badge error';
                         badge.textContent = '⚠️ Error';
-                        badge.style.background = 'rgba(211,47,47,0.15)';
-                        badge.style.color = 'var(--color-danger)';
                     }
                 } catch (error) {
                     previewContainer.style.display = 'none';
@@ -742,7 +783,7 @@
                     });
                 });
 
-                // Solo mostrar canciones individuales (no playlists)
+                // Filtrar playlists
                 lanzamientos = lanzamientos.filter(item => !esPlaylist(item.url));
 
                 if (lanzamientos.length > 0 && lanzamientos.every(l => l.orden === 0)) {
@@ -751,7 +792,7 @@
 
                 renderizarLanzamientos();
                 actualizarListaReproduccion();
-                actualizarPlaylist();
+                actualizarReproductor();
 
             } catch (error) {
                 console.error('Error al cargar lanzamientos:', error);
@@ -766,9 +807,9 @@
                 grid.innerHTML = `
                             <div class="lanzamiento-vacio">
                                 <i class="fa-regular fa-record-vinyl"></i>
-                                <p>No hay canciones agregadas. ¡Agrega la primera!</p>
+                                <p>No hay canciones agregadas</p>
                                 <p style="font-size:0.8rem; color:#555; margin-top:8px;">
-                                    Recuerda: cada canción debe tener su propia URL de YouTube
+                                    Agrega canciones con sus URLs de YouTube
                                 </p>
                             </div>
                         `;
@@ -797,12 +838,12 @@
                                         </button>
                                     </div>
                                 </div>
-                                ${thumbUrl ? `<img class="lanzamiento-thumb" src="${thumbUrl}" alt="${sanitizar(item.titulo)}" loading="lazy" onerror="this.style.display='none'">` : ''}
+                                ${thumbUrl ? `<img class="lanzamiento-thumb" src="${thumbUrl}" alt="${sanitizar(item.titulo)}" loading="lazy" onclick="window.open('${item.url}', '_blank')" title="Haz clic para abrir en YouTube">` : ''}
                                 <div class="lanzamiento-titulo">${sanitizar(item.titulo)}</div>
                                 <div class="lanzamiento-artista">${sanitizar(item.artista)}</div>
                                 <div class="lanzamiento-youtube" onclick="window.open('${item.url}', '_blank')">
                                     <i class="fa-brands fa-youtube"></i>
-                                    <span>${videoId ? '▶️ Reproducir en YouTube' : item.url}</span>
+                                    <span>▶️ Reproducir en YouTube</span>
                                 </div>
                                 <div class="lanzamiento-fecha">
                                     ${item.creadoEn ? 'Agregado: ' + formatearFecha(item.creadoEn) : ''}
@@ -819,35 +860,82 @@
         // FUNCIONES - REPRODUCTOR
         // ============================================================
 
-        function actualizarPlaylist() {
+        function actualizarReproductor() {
+            const embed = document.getElementById('reproductorEmbed');
             const videoIds = lanzamientos
                 .map(item => extraerVideoId(item.url))
                 .filter(id => id !== null);
 
-            const embed = document.getElementById('reproductorEmbed');
-
             if (videoIds.length === 0) {
                 embed.innerHTML = `
-                            <div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--color-text-muted); background:#111; font-size:0.9rem; flex-direction:column; gap:8px;">
-                                <i class="fa-solid fa-music" style="font-size:2.5rem; opacity:0.3;"></i>
-                                <p>Agrega canciones individuales</p>
-                                <p style="font-size:0.7rem; opacity:0.5;">Cada canción debe tener su propia URL de YouTube</p>
+                            <div class="reproductor-error">
+                                <i class="fa-solid fa-circle-play"></i>
+                                <p style="font-size:1rem; font-weight:600;">Sin canciones para reproducir</p>
+                                <p style="font-size:0.8rem; opacity:0.7;">Agrega canciones individuales para verlas aquí</p>
                             </div>
                         `;
                 return;
             }
 
-            // Si hay más de un video, usar playlist
+            // Intentar con el primer video
+            const firstId = videoIds[0];
+
+            // Usar el formato estándar de embed
+            let iframeSrc;
             if (videoIds.length > 1) {
+                // Múltiples videos - usar playlist
                 const playlistParam = videoIds.join(',');
-                embed.innerHTML = `
-                            <iframe src="https://www.youtube.com/embed/videoseries?list=${playlistParam}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        `;
+                iframeSrc = `https://www.youtube.com/embed/videoseries?list=${playlistParam}`;
             } else {
-                embed.innerHTML = `
-                            <iframe src="https://www.youtube.com/embed/${videoIds[0]}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        `;
+                // Un solo video
+                iframeSrc = `https://www.youtube.com/embed/${firstId}`;
             }
+
+            // Añadir parámetros para mejor compatibilidad
+            iframeSrc += '&enablejsapi=1&rel=0&modestbranding=1';
+
+            embed.innerHTML = `
+                        <iframe src="${iframeSrc}" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                allowfullscreen
+                                referrerpolicy="strict-origin-when-cross-origin">
+                        </iframe>
+                    `;
+
+            // Si el iframe falla, mostrar mensaje después de 5 segundos
+            setTimeout(() => {
+                const iframe = embed.querySelector('iframe');
+                if (iframe) {
+                    // Verificar si el iframe cargó correctamente (no podemos detectar directamente)
+                    // Mostramos un mensaje de ayuda
+                    if (!embed.querySelector('.reproductor-help')) {
+                        const help = document.createElement('div');
+                        help.className = 'reproductor-help';
+                        help.style.cssText = `
+                                    position: absolute;
+                                    bottom: 10px;
+                                    right: 10px;
+                                    background: rgba(0,0,0,0.8);
+                                    padding: 6px 12px;
+                                    border-radius: 6px;
+                                    font-size: 0.6rem;
+                                    color: #888;
+                                    cursor: pointer;
+                                    transition: var(--transition);
+                                    z-index: 10;
+                                `;
+                        help.innerHTML = `
+                                    <i class="fa-brands fa-youtube" style="color:#ff0000;"></i>
+                                    ¿No se reproduce? <span style="color:var(--color-primary);font-weight:600;">Abrir en YouTube</span>
+                                `;
+                        help.onclick = () => {
+                            const url = lanzamientos[0]?.url;
+                            if (url) window.open(url, '_blank');
+                        };
+                        embed.appendChild(help);
+                    }
+                }
+            }, 3000);
         }
 
         function actualizarListaReproduccion() {
@@ -856,7 +944,7 @@
             if (lanzamientos.length === 0) {
                 lista.innerHTML = `
                             <div style="text-align:center; padding:12px; color:var(--color-text-muted); font-size:0.8rem;">
-                                <i class="fa-regular fa-record-vinyl"></i> No hay canciones en la lista
+                                <i class="fa-regular fa-record-vinyl"></i> No hay canciones
                             </div>
                         `;
                 return;
@@ -963,14 +1051,12 @@
                 return;
             }
 
-            // Validar que NO sea una playlist
             if (esPlaylist(url)) {
-                mostrarToast('❌ No se permiten playlists. Usa la URL de un video individual.', 'error');
+                mostrarToast('❌ No se permiten playlists. Usa un video individual.', 'error');
                 document.getElementById('lanzamientoUrl').focus();
                 return;
             }
 
-            // Validar que el video existe
             const info = await obtenerInfoYouTube(url);
             if (!info) {
                 mostrarToast('❌ No se pudo verificar el video. Revisa la URL.', 'error');
@@ -1062,7 +1148,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             cargarLanzamientos();
-            console.log('🚀 Gestor de Lanzamientos cargado - Solo canciones individuales');
+            console.log('🚀 Gestor de Lanzamientos cargado');
         });
 
         document.addEventListener('keydown', function (e) {
