@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Lanzamientos | Los Hijos de Tencha</title>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="css/admin.css">
+
+    <style>
+        /* Estilos específicos para lanzamientos */
+        .lanzamientos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 16px;
+        }
+
+        .lanzamiento-card {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .lanzamiento-card:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-4px);
+        }
+
+        .lanzamiento-card .lanzamiento-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .lanzamiento-card .lanzamiento-tipo {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 12px;
+            border-radius: 20px;
+            background: rgba(255, 204, 0, 0.12);
+            color: var(--color-primary);
+        }
+
+        .lanzamiento-card .lanzamiento-tipo.sencillo {
+            background: rgba(25, 118, 210, 0.12);
+            color: var(--color-info);
+        }
+
+        .lanzamiento-card .lanzamiento-tipo.ep {
+            background: rgba(0, 200, 83, 0.12);
+            color: var(--color-success);
+        }
+
+        .lanzamiento-card .lanzamiento-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .lanzamiento-card .lanzamiento-actions .btn-admin {
+            padding: 4px 10px;
+            font-size: 0.7rem;
+            min-width: 32px;
+            height: 30px;
+        }
+
+        .lanzamiento-card .lanzamiento-titulo {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .lanzamiento-card .lanzamiento-artista {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-bottom: 8px;
+        }
+
+        .lanzamiento-card .lanzamiento-youtube {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: rgba(255, 0, 0, 0.05);
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255, 0, 0, 0.08);
+        }
+
+        .lanzamiento-card .lanzamiento-youtube i {
+            color: #ff0000;
+            font-size: 1rem;
+        }
+
+        .lanzamiento-card .lanzamiento-youtube a {
+            color: var(--color-text);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .lanzamiento-card .lanzamiento-youtube a:hover {
+            color: var(--color-primary);
+        }
+
+        .lanzamiento-card .lanzamiento-fecha {
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+            margin-top: 6px;
+        }
+
+        .lanzamiento-card .lanzamiento-destacado {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: var(--color-primary);
+            color: #000;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(255, 204, 0, 0.3);
+        }
+
+        .lanzamiento-card .lanzamiento-orden {
+            font-size: 0.65rem;
+            color: var(--color-text-muted);
+            margin-top: 4px;
+        }
+
+        .lanzamiento-vacio {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--color-text-muted);
+            grid-column: 1 / -1;
+        }
+
+        .lanzamiento-vacio i {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        .reproductor-preview {
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .reproductor-preview .reproductor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .reproductor-preview .reproductor-header h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .reproductor-preview .reproductor-header .badge-count {
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+            background: var(--color-bg-hover);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .reproductor-preview .reproductor-embed {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: var(--radius-sm);
+            background: #000;
+        }
+
+        .reproductor-preview .reproductor-embed iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .reproductor-preview .reproductor-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .reproductor-preview .reproductor-lista .item-lista {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--color-bg-hover);
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            border-left: 3px solid transparent;
+        }
+
+        .reproductor-preview .reproductor-lista .item-lista.activo {
+            border-left-color: var(--color-primary);
+            background: rgba(255, 204, 0, 0.06);
+        }
+
+        .reproductor-preview .reproductor-lista .item-lista .item-tipo {
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .reproductor-preview .reproductor-lista .item-lista .item-tipo.ep {
+            color: var(--color-success);
+        }
+
+        .reproductor-preview .reproductor-lista .item-lista .item-tipo.sencillo {
+            color: var(--color-info);
+        }
+
+        .reproductor-preview .reproductor-lista .item-lista .item-numero {
+            font-weight: 700;
+            color: var(--color-text-muted);
+            margin-right: 10px;
+            font-size: 0.7rem;
+            min-width: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .lanzamientos-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .reproductor-preview .reproductor-header {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-brand">
+            <img src="../img/logo.webp" alt="Los Hijos de Tencha">
+            <h2>Panel <span>Admin</span></h2>
+        </div>
+
+        <ul class="sidebar-nav">
+            <li class="nav-label">Menú Principal</li>
+            <li><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+            <li><a href="eventos.html"><i class="fa-solid fa-calendar"></i> Eventos</a></li>
+            <li><a href="noticias.html"><i class="fa-solid fa-newspaper"></i> Noticias</a></li>
+            <li><a href="galeria.html"><i class="fa-solid fa-images"></i> Galería</a></li>
+
+            <li class="nav-divider"></li>
+            <li class="nav-label">Contenido</li>
+            <li><a href="canciones.html"><i class="fa-solid fa-music"></i> Canciones</a></li>
+            <li><a href="videos.html"><i class="fa-solid fa-video"></i> Videos</a></li>
+            <li><a href="lanzamientos.html" class="active"><i class="fa-solid fa-record-vinyl"></i> Lanzamientos</a>
+            </li>
+            <li><a href="tienda.html"><i class="fa-solid fa-shirt"></i> Tienda</a></li>
+
+            <li class="nav-divider"></li>
+            <li class="nav-label">Herramientas</li>
+            <li><a href="generador.html"><i class="fa-solid fa-wand-magic-sparkles"></i> Generador WhatsApp</a></li>
+
+            <li class="nav-divider"></li>
+            <li class="nav-label">Sistema</li>
+            <li><a href="asistentes.html"><i class="fa-solid fa-users"></i> Asistentes</a></li>
+            <li><a href="validador.html"><i class="fa-solid fa-qrcode"></i> Validador</a></li>
+            <li><a href="#" onclick="cerrarSesionAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Salir</a></li>
+        </ul>
+    </aside>
+
+    <div class="admin-sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="admin-main">
+
+        <!-- HEADER -->
+        <header class="admin-header">
+            <div class="header-left">
+                <button class="hamburger" id="hamburgerBtn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h1><span>🎵</span> Gestión de Lanzamientos</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-badge">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Administrador
+                </div>
+                <a href="../lanzamientos.html" target="_blank" class="btn-header btn-secondary">
+                    <i class="fa-solid fa-globe"></i> Ver Lanzamientos
+                </a>
+                <button class="btn-header btn-danger" onclick="cerrarSesionAdmin()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Salir
+                </button>
+            </div>
+        </header>
+
+        <!-- REPRODUCTOR PREVIEW -->
+        <div class="reproductor-preview">
+            <div class="reproductor-header">
+                <h4><i class="fa-solid fa-play" style="color:var(--color-primary);"></i> Vista previa del reproductor
+                </h4>
+                <span class="badge-count" id="totalLanzamientos">0 canciones</span>
+            </div>
+            <div class="reproductor-embed" id="reproductorEmbed">
+                <iframe src="https://www.youtube.com/embed?listType=playlist&list=PLTuBmL8D1R_lJ8BjJZ5-MvATfL4IztteA"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+            </div>
+            <div class="reproductor-lista" id="listaReproduccion">
+                <div style="text-align:center; padding:20px; color:var(--color-text-muted);">
+                    <i class="fa-solid fa-spinner fa-spin"></i> Cargando lista...
+                </div>
+            </div>
+        </div>
+
+        <!-- LISTA DE LANZAMIENTOS -->
+        <div class="admin-card">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-list"></i> Lanzamientos</h3>
+                <div class="card-actions">
+                    <button class="btn-admin btn-primary btn-sm" onclick="mostrarModalLanzamiento()">
+                        <i class="fa-solid fa-plus"></i> Agregar Lanzamiento
+                    </button>
+                </div>
+            </div>
+
+            <div class="lanzamientos-grid" id="lanzamientosGrid">
+                <div class="lanzamiento-vacio">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <p>Cargando lanzamientos...</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MODAL - LANZAMIENTO -->
+    <div class="admin-modal" id="modalLanzamiento">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalLanzamientoTitulo"><i class="fa-solid fa-record-vinyl"></i> Nuevo Lanzamiento</h3>
+                <button class="modal-close" onclick="cerrarModalLanzamiento()">&times;</button>
+            </div>
+            <input type="hidden" id="lanzamientoIdEdit">
+
+            <div class="admin-form-group">
+                <label for="lanzamientoTitulo">Título *</label>
+                <input type="text" id="lanzamientoTitulo" class="admin-input" placeholder="Ej: Cumbia Salvaje" required>
+            </div>
+
+            <div class="admin-form-group">
+                <label for="lanzamientoArtista">Artista *</label>
+                <input type="text" id="lanzamientoArtista" class="admin-input" placeholder="Ej: Los Hijos de Tencha"
+                    value="Los Hijos de Tencha" required>
+            </div>
+
+            <div class="form-row">
+                <div class="admin-form-group">
+                    <label for="lanzamientoTipo">Tipo *</label>
+                    <select id="lanzamientoTipo" class="admin-select">
+                        <option value="sencillo">Sencillo</option>
+                        <option value="ep" selected>EP</option>
+                    </select>
+                </div>
+                <div class="admin-form-group">
+                    <label for="lanzamientoOrden">Orden (número)</label>
+                    <input type="number" id="lanzamientoOrden" class="admin-input" placeholder="1" min="0">
+                    <div class="form-help">Número menor = aparece primero en la lista</div>
+                </div>
+            </div>
+
+            <div class="admin-form-group">
+                <label for="lanzamientoUrl">URL de YouTube *</label>
+                <input type="url" id="lanzamientoUrl" class="admin-input"
+                    placeholder="https://www.youtube.com/watch?v=..." required>
+                <div class="form-help">Pega la URL completa del video de YouTube</div>
+            </div>
+
+            <div class="admin-form-group">
+                <label for="lanzamientoPortada">URL de portada (opcional)</label>
+                <input type="url" id="lanzamientoPortada" class="admin-input"
+                    placeholder="https://ejemplo.com/portada.jpg">
+                <div class="form-help">Imagen de portada para el lanzamiento</div>
+            </div>
+
+            <div class="admin-form-group">
+                <label for="lanzamientoDestacado">
+                    <input type="checkbox" id="lanzamientoDestacado">
+                    Marcar como destacado
+                </label>
+                <div class="form-help">El lanzamiento destacado aparecerá resaltado</div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-admin btn-secondary" onclick="cerrarModalLanzamiento()">Cancelar</button>
+                <button class="btn-admin btn-primary" id="btnGuardarLanzamiento" onclick="guardarLanzamiento()">
+                    <i class="fa-solid fa-save"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL - ELIMINAR -->
+    <div class="admin-modal" id="modalEliminarLanzamiento">
+        <div class="modal-content" style="max-width:450px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-triangle-exclamation" style="color:var(--color-danger);"></i> Eliminar
+                    Lanzamiento</h3>
+                <button class="modal-close" onclick="cerrarModalEliminarLanzamiento()">&times;</button>
+            </div>
+            <p style="color:var(--color-text-muted); margin-bottom:16px;">
+                ¿Estás seguro de eliminar <strong id="eliminarLanzamientoNombre"></strong>?
+            </p>
+            <input type="hidden" id="eliminarLanzamientoId">
+            <div class="modal-footer">
+                <button class="btn-admin btn-secondary" onclick="cerrarModalEliminarLanzamiento()">Cancelar</button>
+                <button class="btn-admin btn-danger" onclick="confirmarEliminarLanzamiento()">
+                    <i class="fa-solid fa-trash-can"></i> Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="adminToast" class="admin-toast"></div>
+
+    <!-- ============================================================
+    SCRIPTS
+    ============================================================ -->
+    <script src="js/admin.js"></script>
+
+    <script>
+        // ============================================================
+        // VARIABLES GLOBALES
+        // ============================================================
+        let lanzamientos = [];
+        let playlistId = 'PLTuBmL8D1R_lJ8BjJZ5-MvATfL4IztteA'; // Playlist por defecto
+
+        // ============================================================
+        // SIDEBAR
+        // ============================================================
+        const sidebar = document.getElementById('adminSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        if (hamburger) hamburger.addEventListener('click', toggleSidebar);
+        if (overlay) overlay.addEventListener('click', toggleSidebar);
+
+        document.querySelectorAll('.admin-sidebar .sidebar-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 992) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+
+        // ============================================================
+        // VERIFICAR SESIÓN
+        // ============================================================
+        (function () {
+            if (!verificarSesionAdmin()) {
+                window.location.href = 'login.html';
+            }
+        })();
+
+        // ============================================================
+        // FUNCIONES - CARGAR LANZAMIENTOS
+        // ============================================================
+
+        async function cargarLanzamientos() {
+            try {
+                if (!db) {
+                    throw new Error('Firebase no disponible');
+                }
+
+                const snapshot = await db.collection('lanzamientos')
+                    .orderBy('orden', 'asc')
+                    .get();
+
+                lanzamientos = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    lanzamientos.push({
+                        id: doc.id,
+                        titulo: data.titulo || 'Sin título',
+                        artista: data.artista || 'Los Hijos de Tencha',
+                        tipo: data.tipo || 'sencillo',
+                        url: data.url || '',
+                        portada: data.portada || '',
+                        destacado: data.destacado || false,
+                        orden: data.orden || 0,
+                        creadoEn: data.creadoEn || null
+                    });
+                });
+
+                // Si no hay orden definido, ordenar por título
+                if (lanzamientos.length > 0 && lanzamientos.every(l => l.orden === 0)) {
+                    lanzamientos.sort((a, b) => a.titulo.localeCompare(b.titulo));
+                }
+
+                renderizarLanzamientos();
+                actualizarListaReproduccion();
+
+                // Actualizar la playlist si hay lanzamientos
+                if (lanzamientos.length > 0) {
+                    actualizarPlaylist();
+                }
+
+            } catch (error) {
+                console.error('Error al cargar lanzamientos:', error);
+                mostrarToast('❌ Error al cargar lanzamientos', 'error');
+            }
+        }
+
+        function renderizarLanzamientos() {
+            const grid = document.getElementById('lanzamientosGrid');
+
+            if (lanzamientos.length === 0) {
+                grid.innerHTML = `
+                            <div class="lanzamiento-vacio">
+                                <i class="fa-regular fa-record-vinyl"></i>
+                                <p>No hay lanzamientos. ¡Agrega el primero!</p>
+                            </div>
+                        `;
+                return;
+            }
+
+            let html = '';
+            lanzamientos.forEach((item, index) => {
+                const tipoLabel = item.tipo === 'ep' ? 'EP' : 'Sencillo';
+                const tipoClass = item.tipo === 'ep' ? 'ep' : 'sencillo';
+                const destacadoBadge = item.destacado ? '<span class="lanzamiento-destacado">⭐ Destacado</span>' : '';
+                const videoId = extraerVideoId(item.url);
+
+                html += `
+                            <div class="lanzamiento-card">
+                                ${destacadoBadge}
+                                <div class="lanzamiento-header">
+                                    <span class="lanzamiento-tipo ${tipoClass}">${tipoLabel}</span>
+                                    <div class="lanzamiento-actions">
+                                        <button class="btn-admin btn-primary btn-sm" onclick="editarLanzamiento('${item.id}')">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+                                        <button class="btn-admin btn-danger btn-sm" onclick="mostrarEliminarLanzamiento('${item.id}')">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="lanzamiento-titulo">${sanitizar(item.titulo)}</div>
+                                <div class="lanzamiento-artista">${sanitizar(item.artista)}</div>
+                                ${item.portada ? `<img src="${item.portada}" alt="${sanitizar(item.titulo)}" style="width:100%; max-height:120px; object-fit:cover; border-radius:4px; margin:4px 0;">` : ''}
+                                <div class="lanzamiento-youtube">
+                                    <i class="fa-brands fa-youtube"></i>
+                                    <a href="${item.url}" target="_blank">${videoId ? 'Ver en YouTube' : item.url}</a>
+                                </div>
+                                <div class="lanzamiento-fecha">
+                                    ${item.creadoEn ? 'Agregado: ' + formatearFecha(item.creadoEn) : ''}
+                                </div>
+                                <div class="lanzamiento-orden">Orden: ${item.orden || 0}</div>
+                            </div>
+                        `;
+            });
+
+            grid.innerHTML = html;
+            document.getElementById('totalLanzamientos').textContent = lanzamientos.length + ' canciones';
+        }
+
+        // ============================================================
+        // FUNCIONES - PLAYLIST Y REPRODUCTOR
+        // ============================================================
+
+        function extraerVideoId(url) {
+            if (!url) return null;
+            const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?]+)/);
+            return match ? match[1] : null;
+        }
+
+        function extraerPlaylistId(url) {
+            if (!url) return null;
+            const match = url.match(/[?&]list=([^&]+)/);
+            return match ? match[1] : null;
+        }
+
+        function actualizarPlaylist() {
+            // Extraer los IDs de los videos de los lanzamientos
+            const videoIds = lanzamientos
+                .map(item => extraerVideoId(item.url))
+                .filter(id => id !== null);
+
+            if (videoIds.length === 0) {
+                // Si no hay videos, usar la playlist por defecto
+                const embed = document.getElementById('reproductorEmbed');
+                embed.innerHTML = `
+                            <iframe src="https://www.youtube.com/embed?listType=playlist&list=${playlistId}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        `;
+                return;
+            }
+
+            // Crear una playlist con los videos
+            const idsParam = videoIds.join(',');
+            const embed = document.getElementById('reproductorEmbed');
+
+            // Usar la primera canción como video principal y el resto como playlist
+            const firstId = videoIds[0];
+            const restIds = videoIds.slice(1);
+
+            // Si hay más de un video, usar playlist
+            if (restIds.length > 0) {
+                // Crear una playlist personalizada
+                const playlistParam = videoIds.join(',');
+                embed.innerHTML = `
+                            <iframe src="https://www.youtube.com/embed/videoseries?list=${playlistParam}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        `;
+            } else {
+                // Solo un video
+                embed.innerHTML = `
+                            <iframe src="https://www.youtube.com/embed/${firstId}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        `;
+            }
+        }
+
+        function actualizarListaReproduccion() {
+            const lista = document.getElementById('listaReproduccion');
+
+            if (lanzamientos.length === 0) {
+                lista.innerHTML = `
+                            <div style="text-align:center; padding:16px; color:var(--color-text-muted); font-size:0.85rem;">
+                                <i class="fa-regular fa-record-vinyl"></i> No hay canciones en la lista
+                            </div>
+                        `;
+                return;
+            }
+
+            let html = '';
+            lanzamientos.forEach((item, index) => {
+                const tipoLabel = item.tipo === 'ep' ? 'EP' : 'Sencillo';
+                const tipoClass = item.tipo === 'ep' ? 'ep' : 'sencillo';
+                const isActivo = index === 0 ? 'activo' : '';
+
+                html += `
+                            <div class="item-lista ${isActivo}">
+                                <div style="display:flex; align-items:center; gap:8px; flex:1; min-width:0;">
+                                    <span class="item-numero">${index + 1}</span>
+                                    <span style="font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${sanitizar(item.titulo)}</span>
+                                    <span class="item-tipo ${tipoClass}">${tipoLabel}</span>
+                                </div>
+                                <span style="font-size:0.65rem; color:var(--color-text-muted); flex-shrink:0;">
+                                    ${item.artista}
+                                </span>
+                            </div>
+                        `;
+            });
+
+            lista.innerHTML = html;
+        }
+
+        // ============================================================
+        // FUNCIONES - MODAL LANZAMIENTO
+        // ============================================================
+
+        function mostrarModalLanzamiento() {
+            document.getElementById('lanzamientoIdEdit').value = '';
+            document.getElementById('lanzamientoTitulo').value = '';
+            document.getElementById('lanzamientoArtista').value = 'Los Hijos de Tencha';
+            document.getElementById('lanzamientoTipo').value = 'ep';
+            document.getElementById('lanzamientoUrl').value = '';
+            document.getElementById('lanzamientoPortada').value = '';
+            document.getElementById('lanzamientoOrden').value = '';
+            document.getElementById('lanzamientoDestacado').checked = false;
+            document.getElementById('modalLanzamientoTitulo').innerHTML = '<i class="fa-solid fa-record-vinyl"></i> Nuevo Lanzamiento';
+            document.getElementById('btnGuardarLanzamiento').innerHTML = '<i class="fa-solid fa-save"></i> Guardar';
+            document.getElementById('modalLanzamiento').classList.add('active');
+            setTimeout(() => document.getElementById('lanzamientoTitulo').focus(), 100);
+        }
+
+        function cerrarModalLanzamiento() {
+            document.getElementById('modalLanzamiento').classList.remove('active');
+        }
+
+        function editarLanzamiento(id) {
+            const item = lanzamientos.find(l => l.id === id);
+            if (!item) return;
+
+            document.getElementById('lanzamientoIdEdit').value = id;
+            document.getElementById('lanzamientoTitulo').value = item.titulo || '';
+            document.getElementById('lanzamientoArtista').value = item.artista || 'Los Hijos de Tencha';
+            document.getElementById('lanzamientoTipo').value = item.tipo || 'sencillo';
+            document.getElementById('lanzamientoUrl').value = item.url || '';
+            document.getElementById('lanzamientoPortada').value = item.portada || '';
+            document.getElementById('lanzamientoOrden').value = item.orden || '';
+            document.getElementById('lanzamientoDestacado').checked = item.destacado || false;
+
+            document.getElementById('modalLanzamientoTitulo').innerHTML = '<i class="fa-solid fa-pen"></i> Editar Lanzamiento';
+            document.getElementById('btnGuardarLanzamiento').innerHTML = '<i class="fa-solid fa-save"></i> Actualizar';
+            document.getElementById('modalLanzamiento').classList.add('active');
+            setTimeout(() => document.getElementById('lanzamientoTitulo').focus(), 100);
+        }
+
+        // ============================================================
+        // GUARDAR LANZAMIENTO
+        // ============================================================
+
+        async function guardarLanzamiento() {
+            const id = document.getElementById('lanzamientoIdEdit').value;
+            const titulo = document.getElementById('lanzamientoTitulo').value.trim();
+            const artista = document.getElementById('lanzamientoArtista').value.trim();
+            const tipo = document.getElementById('lanzamientoTipo').value;
+            const url = document.getElementById('lanzamientoUrl').value.trim();
+            const portada = document.getElementById('lanzamientoPortada').value.trim();
+            const orden = parseInt(document.getElementById('lanzamientoOrden').value) || 0;
+            const destacado = document.getElementById('lanzamientoDestacado').checked;
+
+            if (!titulo) {
+                mostrarToast('⚠️ Ingresa un título', 'warning');
+                document.getElementById('lanzamientoTitulo').focus();
+                return;
+            }
+
+            if (!artista) {
+                mostrarToast('⚠️ Ingresa el nombre del artista', 'warning');
+                document.getElementById('lanzamientoArtista').focus();
+                return;
+            }
+
+            if (!url || !url.includes('youtube.com') && !url.includes('youtu.be')) {
+                mostrarToast('⚠️ Ingresa una URL válida de YouTube', 'warning');
+                document.getElementById('lanzamientoUrl').focus();
+                return;
+            }
+
+            const btn = document.getElementById('btnGuardarLanzamiento');
+            btn.classList.add('loading');
+            btn.disabled = true;
+
+            try {
+                const datos = {
+                    titulo,
+                    artista,
+                    tipo,
+                    url,
+                    portada: portada || '',
+                    orden: orden,
+                    destacado: destacado,
+                    actualizadoEn: new Date().toISOString()
+                };
+
+                if (id) {
+                    await db.collection('lanzamientos').doc(id).update(datos);
+                    mostrarToast('✅ Lanzamiento actualizado', 'success');
+                } else {
+                    datos.creadoEn = new Date().toISOString();
+                    await db.collection('lanzamientos').add(datos);
+                    mostrarToast('✅ Lanzamiento creado', 'success');
+                }
+
+                cerrarModalLanzamiento();
+                await cargarLanzamientos();
+
+            } catch (error) {
+                console.error('Error al guardar lanzamiento:', error);
+                mostrarToast('❌ Error: ' + error.message, 'error');
+            }
+
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+
+        // ============================================================
+        // ELIMINAR LANZAMIENTO
+        // ============================================================
+
+        function mostrarEliminarLanzamiento(id) {
+            const item = lanzamientos.find(l => l.id === id);
+            if (!item) return;
+            document.getElementById('eliminarLanzamientoId').value = id;
+            document.getElementById('eliminarLanzamientoNombre').textContent = item.titulo;
+            document.getElementById('modalEliminarLanzamiento').classList.add('active');
+        }
+
+        function cerrarModalEliminarLanzamiento() {
+            document.getElementById('modalEliminarLanzamiento').classList.remove('active');
+        }
+
+        async function confirmarEliminarLanzamiento() {
+            const id = document.getElementById('eliminarLanzamientoId').value;
+
+            const btn = document.querySelector('#modalEliminarLanzamiento .btn-danger');
+            btn.classList.add('loading');
+            btn.disabled = true;
+
+            try {
+                await db.collection('lanzamientos').doc(id).delete();
+                cerrarModalEliminarLanzamiento();
+                mostrarToast('✅ Lanzamiento eliminado', 'success');
+                await cargarLanzamientos();
+
+            } catch (error) {
+                console.error('Error al eliminar lanzamiento:', error);
+                mostrarToast('❌ Error: ' + error.message, 'error');
+            }
+
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+
+        // ============================================================
+        // INICIALIZAR
+        // ============================================================
+
+        document.addEventListener('DOMContentLoaded', function () {
+            cargarLanzamientos();
+            console.log('🚀 Gestor de Lanzamientos cargado');
+        });
+
+        // Prevenir cierre con Ctrl+W
+        document.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
+                e.preventDefault();
+                mostrarToast('⚠️ Usa el botón "Salir" para cerrar sesión', 'warning');
+                return false;
+            }
+        });
+    </script>
+
+</body>
+
+</html>
