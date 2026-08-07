@@ -559,8 +559,10 @@
         // VERIFICAR SESIÓN
         // ============================================================
         (function () {
-            if (!verificarSesionAdmin()) {
-                window.location.href = 'login.html';
+            if (typeof verificarSesionAdmin === 'function') {
+                if (!verificarSesionAdmin()) {
+                    window.location.href = 'login.html';
+                }
             }
         })();
 
@@ -906,7 +908,7 @@
         }
 
         // ============================================================
-        // CONFIRMAR PAGO
+        // CONFIRMAR PAGO (CORREGIDO)
         // ============================================================
 
         async function confirmarPago(asistenteId) {
@@ -965,6 +967,7 @@
                         emailEnviado = true;
                     } catch (emailError) {
                         console.error('❌ Error al enviar correo:', emailError);
+                        // No lanzamos error, continuamos con la confirmación
                     }
                 }
 
@@ -975,11 +978,21 @@
                     fechaConfirmacion: new Date().toISOString()
                 });
 
-                // Actualizar contador de entradas vendidas en el evento
+                // 🔧 CORREGIDO: Actualizar contador de entradas vendidas en el evento
                 const eventoRef = db.collection('eventos').doc(asistente.eventoId);
-                await eventoRef.update({
-                    entradasVendidas: firebase.firestore.FieldValue.increment(asistente.numeroEntradas || 1)
-                });
+                try {
+                    await eventoRef.update({
+                        entradasVendidas: firebase.firestore.FieldValue.increment(asistente.numeroEntradas || 1)
+                    });
+                } catch (fieldError) {
+                    console.warn('⚠️ Error con FieldValue, usando método alternativo:', fieldError);
+                    // Método alternativo: leer y actualizar manualmente
+                    const eventoActual = await eventoRef.get();
+                    const entradasActuales = eventoActual.data().entradasVendidas || 0;
+                    await eventoRef.update({
+                        entradasVendidas: entradasActuales + (asistente.numeroEntradas || 1)
+                    });
+                }
 
                 // Recargar lista
                 await cargarTodosLosAsistentes();
@@ -1038,7 +1051,7 @@
         }
 
         // ============================================================
-        // REENVIAR CORREO (para confirmados)
+        // REENVIAR CORREO (para confirmados) - CORREGIDO
         // ============================================================
 
         async function reenviarCorreo(asistenteId) {
@@ -1051,9 +1064,15 @@
 
             try {
                 const asistenteDoc = await db.collection('asistentes').doc(asistenteId).get();
+                if (!asistenteDoc.exists) {
+                    throw new Error('Asistente no encontrado');
+                }
                 const asistente = asistenteDoc.data();
 
                 const eventoDoc = await db.collection('eventos').doc(asistente.eventoId).get();
+                if (!eventoDoc.exists) {
+                    throw new Error('Evento no encontrado');
+                }
                 const evento = eventoDoc.data();
 
                 const qrUrl = `https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html?id=${asistenteId}`;
@@ -1072,7 +1091,17 @@
                     transferencia: asistente.transferencia || ''
                 };
 
-                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+                if (typeof emailjs === 'undefined') {
+                    throw new Error('EmailJS no está disponible');
+                }
+
+                console.log('📧 Reenviando correo a:', asistente.email);
+                const result = await emailjs.send(
+                    EMAILJS_SERVICE_ID,
+                    EMAILJS_TEMPLATE_ID,
+                    templateParams
+                );
+                console.log('✅ Correo reenviado:', result);
 
                 toast.textContent = '✅ QR reenviado exitosamente';
                 toast.className = 'admin-toast success';
