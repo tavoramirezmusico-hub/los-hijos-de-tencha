@@ -25,8 +25,8 @@
         /* Estilos específicos para lanzamientos */
         .lanzamientos-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
             margin-top: 16px;
         }
 
@@ -34,29 +34,29 @@
             background: var(--color-bg);
             border: 1px solid var(--color-border);
             border-radius: var(--radius-sm);
-            padding: 20px;
+            padding: 16px;
             transition: var(--transition);
             position: relative;
         }
 
         .lanzamiento-card:hover {
             border-color: var(--color-primary);
-            transform: translateY(-4px);
+            transform: translateY(-3px);
         }
 
         .lanzamiento-card .lanzamiento-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .lanzamiento-card .lanzamiento-tipo {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            padding: 3px 12px;
+            padding: 2px 10px;
             border-radius: 20px;
             background: rgba(255, 204, 0, 0.12);
             color: var(--color-primary);
@@ -74,36 +74,45 @@
 
         .lanzamiento-card .lanzamiento-actions {
             display: flex;
-            gap: 6px;
+            gap: 4px;
         }
 
         .lanzamiento-card .lanzamiento-actions .btn-admin {
-            padding: 4px 10px;
-            font-size: 0.7rem;
-            min-width: 32px;
-            height: 30px;
+            padding: 3px 8px;
+            font-size: 0.65rem;
+            min-width: 28px;
+            height: 26px;
         }
 
         .lanzamiento-card .lanzamiento-titulo {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .lanzamiento-card .lanzamiento-artista {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--color-text-muted);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+        }
+
+        .lanzamiento-card .lanzamiento-thumb {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            border-radius: 4px;
+            margin: 6px 0;
+            background: var(--color-bg-hover);
         }
 
         .lanzamiento-card .lanzamiento-youtube {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.75rem;
+            gap: 6px;
+            font-size: 0.7rem;
             color: var(--color-text-muted);
-            margin-top: 8px;
-            padding: 8px 12px;
+            margin-top: 6px;
+            padding: 4px 10px;
             background: rgba(255, 0, 0, 0.05);
             border-radius: var(--radius-sm);
             border: 1px solid rgba(255, 0, 0, 0.08);
@@ -111,13 +120,14 @@
 
         .lanzamiento-card .lanzamiento-youtube i {
             color: #ff0000;
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
 
         .lanzamiento-card .lanzamiento-youtube a {
             color: var(--color-text);
             text-decoration: none;
             word-break: break-all;
+            font-size: 0.7rem;
         }
 
         .lanzamiento-card .lanzamiento-youtube a:hover {
@@ -125,9 +135,9 @@
         }
 
         .lanzamiento-card .lanzamiento-fecha {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--color-text-muted);
-            margin-top: 6px;
+            margin-top: 4px;
         }
 
         .lanzamiento-card .lanzamiento-destacado {
@@ -136,38 +146,33 @@
             right: -6px;
             background: var(--color-primary);
             color: #000;
-            padding: 2px 12px;
+            padding: 2px 10px;
             border-radius: 20px;
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             font-weight: 700;
             box-shadow: 0 4px 12px rgba(255, 204, 0, 0.3);
         }
 
-        .lanzamiento-card .lanzamiento-orden {
-            font-size: 0.65rem;
-            color: var(--color-text-muted);
-            margin-top: 4px;
-        }
-
         .lanzamiento-vacio {
             text-align: center;
-            padding: 50px 20px;
+            padding: 40px 20px;
             color: var(--color-text-muted);
             grid-column: 1 / -1;
         }
 
         .lanzamiento-vacio i {
-            font-size: 3rem;
+            font-size: 2.5rem;
             display: block;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             opacity: 0.3;
         }
 
+        /* Reproductor más compacto */
         .reproductor-preview {
             background: var(--color-bg);
             border-radius: var(--radius-sm);
             border: 1px solid var(--color-border);
-            padding: 20px;
+            padding: 16px;
             margin-bottom: 20px;
         }
 
@@ -175,29 +180,30 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .reproductor-preview .reproductor-header h4 {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 600;
         }
 
         .reproductor-preview .reproductor-header .badge-count {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--color-text-muted);
             background: var(--color-bg-hover);
-            padding: 4px 12px;
+            padding: 3px 10px;
             border-radius: 20px;
         }
 
         .reproductor-preview .reproductor-embed {
             position: relative;
-            padding-bottom: 56.25%;
+            padding-bottom: 42%;
             height: 0;
             overflow: hidden;
             border-radius: var(--radius-sm);
             background: #000;
+            max-width: 100%;
         }
 
         .reproductor-preview .reproductor-embed iframe {
@@ -212,9 +218,9 @@
         .reproductor-preview .reproductor-lista {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            margin-top: 12px;
-            max-height: 200px;
+            gap: 4px;
+            margin-top: 10px;
+            max-height: 140px;
             overflow-y: auto;
         }
 
@@ -222,10 +228,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 12px;
+            padding: 5px 10px;
             background: var(--color-bg-hover);
             border-radius: var(--radius-sm);
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             border-left: 3px solid transparent;
         }
 
@@ -235,10 +241,10 @@
         }
 
         .reproductor-preview .reproductor-lista .item-lista .item-tipo {
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             font-weight: 600;
             text-transform: uppercase;
-            padding: 2px 8px;
+            padding: 1px 8px;
             border-radius: 12px;
             background: rgba(255, 255, 255, 0.05);
         }
@@ -254,15 +260,44 @@
         .reproductor-preview .reproductor-lista .item-lista .item-numero {
             font-weight: 700;
             color: var(--color-text-muted);
-            margin-right: 10px;
-            font-size: 0.7rem;
-            min-width: 20px;
+            margin-right: 8px;
+            font-size: 0.65rem;
+            min-width: 18px;
         }
 
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 16px;
+        }
+
+        /* Estilo para el campo de URL con detección automática */
+        .url-preview {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 6px;
+            padding: 8px 12px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+        }
+
+        .url-preview img {
+            width: 80px;
+            height: 45px;
+            object-fit: cover;
+            border-radius: 4px;
+            background: var(--color-bg-hover);
+        }
+
+        .url-preview .url-info {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+        }
+
+        .url-preview .url-info strong {
+            color: var(--color-text);
         }
 
         @media (max-width: 768px) {
@@ -276,8 +311,23 @@
 
             .reproductor-preview .reproductor-header {
                 flex-direction: column;
-                gap: 8px;
+                gap: 6px;
                 align-items: flex-start;
+            }
+
+            .reproductor-preview .reproductor-embed {
+                padding-bottom: 56%;
+            }
+
+            .url-preview {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .url-preview img {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 16/9;
             }
         }
     </style>
@@ -346,7 +396,7 @@
             </div>
         </header>
 
-        <!-- REPRODUCTOR PREVIEW -->
+        <!-- REPRODUCTOR PREVIEW - MÁS COMPACTO -->
         <div class="reproductor-preview">
             <div class="reproductor-header">
                 <h4><i class="fa-solid fa-play" style="color:var(--color-primary);"></i> Vista previa del reproductor
@@ -359,7 +409,7 @@
                     allowfullscreen></iframe>
             </div>
             <div class="reproductor-lista" id="listaReproduccion">
-                <div style="text-align:center; padding:20px; color:var(--color-text-muted);">
+                <div style="text-align:center; padding:12px; color:var(--color-text-muted); font-size:0.8rem;">
                     <i class="fa-solid fa-spinner fa-spin"></i> Cargando lista...
                 </div>
             </div>
@@ -417,22 +467,22 @@
                 <div class="admin-form-group">
                     <label for="lanzamientoOrden">Orden (número)</label>
                     <input type="number" id="lanzamientoOrden" class="admin-input" placeholder="1" min="0">
-                    <div class="form-help">Número menor = aparece primero en la lista</div>
+                    <div class="form-help">Número menor = aparece primero</div>
                 </div>
             </div>
 
             <div class="admin-form-group">
                 <label for="lanzamientoUrl">URL de YouTube *</label>
                 <input type="url" id="lanzamientoUrl" class="admin-input"
-                    placeholder="https://www.youtube.com/watch?v=..." required>
+                    placeholder="https://www.youtube.com/watch?v=..." required oninput="previsualizarUrl()">
                 <div class="form-help">Pega la URL completa del video de YouTube</div>
-            </div>
-
-            <div class="admin-form-group">
-                <label for="lanzamientoPortada">URL de portada (opcional)</label>
-                <input type="url" id="lanzamientoPortada" class="admin-input"
-                    placeholder="https://ejemplo.com/portada.jpg">
-                <div class="form-help">Imagen de portada para el lanzamiento</div>
+                <div class="url-preview" id="urlPreview" style="display:none;">
+                    <img id="urlThumbnail" src="" alt="Vista previa">
+                    <div class="url-info">
+                        <div><strong id="urlTituloPreview">Título</strong></div>
+                        <div id="urlCanalPreview" style="font-size:0.7rem;">Canal</div>
+                    </div>
+                </div>
             </div>
 
             <div class="admin-form-group">
@@ -486,7 +536,7 @@
         // VARIABLES GLOBALES
         // ============================================================
         let lanzamientos = [];
-        let playlistId = 'PLTuBmL8D1R_lJ8BjJZ5-MvATfL4IztteA'; // Playlist por defecto
+        let playlistId = 'PLTuBmL8D1R_lJ8BjJZ5-MvATfL4IztteA';
 
         // ============================================================
         // SIDEBAR
@@ -522,6 +572,78 @@
         })();
 
         // ============================================================
+        // FUNCIONES - EXTRAER INFO DE YOUTUBE (OEmbed)
+        // ============================================================
+
+        async function obtenerInfoYouTube(url) {
+            try {
+                const videoId = extraerVideoId(url);
+                if (!videoId) return null;
+
+                // Usar la API de oEmbed de YouTube
+                const response = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
+                if (!response.ok) return null;
+
+                const data = await response.json();
+                return {
+                    titulo: data.title || 'Video de YouTube',
+                    canal: data.author_name || 'YouTube',
+                    thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
+                };
+            } catch (error) {
+                console.error('Error al obtener info de YouTube:', error);
+                return null;
+            }
+        }
+
+        function extraerVideoId(url) {
+            if (!url) return null;
+            const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?]+)/);
+            return match ? match[1] : null;
+        }
+
+        function extraerPlaylistId(url) {
+            if (!url) return null;
+            const match = url.match(/[?&]list=([^&]+)/);
+            return match ? match[1] : null;
+        }
+
+        // ============================================================
+        // FUNCIONES - PREVISUALIZAR URL EN MODAL
+        // ============================================================
+
+        let urlPreviewTimeout = null;
+
+        async function previsualizarUrl() {
+            const urlInput = document.getElementById('lanzamientoUrl');
+            const url = urlInput.value.trim();
+            const previewContainer = document.getElementById('urlPreview');
+
+            clearTimeout(urlPreviewTimeout);
+
+            if (!url || !url.includes('youtube.com') && !url.includes('youtu.be')) {
+                previewContainer.style.display = 'none';
+                return;
+            }
+
+            urlPreviewTimeout = setTimeout(async () => {
+                try {
+                    const info = await obtenerInfoYouTube(url);
+                    if (info) {
+                        document.getElementById('urlThumbnail').src = info.thumbnail;
+                        document.getElementById('urlTituloPreview').textContent = info.titulo || 'Sin título';
+                        document.getElementById('urlCanalPreview').textContent = info.canal || 'Canal desconocido';
+                        previewContainer.style.display = 'flex';
+                    } else {
+                        previewContainer.style.display = 'none';
+                    }
+                } catch (error) {
+                    previewContainer.style.display = 'none';
+                }
+            }, 500);
+        }
+
+        // ============================================================
         // FUNCIONES - CARGAR LANZAMIENTOS
         // ============================================================
 
@@ -544,25 +666,22 @@
                         artista: data.artista || 'Los Hijos de Tencha',
                         tipo: data.tipo || 'sencillo',
                         url: data.url || '',
-                        portada: data.portada || '',
                         destacado: data.destacado || false,
                         orden: data.orden || 0,
-                        creadoEn: data.creadoEn || null
+                        creadoEn: data.creadoEn || null,
+                        // Portada obtenida desde YouTube
+                        portada: data.portada || ''
                     });
                 });
 
-                // Si no hay orden definido, ordenar por título
+                // Ordenar si no hay orden definido
                 if (lanzamientos.length > 0 && lanzamientos.every(l => l.orden === 0)) {
                     lanzamientos.sort((a, b) => a.titulo.localeCompare(b.titulo));
                 }
 
                 renderizarLanzamientos();
                 actualizarListaReproduccion();
-
-                // Actualizar la playlist si hay lanzamientos
-                if (lanzamientos.length > 0) {
-                    actualizarPlaylist();
-                }
+                actualizarPlaylist();
 
             } catch (error) {
                 console.error('Error al cargar lanzamientos:', error);
@@ -584,11 +703,12 @@
             }
 
             let html = '';
-            lanzamientos.forEach((item, index) => {
+            lanzamientos.forEach((item) => {
                 const tipoLabel = item.tipo === 'ep' ? 'EP' : 'Sencillo';
                 const tipoClass = item.tipo === 'ep' ? 'ep' : 'sencillo';
                 const destacadoBadge = item.destacado ? '<span class="lanzamiento-destacado">⭐ Destacado</span>' : '';
                 const videoId = extraerVideoId(item.url);
+                const thumbUrl = item.portada || (videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : '');
 
                 html += `
                             <div class="lanzamiento-card">
@@ -604,9 +724,9 @@
                                         </button>
                                     </div>
                                 </div>
+                                ${thumbUrl ? `<img class="lanzamiento-thumb" src="${thumbUrl}" alt="${sanitizar(item.titulo)}" loading="lazy" onerror="this.style.display='none'">` : ''}
                                 <div class="lanzamiento-titulo">${sanitizar(item.titulo)}</div>
                                 <div class="lanzamiento-artista">${sanitizar(item.artista)}</div>
-                                ${item.portada ? `<img src="${item.portada}" alt="${sanitizar(item.titulo)}" style="width:100%; max-height:120px; object-fit:cover; border-radius:4px; margin:4px 0;">` : ''}
                                 <div class="lanzamiento-youtube">
                                     <i class="fa-brands fa-youtube"></i>
                                     <a href="${item.url}" target="_blank">${videoId ? 'Ver en YouTube' : item.url}</a>
@@ -614,7 +734,6 @@
                                 <div class="lanzamiento-fecha">
                                     ${item.creadoEn ? 'Agregado: ' + formatearFecha(item.creadoEn) : ''}
                                 </div>
-                                <div class="lanzamiento-orden">Orden: ${item.orden || 0}</div>
                             </div>
                         `;
             });
@@ -627,44 +746,22 @@
         // FUNCIONES - PLAYLIST Y REPRODUCTOR
         // ============================================================
 
-        function extraerVideoId(url) {
-            if (!url) return null;
-            const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?]+)/);
-            return match ? match[1] : null;
-        }
-
-        function extraerPlaylistId(url) {
-            if (!url) return null;
-            const match = url.match(/[?&]list=([^&]+)/);
-            return match ? match[1] : null;
-        }
-
         function actualizarPlaylist() {
-            // Extraer los IDs de los videos de los lanzamientos
             const videoIds = lanzamientos
                 .map(item => extraerVideoId(item.url))
                 .filter(id => id !== null);
 
+            const embed = document.getElementById('reproductorEmbed');
+
             if (videoIds.length === 0) {
-                // Si no hay videos, usar la playlist por defecto
-                const embed = document.getElementById('reproductorEmbed');
                 embed.innerHTML = `
                             <iframe src="https://www.youtube.com/embed?listType=playlist&list=${playlistId}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         `;
                 return;
             }
 
-            // Crear una playlist con los videos
-            const idsParam = videoIds.join(',');
-            const embed = document.getElementById('reproductorEmbed');
-
-            // Usar la primera canción como video principal y el resto como playlist
-            const firstId = videoIds[0];
-            const restIds = videoIds.slice(1);
-
             // Si hay más de un video, usar playlist
-            if (restIds.length > 0) {
-                // Crear una playlist personalizada
+            if (videoIds.length > 1) {
                 const playlistParam = videoIds.join(',');
                 embed.innerHTML = `
                             <iframe src="https://www.youtube.com/embed/videoseries?list=${playlistParam}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -672,7 +769,7 @@
             } else {
                 // Solo un video
                 embed.innerHTML = `
-                            <iframe src="https://www.youtube.com/embed/${firstId}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <iframe src="https://www.youtube.com/embed/${videoIds[0]}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         `;
             }
         }
@@ -682,7 +779,7 @@
 
             if (lanzamientos.length === 0) {
                 lista.innerHTML = `
-                            <div style="text-align:center; padding:16px; color:var(--color-text-muted); font-size:0.85rem;">
+                            <div style="text-align:center; padding:12px; color:var(--color-text-muted); font-size:0.8rem;">
                                 <i class="fa-regular fa-record-vinyl"></i> No hay canciones en la lista
                             </div>
                         `;
@@ -697,12 +794,12 @@
 
                 html += `
                             <div class="item-lista ${isActivo}">
-                                <div style="display:flex; align-items:center; gap:8px; flex:1; min-width:0;">
+                                <div style="display:flex; align-items:center; gap:6px; flex:1; min-width:0;">
                                     <span class="item-numero">${index + 1}</span>
                                     <span style="font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${sanitizar(item.titulo)}</span>
                                     <span class="item-tipo ${tipoClass}">${tipoLabel}</span>
                                 </div>
-                                <span style="font-size:0.65rem; color:var(--color-text-muted); flex-shrink:0;">
+                                <span style="font-size:0.6rem; color:var(--color-text-muted); flex-shrink:0; max-width:80px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                                     ${item.artista}
                                 </span>
                             </div>
@@ -722,9 +819,9 @@
             document.getElementById('lanzamientoArtista').value = 'Los Hijos de Tencha';
             document.getElementById('lanzamientoTipo').value = 'ep';
             document.getElementById('lanzamientoUrl').value = '';
-            document.getElementById('lanzamientoPortada').value = '';
             document.getElementById('lanzamientoOrden').value = '';
             document.getElementById('lanzamientoDestacado').checked = false;
+            document.getElementById('urlPreview').style.display = 'none';
             document.getElementById('modalLanzamientoTitulo').innerHTML = '<i class="fa-solid fa-record-vinyl"></i> Nuevo Lanzamiento';
             document.getElementById('btnGuardarLanzamiento').innerHTML = '<i class="fa-solid fa-save"></i> Guardar';
             document.getElementById('modalLanzamiento').classList.add('active');
@@ -744,9 +841,15 @@
             document.getElementById('lanzamientoArtista').value = item.artista || 'Los Hijos de Tencha';
             document.getElementById('lanzamientoTipo').value = item.tipo || 'sencillo';
             document.getElementById('lanzamientoUrl').value = item.url || '';
-            document.getElementById('lanzamientoPortada').value = item.portada || '';
             document.getElementById('lanzamientoOrden').value = item.orden || '';
             document.getElementById('lanzamientoDestacado').checked = item.destacado || false;
+
+            // Previsualizar la URL existente
+            if (item.url) {
+                setTimeout(() => previsualizarUrl(), 300);
+            } else {
+                document.getElementById('urlPreview').style.display = 'none';
+            }
 
             document.getElementById('modalLanzamientoTitulo').innerHTML = '<i class="fa-solid fa-pen"></i> Editar Lanzamiento';
             document.getElementById('btnGuardarLanzamiento').innerHTML = '<i class="fa-solid fa-save"></i> Actualizar';
@@ -764,7 +867,6 @@
             const artista = document.getElementById('lanzamientoArtista').value.trim();
             const tipo = document.getElementById('lanzamientoTipo').value;
             const url = document.getElementById('lanzamientoUrl').value.trim();
-            const portada = document.getElementById('lanzamientoPortada').value.trim();
             const orden = parseInt(document.getElementById('lanzamientoOrden').value) || 0;
             const destacado = document.getElementById('lanzamientoDestacado').checked;
 
@@ -791,12 +893,19 @@
             btn.disabled = true;
 
             try {
+                // Obtener la portada automáticamente desde YouTube
+                let portada = '';
+                const videoId = extraerVideoId(url);
+                if (videoId) {
+                    portada = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+                }
+
                 const datos = {
                     titulo,
                     artista,
                     tipo,
                     url,
-                    portada: portada || '',
+                    portada: portada,
                     orden: orden,
                     destacado: destacado,
                     actualizadoEn: new Date().toISOString()
