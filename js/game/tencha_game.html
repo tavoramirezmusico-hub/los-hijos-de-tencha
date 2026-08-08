@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Diablito Musical - Los Hijos de Tencha</title>
+    <style>
+        /* =====================================
+           ESTILOS DEL JUEGO - LOS HIJOS DE TENCHA
+        ===================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            background: #111;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Contenedor principal del juego */
+        .game-wrapper {
+            background: #1a1a1a;
+            border-radius: 30px;
+            padding: 30px 30px 35px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            border: 2px solid rgba(255, 204, 0, 0.2);
+            max-width: 650px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Logo */
+        .game-logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .game-logo img {
+            height: 55px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .game-logo span {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffcc00;
+            letter-spacing: 1px;
+        }
+
+        /* Cabecera con vidas y puntaje */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: #0d0d0d;
+            border-radius: 16px;
+            margin-bottom: 18px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .vidas {
+            display: flex;
+            gap: 6px;
+            font-size: 1.8rem;
+            line-height: 1;
+        }
+
+        .vidas .vida {
+            color: #ffcc00;
+            transition: 0.3s;
+        }
+
+        .vidas .vida.perdida {
+            color: #333;
+            transform: scale(0.8);
+        }
+
+        .puntaje {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .puntaje span {
+            color: #ffcc00;
+            font-size: 1.8rem;
+        }
+
+        /* Canvas del juego */
+        #gameCanvas {
+            width: 100%;
+            aspect-ratio: 480 / 600;
+            background: #0d0d0d;
+            border-radius: 18px;
+            display: block;
+            margin: 0 auto;
+            border: 2px solid #2a2a2a;
+            cursor: pointer;
+            touch-action: none;
+        }
+
+        /* Controles y botones */
+        .game-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+
+        .btn-juego {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Poppins', sans-serif;
+            background: #ffcc00;
+            color: #000;
+        }
+
+        .btn-juego:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 204, 0, 0.4);
+        }
+
+        .btn-juego:active {
+            transform: scale(0.95);
+        }
+
+        .btn-juego.secundario {
+            background: transparent;
+            color: #fff;
+            border: 2px solid #ffcc00;
+        }
+
+        .btn-juego.secundario:hover {
+            background: #ffcc00;
+            color: #000;
+        }
+
+        /* Instrucciones */
+        .instrucciones {
+            margin-top: 16px;
+            color: #999;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .instrucciones strong {
+            color: #ffcc00;
+        }
+
+        /* Responsive */
+        @media (max-width: 550px) {
+            .game-wrapper {
+                padding: 18px 14px 22px;
+                border-radius: 20px;
+            }
+
+            .game-logo img {
+                height: 40px;
+            }
+
+            .game-logo span {
+                font-size: 1.3rem;
+            }
+
+            .vidas {
+                font-size: 1.4rem;
+            }
+
+            .puntaje {
+                font-size: 1rem;
+            }
+
+            .puntaje span {
+                font-size: 1.4rem;
+            }
+
+            .btn-juego {
+                padding: 10px 20px;
+                font-size: 0.85rem;
+            }
+
+            .instrucciones {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .game-wrapper {
+                padding: 12px 8px 16px;
+                border-radius: 16px;
+            }
+
+            .game-logo img {
+                height: 32px;
+            }
+
+            .game-logo span {
+                font-size: 1rem;
+            }
+
+            .game-header {
+                padding: 6px 10px;
+                flex-wrap: wrap;
+                gap: 6px;
+                justify-content: center;
+            }
+
+            .vidas {
+                font-size: 1.2rem;
+            }
+
+            .puntaje {
+                font-size: 0.85rem;
+            }
+
+            .btn-juego {
+                padding: 8px 16px;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="game-wrapper">
+        <!-- Logo + título -->
+        <div class="game-logo">
+            <img src="logo.webp" alt="Los Hijos de Tencha" onerror="this.style.display='none'" />
+            <span>🎵 DIABLITO MUSICAL</span>
+        </div>
+
+        <!-- Cabecera: vidas y puntaje -->
+        <div class="game-header">
+            <div class="vidas" id="vidasDisplay">
+                <span class="vida">❤️</span>
+                <span class="vida">❤️</span>
+                <span class="vida">❤️</span>
+            </div>
+            <div class="puntaje">🎶 <span id="puntajeDisplay">0</span></div>
+        </div>
+
+        <!-- Canvas del juego -->
+        <canvas id="gameCanvas" width="480" height="600"></canvas>
+
+        <!-- Controles -->
+        <div class="game-controls">
+            <button class="btn-juego" id="btnReiniciar">🔄 Reiniciar</button>
+            <button class="btn-juego secundario" id="btnPausa">⏸️ Pausa</button>
+        </div>
+
+        <p class="instrucciones">
+            <strong>⬅️ ➡️</strong> Mueve al diablito con el mouse o con las flechas.
+            ¡Atrapa las <strong>🎵 notas</strong>! 3 falladas = ❤️ perdida.
+        </p>
+    </div>
+
+    <script>
+        // ============================================================
+        //  JUEGO: DIABLITO MUSICAL - LOS HIJOS DE TENCHA
+        // ============================================================
+
+        // -------- CONFIGURACIÓN --------
+        const CONFIG = {
+            canvasWidth: 480,
+            canvasHeight: 600,
+            diablitoWidth: 56,
+            diablitoHeight: 56,
+            notaWidth: 40,
+            notaHeight: 40,
+            velocidadInicial: 2.2,
+            velocidadMaxima: 7.5,
+            incrementoVelocidad: 0.08,
+            intervaloGeneracion: 38, // frames entre notas
+            vidasMaximas: 3,
+            fallosPorVida: 3,
+        };
+
+        // -------- DOM --------
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const vidasDisplay = document.getElementById('vidasDisplay');
+        const puntajeDisplay = document.getElementById('puntajeDisplay');
+        const btnReiniciar = document.getElementById('btnReiniciar');
+        const btnPausa = document.getElementById('btnPausa');
+
+        // -------- ESTADO DEL JUEGO --------
+        let estado = {
+            // Jugador
+            diablito: {
+                x: CONFIG.canvasWidth / 2 - CONFIG.diablitoWidth / 2,
+                y: CONFIG.canvasHeight - 90,
+                w: CONFIG.diablitoWidth,
+                h: CONFIG.diablitoHeight,
+            },
+            // Notas musicales
+            notas: [],
+            // Puntaje y vidas
+            puntaje: 0,
+            vidas: CONFIG.vidasMaximas,
+            fallosActuales: 0, // fallos antes de perder una vida
+            // Control
+            juegoActivo: false,
+            pausado: false,
+            gameOver: false,
+            victoria: false,
+            // Velocidad
+            velocidad: CONFIG.velocidadInicial,
+            // Contador para generar notas
+            frameCounter: 0,
+            // Teclas
+            teclas: {
+                izquierda: false,
+                derecha: false,
+            },
+            // Imagen del diablito (se carga con Image)
+            diablitoImg: null,
+            // Imagen de nota musical
+            notaImg: null,
+            // Carga de imágenes
+            imagenesCargadas: 0,
+            totalImagenes: 2,
+            // Animación de frames
+            animFrame: null,
+        };
+
+        // -------- SÍMBOLOS DE NOTAS (alternativas si no carga imagen) --------
+        const SIMBOLOS_NOTA = ['🎵', '🎶', '♩', '♪', '♫'];
+
+        // -------- CARGAR IMÁGENES --------
+        function cargarImagenes() {
+            // Diablito: menu-icono.webp
+            const imgDiablito = new Image();
+            imgDiablito.src = 'menu-icono.webp';
+            imgDiablito.onload = () => {
+                estado.diablitoImg = imgDiablito;
+                estado.imagenesCargadas++;
+                verificarCarga();
+            };
+            imgDiablito.onerror = () => {
+                console.warn('No se pudo cargar menu-icono.webp, se usará emoji 😈');
+                estado.imagenesCargadas++;
+                verificarCarga();
+            };
+
+            // Nota musical: usamos un emoji o dibujo, pero intentamos cargar una imagen si existe
+            // Como no tenemos una imagen específica para notas, usamos emoji o dibujo
+            // Pero simulamos carga para que el juego comience
+            estado.notaImg = null; // usaremos emoji
+            estado.imagenesCargadas++;
+            verificarCarga();
+        }
+
+        function verificarCarga() {
+            if (estado.imagenesCargadas >= estado.totalImagenes) {
+                iniciarJuego();
+            }
+        }
+
+        // -------- INICIAR JUEGO --------
+        function iniciarJuego() {
+            resetearEstado();
+            estado.juegoActivo = true;
+            estado.gameOver = false;
+            estado.victoria = false;
+            estado.pausado = false;
+            btnPausa.textContent = '⏸️ Pausa';
+            dibujar();
+            loopJuego();
+        }
+
+        function resetearEstado() {
+            estado.notas = [];
+            estado.puntaje = 0;
+            estado.vidas = CONFIG.vidasMaximas;
+            estado.fallosActuales = 0;
+            estado.velocidad = CONFIG.velocidadInicial;
+            estado.frameCounter = 0;
+            estado.gameOver = false;
+            estado.victoria = false;
+            estado.diablito.x = CONFIG.canvasWidth / 2 - CONFIG.diablitoWidth / 2;
+            estado.teclas.izquierda = false;
+            estado.teclas.derecha = false;
+            actualizarUI();
+        }
+
+        // -------- ACTUALIZAR UI --------
+        function actualizarUI() {
+            // Vidas
+            const vidasSpan = vidasDisplay.querySelectorAll('.vida');
+            vidasSpan.forEach((el, i) => {
+                if (i < estado.vidas) {
+                    el.classList.remove('perdida');
+                    el.textContent = '❤️';
+                } else {
+                    el.classList.add('perdida');
+                    el.textContent = '🖤';
+                }
+            });
+            // Puntaje
+            puntajeDisplay.textContent = estado.puntaje;
+        }
+
+        // -------- LOOP PRINCIPAL --------
+        function loopJuego() {
+            if (!estado.juegoActivo) return;
+
+            if (!estado.pausado && !estado.gameOver && !estado.victoria) {
+                actualizar();
+                dibujar();
+            } else if (estado.gameOver || estado.victoria) {
+                dibujar(); // dibuja el estado final
+            }
+
+            estado.animFrame = requestAnimationFrame(loopJuego);
+        }
+
+        // -------- ACTUALIZAR LÓGICA --------
+        function actualizar() {
+            // 1. Mover diablito con teclas
+            const velocidadDiablito = 6;
+            if (estado.teclas.izquierda) {
+                estado.diablito.x -= velocidadDiablito;
+            }
+            if (estado.teclas.derecha) {
+                estado.diablito.x += velocidadDiablito;
+            }
+            // Limitar dentro del canvas
+            if (estado.diablito.x < 0) estado.diablito.x = 0;
+            if (estado.diablito.x + estado.diablito.w > CONFIG.canvasWidth) {
+                estado.diablito.x = CONFIG.canvasWidth - estado.diablito.w;
+            }
+
+            // 2. Generar notas
+            estado.frameCounter++;
+            const intervalo = Math.max(15, CONFIG.intervaloGeneracion - Math.floor(estado.velocidad * 1.5));
+            if (estado.frameCounter >= intervalo) {
+                estado.frameCounter = 0;
+                generarNota();
+            }
+
+            // 3. Mover notas y verificar colisiones / fallos
+            const notasAEliminar = [];
+            for (let i = 0; i < estado.notas.length; i++) {
+                const nota = estado.notas[i];
+                nota.y += estado.velocidad;
+
+                // Verificar colisión con diablito
+                if (!nota.atrapada && !nota.fallada) {
+                    if (colisionRect(estado.diablito, nota)) {
+                        // ¡Atrapada!
+                        nota.atrapada = true;
+                        estado.puntaje++;
+                        actualizarUI();
+                        notasAEliminar.push(i);
+                        continue;
+                    }
+                }
+
+                // Si la nota pasó el borde inferior sin ser atrapada
+                if (!nota.atrapada && !nota.fallada && nota.y + nota.h > CONFIG.canvasHeight) {
+                    nota.fallada = true;
+                    estado.fallosActuales++;
+                    // Verificar si perdió una vida
+                    if (estado.fallosActuales >= CONFIG.fallosPorVida) {
+                        estado.fallosActuales = 0;
+                        estado.vidas--;
+                        actualizarUI();
+                        if (estado.vidas <= 0) {
+                            estado.gameOver = true;
+                            estado.juegoActivo = false;
+                            return;
+                        }
+                    }
+                    notasAEliminar.push(i);
+                }
+            }
+
+            // Eliminar notas marcadas (atrapadas o falladas)
+            for (let i = notasAEliminar.length - 1; i >= 0; i--) {
+                estado.notas.splice(notasAEliminar[i], 1);
+            }
+
+            // 4. Aumentar velocidad progresivamente
+            if (estado.velocidad < CONFIG.velocidadMaxima) {
+                estado.velocidad += CONFIG.incrementoVelocidad * 0.02;
+                if (estado.velocidad > CONFIG.velocidadMaxima) {
+                    estado.velocidad = CONFIG.velocidadMaxima;
+                }
+            }
+
+            // 5. Verificar victoria (puntaje alto)
+            if (estado.puntaje >= 50) {
+                estado.victoria = true;
+                estado.juegoActivo = false;
+            }
+        }
+
+        // -------- GENERAR NOTA --------
+        function generarNota() {
+            const x = Math.random() * (CONFIG.canvasWidth - CONFIG.notaWidth);
+            const nota = {
+                x: x,
+                y: -CONFIG.notaHeight - 10,
+                w: CONFIG.notaWidth,
+                h: CONFIG.notaHeight,
+                atrapada: false,
+                fallada: false,
+                simbolo: SIMBOLOS_NOTA[Math.floor(Math.random() * SIMBOLOS_NOTA.length)],
+                // Color aleatorio dentro de la paleta
+                color: ['#ffcc00', '#ff6b6b', '#4ecdc4', '#ffe66d', '#ff9ff3'][Math.floor(Math.random() * 5)],
+            };
+            estado.notas.push(nota);
+        }
+
+        // -------- COLISIÓN --------
+        function colisionRect(a, b) {
+            return a.x < b.x + b.w &&
+                a.x + a.w > b.x &&
+                a.y < b.y + b.h &&
+                a.y + a.h > b.y;
+        }
+
+        // -------- DIBUJAR --------
+        function dibujar() {
+            ctx.clearRect(0, 0, CONFIG.canvasWidth, CONFIG.canvasHeight);
+
+            // Fondo con gradiente
+            const grad = ctx.createRadialGradient(240, 300, 50, 240, 300, 350);
+            grad.addColorStop(0, '#1a1a2e');
+            grad.addColorStop(1, '#0a0a0a');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, CONFIG.canvasWidth, CONFIG.canvasHeight);
+
+            // Líneas decorativas (pentagrama)
+            ctx.strokeStyle = 'rgba(255, 204, 0, 0.08)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 5; i++) {
+                const y = 80 + i * 35 + Math.sin(Date.now() / 3000 + i) * 5;
+                ctx.beginPath();
+                ctx.moveTo(20, y);
+                ctx.lineTo(CONFIG.canvasWidth - 20, y + Math.sin(Date.now() / 4000 + i * 0.5) * 3);
+                ctx.stroke();
+            }
+
+            // Dibujar notas
+            for (const nota of estado.notas) {
+                if (nota.atrapada || nota.fallada) continue;
+                // Fondo de la nota (círculo)
+                ctx.shadowColor = nota.color;
+                ctx.shadowBlur = 18;
+                ctx.beginPath();
+                ctx.arc(nota.x + nota.w / 2, nota.y + nota.h / 2, nota.w / 2.2, 0, Math.PI * 2);
+                ctx.fillStyle = nota.color + '33';
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // Círculo interior
+                ctx.beginPath();
+                ctx.arc(nota.x + nota.w / 2, nota.y + nota.h / 2, nota.w / 2.8, 0, Math.PI * 2);
+                ctx.fillStyle = nota.color;
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                // Símbolo musical
+                ctx.font = `${nota.w * 0.7}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.shadowColor = '#fff';
+                ctx.shadowBlur = 10;
+                ctx.fillStyle = '#fff';
+                ctx.fillText(nota.simbolo, nota.x + nota.w / 2, nota.y + nota.h / 2 + 2);
+                ctx.shadowBlur = 0;
+            }
+
+            // Dibujar diablito
+            const d = estado.diablito;
+            if (estado.diablitoImg && estado.diablitoImg.complete && estado.diablitoImg.naturalWidth > 0) {
+                // Dibujar imagen
+                ctx.shadowColor = '#ffcc00';
+                ctx.shadowBlur = 20;
+                ctx.drawImage(estado.diablitoImg, d.x, d.y, d.w, d.h);
+                ctx.shadowBlur = 0;
+            } else {
+                // Fallback: emoji diablito
+                ctx.font = `${d.w * 0.8}px "Segoe UI Emoji", "Apple Color Emoji", sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.shadowColor = '#ffcc00';
+                ctx.shadowBlur = 25;
+                ctx.fillStyle = '#ffcc00';
+                ctx.fillText('😈', d.x + d.w / 2, d.y + d.h / 2 + 2);
+                ctx.shadowBlur = 0;
+            }
+
+            // Efecto de brillo alrededor del diablito
+            const grad2 = ctx.createRadialGradient(
+                d.x + d.w / 2, d.y + d.h / 2, 5,
+                d.x + d.w / 2, d.y + d.h / 2, d.w * 1.2
+            );
+            grad2.addColorStop(0, 'rgba(255, 204, 0, 0.08)');
+            grad2.addColorStop(1, 'rgba(255, 204, 0, 0)');
+            ctx.fillStyle = grad2;
+            ctx.fillRect(d.x - 30, d.y - 30, d.w + 60, d.h + 60);
+
+            // ----- ESTADOS FINALES -----
+            if (estado.gameOver) {
+                ctx.fillStyle = 'rgba(0,0,0,0.7)';
+                ctx.fillRect(0, 0, CONFIG.canvasWidth, CONFIG.canvasHeight);
+                ctx.font = 'bold 48px "Poppins", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.shadowColor = '#ff0000';
+                ctx.shadowBlur = 30;
+                ctx.fillStyle = '#ff4444';
+                ctx.fillText('💀 GAME OVER', CONFIG.canvasWidth / 2, CONFIG.canvasHeight / 2 - 30);
+                ctx.shadowBlur = 0;
+                ctx.font = '24px "Poppins", sans-serif';
+                ctx.fillStyle = '#ffcc00';
+                ctx.fillText(`Puntaje: ${estado.puntaje}`, CONFIG.canvasWidth / 2, CONFIG.canvasHeight / 2 + 50);
+                ctx.fillStyle = '#aaa';
+                ctx.font = '18px "Poppins", sans-serif';
+                ctx.fillText('Presiona "Reiniciar" para jugar de nuevo', CONFIG.canvasWidth / 2, CONFIG.canvasHeight / 2 +
+                    110);
+            }
+
+            if (estado.victoria) {
+                ctx.fillStyle = 'rgba(0,0,0,0.7)';
+                ctx.fillRect(0, 0, CONFIG.canvasWidth, CONFIG.canvasHeight);
+                ctx.font = 'bold 48px "Poppins", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.shadowColor = '#ffcc00';
+                ctx.shadowBlur = 40;
+                ctx.fillStyle = '#ffcc00';
+                ctx.fillText('🏆 ¡VICTORIA!', CONFIG.canvasWidth / 2, CONFIG.canvasHeight / 2 - 30);
+                ctx.shadowBlur = 0;
+                ctx.font = '28px "Poppins", sans-serif';
+                ctx.fillStyle = '#fff';
+                ctx.fillText(`Puntaje: ${estado.puntaje}`, CONFIG.canvasWidth / 2, CONFIG.canvasHeight / 2 + 50);
+                ctx.fillStyle = '#aaa';
+                ctx.font = '18px "Poppins", sans-serif';
+                ctx.fillText('¡Eres un músico legendario! 🎵', CONFIG.canvasWidth / 2, CONFIG.canvasHeight / 2 + 110);
+            }
+
+            if (estado.pausado && !estado.gameOver && !estado.victoria) {
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                ctx.fillRect(0, 0, CONFIG.canvasWidth, CONFIG.canvasHeight);
+                ctx.font = 'bold 40px "Poppins", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#ffcc00';
+                ctx.fillText('⏸️ PAUSA', CONFIG.canvasWidth / 2, CONFIG.canvasHeight / 2);
+            }
+
+            // Contador de fallos actuales (pequeño indicador)
+            if (!estado.gameOver && !estado.victoria) {
+                ctx.font = '14px "Poppins", sans-serif';
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'bottom';
+                ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                ctx.fillText(`Fallos: ${estado.fallosActuales}/${CONFIG.fallosPorVida}`, CONFIG.canvasWidth - 12, CONFIG
+                    .canvasHeight - 10);
+            }
+        }
+
+        // -------- MOVER CON MOUSE / TÁCTIL --------
+        function moverDiablitoConMouse(e) {
+            if (!estado.juegoActivo || estado.pausado || estado.gameOver || estado.victoria) return;
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            let clientX = e.clientX !== undefined ? e.clientX : e.touches[0].clientX;
+            let x = (clientX - rect.left) * scaleX;
+            x = x - estado.diablito.w / 2;
+            if (x < 0) x = 0;
+            if (x + estado.diablito.w > CONFIG.canvasWidth) x = CONFIG.canvasWidth - estado.diablito.w;
+            estado.diablito.x = x;
+        }
+
+        // -------- EVENTOS --------
+        // Teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'Left' || e.key === 'a' || e.key === 'A') {
+                e.preventDefault();
+                estado.teclas.izquierda = true;
+            }
+            if (e.key === 'ArrowRight' || e.key === 'Right' || e.key === 'd' || e.key === 'D') {
+                e.preventDefault();
+                estado.teclas.derecha = true;
+            }
+            if (e.key === ' ' || e.key === 'p' || e.key === 'P') {
+                e.preventDefault();
+                togglePausa();
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'Left' || e.key === 'a' || e.key === 'A') {
+                e.preventDefault();
+                estado.teclas.izquierda = false;
+            }
+            if (e.key === 'ArrowRight' || e.key === 'Right' || e.key === 'd' || e.key === 'D') {
+                e.preventDefault();
+                estado.teclas.derecha = false;
+            }
+        });
+
+        // Mouse / táctil en canvas
+        canvas.addEventListener('mousemove', moverDiablitoConMouse);
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            moverDiablitoConMouse(e);
+        }, { passive: false });
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moverDiablitoConMouse(e);
+        }, { passive: false });
+
+        // Botones
+        btnReiniciar.addEventListener('click', () => {
+            if (estado.animFrame) cancelAnimationFrame(estado.animFrame);
+            resetearEstado();
+            estado.juegoActivo = true;
+            estado.gameOver = false;
+            estado.victoria = false;
+            estado.pausado = false;
+            btnPausa.textContent = '⏸️ Pausa';
+            actualizarUI();
+            loopJuego();
+        });
+
+        btnPausa.addEventListener('click', togglePausa);
+
+        function togglePausa() {
+            if (!estado.juegoActivo || estado.gameOver || estado.victoria) return;
+            estado.pausado = !estado.pausado;
+            btnPausa.textContent = estado.pausado ? '▶️ Reanudar' : '⏸️ Pausa';
+        }
+
+        // -------- INICIO --------
+        cargarImagenes();
+
+        // Prevenir scroll en móvil
+        document.addEventListener('touchmove', (e) => {
+            if (e.target === canvas) e.preventDefault();
+        }, { passive: false });
+
+        console.log('🎵 Diablito Musical - Los Hijos de Tencha');
+        console.log('🎶 ¡Atrapa todas las notas!');
+    </script>
+
+</body>
+
+</html>
