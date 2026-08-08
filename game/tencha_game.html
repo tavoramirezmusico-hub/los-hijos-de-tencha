@@ -56,13 +56,13 @@
 
         .logo-centro {
             position: absolute;
-            top: 10px;
+            top: 8px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 6;
-            width: clamp(70px, 12vw, 110px);
+            width: clamp(88px, 15vw, 138px);
             height: auto;
-            filter: drop-shadow(0 0 30px rgba(255, 204, 0, 0.15));
+            filter: drop-shadow(0 0 35px rgba(255, 204, 0, 0.15));
             pointer-events: none;
         }
 
@@ -115,6 +115,143 @@
             padding: 2px 10px;
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        /* ---- BONUS INDICADOR ---- */
+        .bonus-indicador {
+            position: absolute;
+            top: 55px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 7;
+            color: #ff6b6b;
+            font-weight: 900;
+            font-size: clamp(13px, 2vw, 18px);
+            text-shadow: 0 0 30px rgba(255, 107, 107, 0.3), 0 0 60px rgba(255, 107, 107, 0.1);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            text-align: center;
+            letter-spacing: 1px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 4px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 107, 107, 0.2);
+            backdrop-filter: blur(4px);
+            white-space: nowrap;
+        }
+
+        .bonus-indicador.visible {
+            opacity: 1;
+        }
+
+        .bonus-indicador .doble {
+            color: #ffd93d;
+            font-size: clamp(11px, 1.6vw, 15px);
+        }
+
+        /* ---- MENSAJE VICTORIA ---- */
+        .victoria-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, .8);
+            backdrop-filter: blur(8px);
+            z-index: 15;
+            gap: 14px;
+        }
+
+        .victoria-overlay h1 {
+            color: #ffd93d;
+            font-size: clamp(38px, 8vw, 60px);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 40px rgba(255, 217, 61, 0.3), 0 0 80px rgba(255, 217, 61, 0.1);
+            animation: victoriaPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes victoriaPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.03);
+            }
+        }
+
+        .victoria-overlay h1 .fuego {
+            display: inline-block;
+            animation: fuego 0.6s ease-in-out infinite alternate;
+        }
+
+        .victoria-overlay h1 .fuego:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .victoria-overlay h1 .fuego:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes fuego {
+            0% {
+                transform: scale(1) rotate(-2deg);
+            }
+
+            100% {
+                transform: scale(1.1) rotate(2deg);
+            }
+        }
+
+        .victoria-overlay p {
+            color: #ddd;
+            font-size: clamp(16px, 2.5vw, 22px);
+            max-width: 500px;
+            line-height: 1.6;
+        }
+
+        .victoria-overlay .puntos-finales {
+            color: #ffcc00;
+            font-size: clamp(24px, 3.5vw, 34px);
+            font-weight: 900;
+        }
+
+        .victoria-overlay .btn-tencha {
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            padding: 12px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: .3s;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+        }
+
+        .victoria-overlay .btn-tencha:hover {
+            background: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 204, 0, .15);
+        }
+
+        .victoria-overlay .btn-tencha.rojo {
+            background: #d72638;
+            color: #fff;
+        }
+
+        .victoria-overlay .btn-tencha.rojo:hover {
+            background: #ff3b4f;
         }
 
         .hud-botones {
@@ -309,36 +446,8 @@
             min-width: 160px;
         }
 
-        /* ---- BONUS ---- */
-        .bonus-overlay {
-            background: rgba(0, 0, 0, .6);
-            backdrop-filter: blur(4px);
-            z-index: 8;
-        }
-
-        .bonus-overlay h1 {
-            color: #ff6b6b;
-            font-size: clamp(28px, 6vw, 48px);
-            text-shadow: 0 0 60px rgba(255, 107, 107, .3), 0 0 120px rgba(255, 107, 107, .1);
-            animation: pulse 1.2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.03);
-            }
-        }
-
-        .bonus-overlay .puntos-bonus {
-            color: #ffd93d;
-            font-size: 28px;
-            font-weight: 900;
+        .victoria-overlay .btn-tencha {
+            min-width: 160px;
         }
 
         @media (hover: none) {
@@ -375,20 +484,34 @@
 
             .logo-centro {
                 top: 6px;
-                width: clamp(50px, 10vw, 70px);
+                width: clamp(60px, 12vw, 85px);
+            }
+
+            .bonus-indicador {
+                top: 48px;
+                font-size: 11px;
+                padding: 3px 14px;
+                white-space: normal;
+                max-width: 90%;
             }
         }
 
         @media (max-width: 400px) {
             .logo-centro {
                 top: 4px;
-                width: clamp(40px, 8vw, 55px);
+                width: clamp(50px, 10vw, 70px);
             }
 
             .hud {
                 top: 4px;
                 left: 6px;
                 right: 6px;
+            }
+
+            .bonus-indicador {
+                top: 42px;
+                font-size: 10px;
+                padding: 2px 10px;
             }
         }
     </style>
@@ -409,11 +532,17 @@
             <div class="velocidad-indicador" id="velocidadHUD">⚡ Nivel 1</div>
         </div>
 
+        <!-- Bonus indicador (flotante) -->
+        <div class="bonus-indicador" id="bonusIndicador">
+            🔥 ¡ME VALE VERGA LO QUE PIENSEN DE MÍ! <span class="doble">✨ PUNTOS DOBLES</span>
+        </div>
+
         <div class="hud-botones">
             <button id="btnPausa" class="btn-pausa">⏸️ Pausa</button>
             <button id="btnSalir" class="btn-salir">🚪 Salir</button>
         </div>
 
+        <!-- Pantalla de inicio -->
         <div class="overlay" id="pantallaInicio">
             <h1>El Diablo Cumbiambero</h1>
             <p>Brinca guitarras, bajos, bongós, tumbas, pianos, acordeones y teclados que se te atraviesan en el camino.
@@ -425,6 +554,7 @@
             <button class="btn-tencha" id="btnIniciar">Empezar a bailar</button>
         </div>
 
+        <!-- Pantalla de pausa -->
         <div class="overlay pausa-overlay oculto" id="pantallaPausa">
             <h1>⏸️ PAUSA</h1>
             <p>Descansa un momento, el diablo te espera.</p>
@@ -432,6 +562,7 @@
             <button class="btn-tencha rojo" id="btnSalirPausa" style="margin-top:4px;">🚪 Salir al sitio</button>
         </div>
 
+        <!-- Pantalla de juego terminado -->
         <div class="overlay oculto" id="pantallaFin">
             <h1 class="rojo">Juego Terminado</h1>
             <p class="score-final" id="puntajeFinal">Puntos: 0</p>
@@ -439,14 +570,20 @@
             <button class="btn-tencha rojo" id="btnSalirFin">🚪 Salir al sitio</button>
         </div>
 
-        <!-- BONUS: Me Vale Verga -->
-        <div class="overlay bonus-overlay oculto" id="pantallaBonus">
-            <h1>🔥 ¡ME VALE VERGA!</h1>
-            <p style="color: #ffd93d; font-size: 18px;">Lo que piensen de mí, ¡yo sigo bailando!</p>
-            <p class="puntos-bonus" id="bonusPuntos">+50 PUNTOS</p>
-            <div style="font-size: 48px; margin-top: -4px;">🎵🎶🔥</div>
+        <!-- Pantalla de VICTORIA (6000 puntos) -->
+        <div class="victoria-overlay oculto" id="pantallaVictoria">
+            <h1>
+                <span class="fuego">🔥</span>
+                ¡HAS GANADO!
+                <span class="fuego">🔥</span>
+            </h1>
+            <p>¡Eres un verdadero Diablo Cumbiambero! La música y la fiesta te llevan a la victoria.</p>
+            <p class="puntos-finales" id="puntosVictoria">🎵 6000 PUNTOS 🎵</p>
+            <button class="btn-tencha" id="btnReiniciarVictoria">Reiniciar</button>
+            <button class="btn-tencha rojo" id="btnSalirVictoria">🚪 Salir al sitio</button>
         </div>
 
+        <!-- Grito al reiniciar -->
         <div class="overlay oculto" id="pantallaGrito">
             <div class="grito-diablo">¡La cuuumbbbia del diablooooooo! 🔥</div>
         </div>
@@ -463,15 +600,18 @@
             const vidasHUD = document.getElementById('vidasHUD');
             const puntajeHUD = document.getElementById('puntajeHUD');
             const velocidadHUD = document.getElementById('velocidadHUD');
+            const bonusIndicador = document.getElementById('bonusIndicador');
             const pantallaInicio = document.getElementById('pantallaInicio');
             const pantallaPausa = document.getElementById('pantallaPausa');
             const pantallaFin = document.getElementById('pantallaFin');
-            const pantallaBonus = document.getElementById('pantallaBonus');
+            const pantallaVictoria = document.getElementById('pantallaVictoria');
             const pantallaGrito = document.getElementById('pantallaGrito');
             const puntajeFinal = document.getElementById('puntajeFinal');
-            const bonusPuntos = document.getElementById('bonusPuntos');
+            const puntosVictoria = document.getElementById('puntosVictoria');
             const btnIniciar = document.getElementById('btnIniciar');
             const btnReiniciar = document.getElementById('btnReiniciar');
+            const btnReiniciarVictoria = document.getElementById('btnReiniciarVictoria');
+            const btnSalirVictoria = document.getElementById('btnSalirVictoria');
             const btnPausa = document.getElementById('btnPausa');
             const btnReanudar = document.getElementById('btnReanudar');
             const btnSalir = document.getElementById('btnSalir');
@@ -532,6 +672,10 @@
                 { emoji: '🦩', nombre: 'flamenco', ancho: 30, alto: 26 }
             ];
 
+            // ---- HITOS DE BONUS ----
+            const HITOS_BONUS = [500, 1000, 2500, 5000];
+            const PUNTOS_VICTORIA = 6000;
+
             // ---- Estado ----
             let obstaculos = [];
             let particulas = [];
@@ -540,8 +684,6 @@
             let pinos = [];
             let hojas = [];
             let estrellas = [];
-            let bonusActivo = false;
-            let bonusTimeout = null;
 
             let velocidadJuego = 5.5;
             const VELOCIDAD_MAX = 14;
@@ -550,10 +692,11 @@
             let vidas = 3;
             const VIDAS_MAX = 3;
             let invencibleHasta = 0;
+
             let siguienteObstaculo = 0;
             let siguienteAnimal = 0;
             let siguientePajaro = 0;
-            let siguienteBonus = 0;
+
             let estado = 'inicio';
             let pausado = false;
             let tiempoAnterior = null;
@@ -561,9 +704,15 @@
             let animFrame = null;
             let finTimeout = null;
             let frameCount = 0;
-            let ultimaVidaPerdida = 0;
 
-            // ---- Generar pinos (siluetas que llegan hasta arriba) ----
+            // ---- Sistema de Bonus ----
+            let bonusActivo = false;
+            let bonusTimeout = null;
+            let bonusDoblePuntos = false;
+            let bonusDobleHasta = 0;
+            let hitosAlcanzados = new Set();
+
+            // ---- Generar pinos ----
             function generarPinos() {
                 pinos = [];
                 for (let i = 0; i < 35; i++) {
@@ -581,12 +730,11 @@
                         offset: Math.random() * 100
                     });
                 }
-                // Ordenar por altura (los más altos atrás)
                 pinos.sort((a, b) => a.altura - b.altura);
             }
             generarPinos();
 
-            // ---- Estrellas psicodélicas ----
+            // ---- Estrellas ----
             function generarEstrellas() {
                 estrellas = [];
                 for (let i = 0; i < 80; i++) {
@@ -603,7 +751,7 @@
             }
             generarEstrellas();
 
-            // ---- Hojas psicodélicas ----
+            // ---- Hojas ----
             function generarHojas() {
                 hojas = [];
                 for (let i = 0; i < 20; i++) {
@@ -638,6 +786,92 @@
                 puntajeHUD.textContent = 'PUNTOS: ' + puntos;
                 const nivel = Math.floor(distancia / 250) + 1;
                 velocidadHUD.textContent = '⚡ Nivel ' + nivel;
+
+                // Verificar hitos de bonus
+                verificarHitosBonus();
+
+                // Verificar victoria (6000 puntos)
+                if (puntos >= PUNTOS_VICTORIA && estado === 'jugando') {
+                    mostrarVictoria();
+                }
+            }
+
+            function verificarHitosBonus() {
+                for (const hito of HITOS_BONUS) {
+                    if (puntos >= hito && !hitosAlcanzados.has(hito) && estado === 'jugando') {
+                        hitosAlcanzados.add(hito);
+                        activarBonus(hito);
+                        break;
+                    }
+                }
+            }
+
+            function activarBonus(hito) {
+                if (bonusTimeout) {
+                    clearTimeout(bonusTimeout);
+                    clearTimeout(bonusTimeout);
+                }
+
+                // Activar puntos dobles por 15 segundos
+                bonusDoblePuntos = true;
+                bonusDobleHasta = Date.now() + 15000;
+
+                // Mostrar indicador
+                bonusIndicador.classList.add('visible');
+                bonusIndicador.innerHTML = `
+                    🔥 ¡ME VALE VERGA LO QUE PIENSEN DE MÍ! 
+                    <span class="doble">✨ PUNTOS DOBLES ×2 (15s)</span>
+                `;
+
+                // Efecto de partículas de celebración
+                for (let i = 0; i < 40; i++) {
+                    particulas.push({
+                        x: ANCHO / 2 + (Math.random() - 0.5) * 300,
+                        y: ALTO / 2 + (Math.random() - 0.5) * 150,
+                        vx: (Math.random() - 0.5) * 14,
+                        vy: (Math.random() - 2) * 10 - 3,
+                        vida: 55,
+                        color: ['#ffcc00', '#ff6b6b', '#ffd93d', '#ff9ff3', '#48dbfb', '#ff6348', '#ff8a5c'][Math.floor(Math
+                            .random() * 7)],
+                        tamano: 3 + Math.random() * 6
+                    });
+                }
+
+                // Ocultar después de 3 segundos (el indicador)
+                if (bonusTimeout) clearTimeout(bonusTimeout);
+                bonusTimeout = setTimeout(() => {
+                    bonusIndicador.classList.remove('visible');
+                }, 3000);
+
+                // Desactivar puntos dobles después de 15 segundos
+                setTimeout(() => {
+                    bonusDoblePuntos = false;
+                    bonusIndicador.classList.remove('visible');
+                }, 15000);
+            }
+
+            function mostrarVictoria() {
+                estado = 'terminado';
+                puntosVictoria.textContent = '🎵 ' + puntos + ' PUNTOS 🎵';
+                pantallaVictoria.classList.remove('oculto');
+                if (animFrame) cancelAnimationFrame(animFrame);
+
+                // Efecto de celebración masivo
+                for (let i = 0; i < 80; i++) {
+                    setTimeout(() => {
+                        particulas.push({
+                            x: ANCHO / 2 + (Math.random() - 0.5) * 400,
+                            y: ALTO / 2 + (Math.random() - 0.5) * 200,
+                            vx: (Math.random() - 0.5) * 16,
+                            vy: (Math.random() - 3) * 12 - 4,
+                            vida: 70,
+                            color: ['#ffcc00', '#ff6b6b', '#ffd93d', '#ff9ff3', '#48dbfb', '#ff6348', '#ff8a5c', '#ff4757',
+                                '#2ed573'
+                            ][Math.floor(Math.random() * 9)],
+                            tamano: 4 + Math.random() * 8
+                        });
+                    }, i * 30);
+                }
             }
 
             function tiempoAleatorioObstaculo() {
@@ -653,10 +887,6 @@
                 return 100 + Math.random() * 200;
             }
 
-            function tiempoAleatorioBonus() {
-                return 180 + Math.random() * 300; // cada 3-8 segundos sin perder
-            }
-
             function reiniciarEstadoJuego() {
                 obstaculos = [];
                 particulas = [];
@@ -667,20 +897,25 @@
                 puntos = 0;
                 vidas = 3;
                 invencibleHasta = 0;
-                ultimaVidaPerdida = 0;
                 siguienteObstaculo = tiempoAleatorioObstaculo();
                 siguienteAnimal = tiempoAleatorioAnimal();
                 siguientePajaro = tiempoAleatorioPajaro();
-                siguienteBonus = tiempoAleatorioBonus();
                 personaje.y = SUELO_Y - PERSONAJE_ALTO;
                 personaje.velocidadY = 0;
                 personaje.saltando = false;
                 personaje.angulo = 0;
                 scrollFondo = 0;
                 frameCount = 0;
+
+                // Resetear bonus
                 bonusActivo = false;
+                bonusDoblePuntos = false;
+                bonusDobleHasta = 0;
+                hitosAlcanzados = new Set();
                 if (bonusTimeout) clearTimeout(bonusTimeout);
-                pantallaBonus.classList.add('oculto');
+                bonusIndicador.classList.remove('visible');
+
+                pantallaVictoria.classList.add('oculto');
                 corazonesHUD();
                 actualizarPuntaje();
                 document.getElementById('btnPausa').textContent = '⏸️ Pausa';
@@ -723,7 +958,13 @@
                     e.preventDefault();
                     if (estado === 'inicio') empezarJuego();
                     else if (estado === 'jugando' && !pausado) saltar();
-                    else if (estado === 'terminado') reiniciar();
+                    else if (estado === 'terminado') {
+                        if (!pantallaVictoria.classList.contains('oculto')) {
+                            reiniciarDesdeVictoria();
+                        } else {
+                            reiniciar();
+                        }
+                    }
                 }
                 if (e.code === 'KeyP' && estado === 'jugando') togglePausa();
             });
@@ -732,7 +973,13 @@
                 if (e.target.closest('button')) return;
                 if (estado === 'inicio') empezarJuego();
                 else if (estado === 'jugando' && !pausado) saltar();
-                else if (estado === 'terminado') reiniciar();
+                else if (estado === 'terminado') {
+                    if (!pantallaVictoria.classList.contains('oculto')) {
+                        reiniciarDesdeVictoria();
+                    } else {
+                        reiniciar();
+                    }
+                }
             });
 
             btnIniciar.addEventListener('click', (e) => {
@@ -742,6 +989,14 @@
             btnReiniciar.addEventListener('click', (e) => {
                 e.stopPropagation();
                 reiniciar();
+            });
+            btnReiniciarVictoria.addEventListener('click', (e) => {
+                e.stopPropagation();
+                reiniciarDesdeVictoria();
+            });
+            btnSalirVictoria.addEventListener('click', (e) => {
+                e.stopPropagation();
+                salirAlSitio();
             });
             btnPausa.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -768,6 +1023,7 @@
             function empezarJuego() {
                 pantallaInicio.classList.add('oculto');
                 pantallaFin.classList.add('oculto');
+                pantallaVictoria.classList.add('oculto');
                 reiniciarEstadoJuego();
                 estado = 'jugando';
                 tiempoAnterior = null;
@@ -789,41 +1045,20 @@
                 }, 1500);
             }
 
+            function reiniciarDesdeVictoria() {
+                pantallaVictoria.classList.add('oculto');
+                reiniciarEstadoJuego();
+                estado = 'jugando';
+                tiempoAnterior = null;
+                if (animFrame) cancelAnimationFrame(animFrame);
+                animFrame = requestAnimationFrame(bucle);
+            }
+
             function terminarJuego() {
                 estado = 'terminado';
                 puntajeFinal.textContent = 'Puntos: ' + puntos + ' | Distancia: ' + Math.floor(distancia) + 'm';
                 pantallaFin.classList.remove('oculto');
                 if (animFrame) cancelAnimationFrame(animFrame);
-            }
-
-            function mostrarBonus() {
-                if (bonusActivo || estado !== 'jugando') return;
-                const bonus = 50 + Math.floor(Math.random() * 30);
-                puntos += bonus;
-                bonusPuntos.textContent = '+' + bonus + ' PUNTOS';
-                actualizarPuntaje();
-                bonusActivo = true;
-                pantallaBonus.classList.remove('oculto');
-
-                // Efecto de partículas de celebración
-                for (let i = 0; i < 30; i++) {
-                    particulas.push({
-                        x: ANCHO / 2 + (Math.random() - 0.5) * 200,
-                        y: ALTO / 2 + (Math.random() - 0.5) * 100,
-                        vx: (Math.random() - 0.5) * 12,
-                        vy: (Math.random() - 1.5) * 10 - 3,
-                        vida: 50,
-                        color: ['#ffcc00', '#ff6b6b', '#ffd93d', '#ff9ff3', '#48dbfb', '#ff6348'][Math.floor(Math.random() *
-                            6)],
-                        tamano: 3 + Math.random() * 5
-                    });
-                }
-
-                if (bonusTimeout) clearTimeout(bonusTimeout);
-                bonusTimeout = setTimeout(() => {
-                    pantallaBonus.classList.add('oculto');
-                    bonusActivo = false;
-                }, 2000);
             }
 
             function generarObstaculo() {
@@ -921,13 +1156,6 @@
                     personaje.angulo = 0;
                 }
 
-                // Bonus (cuando no se ha perdido vida por un tiempo)
-                siguienteBonus -= dt * 0.055;
-                if (siguienteBonus <= 0 && vidas > 0) {
-                    mostrarBonus();
-                    siguienteBonus = tiempoAleatorioBonus() + (Math.random() - 0.5) * 100;
-                }
-
                 siguienteObstaculo -= dt * 0.055;
                 if (siguienteObstaculo <= 0) {
                     generarObstaculo();
@@ -946,7 +1174,6 @@
                     siguientePajaro = tiempoAleatorioPajaro();
                 }
 
-                // Hojas psicodélicas
                 hojas.forEach(h => {
                     h.x += h.vx * dt * 0.055;
                     h.y += h.vy * dt * 0.055;
@@ -976,9 +1203,9 @@
                         if (colision(cajaPersonaje, o)) {
                             o.golpeado = true;
                             vidas--;
-                            ultimaVidaPerdida = Date.now();
-                            // Resetear bonus al perder vida
-                            siguienteBonus = tiempoAleatorioBonus();
+                            // Al perder vida, se reinicia el contador de bonus
+                            hitosAlcanzados = new Set();
+                            // Pero mantiene los puntos
                             corazonesHUD();
                             invencibleHasta = Date.now() + 1200;
                             generarParticulasImpacto(o.x + o.ancho / 2, o.y + o.alto / 2);
@@ -993,7 +1220,9 @@
 
                     if (o.x + o.ancho < -20) {
                         if (!o.golpeado) {
-                            puntos += 10;
+                            // Puntos dobles si está activo
+                            const puntosGanados = bonusDoblePuntos && Date.now() < bonusDobleHasta ? 20 : 10;
+                            puntos += puntosGanados;
                             actualizarPuntaje();
                         }
                         obstaculos.splice(i, 1);
@@ -1026,13 +1255,18 @@
                     p.vida -= dt * 0.055;
                     if (p.vida <= 0) particulas.splice(i, 1);
                 }
+
+                // Verificar si el bonus de puntos dobles expiró
+                if (bonusDoblePuntos && Date.now() > bonusDobleHasta) {
+                    bonusDoblePuntos = false;
+                    bonusIndicador.classList.remove('visible');
+                }
             }
 
             // ---- Dibujar ----
             function dibujarFondo() {
                 ctx.clearRect(0, 0, ANCHO, ALTO);
 
-                // Fondo oscuro con degradado psicodélico
                 const grad = ctx.createLinearGradient(0, 0, 0, SUELO_Y);
                 grad.addColorStop(0, '#0a0505');
                 grad.addColorStop(0.15, '#0d0a0f');
@@ -1044,7 +1278,7 @@
                 ctx.fillStyle = grad;
                 ctx.fillRect(0, 0, ANCHO, SUELO_Y);
 
-                // Estrellas psicodélicas
+                // Estrellas
                 estrellas.forEach(e => {
                     const brillo = 0.3 + Math.sin(frameCount * e.parpadeo + e.fase) * 0.3;
                     ctx.globalAlpha = Math.max(0.1, brillo);
@@ -1058,7 +1292,7 @@
                     ctx.globalAlpha = 1;
                 });
 
-                // PINOS - Siluetas que llegan hasta arriba
+                // PINOS
                 pinos.forEach(pino => {
                     const xOff = (pino.x + scrollFondo * pino.velocidad * 0.5) % (ANCHO + 100) - 50;
                     const sway = Math.sin(frameCount * 0.005 + pino.offset) * 2;
@@ -1067,11 +1301,9 @@
                     ctx.save();
                     ctx.globalAlpha = pino.opacidad;
 
-                    // Tronco
                     ctx.fillStyle = '#0a0a0a';
                     ctx.fillRect(baseX - 3, SUELO_Y - pino.altura + 10, 6, pino.altura - 10);
 
-                    // Capas de hojas (pino)
                     const colores = ['#0a0a0a', '#0d0d0d', '#101010'];
                     for (let c = 0; c < pino.capas; c++) {
                         const prog = c / pino.capas;
@@ -1097,7 +1329,6 @@
                         ctx.closePath();
                         ctx.fill();
 
-                        // Detalle de ramas
                         ctx.fillStyle = 'rgba(0,0,0,0.3)';
                         for (let r = 0; r < 3; r++) {
                             const rx = baseX + (r - 1) * anchoCapa * 0.25;
@@ -1109,7 +1340,7 @@
                     ctx.restore();
                 });
 
-                // Nubes oscuras psicodélicas
+                // Nubes
                 const nubes = [
                     { x: 80, y: 30, w: 90, h: 25, color: 'rgba(30,20,40,0.15)' },
                     { x: 350, y: 18, w: 120, h: 30, color: 'rgba(40,20,50,0.12)' },
@@ -1131,7 +1362,7 @@
                     ctx.fill();
                 });
 
-                // Hojas psicodélicas volando
+                // Hojas
                 hojas.forEach(h => {
                     ctx.save();
                     ctx.translate(h.x, h.y);
@@ -1157,7 +1388,7 @@
                 ctx.fillStyle = gradSuelo;
                 ctx.fillRect(0, SUELO_Y + 4, ANCHO, ALTO - SUELO_Y - 4);
 
-                // Línea del suelo con brillo psicodélico
+                // Línea del suelo
                 ctx.strokeStyle = `hsla(${frameCount * 0.3 % 360}, 80%, 60%, 0.06)`;
                 ctx.lineWidth = 2;
                 ctx.setLineDash([15, 25]);
@@ -1167,7 +1398,6 @@
                 ctx.lineTo(ANCHO, SUELO_Y + 4);
                 ctx.stroke();
 
-                // Línea secundaria
                 ctx.strokeStyle = `hsla(${frameCount * 0.2 % 360 + 180}, 60%, 50%, 0.04)`;
                 ctx.lineWidth = 1;
                 ctx.setLineDash([8, 15]);
@@ -1178,7 +1408,7 @@
                 ctx.stroke();
                 ctx.setLineDash([]);
 
-                // Brillo psicodélico en el suelo
+                // Brillo psicodélico
                 for (let i = 0; i < 10; i++) {
                     const x = ((i * 120 + scrollFondo * 0.5) % (ANCHO + 150)) - 75;
                     const hue = (frameCount * 0.15 + i * 36) % 360;
@@ -1189,7 +1419,7 @@
                     ctx.fill();
                 }
 
-                // Neblina psicodélica en la base
+                // Neblina
                 for (let i = 0; i < 5; i++) {
                     const x = (i * 180 + scrollFondo * 0.15) % (ANCHO + 100) - 50;
                     const hue = (frameCount * 0.05 + i * 72) % 360;
@@ -1360,6 +1590,16 @@
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'bottom';
                 ctx.fillText('🌙 ' + Math.floor(distancia) + 'm', 12, ALTO - 8);
+
+                // Indicador de puntos dobles en el canvas
+                if (bonusDoblePuntos && Date.now() < bonusDobleHasta) {
+                    const tiempoRestante = Math.ceil((bonusDobleHasta - Date.now()) / 1000);
+                    ctx.fillStyle = 'rgba(255,215,0,0.15)';
+                    ctx.font = '10px Poppins, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                    ctx.fillText('×2 PUNTOS (' + tiempoRestante + 's)', ANCHO / 2, ALTO - 8);
+                }
             }
 
             // ---- Bucle ----
@@ -1389,8 +1629,9 @@
             dibujar();
 
             console.log('🔥 El Diablo Cumbiambero — Los Hijos de Tencha');
-            console.log('🌲 Siluetas de pinos y atmósfera psicodélica!');
-            console.log('💀 "Me Vale Verga" — Bonus por sobrevivir!');
+            console.log('🎯 Hitos de Bonus: 500, 1000, 2500, 5000 puntos');
+            console.log('🏆 Victoria: 6000 puntos — ¡HAS GANADO!');
+            console.log('💀 "Me Vale Verga lo que Piensen de Mi" — Puntos Dobles ×2 por 15s');
         })();
     </script>
 </body>
