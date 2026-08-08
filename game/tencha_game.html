@@ -635,6 +635,7 @@
             let pinos = [];
             let hojas = [];
             let estrellas = [];
+            let lluvia = [];
 
             // ===== VELOCIDAD: entretenida desde el inicio, acelera al acercarse a 6000 =====
             let velocidadJuego = 8.5;
@@ -726,6 +727,25 @@
                 }
             }
             generarHojas();
+
+            // ---- Lluvia de notas musicales (decorativa, no interfiere con el juego) ----
+            const SIMBOLOS_LLUVIA = ['♪', '♫', '♩', '♬'];
+            function generarLluvia() {
+                lluvia = [];
+                for (let i = 0; i < 24; i++) {
+                    lluvia.push({
+                        x: Math.random() * ANCHO,
+                        y: Math.random() * ALTO,
+                        vy: 1.2 + Math.random() * 1.4,
+                        vx: -0.3 - Math.random() * 0.3,
+                        tam: 10 + Math.random() * 10,
+                        rot: (Math.random() - 0.5) * 0.5,
+                        simbolo: SIMBOLOS_LLUVIA[Math.floor(Math.random() * SIMBOLOS_LLUVIA.length)],
+                        opacidad: 0.06 + Math.random() * 0.1
+                    });
+                }
+            }
+            generarLluvia();
 
             // ---- Funciones ----
             function corazonesHUD() {
@@ -1045,17 +1065,14 @@
 
             function generarAnimal() {
                 const tipo = ANIMALES[Math.floor(Math.random() * ANIMALES.length)];
-                const enSuelo = Math.random() > 0.3;
                 animales.push({
                     x: ANCHO + 20,
-                    y: enSuelo ? SUELO_Y - tipo.alto + 4 : 40 + Math.random() * 80,
+                    y: SUELO_Y - tipo.alto + 4,
                     ancho: tipo.ancho,
                     alto: tipo.alto,
                     emoji: tipo.emoji,
-                    enSuelo: enSuelo,
                     velocidad: 0.4 + Math.random() * 0.6,
-                    bob: Math.random() * 100,
-                    direccion: Math.random() > 0.5 ? 1 : -1
+                    paso: Math.random() * 100
                 });
             }
 
@@ -1156,6 +1173,17 @@
                     if (h.x < -20) h.x = ANCHO + 20;
                 });
 
+                // Lluvia de notas musicales: puramente decorativa, sin colisiones
+                lluvia.forEach(n => {
+                    n.y += n.vy * dt * 0.16;
+                    n.x += n.vx * dt * 0.055;
+                    if (n.y > ALTO + 20) {
+                        n.y = -20;
+                        n.x = Math.random() * ANCHO;
+                    }
+                    if (n.x < -20) n.x = ANCHO + 20;
+                });
+
                 const cajaPersonaje = {
                     x: personaje.x,
                     y: personaje.y,
@@ -1227,6 +1255,43 @@
                 }
             }
 
+            // Dibuja un pino como silueta solida en zigzag (forma de picos apilados)
+            function dibujarPinoSilueta(baseX, baseY, altura, anchoBase, dientes) {
+                const alturaCopa = altura * 0.86;
+                const apexY = baseY - altura;
+                const mitadAncho = anchoBase / 2;
+
+                ctx.beginPath();
+                ctx.moveTo(baseX, apexY);
+
+                // lado derecho: de la punta hacia la base, alternando pico/valle
+                for (let i = 1; i <= dientes; i++) {
+                    const tValle = (i - 0.55) / dientes;
+                    const tPico = i / dientes;
+                    const anchoValle = mitadAncho * Math.pow(tValle, 0.85) * 0.42;
+                    const anchoPico = mitadAncho * Math.pow(tPico, 0.85);
+                    ctx.lineTo(baseX + anchoValle, apexY + alturaCopa * tValle);
+                    ctx.lineTo(baseX + anchoPico, apexY + alturaCopa * tPico);
+                }
+
+                // lado izquierdo: de la base hacia la punta (espejado)
+                for (let i = dientes; i >= 1; i--) {
+                    const tValle = (i - 0.55) / dientes;
+                    const tPico = i / dientes;
+                    const anchoValle = mitadAncho * Math.pow(tValle, 0.85) * 0.42;
+                    const anchoPico = mitadAncho * Math.pow(tPico, 0.85);
+                    ctx.lineTo(baseX - anchoPico, apexY + alturaCopa * tPico);
+                    ctx.lineTo(baseX - anchoValle, apexY + alturaCopa * tValle);
+                }
+
+                ctx.closePath();
+                ctx.fill();
+
+                // tronco
+                const anchoTronco = Math.max(3, anchoBase * 0.13);
+                ctx.fillRect(baseX - anchoTronco / 2, baseY - altura * 0.16, anchoTronco, altura * 0.16 + 2);
+            }
+
             // ---- Dibujar ----
             function dibujarFondo() {
                 // Fondo negro solido de punta a punta
@@ -1244,7 +1309,7 @@
                 });
                 ctx.globalAlpha = 1;
 
-                // Pinos: siluetas amarillas simples, en dos planos de profundidad (parallax)
+                // Pinos: siluetas amarillas en zigzag, en dos planos de profundidad (parallax)
                 for (let capa = 0; capa < 2; capa++) {
                     pinos.forEach((pino, idx) => {
                         if (idx % 2 !== capa) return;
@@ -1258,25 +1323,7 @@
                         ctx.globalAlpha = pino.opacidad * (capa === 0 ? 0.55 : 1);
                         ctx.fillStyle = '#ffcc00';
 
-                        // tronco
-                        ctx.fillRect(baseX - 2, baseY - pino.altura * 0.12, 4, pino.altura * 0.12);
-
-                        // copa: triangulos apilados formando la silueta del pino
-                        const capasPino = pino.capas;
-                        for (let c = 0; c < capasPino; c++) {
-                            const prog = c / capasPino;
-                            const anchoCapa = pino.ancho * (1 - prog * 0.55);
-                            const segAlto = (pino.altura * 0.9) / capasPino;
-                            const yTop = baseY - pino.altura + prog * segAlto * 0.9;
-                            const yBase = yTop + segAlto * 1.4;
-
-                            ctx.beginPath();
-                            ctx.moveTo(baseX, yTop);
-                            ctx.lineTo(baseX - anchoCapa / 2, yBase);
-                            ctx.lineTo(baseX + anchoCapa / 2, yBase);
-                            ctx.closePath();
-                            ctx.fill();
-                        }
+                        dibujarPinoSilueta(baseX, baseY, pino.altura, pino.ancho, pino.capas);
                     });
                 }
                 ctx.globalAlpha = 1;
@@ -1382,18 +1429,35 @@
                 });
             }
 
+            // Convierte un emoji en una silueta solida de un color (usado para los animales)
+            const cacheSiluetas = {};
+            function obtenerSiluetaEmoji(emoji, tamanoPx, color) {
+                const clave = emoji + '|' + tamanoPx + '|' + color;
+                if (cacheSiluetas[clave]) return cacheSiluetas[clave];
+                const dim = Math.ceil(tamanoPx * 1.5);
+                const off = document.createElement('canvas');
+                off.width = dim;
+                off.height = dim;
+                const octx = off.getContext('2d');
+                octx.font = tamanoPx + 'px sans-serif';
+                octx.textAlign = 'center';
+                octx.textBaseline = 'middle';
+                octx.fillText(emoji, dim / 2, dim / 2 + 1);
+                octx.globalCompositeOperation = 'source-in';
+                octx.fillStyle = color;
+                octx.fillRect(0, 0, dim, dim);
+                cacheSiluetas[clave] = off;
+                return off;
+            }
+
             function dibujarAnimales() {
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
                 animales.forEach(a => {
                     ctx.save();
-                    const bobY = a.enSuelo ? 0 : Math.sin(Date.now() / 800 + a.bob) * 5;
-                    ctx.translate(a.x + a.ancho / 2, a.y + a.alto / 2 + bobY);
-                    ctx.shadowColor = 'rgba(255,255,255,0.03)';
-                    ctx.shadowBlur = 8;
-                    ctx.font = a.ancho + 'px sans-serif';
-                    ctx.fillText(a.emoji, 0, 2);
-                    ctx.shadowBlur = 0;
+                    // pequeño balanceo al caminar, siempre sobre el suelo
+                    const paso = Math.sin(Date.now() / 180 + a.paso) * 1.5;
+                    ctx.translate(a.x + a.ancho / 2, a.y + a.alto / 2 + paso);
+                    const img = obtenerSiluetaEmoji(a.emoji, Math.round(a.ancho), '#ffcc00');
+                    ctx.drawImage(img, -img.width / 2, -img.height / 2);
                     ctx.restore();
                 });
             }
@@ -1449,8 +1513,26 @@
                 });
             }
 
+            function dibujarLluvia() {
+                // Decorativa: baja opacidad y siempre detrás del juego para no interrumpir la visualización
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#ffcc00';
+                lluvia.forEach(n => {
+                    ctx.globalAlpha = n.opacidad;
+                    ctx.save();
+                    ctx.translate(n.x, n.y);
+                    ctx.rotate(n.rot);
+                    ctx.font = n.tam + 'px sans-serif';
+                    ctx.fillText(n.simbolo, 0, 0);
+                    ctx.restore();
+                });
+                ctx.globalAlpha = 1;
+            }
+
             function dibujar() {
                 dibujarFondo();
+                dibujarLluvia();
                 dibujarPajaro();
                 dibujarAnimales();
                 dibujarObstaculos();
