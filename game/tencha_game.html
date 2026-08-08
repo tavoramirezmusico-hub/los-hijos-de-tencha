@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>El Diablo Cumbiambero — Los Hijos de Tencha</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -17,7 +18,7 @@
         html,
         body {
             height: 100%;
-            background: #111;
+            background: #0a0505;
             color: #fff;
             font-family: 'Poppins', sans-serif;
             overflow: hidden;
@@ -31,8 +32,8 @@
             min-height: 100vh;
             padding: 20px;
             background:
-                radial-gradient(circle at 50% 0%, rgba(255, 204, 0, .08), transparent 60%),
-                #111;
+                radial-gradient(circle at 50% 0%, rgba(255, 204, 0, .05), transparent 70%),
+                #0a0505;
         }
 
         .juego-wrap {
@@ -41,16 +42,16 @@
             aspect-ratio: 900 / 500;
             border-radius: 18px;
             border: 3px solid #ffcc00;
-            box-shadow: 0 0 0 6px #000, 0 20px 50px rgba(0, 0, 0, .6), 0 0 40px rgba(255, 204, 0, .15);
+            box-shadow: 0 0 0 6px #000, 0 20px 50px rgba(0, 0, 0, .8), 0 0 60px rgba(255, 204, 0, .08);
             overflow: hidden;
-            background: #1a1a1a;
+            background: #0a0505;
         }
 
         canvas {
             display: block;
             width: 100%;
             height: 100%;
-            background: linear-gradient(180deg, #0d1f0d 0%, #1a3a1a 20%, #2d5a2d 50%, #1a3a1a 80%, #0d1f0d 100%);
+            background: #0a0505;
         }
 
         .logo-centro {
@@ -61,7 +62,7 @@
             z-index: 6;
             width: clamp(70px, 12vw, 110px);
             height: auto;
-            filter: drop-shadow(0 0 25px rgba(255, 204, 0, 0.25));
+            filter: drop-shadow(0 0 30px rgba(255, 204, 0, 0.15));
             pointer-events: none;
         }
 
@@ -88,30 +89,32 @@
             display: flex;
             gap: 3px;
             font-size: clamp(14px, 2.5vw, 22px);
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .6));
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .8));
         }
 
         .vida-perdida {
-            opacity: .2;
-            filter: grayscale(1) drop-shadow(0 2px 4px rgba(0, 0, 0, .6));
+            opacity: .15;
+            filter: grayscale(1) drop-shadow(0 2px 4px rgba(0, 0, 0, .8));
         }
 
         .puntaje {
             color: #ffcc00;
             font-size: clamp(12px, 2vw, 17px);
-            background: rgba(0, 0, 0, .5);
+            background: rgba(0, 0, 0, .7);
             padding: 4px 14px;
             border-radius: 20px;
-            border: 1px solid rgba(255, 204, 0, .3);
+            border: 1px solid rgba(255, 204, 0, .2);
+            text-shadow: 0 0 20px rgba(255, 204, 0, .15);
         }
 
         .velocidad-indicador {
-            color: rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.2);
             font-size: 12px;
             font-weight: 400;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.5);
             padding: 2px 10px;
             border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
         .hud-botones {
@@ -128,8 +131,8 @@
 
         .hud-botones button {
             pointer-events: auto;
-            background: rgba(0, 0, 0, .6);
-            border: 1px solid rgba(255, 204, 0, .3);
+            background: rgba(0, 0, 0, .7);
+            border: 1px solid rgba(255, 204, 0, .15);
             color: #fff;
             padding: 6px 18px;
             border-radius: 20px;
@@ -137,23 +140,24 @@
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
-            transition: .2s;
+            transition: .3s;
             backdrop-filter: blur(4px);
         }
 
         .hud-botones button:hover {
-            background: rgba(255, 204, 0, .2);
+            background: rgba(255, 204, 0, .12);
             border-color: #ffcc00;
             transform: translateY(-1px);
+            box-shadow: 0 0 20px rgba(255, 204, 0, .05);
         }
 
         .hud-botones .btn-salir {
-            border-color: rgba(215, 38, 56, .4);
+            border-color: rgba(215, 38, 56, .3);
             color: #ff6b7a;
         }
 
         .hud-botones .btn-salir:hover {
-            background: rgba(215, 38, 56, .2);
+            background: rgba(215, 38, 56, .15);
             border-color: #d72638;
         }
 
@@ -166,8 +170,8 @@
             justify-content: center;
             text-align: center;
             padding: 20px;
-            background: rgba(0, 0, 0, .78);
-            backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, .85);
+            backdrop-filter: blur(6px);
             z-index: 10;
             gap: 14px;
         }
@@ -179,22 +183,22 @@
         .overlay h1 {
             color: #ffcc00;
             font-size: clamp(26px, 6vw, 44px);
-            font-weight: 800;
+            font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            text-shadow: 0 0 20px rgba(255, 204, 0, .4);
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px rgba(255, 204, 0, .2);
         }
 
         .overlay h1.rojo {
             color: #d72638;
-            text-shadow: 0 0 20px rgba(215, 38, 56, .55);
+            text-shadow: 0 0 30px rgba(215, 38, 56, .4);
         }
 
         .overlay p {
-            color: #ddd;
+            color: #bbb;
             font-size: clamp(13px, 2.4vw, 17px);
             max-width: 480px;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .overlay .instrucciones {
@@ -202,14 +206,14 @@
             gap: 18px;
             flex-wrap: wrap;
             justify-content: center;
-            color: #bdbdbd;
+            color: #888;
             font-size: 13px;
             margin-top: 4px;
         }
 
         .overlay .instrucciones span {
-            background: rgba(255, 255, 255, .06);
-            border: 1px solid rgba(255, 255, 255, .12);
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid rgba(255, 255, 255, .06);
             padding: 6px 12px;
             border-radius: 20px;
         }
@@ -233,7 +237,7 @@
             padding: 12px 30px;
             border-radius: 30px;
             cursor: pointer;
-            transition: .2s;
+            transition: .3s;
             letter-spacing: .5px;
             text-transform: uppercase;
         }
@@ -241,6 +245,7 @@
         .btn-tencha:hover {
             background: #fff;
             transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 204, 0, .15);
         }
 
         .btn-tencha.rojo {
@@ -250,14 +255,15 @@
 
         .btn-tencha.rojo:hover {
             background: #ff3b4f;
+            box-shadow: 0 8px 30px rgba(215, 38, 56, .3);
         }
 
         .grito-diablo {
             color: #ffcc00;
             font-size: clamp(18px, 3.6vw, 30px);
-            font-weight: 800;
-            text-shadow: 0 0 24px rgba(255, 204, 0, .6);
-            animation: aparece .3s ease-out;
+            font-weight: 900;
+            text-shadow: 0 0 40px rgba(255, 204, 0, .5);
+            animation: aparece .4s ease-out;
         }
 
         @keyframes aparece {
@@ -280,7 +286,7 @@
 
         .volver {
             margin-top: 18px;
-            color: #7d7d7d;
+            color: #555;
             font-size: 13px;
             text-decoration: none;
             transition: .3s;
@@ -291,8 +297,8 @@
         }
 
         .pausa-overlay {
-            background: rgba(0, 0, 0, .65);
-            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, .7);
+            backdrop-filter: blur(10px);
         }
 
         .pausa-overlay h1 {
@@ -301,6 +307,38 @@
 
         .pausa-overlay .btn-tencha {
             min-width: 160px;
+        }
+
+        /* ---- BONUS ---- */
+        .bonus-overlay {
+            background: rgba(0, 0, 0, .6);
+            backdrop-filter: blur(4px);
+            z-index: 8;
+        }
+
+        .bonus-overlay h1 {
+            color: #ff6b6b;
+            font-size: clamp(28px, 6vw, 48px);
+            text-shadow: 0 0 60px rgba(255, 107, 107, .3), 0 0 120px rgba(255, 107, 107, .1);
+            animation: pulse 1.2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.03);
+            }
+        }
+
+        .bonus-overlay .puntos-bonus {
+            color: #ffd93d;
+            font-size: 28px;
+            font-weight: 900;
         }
 
         @media (hover: none) {
@@ -401,6 +439,14 @@
             <button class="btn-tencha rojo" id="btnSalirFin">🚪 Salir al sitio</button>
         </div>
 
+        <!-- BONUS: Me Vale Verga -->
+        <div class="overlay bonus-overlay oculto" id="pantallaBonus">
+            <h1>🔥 ¡ME VALE VERGA!</h1>
+            <p style="color: #ffd93d; font-size: 18px;">Lo que piensen de mí, ¡yo sigo bailando!</p>
+            <p class="puntos-bonus" id="bonusPuntos">+50 PUNTOS</p>
+            <div style="font-size: 48px; margin-top: -4px;">🎵🎶🔥</div>
+        </div>
+
         <div class="overlay oculto" id="pantallaGrito">
             <div class="grito-diablo">¡La cuuumbbbia del diablooooooo! 🔥</div>
         </div>
@@ -420,8 +466,10 @@
             const pantallaInicio = document.getElementById('pantallaInicio');
             const pantallaPausa = document.getElementById('pantallaPausa');
             const pantallaFin = document.getElementById('pantallaFin');
+            const pantallaBonus = document.getElementById('pantallaBonus');
             const pantallaGrito = document.getElementById('pantallaGrito');
             const puntajeFinal = document.getElementById('puntajeFinal');
+            const bonusPuntos = document.getElementById('bonusPuntos');
             const btnIniciar = document.getElementById('btnIniciar');
             const btnReiniciar = document.getElementById('btnReiniciar');
             const btnPausa = document.getElementById('btnPausa');
@@ -489,8 +537,11 @@
             let particulas = [];
             let animales = [];
             let pajaroVolando = null;
-            let vegetacion = [];
+            let pinos = [];
             let hojas = [];
+            let estrellas = [];
+            let bonusActivo = false;
+            let bonusTimeout = null;
 
             let velocidadJuego = 5.5;
             const VELOCIDAD_MAX = 14;
@@ -502,6 +553,7 @@
             let siguienteObstaculo = 0;
             let siguienteAnimal = 0;
             let siguientePajaro = 0;
+            let siguienteBonus = 0;
             let estado = 'inicio';
             let pausado = false;
             let tiempoAnterior = null;
@@ -509,143 +561,67 @@
             let animFrame = null;
             let finTimeout = null;
             let frameCount = 0;
+            let ultimaVidaPerdida = 0;
 
-            // ---- VEGETACIÓN DENSIDAD MÁXIMA ----
-            function generarVegetacion() {
-                vegetacion = [];
-
-                // Árboles grandes (muchos)
-                for (let i = 0; i < 25; i++) {
+            // ---- Generar pinos (siluetas que llegan hasta arriba) ----
+            function generarPinos() {
+                pinos = [];
+                for (let i = 0; i < 35; i++) {
                     const x = Math.random() * ANCHO;
-                    const h = 50 + Math.random() * 70;
-                    const w = 15 + Math.random() * 25;
-                    vegetacion.push({
+                    const altura = 120 + Math.random() * 250;
+                    const ancho = 20 + Math.random() * 25;
+                    const capas = 3 + Math.floor(Math.random() * 5);
+                    pinos.push({
                         x,
-                        y: SUELO_Y,
-                        ancho: w,
-                        altura: h,
-                        tipo: 'arbol',
-                        color: ['#1b5e20', '#2e7d32', '#388e3c', '#4caf50'][Math.floor(Math.random() * 4)],
-                        velocidad: 0.05 + Math.random() * 0.08,
-                        capas: 2 + Math.floor(Math.random() * 3)
-                    });
-                }
-
-                // Arbustos densos
-                for (let i = 0; i < 45; i++) {
-                    const x = Math.random() * ANCHO;
-                    const y = SUELO_Y + 2 + Math.random() * 25;
-                    const ancho = 18 + Math.random() * 30;
-                    const altura = 12 + Math.random() * 22;
-                    vegetacion.push({
-                        x,
-                        y,
-                        ancho,
                         altura,
-                        tipo: 'arbusto',
-                        color: ['#2e7d32', '#388e3c', '#1b5e20', '#4caf50', '#43a047'][Math.floor(Math.random() * 5)],
-                        velocidad: 0.15 + Math.random() * 0.25,
-                        sub: 2 + Math.floor(Math.random() * 3)
+                        ancho,
+                        capas,
+                        opacidad: 0.06 + Math.random() * 0.12,
+                        velocidad: 0.02 + Math.random() * 0.04,
+                        offset: Math.random() * 100
                     });
                 }
+                // Ordenar por altura (los más altos atrás)
+                pinos.sort((a, b) => a.altura - b.altura);
+            }
+            generarPinos();
 
-                // Pasto alto (mucho)
+            // ---- Estrellas psicodélicas ----
+            function generarEstrellas() {
+                estrellas = [];
                 for (let i = 0; i < 80; i++) {
-                    const x = Math.random() * ANCHO;
-                    const y = SUELO_Y + 3 + Math.random() * 18;
-                    const ancho = 3 + Math.random() * 6;
-                    const altura = 10 + Math.random() * 22;
-                    vegetacion.push({
-                        x,
-                        y,
-                        ancho,
-                        altura,
-                        tipo: 'pasto',
-                        color: ['#388e3c', '#2e7d32', '#4caf50', '#1b5e20', '#43a047'][Math.floor(Math.random() * 5)],
-                        velocidad: 0.2 + Math.random() * 0.35,
-                        tallos: 3 + Math.floor(Math.random() * 5)
-                    });
-                }
-
-                // Flores (muchas)
-                for (let i = 0; i < 30; i++) {
-                    const x = Math.random() * ANCHO;
-                    const y = SUELO_Y + 2 + Math.random() * 12;
-                    vegetacion.push({
-                        x,
-                        y,
-                        ancho: 5 + Math.random() * 4,
-                        altura: 6 + Math.random() * 6,
-                        tipo: 'flor',
-                        color: ['#ff6b6b', '#ffd93d', '#ff8a5c', '#ffcc00', '#ff9ff3', '#ff4757', '#ff6348'][Math.floor(Math
-                            .random() * 7)],
-                        velocidad: 0.1 + Math.random() * 0.15,
-                        tam: 3 + Math.random() * 3
-                    });
-                }
-
-                // Helechos
-                for (let i = 0; i < 25; i++) {
-                    const x = Math.random() * ANCHO;
-                    const y = SUELO_Y + 3 + Math.random() * 20;
-                    vegetacion.push({
-                        x,
-                        y,
-                        ancho: 12 + Math.random() * 16,
-                        altura: 10 + Math.random() * 18,
-                        tipo: 'helecho',
-                        color: ['#1b5e20', '#2e7d32', '#388e3c'][Math.floor(Math.random() * 3)],
-                        velocidad: 0.12 + Math.random() * 0.2,
-                        hojas: 4 + Math.floor(Math.random() * 4)
-                    });
-                }
-
-                // Troncos
-                for (let i = 0; i < 10; i++) {
-                    const x = Math.random() * ANCHO;
-                    const y = SUELO_Y + 3 + Math.random() * 8;
-                    vegetacion.push({
-                        x,
-                        y,
-                        ancho: 25 + Math.random() * 40,
-                        altura: 5 + Math.random() * 6,
-                        tipo: 'tronco',
-                        color: ['#4e342e', '#3e2723', '#5d4037'][Math.floor(Math.random() * 3)],
-                        velocidad: 0.05 + Math.random() * 0.08
-                    });
-                }
-
-                // Lianas y enredaderas (fondo)
-                for (let i = 0; i < 20; i++) {
-                    const x = Math.random() * ANCHO;
-                    const y = 20 + Math.random() * 150;
-                    vegetacion.push({
-                        x,
-                        y,
-                        ancho: 2 + Math.random() * 3,
-                        altura: 40 + Math.random() * 80,
-                        tipo: 'liana',
-                        color: ['#1b5e20', '#2e7d32', '#388e3c'][Math.floor(Math.random() * 3)],
-                        velocidad: 0.02 + Math.random() * 0.03,
-                        curvas: 2 + Math.floor(Math.random() * 4)
-                    });
-                }
-
-                // Hojas voladoras (efecto)
-                for (let i = 0; i < 15; i++) {
-                    hojas.push({
+                    estrellas.push({
                         x: Math.random() * ANCHO,
-                        y: Math.random() * (SUELO_Y - 50),
-                        vx: (Math.random() - 0.5) * 0.3,
-                        vy: 0.2 + Math.random() * 0.3,
-                        tam: 3 + Math.random() * 4,
-                        rot: Math.random() * Math.PI * 2,
-                        velRot: (Math.random() - 0.5) * 0.02,
-                        color: ['#2e7d32', '#4caf50', '#8bc34a', '#ffd93d', '#ff6b6b'][Math.floor(Math.random() * 5)]
+                        y: Math.random() * (SUELO_Y - 40),
+                        tam: 0.5 + Math.random() * 1.5,
+                        parpadeo: 0.02 + Math.random() * 0.04,
+                        fase: Math.random() * Math.PI * 2,
+                        color: ['#ffcc00', '#ff6b6b', '#ffd93d', '#ff9ff3', '#48dbfb', '#ff6348'][Math.floor(Math.random() *
+                            6)]
                     });
                 }
             }
-            generarVegetacion();
+            generarEstrellas();
+
+            // ---- Hojas psicodélicas ----
+            function generarHojas() {
+                hojas = [];
+                for (let i = 0; i < 20; i++) {
+                    hojas.push({
+                        x: Math.random() * ANCHO,
+                        y: Math.random() * (SUELO_Y - 20),
+                        vx: (Math.random() - 0.5) * 0.5,
+                        vy: 0.1 + Math.random() * 0.3,
+                        tam: 3 + Math.random() * 5,
+                        rot: Math.random() * Math.PI * 2,
+                        velRot: (Math.random() - 0.5) * 0.03,
+                        color: ['#ff6b6b', '#ffd93d', '#ff9ff3', '#48dbfb', '#ffcc00', '#ff6348', '#ff8a5c'][Math.floor(Math
+                            .random() * 7)],
+                        opacidad: 0.3 + Math.random() * 0.4
+                    });
+                }
+            }
+            generarHojas();
 
             // ---- Funciones ----
             function corazonesHUD() {
@@ -677,6 +653,10 @@
                 return 100 + Math.random() * 200;
             }
 
+            function tiempoAleatorioBonus() {
+                return 180 + Math.random() * 300; // cada 3-8 segundos sin perder
+            }
+
             function reiniciarEstadoJuego() {
                 obstaculos = [];
                 particulas = [];
@@ -687,15 +667,20 @@
                 puntos = 0;
                 vidas = 3;
                 invencibleHasta = 0;
+                ultimaVidaPerdida = 0;
                 siguienteObstaculo = tiempoAleatorioObstaculo();
                 siguienteAnimal = tiempoAleatorioAnimal();
                 siguientePajaro = tiempoAleatorioPajaro();
+                siguienteBonus = tiempoAleatorioBonus();
                 personaje.y = SUELO_Y - PERSONAJE_ALTO;
                 personaje.velocidadY = 0;
                 personaje.saltando = false;
                 personaje.angulo = 0;
                 scrollFondo = 0;
                 frameCount = 0;
+                bonusActivo = false;
+                if (bonusTimeout) clearTimeout(bonusTimeout);
+                pantallaBonus.classList.add('oculto');
                 corazonesHUD();
                 actualizarPuntaje();
                 document.getElementById('btnPausa').textContent = '⏸️ Pausa';
@@ -728,6 +713,7 @@
             function salirAlSitio() {
                 if (animFrame) cancelAnimationFrame(animFrame);
                 if (finTimeout) clearTimeout(finTimeout);
+                if (bonusTimeout) clearTimeout(bonusTimeout);
                 window.location.href = '../index.html';
             }
 
@@ -810,6 +796,36 @@
                 if (animFrame) cancelAnimationFrame(animFrame);
             }
 
+            function mostrarBonus() {
+                if (bonusActivo || estado !== 'jugando') return;
+                const bonus = 50 + Math.floor(Math.random() * 30);
+                puntos += bonus;
+                bonusPuntos.textContent = '+' + bonus + ' PUNTOS';
+                actualizarPuntaje();
+                bonusActivo = true;
+                pantallaBonus.classList.remove('oculto');
+
+                // Efecto de partículas de celebración
+                for (let i = 0; i < 30; i++) {
+                    particulas.push({
+                        x: ANCHO / 2 + (Math.random() - 0.5) * 200,
+                        y: ALTO / 2 + (Math.random() - 0.5) * 100,
+                        vx: (Math.random() - 0.5) * 12,
+                        vy: (Math.random() - 1.5) * 10 - 3,
+                        vida: 50,
+                        color: ['#ffcc00', '#ff6b6b', '#ffd93d', '#ff9ff3', '#48dbfb', '#ff6348'][Math.floor(Math.random() *
+                            6)],
+                        tamano: 3 + Math.random() * 5
+                    });
+                }
+
+                if (bonusTimeout) clearTimeout(bonusTimeout);
+                bonusTimeout = setTimeout(() => {
+                    pantallaBonus.classList.add('oculto');
+                    bonusActivo = false;
+                }, 2000);
+            }
+
             function generarObstaculo() {
                 const tipo = INSTRUMENTOS[Math.floor(Math.random() * INSTRUMENTOS.length)];
                 obstaculos.push({
@@ -856,15 +872,16 @@
             }
 
             function generarParticulasImpacto(x, y) {
-                for (let i = 0; i < 18; i++) {
+                for (let i = 0; i < 20; i++) {
                     particulas.push({
                         x,
                         y,
-                        vx: (Math.random() - 0.5) * 10,
-                        vy: (Math.random() - 1.8) * 9,
-                        vida: 40,
-                        color: Math.random() > 0.5 ? '#ffcc00' : '#d72638',
-                        tamano: 2 + Math.random() * 5
+                        vx: (Math.random() - 0.5) * 12,
+                        vy: (Math.random() - 2) * 9,
+                        vida: 45,
+                        color: ['#ffcc00', '#ff6b6b', '#ffd93d', '#ff9ff3', '#48dbfb', '#ff6348'][Math.floor(Math.random() *
+                            6)],
+                        tamano: 2 + Math.random() * 6
                     });
                 }
             }
@@ -904,6 +921,13 @@
                     personaje.angulo = 0;
                 }
 
+                // Bonus (cuando no se ha perdido vida por un tiempo)
+                siguienteBonus -= dt * 0.055;
+                if (siguienteBonus <= 0 && vidas > 0) {
+                    mostrarBonus();
+                    siguienteBonus = tiempoAleatorioBonus() + (Math.random() - 0.5) * 100;
+                }
+
                 siguienteObstaculo -= dt * 0.055;
                 if (siguienteObstaculo <= 0) {
                     generarObstaculo();
@@ -922,7 +946,7 @@
                     siguientePajaro = tiempoAleatorioPajaro();
                 }
 
-                // Hojas voladoras
+                // Hojas psicodélicas
                 hojas.forEach(h => {
                     h.x += h.vx * dt * 0.055;
                     h.y += h.vy * dt * 0.055;
@@ -930,6 +954,8 @@
                     if (h.y > SUELO_Y + 20) {
                         h.y = -20;
                         h.x = Math.random() * ANCHO;
+                        h.color = ['#ff6b6b', '#ffd93d', '#ff9ff3', '#48dbfb', '#ffcc00', '#ff6348', '#ff8a5c'][Math.floor(Math
+                            .random() * 7)];
                     }
                     if (h.x > ANCHO + 20) h.x = -20;
                     if (h.x < -20) h.x = ANCHO + 20;
@@ -950,6 +976,9 @@
                         if (colision(cajaPersonaje, o)) {
                             o.golpeado = true;
                             vidas--;
+                            ultimaVidaPerdida = Date.now();
+                            // Resetear bonus al perder vida
+                            siguienteBonus = tiempoAleatorioBonus();
                             corazonesHUD();
                             invencibleHasta = Date.now() + 1200;
                             generarParticulasImpacto(o.x + o.ancho / 2, o.y + o.alto / 2);
@@ -993,7 +1022,7 @@
                     const p = particulas[i];
                     p.x += p.vx * dt * 0.055;
                     p.y += p.vy * dt * 0.055;
-                    p.vy += 0.25 * dt * 0.055;
+                    p.vy += 0.2 * dt * 0.055;
                     p.vida -= dt * 0.055;
                     if (p.vida <= 0) particulas.splice(i, 1);
                 }
@@ -1003,258 +1032,145 @@
             function dibujarFondo() {
                 ctx.clearRect(0, 0, ANCHO, ALTO);
 
-                // Cielo selvático con capas
-                const gradCielo = ctx.createLinearGradient(0, 0, 0, SUELO_Y);
-                gradCielo.addColorStop(0, '#0a1a0a');
-                gradCielo.addColorStop(0.1, '#0d1f0d');
-                gradCielo.addColorStop(0.25, '#1a3a1a');
-                gradCielo.addColorStop(0.5, '#2d5a2d');
-                gradCielo.addColorStop(0.7, '#3a7a3a');
-                gradCielo.addColorStop(0.85, '#2d5a2d');
-                gradCielo.addColorStop(1, '#1a3a1a');
-                ctx.fillStyle = gradCielo;
+                // Fondo oscuro con degradado psicodélico
+                const grad = ctx.createLinearGradient(0, 0, 0, SUELO_Y);
+                grad.addColorStop(0, '#0a0505');
+                grad.addColorStop(0.15, '#0d0a0f');
+                grad.addColorStop(0.3, '#0f0a15');
+                grad.addColorStop(0.5, '#120a1a');
+                grad.addColorStop(0.7, '#0d0815');
+                grad.addColorStop(0.85, '#0a0a12');
+                grad.addColorStop(1, '#080810');
+                ctx.fillStyle = grad;
                 ctx.fillRect(0, 0, ANCHO, SUELO_Y);
 
-                // Nubes
-                ctx.fillStyle = 'rgba(255,255,255,0.04)';
+                // Estrellas psicodélicas
+                estrellas.forEach(e => {
+                    const brillo = 0.3 + Math.sin(frameCount * e.parpadeo + e.fase) * 0.3;
+                    ctx.globalAlpha = Math.max(0.1, brillo);
+                    ctx.fillStyle = e.color;
+                    ctx.shadowColor = e.color;
+                    ctx.shadowBlur = 10 + Math.sin(frameCount * e.parpadeo + e.fase) * 6;
+                    ctx.beginPath();
+                    ctx.arc(e.x, e.y, e.tam, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.globalAlpha = 1;
+                });
+
+                // PINOS - Siluetas que llegan hasta arriba
+                pinos.forEach(pino => {
+                    const xOff = (pino.x + scrollFondo * pino.velocidad * 0.5) % (ANCHO + 100) - 50;
+                    const sway = Math.sin(frameCount * 0.005 + pino.offset) * 2;
+                    const baseX = xOff + sway;
+
+                    ctx.save();
+                    ctx.globalAlpha = pino.opacidad;
+
+                    // Tronco
+                    ctx.fillStyle = '#0a0a0a';
+                    ctx.fillRect(baseX - 3, SUELO_Y - pino.altura + 10, 6, pino.altura - 10);
+
+                    // Capas de hojas (pino)
+                    const colores = ['#0a0a0a', '#0d0d0d', '#101010'];
+                    for (let c = 0; c < pino.capas; c++) {
+                        const prog = c / pino.capas;
+                        const anchoCapa = pino.ancho * (1 - prog * 0.7);
+                        const alturaCapa = (pino.altura / pino.capas) * 1.2;
+                        const yCapa = SUELO_Y - pino.altura + 4 + c * (pino.altura / pino.capas) * 0.9;
+
+                        ctx.fillStyle = colores[c % colores.length];
+                        ctx.beginPath();
+                        ctx.moveTo(baseX - anchoCapa / 2, yCapa + alturaCapa);
+                        ctx.quadraticCurveTo(
+                            baseX - anchoCapa / 2 - 2 + sway * 0.1,
+                            yCapa + alturaCapa * 0.5,
+                            baseX,
+                            yCapa
+                        );
+                        ctx.quadraticCurveTo(
+                            baseX + anchoCapa / 2 + 2 + sway * 0.1,
+                            yCapa + alturaCapa * 0.5,
+                            baseX + anchoCapa / 2,
+                            yCapa + alturaCapa
+                        );
+                        ctx.closePath();
+                        ctx.fill();
+
+                        // Detalle de ramas
+                        ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                        for (let r = 0; r < 3; r++) {
+                            const rx = baseX + (r - 1) * anchoCapa * 0.25;
+                            const ry = yCapa + alturaCapa * (0.2 + r * 0.2);
+                            ctx.fillRect(rx, ry, 2, 8 + r * 2);
+                        }
+                    }
+
+                    ctx.restore();
+                });
+
+                // Nubes oscuras psicodélicas
                 const nubes = [
-                    { x: 80, y: 30, w: 90, h: 28 },
-                    { x: 350, y: 18, w: 120, h: 32 },
-                    { x: 650, y: 40, w: 80, h: 24 },
-                    { x: 200, y: 55, w: 70, h: 20 },
-                    { x: 500, y: 10, w: 100, h: 30 },
-                    { x: 780, y: 25, w: 85, h: 26 }
+                    { x: 80, y: 30, w: 90, h: 25, color: 'rgba(30,20,40,0.15)' },
+                    { x: 350, y: 18, w: 120, h: 30, color: 'rgba(40,20,50,0.12)' },
+                    { x: 650, y: 35, w: 80, h: 22, color: 'rgba(25,15,35,0.18)' },
+                    { x: 200, y: 50, w: 70, h: 18, color: 'rgba(35,20,45,0.10)' },
+                    { x: 520, y: 12, w: 100, h: 28, color: 'rgba(30,15,40,0.14)' }
                 ];
                 nubes.forEach(n => {
-                    const xOff = (n.x + scrollFondo * 0.04) % (ANCHO + 200) - 100;
+                    const xOff = (n.x + scrollFondo * 0.03) % (ANCHO + 200) - 100;
+                    ctx.fillStyle = n.color;
                     ctx.beginPath();
                     ctx.ellipse(xOff, n.y, n.w, n.h, 0, 0, Math.PI * 2);
                     ctx.fill();
                     ctx.beginPath();
-                    ctx.ellipse(xOff - n.w * 0.55, n.y + 4, n.w * 0.45, n.h * 0.7, 0, 0, Math.PI * 2);
+                    ctx.ellipse(xOff - n.w * 0.5, n.y + 3, n.w * 0.4, n.h * 0.6, 0, 0, Math.PI * 2);
                     ctx.fill();
                     ctx.beginPath();
-                    ctx.ellipse(xOff + n.w * 0.55, n.y + 4, n.w * 0.45, n.h * 0.7, 0, 0, Math.PI * 2);
-                    ctx.fill();
-                });
-
-                // VEGETACIÓN DE FONDO (por capas)
-                ctx.shadowColor = 'rgba(0,0,0,0.2)';
-                ctx.shadowBlur = 8;
-
-                // Capa 1: Lianas y enredaderas
-                vegetacion.filter(v => v.tipo === 'liana').forEach(v => {
-                    const xOff = (v.x + scrollFondo * v.velocidad) % (ANCHO + 50) - 25;
-                    ctx.strokeStyle = v.color;
-                    ctx.lineWidth = v.ancho;
-                    ctx.beginPath();
-                    ctx.moveTo(xOff, v.y);
-                    for (let i = 0; i < v.curvas; i++) {
-                        const px = xOff + Math.sin(i * 0.7 + v.x) * 15;
-                        const py = v.y + (i + 1) * (v.altura / v.curvas);
-                        ctx.quadraticCurveTo(px, py, px + Math.sin(i * 0.5 + v.x + 1) * 12, py + 8);
-                    }
-                    ctx.stroke();
-                    // Hojas de liana
-                    for (let i = 0; i < v.curvas; i++) {
-                        const px = xOff + Math.sin(i * 0.7 + v.x + 0.5) * 18;
-                        const py = v.y + (i + 0.5) * (v.altura / v.curvas);
-                        ctx.fillStyle = v.color;
-                        ctx.beginPath();
-                        ctx.ellipse(px, py, 4, 3, 0.3, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                });
-
-                // Capa 2: Árboles grandes
-                vegetacion.filter(v => v.tipo === 'arbol').forEach(v => {
-                    const xOff = (v.x + scrollFondo * v.velocidad) % (ANCHO + 100) - 50;
-                    const sway = Math.sin(frameCount * 0.008 + v.x) * 1.5;
-
-                    // Tronco
-                    ctx.fillStyle = '#2d1f12';
-                    ctx.fillRect(xOff + v.ancho / 2 - 4 + sway * 0.2, SUELO_Y - v.altura + 12, 8, v.altura - 12);
-                    ctx.fillStyle = '#3e2a1a';
-                    ctx.fillRect(xOff + v.ancho / 2 - 2 + sway * 0.2, SUELO_Y - v.altura + 12, 4, v.altura - 12);
-
-                    // Copa (capas)
-                    const colores = ['#1b5e20', '#2e7d32', '#388e3c', '#4caf50', '#43a047'];
-                    for (let c = 0; c < v.capas; c++) {
-                        const radio = v.ancho / 2 + 6 - c * 4;
-                        const yOff = c * 6 - 2;
-                        ctx.fillStyle = colores[c % colores.length];
-                        ctx.beginPath();
-                        ctx.arc(xOff + v.ancho / 2 + sway * 0.3, SUELO_Y - v.altura + 4 + yOff, radio, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                    // Brillo en la copa
-                    ctx.fillStyle = 'rgba(255,255,255,0.04)';
-                    ctx.beginPath();
-                    ctx.arc(xOff + v.ancho / 2 - 6 + sway * 0.2, SUELO_Y - v.altura + 2, v.ancho / 3, 0, Math.PI * 2);
+                    ctx.ellipse(xOff + n.w * 0.5, n.y + 3, n.w * 0.4, n.h * 0.6, 0, 0, Math.PI * 2);
                     ctx.fill();
                 });
 
-                // Capa 3: Arbustos y vegetación baja
-                ctx.shadowBlur = 4;
-                vegetacion.filter(v => v.tipo === 'arbusto').forEach(v => {
-                    const xOff = (v.x + scrollFondo * v.velocidad * 0.3) % (ANCHO + 60) - 30;
-                    const sway = Math.sin(frameCount * 0.015 + v.x) * 1.2;
-
-                    ctx.fillStyle = v.color;
-                    // Arbusto principal
-                    ctx.beginPath();
-                    ctx.ellipse(xOff + sway * 0.3, v.y - v.altura / 2, v.ancho / 2.2, v.altura / 2.2, 0, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    // Sub-arbustos
-                    for (let s = 0; s < v.sub; s++) {
-                        const angle = s * (Math.PI * 2 / v.sub) + 0.3;
-                        const dist = v.ancho / 2.5;
-                        const sx = xOff + Math.cos(angle) * dist + sway * 0.2;
-                        const sy = v.y - v.altura / 3 + Math.sin(angle) * dist * 0.3;
-                        ctx.beginPath();
-                        ctx.ellipse(sx, sy, v.ancho / 2.8, v.altura / 2.8, 0, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                });
-
-                // Capa 4: Pasto
-                vegetacion.filter(v => v.tipo === 'pasto').forEach(v => {
-                    const xOff = (v.x + scrollFondo * v.velocidad * 0.4) % (ANCHO + 40) - 20;
-                    const sway = Math.sin(frameCount * 0.02 + v.x) * 1.8;
-                    ctx.fillStyle = v.color;
-                    for (let i = 0; i < v.tallos; i++) {
-                        const px = xOff - v.ancho / 2 + i * (v.ancho / (v.tallos - 1)) + sway * 0.15;
-                        const h = v.altura + Math.sin(frameCount * 0.025 + i * 0.5 + v.x) * 3;
-                        ctx.fillRect(px, v.y - h + 2, 1.8, h - 2);
-                        // Hoja en la punta
-                        ctx.fillStyle = v.color;
-                        ctx.beginPath();
-                        ctx.ellipse(px + sway * 0.05, v.y - h + 2, 3, 2, 0.3, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.fillStyle = v.color;
-                    }
-                });
-
-                // Capa 5: Helechos
-                vegetacion.filter(v => v.tipo === 'helecho').forEach(v => {
-                    const xOff = (v.x + scrollFondo * v.velocidad * 0.35) % (ANCHO + 50) - 25;
-                    const sway = Math.sin(frameCount * 0.018 + v.x) * 1.5;
-                    ctx.fillStyle = v.color;
-                    for (let i = 0; i < v.hojas; i++) {
-                        const angle = (i / v.hojas) * Math.PI * 2 + sway * 0.1;
-                        const h = v.altura * (0.3 + i / 8);
-                        ctx.beginPath();
-                        ctx.ellipse(
-                            xOff + Math.cos(angle + 0.2) * h * 0.35 + sway * 0.1,
-                            v.y - v.altura * 0.4 + Math.sin(angle + 0.2) * h * 0.35,
-                            h * 0.2,
-                            h * 0.15,
-                            angle,
-                            0, Math.PI * 2
-                        );
-                        ctx.fill();
-                    }
-                });
-
-                // Capa 6: Flores (con brillo)
-                ctx.shadowBlur = 12;
-                vegetacion.filter(v => v.tipo === 'flor').forEach(v => {
-                    const xOff = (v.x + scrollFondo * v.velocidad * 0.3) % (ANCHO + 40) - 20;
-                    const sway = Math.sin(frameCount * 0.02 + v.x) * 1.2;
-                    const tam = v.tam + Math.sin(frameCount * 0.03 + v.x) * 0.5;
-
-                    ctx.shadowColor = v.color;
-                    ctx.fillStyle = v.color;
-                    ctx.beginPath();
-                    for (let i = 0; i < 5; i++) {
-                        const angle = (i / 5) * Math.PI * 2 + frameCount * 0.01;
-                        const r = tam * (0.8 + Math.sin(frameCount * 0.02 + i * 1.2 + v.x) * 0.2);
-                        const px = xOff + Math.cos(angle) * r + sway * 0.2;
-                        const py = v.y - v.altura + Math.sin(angle) * r * 0.4;
-                        if (i === 0) ctx.moveTo(px, py);
-                        else ctx.lineTo(px, py);
-                    }
-                    ctx.closePath();
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-
-                    // Centro de la flor
-                    ctx.fillStyle = '#ffd93d';
-                    ctx.beginPath();
-                    ctx.arc(xOff + sway * 0.2, v.y - v.altura, tam * 0.3, 0, Math.PI * 2);
-                    ctx.fill();
-                });
-
-                // Capa 7: Troncos
-                ctx.shadowBlur = 4;
-                vegetacion.filter(v => v.tipo === 'tronco').forEach(v => {
-                    const xOff = (v.x + scrollFondo * v.velocidad * 0.3) % (ANCHO + 60) - 30;
-                    const sway = Math.sin(frameCount * 0.01 + v.x) * 0.5;
-                    ctx.fillStyle = v.color;
-                    ctx.fillRect(xOff + sway * 0.1, v.y - v.altura, v.ancho, v.altura);
-                    // Detalle de la corteza
-                    ctx.fillStyle = '#3e2723';
-                    for (let i = 0; i < 4; i++) {
-                        ctx.fillRect(xOff + v.ancho * 0.15 + i * v.ancho * 0.25 + sway * 0.1, v.y - v.altura + 2, 2, v
-                            .altura - 4);
-                    }
-                    // Musgo
-                    ctx.fillStyle = '#2e7d32';
-                    for (let i = 0; i < 2; i++) {
-                        const mx = xOff + v.ancho * (0.2 + i * 0.4) + sway * 0.1;
-                        ctx.beginPath();
-                        ctx.ellipse(mx, v.y - v.altura * 0.3, 4, 2, 0, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                });
-
-                ctx.shadowBlur = 0;
-
-                // Hojas voladoras (efecto de viento)
+                // Hojas psicodélicas volando
                 hojas.forEach(h => {
                     ctx.save();
                     ctx.translate(h.x, h.y);
                     ctx.rotate(h.rot);
-                    ctx.globalAlpha = 0.4 + Math.sin(frameCount * 0.02 + h.x) * 0.15;
+                    ctx.globalAlpha = h.opacidad;
                     ctx.fillStyle = h.color;
+                    ctx.shadowColor = h.color;
+                    ctx.shadowBlur = 15;
                     ctx.beginPath();
                     ctx.ellipse(0, 0, h.tam, h.tam * 0.5, 0, 0, Math.PI * 2);
                     ctx.fill();
+                    ctx.shadowBlur = 0;
                     ctx.globalAlpha = 1;
                     ctx.restore();
                 });
 
                 // Suelo
                 const gradSuelo = ctx.createLinearGradient(0, SUELO_Y + 4, 0, ALTO);
-                gradSuelo.addColorStop(0, '#2d4a2d');
-                gradSuelo.addColorStop(0.15, '#1a3a1a');
-                gradSuelo.addColorStop(0.5, '#0d1f0d');
-                gradSuelo.addColorStop(1, '#080f08');
+                gradSuelo.addColorStop(0, '#0d0a0f');
+                gradSuelo.addColorStop(0.2, '#080810');
+                gradSuelo.addColorStop(0.6, '#060608');
+                gradSuelo.addColorStop(1, '#030305');
                 ctx.fillStyle = gradSuelo;
                 ctx.fillRect(0, SUELO_Y + 4, ANCHO, ALTO - SUELO_Y - 4);
 
-                // Textura del suelo (pequeñas motas)
-                for (let i = 0; i < 60; i++) {
-                    const x = (i * 37 + scrollFondo * 0.5) % ANCHO;
-                    const y = SUELO_Y + 8 + (i * 23) % 55;
-                    ctx.fillStyle = 'rgba(255,255,255,0.02)';
-                    ctx.fillRect(x, y, 2 + (i % 3), 1 + (i % 2));
-                }
-
-                // Línea del suelo con efecto de sendero
-                ctx.strokeStyle = 'rgba(255,204,0,0.08)';
+                // Línea del suelo con brillo psicodélico
+                ctx.strokeStyle = `hsla(${frameCount * 0.3 % 360}, 80%, 60%, 0.06)`;
                 ctx.lineWidth = 2;
-                ctx.setLineDash([20, 25]);
+                ctx.setLineDash([15, 25]);
                 ctx.lineDashOffset = -scrollFondo * 1.5;
                 ctx.beginPath();
                 ctx.moveTo(0, SUELO_Y + 4);
                 ctx.lineTo(ANCHO, SUELO_Y + 4);
                 ctx.stroke();
 
-                ctx.strokeStyle = 'rgba(255,204,0,0.04)';
+                // Línea secundaria
+                ctx.strokeStyle = `hsla(${frameCount * 0.2 % 360 + 180}, 60%, 50%, 0.04)`;
                 ctx.lineWidth = 1;
-                ctx.setLineDash([10, 15]);
+                ctx.setLineDash([8, 15]);
                 ctx.lineDashOffset = -scrollFondo * 0.5;
                 ctx.beginPath();
                 ctx.moveTo(0, SUELO_Y + 18);
@@ -1262,29 +1178,26 @@
                 ctx.stroke();
                 ctx.setLineDash([]);
 
-                // Luciérnagas (efecto mágico)
-                for (let i = 0; i < 8; i++) {
-                    const x = (i * 113 + scrollFondo * 0.2 + Math.sin(frameCount * 0.01 + i) * 40) % ANCHO;
-                    const y = 50 + (i * 47) % 180 + Math.sin(frameCount * 0.015 + i * 1.3) * 20;
-                    const tam = 1.5 + Math.sin(frameCount * 0.02 + i * 2) * 0.8;
-                    ctx.globalAlpha = 0.2 + Math.sin(frameCount * 0.02 + i * 1.7) * 0.15;
-                    ctx.fillStyle = '#ffd93d';
-                    ctx.shadowColor = '#ffd93d';
-                    ctx.shadowBlur = 20;
+                // Brillo psicodélico en el suelo
+                for (let i = 0; i < 10; i++) {
+                    const x = ((i * 120 + scrollFondo * 0.5) % (ANCHO + 150)) - 75;
+                    const hue = (frameCount * 0.15 + i * 36) % 360;
+                    ctx.fillStyle = `hsla(${hue}, 80%, 60%, 0.015)`;
                     ctx.beginPath();
-                    ctx.arc(x, y, tam, 0, Math.PI * 2);
+                    ctx.ellipse(x, SUELO_Y + 20, 40 + Math.sin(i * 1.3 + frameCount * 0.01) * 15,
+                        5 + Math.sin(i * 0.8 + frameCount * 0.008) * 2, 0, 0, Math.PI * 2);
                     ctx.fill();
-                    ctx.shadowBlur = 0;
-                    ctx.globalAlpha = 1;
                 }
 
-                // Brillo en el suelo
-                ctx.fillStyle = 'rgba(255,204,0,0.015)';
-                for (let i = 0; i < 8; i++) {
-                    const x = ((i * 140 + scrollFondo * 0.6) % (ANCHO + 120)) - 60;
-                    ctx.beginPath();
-                    ctx.ellipse(x, SUELO_Y + 20, 35 + Math.sin(i * 1.2) * 10, 4 + Math.sin(i * 0.8) * 1.5, 0, 0, Math.PI * 2);
-                    ctx.fill();
+                // Neblina psicodélica en la base
+                for (let i = 0; i < 5; i++) {
+                    const x = (i * 180 + scrollFondo * 0.15) % (ANCHO + 100) - 50;
+                    const hue = (frameCount * 0.05 + i * 72) % 360;
+                    const gradNiebla = ctx.createRadialGradient(x, SUELO_Y - 10, 10, x, SUELO_Y - 10, 120);
+                    gradNiebla.addColorStop(0, `hsla(${hue}, 60%, 40%, 0.04)`);
+                    gradNiebla.addColorStop(1, `hsla(${hue + 40}, 60%, 40%, 0)`);
+                    ctx.fillStyle = gradNiebla;
+                    ctx.fillRect(x - 120, SUELO_Y - 80, 240, 120);
                 }
             }
 
@@ -1308,7 +1221,7 @@
                 ctx.scale(escalaSombra, escalaSombra * 0.25);
                 ctx.beginPath();
                 ctx.ellipse(0, 0, personaje.ancho / 2.2, 6, 0, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(0,0,0,0.35)';
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
                 ctx.fill();
                 ctx.restore();
 
@@ -1323,11 +1236,11 @@
                 }
 
                 if (Date.now() < invencibleHasta) {
-                    ctx.strokeStyle = 'rgba(255,204,0,0.2)';
+                    ctx.strokeStyle = `hsla(${frameCount * 2 % 360}, 80%, 60%, 0.3)`;
                     ctx.lineWidth = 3;
                     ctx.setLineDash([4, 8]);
                     ctx.beginPath();
-                    ctx.arc(0, 0, personaje.ancho / 2 + 10, 0, Math.PI * 2);
+                    ctx.arc(0, 0, personaje.ancho / 2 + 12, 0, Math.PI * 2);
                     ctx.stroke();
                     ctx.setLineDash([]);
                 }
@@ -1344,12 +1257,12 @@
 
                     ctx.beginPath();
                     ctx.ellipse(0, o.alto / 2 + 4, o.ancho / 2.2, 5, 0, 0, Math.PI * 2);
-                    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+                    ctx.fillStyle = 'rgba(0,0,0,0.4)';
                     ctx.fill();
 
                     if (o.x < ANCHO * 0.7) {
-                        ctx.shadowColor = 'rgba(255,0,0,0.12)';
-                        ctx.shadowBlur = 18;
+                        ctx.shadowColor = `hsla(${frameCount * 1.5 % 360}, 80%, 60%, 0.15)`;
+                        ctx.shadowBlur = 25;
                     }
 
                     ctx.font = Math.max(o.ancho, o.alto) * 0.78 + 'px sans-serif';
@@ -1367,8 +1280,11 @@
                     ctx.save();
                     const bobY = a.enSuelo ? 0 : Math.sin(Date.now() / 800 + a.bob) * 5;
                     ctx.translate(a.x + a.ancho / 2, a.y + a.alto / 2 + bobY);
+                    ctx.shadowColor = 'rgba(255,255,255,0.03)';
+                    ctx.shadowBlur = 8;
                     ctx.font = a.ancho + 'px sans-serif';
                     ctx.fillText(a.emoji, 0, 2);
+                    ctx.shadowBlur = 0;
                     ctx.restore();
                 });
             }
@@ -1380,7 +1296,6 @@
                 const flapY = Math.sin(p.flap) * 2;
                 ctx.translate(p.x + p.ancho / 2, p.y + p.alto / 2 + flapY);
 
-                // Sombra
                 ctx.save();
                 const altura = p.y + p.alto / 2;
                 const sombraY = SUELO_Y + 10;
@@ -1389,34 +1304,34 @@
                 ctx.scale(escalaSombra, escalaSombra * 0.1);
                 ctx.beginPath();
                 ctx.ellipse(0, 0, p.ancho, 8, 0, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(0,0,0,0.12)';
+                ctx.fillStyle = 'rgba(0,0,0,0.15)';
                 ctx.fill();
                 ctx.restore();
 
                 const flapAngle = Math.sin(p.flap * 1.5) * 0.15;
                 ctx.rotate(flapAngle);
 
+                ctx.shadowColor = 'rgba(255,255,255,0.05)';
+                ctx.shadowBlur = 15;
                 ctx.font = p.ancho + 'px sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(p.emoji, 0, 2);
 
-                // Estela
-                ctx.shadowColor = 'rgba(255,255,255,0.04)';
-                ctx.shadowBlur = 12;
-                ctx.font = (p.ancho * 0.5) + 'px sans-serif';
-                ctx.fillText('✦', -p.ancho * 0.8, -2);
                 ctx.shadowBlur = 0;
+                ctx.font = (p.ancho * 0.4) + 'px sans-serif';
+                ctx.fillStyle = `hsla(${frameCount * 0.5 % 360}, 80%, 70%, 0.15)`;
+                ctx.fillText('✦', -p.ancho * 0.9, -p.alto * 0.2);
 
                 ctx.restore();
             }
 
             function dibujarParticulas() {
                 particulas.forEach(p => {
-                    ctx.globalAlpha = Math.max(0, p.vida / 40);
+                    ctx.globalAlpha = Math.max(0, p.vida / 45);
                     ctx.fillStyle = p.color;
                     ctx.shadowColor = p.color;
-                    ctx.shadowBlur = 12;
+                    ctx.shadowBlur = 15;
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, p.tamano || 3, 0, Math.PI * 2);
                     ctx.fill();
@@ -1434,7 +1349,7 @@
                 dibujarParticulas();
 
                 const nivel = Math.floor(distancia / 250) + 1;
-                ctx.fillStyle = 'rgba(255,255,255,0.04)';
+                ctx.fillStyle = 'rgba(255,255,255,0.03)';
                 ctx.font = '11px Poppins, sans-serif';
                 ctx.textAlign = 'right';
                 ctx.textBaseline = 'bottom';
@@ -1444,7 +1359,7 @@
                 ctx.font = '10px Poppins, sans-serif';
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'bottom';
-                ctx.fillText('🌿 ' + Math.floor(distancia) + 'm', 12, ALTO - 8);
+                ctx.fillText('🌙 ' + Math.floor(distancia) + 'm', 12, ALTO - 8);
             }
 
             // ---- Bucle ----
@@ -1474,7 +1389,8 @@
             dibujar();
 
             console.log('🔥 El Diablo Cumbiambero — Los Hijos de Tencha');
-            console.log('🌿 Selva densa con vegetación y efectos visuales!');
+            console.log('🌲 Siluetas de pinos y atmósfera psicodélica!');
+            console.log('💀 "Me Vale Verga" — Bonus por sobrevivir!');
         })();
     </script>
 </body>
