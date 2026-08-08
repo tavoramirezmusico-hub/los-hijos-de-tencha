@@ -634,15 +634,17 @@
             let pajaroVolando = null;
             let pinos = [];
             let hojas = [];
+            let hojasViento = [];
+            let lineasViento = [];
             let estrellas = [];
             let lluvia = [];
             let destellos = [];
+            let polvoViento = [];
 
-            // ===== VELOCIDAD: entretenida desde el inicio, acelera al acercarse a 6000 =====
+            // ===== VELOCIDAD =====
             let velocidadJuego = 8.5;
             const VELOCIDAD_INICIAL = 8.5;
             const VELOCIDAD_MAX = 24;
-            const VELOCIDAD_INCREMENTO = 0.12;
 
             let distancia = 0;
             let puntos = 0;
@@ -673,6 +675,11 @@
             let maxObstaculosSimultaneos = 3;
             let intervaloGeneracionBase = 55;
 
+            // ---- INTENSIDAD DEL VIENTO ----
+            let intensidadViento = 0.6;
+            const VIENTO_MIN = 0.4;
+            const VIENTO_MAX = 1.2;
+
             // ---- LUNA ----
             const luna = {
                 x: 720,
@@ -682,7 +689,7 @@
                 fase: 0
             };
 
-            // ---- Generar pinos (siluetas) ----
+            // ---- Generar pinos ----
             function generarPinos() {
                 pinos = [];
                 for (let i = 0; i < 30; i++) {
@@ -697,7 +704,8 @@
                         capas,
                         opacidad: 0.5 + Math.random() * 0.4,
                         velocidad: 0.02 + Math.random() * 0.04,
-                        offset: Math.random() * 100
+                        offset: Math.random() * 100,
+                        inclinacion: 0
                     });
                 }
                 pinos.sort((a, b) => a.altura - b.altura);
@@ -720,45 +728,98 @@
             }
             generarEstrellas();
 
+            // ---- HOJAS NORMALES (caen) ----
             function generarHojas() {
                 hojas = [];
-                for (let i = 0; i < 20; i++) {
+                for (let i = 0; i < 15; i++) {
                     hojas.push({
                         x: Math.random() * ANCHO,
                         y: Math.random() * (SUELO_Y - 20),
-                        vx: (Math.random() - 0.5) * 0.5,
-                        vy: 0.1 + Math.random() * 0.3,
-                        tam: 3 + Math.random() * 5,
+                        vx: (Math.random() - 0.5) * 0.3,
+                        vy: 0.1 + Math.random() * 0.2,
+                        tam: 3 + Math.random() * 4,
                         rot: Math.random() * Math.PI * 2,
                         velRot: (Math.random() - 0.5) * 0.03,
-                        color: ['#ff6b6b', '#ffd93d', '#ff9ff3', '#48dbfb', '#ffcc00', '#ff6348', '#ff8a5c'][Math.floor(Math
-                            .random() * 7)],
-                        opacidad: 0.3 + Math.random() * 0.4
+                        color: '#ffcc00',
+                        opacidad: 0.3 + Math.random() * 0.3
                     });
                 }
             }
             generarHojas();
 
-            // ---- Lluvia de notas musicales ----
+            // ---- HOJAS ARRASTRADAS POR EL VIENTO (vuelan horizontalmente) ----
+            function generarHojasViento() {
+                hojasViento = [];
+                for (let i = 0; i < 25; i++) {
+                    hojasViento.push({
+                        x: Math.random() * ANCHO,
+                        y: 20 + Math.random() * (SUELO_Y - 40),
+                        vx: 2 + Math.random() * 4,
+                        vy: (Math.random() - 0.5) * 0.5,
+                        tam: 2 + Math.random() * 4,
+                        rot: Math.random() * Math.PI * 2,
+                        velRot: (Math.random() - 0.5) * 0.05,
+                        color: ['#ffcc00', '#ffd93d', '#ff8a5c', '#ff6b6b', '#ff9ff3'][Math.floor(Math.random() * 5)],
+                        opacidad: 0.2 + Math.random() * 0.3,
+                        vida: 0,
+                        maxVida: 60 + Math.random() * 40
+                    });
+                }
+            }
+            generarHojasViento();
+
+            // ---- LÍNEAS DE VIENTO ----
+            function generarLineasViento() {
+                lineasViento = [];
+                for (let i = 0; i < 18; i++) {
+                    lineasViento.push({
+                        x: Math.random() * ANCHO,
+                        y: 10 + Math.random() * (SUELO_Y - 30),
+                        largo: 20 + Math.random() * 40,
+                        opacidad: 0.04 + Math.random() * 0.08,
+                        velocidad: 2 + Math.random() * 3
+                    });
+                }
+            }
+            generarLineasViento();
+
+            // ---- POLVO / PARTÍCULAS DE VIENTO ----
+            function generarPolvoViento() {
+                polvoViento = [];
+                for (let i = 0; i < 30; i++) {
+                    polvoViento.push({
+                        x: Math.random() * ANCHO,
+                        y: 5 + Math.random() * (SUELO_Y - 10),
+                        tam: 1 + Math.random() * 2.5,
+                        velocidad: 1.5 + Math.random() * 3,
+                        opacidad: 0.05 + Math.random() * 0.1,
+                        offsetY: Math.random() * 100
+                    });
+                }
+            }
+            generarPolvoViento();
+
+            // ---- Lluvia de notas ----
             const SIMBOLOS_LLUVIA = ['♪', '♫', '♩', '♬'];
+
             function generarLluvia() {
                 lluvia = [];
-                for (let i = 0; i < 24; i++) {
+                for (let i = 0; i < 20; i++) {
                     lluvia.push({
                         x: Math.random() * ANCHO,
                         y: Math.random() * ALTO,
-                        vy: 1.2 + Math.random() * 1.4,
-                        vx: -0.3 - Math.random() * 0.3,
-                        tam: 10 + Math.random() * 10,
-                        rot: (Math.random() - 0.5) * 0.5,
+                        vy: 0.6 + Math.random() * 0.8,
+                        vx: 1.5 + Math.random() * 2.5,
+                        tam: 8 + Math.random() * 8,
+                        rot: (Math.random() - 0.5) * 0.3,
                         simbolo: SIMBOLOS_LLUVIA[Math.floor(Math.random() * SIMBOLOS_LLUVIA.length)],
-                        opacidad: 0.06 + Math.random() * 0.1
+                        opacidad: 0.04 + Math.random() * 0.06
                     });
                 }
             }
             generarLluvia();
 
-            // ---- Destellos en el cielo ----
+            // ---- Destellos ----
             function generarDestello() {
                 destellos.push({
                     x: 50 + Math.random() * (ANCHO - 100),
@@ -873,6 +934,10 @@
                 velocidadJuego = VELOCIDAD_INICIAL + (VELOCIDAD_MAX - VELOCIDAD_INICIAL) * progresoCurva;
                 maxObstaculosSimultaneos = Math.min(8, 3 + Math.floor(progresoCurva * 5));
                 intervaloGeneracionBase = Math.max(12, 55 - progresoCurva * 43);
+
+                // El viento se intensifica con la velocidad del juego
+                intensidadViento = VIENTO_MIN + (VIENTO_MAX - VIENTO_MIN) * (velocidadJuego - VELOCIDAD_INICIAL) / (VELOCIDAD_MAX -
+                    VELOCIDAD_INICIAL);
             }
 
             function tiempoAleatorioObstaculo() {
@@ -899,6 +964,7 @@
                 pajaroVolando = null;
                 destellos = [];
                 velocidadJuego = VELOCIDAD_INICIAL;
+                intensidadViento = VIENTO_MIN;
                 distancia = 0;
                 puntos = 0;
                 vidas = 3;
@@ -923,6 +989,10 @@
                 hitosAlcanzados = new Set();
                 if (bonusTimeout) clearTimeout(bonusTimeout);
                 bonusIndicador.classList.remove('visible');
+
+                generarHojasViento();
+                generarLineasViento();
+                generarPolvoViento();
 
                 pantallaVictoria.classList.add('oculto');
                 corazonesHUD();
@@ -1138,21 +1208,24 @@
             }
 
             // ---- Dibujar funciones auxiliares ----
-            function dibujarPinoSilueta(baseX, baseY, altura, anchoBase, dientes) {
+            function dibujarPinoSilueta(baseX, baseY, altura, anchoBase, dientes, inclinacion) {
                 const alturaCopa = altura * 0.86;
                 const apexY = baseY - altura;
                 const mitadAncho = anchoBase / 2;
+                const inclinar = inclinacion || 0;
 
                 ctx.beginPath();
-                ctx.moveTo(baseX, apexY);
+                ctx.moveTo(baseX + inclinar * 2, apexY);
 
                 for (let i = 1; i <= dientes; i++) {
                     const tValle = (i - 0.55) / dientes;
                     const tPico = i / dientes;
                     const anchoValle = mitadAncho * Math.pow(tValle, 0.85) * 0.42;
                     const anchoPico = mitadAncho * Math.pow(tPico, 0.85);
-                    ctx.lineTo(baseX + anchoValle, apexY + alturaCopa * tValle);
-                    ctx.lineTo(baseX + anchoPico, apexY + alturaCopa * tPico);
+                    const inclinacionValle = inclinar * tValle * 4;
+                    const inclinacionPico = inclinar * tPico * 4;
+                    ctx.lineTo(baseX + anchoValle + inclinacionValle, apexY + alturaCopa * tValle);
+                    ctx.lineTo(baseX + anchoPico + inclinacionPico, apexY + alturaCopa * tPico);
                 }
 
                 for (let i = dientes; i >= 1; i--) {
@@ -1160,15 +1233,17 @@
                     const tPico = i / dientes;
                     const anchoValle = mitadAncho * Math.pow(tValle, 0.85) * 0.42;
                     const anchoPico = mitadAncho * Math.pow(tPico, 0.85);
-                    ctx.lineTo(baseX - anchoPico, apexY + alturaCopa * tPico);
-                    ctx.lineTo(baseX - anchoValle, apexY + alturaCopa * tValle);
+                    const inclinacionValle = inclinar * tValle * 4;
+                    const inclinacionPico = inclinar * tPico * 4;
+                    ctx.lineTo(baseX - anchoPico + inclinacionPico, apexY + alturaCopa * tPico);
+                    ctx.lineTo(baseX - anchoValle + inclinacionValle, apexY + alturaCopa * tValle);
                 }
 
                 ctx.closePath();
                 ctx.fill();
 
                 const anchoTronco = Math.max(3, anchoBase * 0.13);
-                ctx.fillRect(baseX - anchoTronco / 2, baseY - altura * 0.16, anchoTronco, altura * 0.16 + 2);
+                ctx.fillRect(baseX + inclinar * 2 - anchoTronco / 2, baseY - altura * 0.16, anchoTronco, altura * 0.16 + 2);
             }
 
             // ---- Actualizar ----
@@ -1213,14 +1288,13 @@
                     siguientePajaro = tiempoAleatorioPajaro();
                 }
 
-                // Destellos en el cielo
                 siguienteDestello -= dt * 0.055;
                 if (siguienteDestello <= 0) {
                     generarDestello();
                     siguienteDestello = tiempoAleatorioDestello();
                 }
 
-                // Actualizar destellos
+                // Destellos
                 for (let i = destellos.length - 1; i >= 0; i--) {
                     const d = destellos[i];
                     d.vida -= dt * 0.055 * 0.8;
@@ -1233,30 +1307,70 @@
                     }
                 }
 
+                // ---- VIENTO: HOJAS VOLANDO ----
+                hojasViento.forEach(h => {
+                    h.x += (h.vx + intensidadViento * 1.5) * dt * 0.055;
+                    h.y += h.vy * dt * 0.055 + Math.sin(frameCount * 0.02 + h.x) * 0.15;
+                    h.rot += h.velRot * dt * 0.055;
+                    h.vida += dt * 0.055;
+                    if (h.x > ANCHO + 30) {
+                        h.x = -30;
+                        h.y = 20 + Math.random() * (SUELO_Y - 40);
+                        h.vida = 0;
+                    }
+                });
+
+                // ---- VIENTO: LÍNEAS ----
+                lineasViento.forEach(l => {
+                    l.x += (l.velocidad + intensidadViento * 1.2) * dt * 0.055;
+                    if (l.x > ANCHO + 20) {
+                        l.x = -l.largo - 20;
+                        l.y = 10 + Math.random() * (SUELO_Y - 30);
+                    }
+                });
+
+                // ---- VIENTO: POLVO ----
+                polvoViento.forEach(p => {
+                    p.x += (p.velocidad + intensidadViento * 1.8) * dt * 0.055;
+                    p.y += Math.sin(frameCount * 0.015 + p.offsetY) * 0.1 * dt * 0.055;
+                    if (p.x > ANCHO + 10) {
+                        p.x = -10;
+                        p.y = 5 + Math.random() * (SUELO_Y - 10);
+                    }
+                });
+
+                // ---- HOJAS NORMALES ----
                 hojas.forEach(h => {
-                    h.x += h.vx * dt * 0.055;
+                    h.x += (h.vx + intensidadViento * 0.3) * dt * 0.055;
                     h.y += h.vy * dt * 0.055;
                     h.rot += h.velRot * dt * 0.055;
                     if (h.y > SUELO_Y + 20) {
                         h.y = -20;
                         h.x = Math.random() * ANCHO;
-                        h.color = ['#ff6b6b', '#ffd93d', '#ff9ff3', '#48dbfb', '#ffcc00', '#ff6348', '#ff8a5c'][Math.floor(Math
-                            .random() * 7)];
                     }
                     if (h.x > ANCHO + 20) h.x = -20;
                     if (h.x < -20) h.x = ANCHO + 20;
                 });
 
+                // ---- LLUVIA DE NOTAS (con viento) ----
                 lluvia.forEach(n => {
                     n.y += n.vy * dt * 0.16;
-                    n.x += n.vx * dt * 0.055;
+                    n.x += (n.vx + intensidadViento * 1.5) * dt * 0.055;
                     if (n.y > ALTO + 20) {
                         n.y = -20;
                         n.x = Math.random() * ANCHO;
                     }
                     if (n.x < -20) n.x = ANCHO + 20;
+                    if (n.x > ANCHO + 20) n.x = -20;
                 });
 
+                // ---- PINOS: INCLINACIÓN POR VIENTO ----
+                pinos.forEach(p => {
+                    const fuerzaViento = intensidadViento * 1.2;
+                    p.inclinacion = fuerzaViento * 0.8 + Math.sin(frameCount * 0.003 + p.offset) * 0.3;
+                });
+
+                // ---- COLISIONES ----
                 const cajaPersonaje = {
                     x: personaje.x,
                     y: personaje.y,
@@ -1327,13 +1441,12 @@
                     bonusIndicador.classList.remove('visible');
                 }
 
-                // Luna: brillo sutilmente variable
                 luna.brillo = 0.12 + Math.sin(frameCount * 0.005) * 0.04;
             }
 
             // ---- Dibujar ----
             function dibujarFondo() {
-                // Fondo con degradado para contraste
+                // Fondo
                 const grad = ctx.createLinearGradient(0, 0, 0, ALTO);
                 grad.addColorStop(0, '#0a0a0f');
                 grad.addColorStop(0.3, '#0d0d18');
@@ -1343,11 +1456,10 @@
                 ctx.fillStyle = grad;
                 ctx.fillRect(0, 0, ANCHO, ALTO);
 
-                // ---- LUNA LLENA ----
+                // ---- LUNA ----
                 const lx = luna.x + Math.sin(frameCount * 0.002) * 8;
                 const ly = luna.y + Math.sin(frameCount * 0.003 + 1) * 5;
 
-                // Resplandor exterior
                 const gradLuna = ctx.createRadialGradient(lx, ly, 10, lx, ly, luna.radio * 3.5);
                 gradLuna.addColorStop(0, `rgba(255, 235, 200, ${luna.brillo * 0.6})`);
                 gradLuna.addColorStop(0.3, `rgba(255, 220, 180, ${luna.brillo * 0.3})`);
@@ -1358,7 +1470,6 @@
                 ctx.arc(lx, ly, luna.radio * 3.5, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Resplandor medio
                 const gradLuna2 = ctx.createRadialGradient(lx, ly, 5, lx, ly, luna.radio * 1.8);
                 gradLuna2.addColorStop(0, `rgba(255, 245, 220, ${luna.brillo * 0.5})`);
                 gradLuna2.addColorStop(0.5, `rgba(255, 230, 200, ${luna.brillo * 0.2})`);
@@ -1368,7 +1479,6 @@
                 ctx.arc(lx, ly, luna.radio * 1.8, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Cuerpo de la luna
                 ctx.shadowColor = 'rgba(255, 235, 200, 0.3)';
                 ctx.shadowBlur = 40;
                 ctx.fillStyle = '#fff8ee';
@@ -1376,7 +1486,6 @@
                 ctx.arc(lx, ly, luna.radio, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Detalles de la luna (cráteres sutiles)
                 ctx.shadowBlur = 0;
                 ctx.fillStyle = 'rgba(220, 210, 190, 0.15)';
                 ctx.beginPath();
@@ -1392,16 +1501,9 @@
                 ctx.arc(lx - 22, ly + 15, 6, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Brillo en el borde de la luna
-                ctx.shadowBlur = 0;
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-                ctx.beginPath();
-                ctx.arc(lx - 8, ly - 12, luna.radio * 0.3, 0, Math.PI * 2);
-                ctx.fill();
                 ctx.shadowBlur = 0;
 
                 // ---- Estrellas ----
-                ctx.shadowBlur = 0;
                 estrellas.forEach(e => {
                     const brillo = 0.35 + Math.sin(frameCount * e.parpadeo + e.fase) * 0.35;
                     ctx.globalAlpha = Math.max(0.15, brillo);
@@ -1412,7 +1514,7 @@
                 });
                 ctx.globalAlpha = 1;
 
-                // ---- Pinos (siluetas doradas) ----
+                // ---- PINOS (con inclinación por viento) ----
                 for (let capa = 0; capa < 2; capa++) {
                     pinos.forEach((pino, idx) => {
                         if (idx % 2 !== capa) return;
@@ -1428,22 +1530,74 @@
                         ctx.shadowColor = 'rgba(255, 204, 0, 0.05)';
                         ctx.shadowBlur = 15;
 
-                        dibujarPinoSilueta(baseX, baseY, pino.altura, pino.ancho, pino.capas);
+                        dibujarPinoSilueta(baseX, baseY, pino.altura, pino.ancho, pino.capas, pino.inclinacion);
 
                         ctx.shadowBlur = 0;
                     });
                 }
                 ctx.globalAlpha = 1;
 
-                // ---- Hojas cayendo ----
+                // ---- HOJAS ARRASTRADAS POR EL VIENTO ----
+                hojasViento.forEach(h => {
+                    ctx.save();
+                    ctx.translate(h.x, h.y);
+                    ctx.rotate(h.rot);
+                    ctx.globalAlpha = h.opacidad * (0.5 + Math.sin(h.vida * 0.05) * 0.3);
+                    ctx.fillStyle = h.color;
+                    ctx.shadowColor = 'rgba(255, 204, 0, 0.03)';
+                    ctx.shadowBlur = 6;
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, h.tam, h.tam * 0.4, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.globalAlpha = 1;
+                    ctx.restore();
+                });
+
+                // ---- LÍNEAS DE VIENTO ----
+                lineasViento.forEach(l => {
+                    ctx.globalAlpha = l.opacidad * (0.5 + Math.sin(frameCount * 0.02 + l.y) * 0.5);
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                    ctx.shadowColor = 'rgba(255, 255, 255, 0.02)';
+                    ctx.shadowBlur = 10;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(l.x, l.y);
+                    // Línea con ligera curva
+                    const endX = l.x + l.largo * (1 + intensidadViento * 0.5);
+                    ctx.quadraticCurveTo(
+                        l.x + l.largo * 0.5,
+                        l.y + Math.sin(frameCount * 0.025 + l.x * 0.01) * 4,
+                        endX,
+                        l.y + Math.sin(frameCount * 0.03 + l.x * 0.01 + 1) * 4
+                    );
+                    ctx.stroke();
+                    ctx.shadowBlur = 0;
+                    ctx.globalAlpha = 1;
+                });
+
+                // ---- POLVO / PARTÍCULAS DE VIENTO ----
+                polvoViento.forEach(p => {
+                    ctx.globalAlpha = p.opacidad * (0.5 + Math.sin(frameCount * 0.015 + p.offsetY) * 0.5);
+                    ctx.fillStyle = 'rgba(255, 255, 200, 0.3)';
+                    ctx.shadowColor = 'rgba(255, 255, 200, 0.02)';
+                    ctx.shadowBlur = 8;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.tam, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.globalAlpha = 1;
+                });
+
+                // ---- HOJAS NORMALES ----
                 hojas.forEach(h => {
                     ctx.save();
                     ctx.translate(h.x, h.y);
                     ctx.rotate(h.rot);
                     ctx.globalAlpha = h.opacidad * 0.7;
                     ctx.fillStyle = '#ffcc00';
-                    ctx.shadowColor = 'rgba(255, 204, 0, 0.05)';
-                    ctx.shadowBlur = 8;
+                    ctx.shadowColor = 'rgba(255, 204, 0, 0.03)';
+                    ctx.shadowBlur = 6;
                     ctx.beginPath();
                     ctx.ellipse(0, 0, h.tam, h.tam * 0.5, 0, 0, Math.PI * 2);
                     ctx.fill();
@@ -1452,27 +1606,22 @@
                     ctx.restore();
                 });
 
-                // ---- DESTELLOS EN EL CIELO ----
+                // ---- DESTELLOS ----
                 destellos.forEach(d => {
                     const alpha = Math.max(0, d.vida / d.maxVida);
                     const size = d.tam * (1 + (1 - alpha) * 0.5);
 
                     if (d.tipo === 'relampago') {
-                        // Relámpago: línea vertical con ramas
                         ctx.save();
                         ctx.globalAlpha = alpha * 0.6;
                         ctx.strokeStyle = `rgba(255, 255, 240, ${alpha * 0.9})`;
                         ctx.shadowColor = 'rgba(255, 255, 240, 0.4)';
                         ctx.shadowBlur = 30;
                         ctx.lineWidth = 2;
-
-                        // Línea principal
                         ctx.beginPath();
                         ctx.moveTo(d.x, d.y - size * 2);
                         ctx.lineTo(d.x + (Math.random() - 0.5) * 4, d.y);
                         ctx.stroke();
-
-                        // Ramas
                         for (let i = 0; i < 4; i++) {
                             const ry = d.y - size * 0.5 + i * size * 0.4;
                             const rx = d.x + (Math.random() - 0.5) * 15;
@@ -1481,18 +1630,14 @@
                             ctx.lineTo(rx, ry + 6 + Math.random() * 8);
                             ctx.stroke();
                         }
-
                         ctx.shadowBlur = 0;
                         ctx.restore();
                     } else {
-                        // Estrella fugaz: trazo diagonal con cola
                         ctx.save();
                         ctx.globalAlpha = alpha * 0.8;
                         ctx.fillStyle = `rgba(255, 255, 240, ${alpha * 0.9})`;
                         ctx.shadowColor = 'rgba(255, 255, 240, 0.5)';
                         ctx.shadowBlur = 40;
-
-                        // Cuerpo de la estrella
                         const gradFugaz = ctx.createRadialGradient(
                             d.x, d.y, 2,
                             d.x, d.y, size * 1.5
@@ -1504,21 +1649,18 @@
                         ctx.beginPath();
                         ctx.arc(d.x, d.y, size * 1.5, 0, Math.PI * 2);
                         ctx.fill();
-
-                        // Cola
                         ctx.shadowBlur = 20;
                         ctx.fillStyle = `rgba(255, 240, 200, ${alpha * 0.2})`;
                         ctx.beginPath();
                         ctx.ellipse(d.x - size * 2.5, d.y + size * 0.8, size * 2.5, size * 0.6, -0.3, 0, Math.PI * 2);
                         ctx.fill();
-
                         ctx.shadowBlur = 0;
                         ctx.restore();
                     }
                     ctx.globalAlpha = 1;
                 });
 
-                // ---- SUELO (contraste mejorado) ----
+                // ---- SUELO ----
                 ctx.shadowBlur = 0;
                 const gradSuelo = ctx.createLinearGradient(0, SUELO_Y + 4, 0, ALTO);
                 gradSuelo.addColorStop(0, '#0d0a0f');
@@ -1528,7 +1670,6 @@
                 ctx.fillStyle = gradSuelo;
                 ctx.fillRect(0, SUELO_Y + 4, ANCHO, ALTO - SUELO_Y - 4);
 
-                // Línea del suelo con brillo (más gruesa y visible)
                 ctx.shadowColor = 'rgba(255, 204, 0, 0.2)';
                 ctx.shadowBlur = 20;
                 ctx.strokeStyle = 'rgba(255, 204, 0, 0.3)';
@@ -1540,7 +1681,6 @@
                 ctx.lineTo(ANCHO, SUELO_Y + 4);
                 ctx.stroke();
 
-                // Segunda línea más sutil
                 ctx.shadowBlur = 0;
                 ctx.strokeStyle = 'rgba(255, 204, 0, 0.08)';
                 ctx.lineWidth = 1;
@@ -1552,7 +1692,6 @@
                 ctx.stroke();
                 ctx.setLineDash([]);
 
-                // Brillo en el suelo (puntos de luz)
                 for (let i = 0; i < 15; i++) {
                     const x = ((i * 97 + scrollFondo * 0.3) % (ANCHO + 80)) - 40;
                     const brillo = 0.3 + Math.sin(i * 1.7 + frameCount * 0.01) * 0.2;
@@ -1565,12 +1704,12 @@
                 }
                 ctx.shadowBlur = 0;
 
-                // ---- Lluvia de notas ----
+                // ---- LLUVIA DE NOTAS ----
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillStyle = '#ffcc00';
                 lluvia.forEach(n => {
-                    ctx.globalAlpha = n.opacidad;
+                    ctx.globalAlpha = n.opacidad * (0.6 + Math.sin(frameCount * 0.02 + n.x) * 0.4);
                     ctx.save();
                     ctx.translate(n.x, n.y);
                     ctx.rotate(n.rot);
@@ -1762,7 +1901,7 @@
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'bottom';
                 ctx.fillText('⚡ Vel: ' + Math.round(velocidadJuego * 10) / 10 + ' | 🎯 ' + maxObstaculosSimultaneos +
-                    ' obs', ANCHO / 2, ALTO - 8);
+                    ' obs | 💨 ' + Math.round(intensidadViento * 10) / 10, ANCHO / 2, ALTO - 8);
 
                 if (bonusDoblePuntos && Date.now() < bonusDobleHasta) {
                     const tiempoRestante = Math.ceil((bonusDobleHasta - Date.now()) / 1000);
@@ -1802,8 +1941,9 @@
 
             console.log('🔥 El Diablo Cumbiambero — Los Hijos de Tencha');
             console.log('🌕 Luna llena y destellos en el cielo');
-            console.log('⚡ Velocidad INICIAL: 8.5 (entretenida desde el inicio)');
-            console.log('🚀 Velocidad MÁXIMA: 24.0 (se acelera al acercarse a 6000 pts)');
+            console.log('💨 VIENTO FUERTE: hojas volando, líneas y polvo');
+            console.log('⚡ Velocidad INICIAL: 8.5 (entretenida)');
+            console.log('🚀 Velocidad MÁXIMA: 24.0 (se acelera hacia 6000 pts)');
             console.log('🏆 Victoria: 6000 puntos — ¡HAS GANADO!');
         })();
     </script>
