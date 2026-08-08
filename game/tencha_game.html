@@ -117,7 +117,6 @@
             border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
-        /* ---- BONUS INDICADOR ---- */
         .bonus-indicador {
             position: absolute;
             top: 55px;
@@ -148,110 +147,6 @@
         .bonus-indicador .doble {
             color: #ffd93d;
             font-size: clamp(11px, 1.6vw, 15px);
-        }
-
-        /* ---- MENSAJE VICTORIA ---- */
-        .victoria-overlay {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 20px;
-            background: rgba(0, 0, 0, .8);
-            backdrop-filter: blur(8px);
-            z-index: 15;
-            gap: 14px;
-        }
-
-        .victoria-overlay h1 {
-            color: #ffd93d;
-            font-size: clamp(38px, 8vw, 60px);
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            text-shadow: 0 0 40px rgba(255, 217, 61, 0.3), 0 0 80px rgba(255, 217, 61, 0.1);
-            animation: victoriaPulse 1.5s ease-in-out infinite;
-        }
-
-        @keyframes victoriaPulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.03);
-            }
-        }
-
-        .victoria-overlay h1 .fuego {
-            display: inline-block;
-            animation: fuego 0.6s ease-in-out infinite alternate;
-        }
-
-        .victoria-overlay h1 .fuego:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .victoria-overlay h1 .fuego:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes fuego {
-            0% {
-                transform: scale(1) rotate(-2deg);
-            }
-
-            100% {
-                transform: scale(1.1) rotate(2deg);
-            }
-        }
-
-        .victoria-overlay p {
-            color: #ddd;
-            font-size: clamp(16px, 2.5vw, 22px);
-            max-width: 500px;
-            line-height: 1.6;
-        }
-
-        .victoria-overlay .puntos-finales {
-            color: #ffcc00;
-            font-size: clamp(24px, 3.5vw, 34px);
-            font-weight: 900;
-        }
-
-        .victoria-overlay .btn-tencha {
-            background: #ffcc00;
-            color: #000;
-            border: none;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            font-size: 16px;
-            padding: 12px 30px;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: .3s;
-            letter-spacing: .5px;
-            text-transform: uppercase;
-        }
-
-        .victoria-overlay .btn-tencha:hover {
-            background: #fff;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(255, 204, 0, .15);
-        }
-
-        .victoria-overlay .btn-tencha.rojo {
-            background: #d72638;
-            color: #fff;
-        }
-
-        .victoria-overlay .btn-tencha.rojo:hover {
-            background: #ff3b4f;
         }
 
         .hud-botones {
@@ -446,8 +341,77 @@
             min-width: 160px;
         }
 
+        .victoria-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, .85);
+            backdrop-filter: blur(8px);
+            z-index: 15;
+            gap: 14px;
+        }
+
+        .victoria-overlay h1 {
+            color: #ffd93d;
+            font-size: clamp(38px, 8vw, 60px);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 40px rgba(255, 217, 61, 0.3), 0 0 80px rgba(255, 217, 61, 0.1);
+            animation: victoriaPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes victoriaPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.03);
+            }
+        }
+
+        .victoria-overlay .puntos-finales {
+            color: #ffcc00;
+            font-size: clamp(24px, 3.5vw, 34px);
+            font-weight: 900;
+        }
+
         .victoria-overlay .btn-tencha {
-            min-width: 160px;
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            padding: 12px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: .3s;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+        }
+
+        .victoria-overlay .btn-tencha:hover {
+            background: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 204, 0, .15);
+        }
+
+        .victoria-overlay .btn-tencha.rojo {
+            background: #d72638;
+            color: #fff;
+        }
+
+        .victoria-overlay .btn-tencha.rojo:hover {
+            background: #ff3b4f;
         }
 
         @media (hover: none) {
@@ -532,7 +496,6 @@
             <div class="velocidad-indicador" id="velocidadHUD">⚡ Nivel 1</div>
         </div>
 
-        <!-- Bonus indicador (flotante) -->
         <div class="bonus-indicador" id="bonusIndicador">
             🔥 ¡ME VALE VERGA LO QUE PIENSEN DE MÍ! <span class="doble">✨ PUNTOS DOBLES</span>
         </div>
@@ -542,11 +505,9 @@
             <button id="btnSalir" class="btn-salir">🚪 Salir</button>
         </div>
 
-        <!-- Pantalla de inicio -->
         <div class="overlay" id="pantallaInicio">
             <h1>El Diablo Cumbiambero</h1>
-            <p>Brinca guitarras, bajos, bongós, tumbas, pianos, acordeones y teclados que se te atraviesan en el camino.
-                ¡Tienes 3 vidas!</p>
+            <p>Brinca guitarras, bajos, bongós, tumbas, pianos, acordeones y teclados. ¡Tienes 3 vidas!</p>
             <div class="instrucciones">
                 <span class="tecla"><kbd>ESPACIO</kbd> para saltar</span>
                 <span class="tecla-touch">Toca la pantalla para saltar</span>
@@ -554,7 +515,6 @@
             <button class="btn-tencha" id="btnIniciar">Empezar a bailar</button>
         </div>
 
-        <!-- Pantalla de pausa -->
         <div class="overlay pausa-overlay oculto" id="pantallaPausa">
             <h1>⏸️ PAUSA</h1>
             <p>Descansa un momento, el diablo te espera.</p>
@@ -562,7 +522,6 @@
             <button class="btn-tencha rojo" id="btnSalirPausa" style="margin-top:4px;">🚪 Salir al sitio</button>
         </div>
 
-        <!-- Pantalla de juego terminado -->
         <div class="overlay oculto" id="pantallaFin">
             <h1 class="rojo">Juego Terminado</h1>
             <p class="score-final" id="puntajeFinal">Puntos: 0</p>
@@ -570,20 +529,14 @@
             <button class="btn-tencha rojo" id="btnSalirFin">🚪 Salir al sitio</button>
         </div>
 
-        <!-- Pantalla de VICTORIA (6000 puntos) -->
         <div class="victoria-overlay oculto" id="pantallaVictoria">
-            <h1>
-                <span class="fuego">🔥</span>
-                ¡HAS GANADO!
-                <span class="fuego">🔥</span>
-            </h1>
-            <p>¡Eres un verdadero Diablo Cumbiambero! La música y la fiesta te llevan a la victoria.</p>
+            <h1>🏆 ¡HAS GANADO!</h1>
+            <p>¡Eres un verdadero Diablo Cumbiambero!</p>
             <p class="puntos-finales" id="puntosVictoria">🎵 6000 PUNTOS 🎵</p>
             <button class="btn-tencha" id="btnReiniciarVictoria">Reiniciar</button>
             <button class="btn-tencha rojo" id="btnSalirVictoria">🚪 Salir al sitio</button>
         </div>
 
-        <!-- Grito al reiniciar -->
         <div class="overlay oculto" id="pantallaGrito">
             <div class="grito-diablo">¡La cuuumbbbia del diablooooooo! 🔥</div>
         </div>
@@ -685,8 +638,11 @@
             let hojas = [];
             let estrellas = [];
 
-            let velocidadJuego = 5.5;
-            const VELOCIDAD_MAX = 14;
+            let velocidadJuego = 4.5;
+            const VELOCIDAD_INICIAL = 4.5;
+            const VELOCIDAD_MAX = 16;
+            const VELOCIDAD_INCREMENTO = 0.08;
+
             let distancia = 0;
             let puntos = 0;
             let vidas = 3;
@@ -712,22 +668,28 @@
             let bonusDobleHasta = 0;
             let hitosAlcanzados = new Set();
 
-            // ---- Generar pinos ----
+            // ---- NIVEL DE DIFICULTAD ----
+            let nivelDificultad = 1;
+            let maxObstaculosSimultaneos = 2;
+            let intervaloGeneracionBase = 90;
+
+            // ---- Generar pinos (más visibles) ----
             function generarPinos() {
                 pinos = [];
-                for (let i = 0; i < 35; i++) {
+                for (let i = 0; i < 40; i++) {
                     const x = Math.random() * ANCHO;
-                    const altura = 120 + Math.random() * 250;
-                    const ancho = 20 + Math.random() * 25;
-                    const capas = 3 + Math.floor(Math.random() * 5);
+                    const altura = 130 + Math.random() * 260;
+                    const ancho = 22 + Math.random() * 30;
+                    const capas = 4 + Math.floor(Math.random() * 6);
                     pinos.push({
                         x,
                         altura,
                         ancho,
                         capas,
-                        opacidad: 0.06 + Math.random() * 0.12,
+                        opacidad: 0.25 + Math.random() * 0.25,
                         velocidad: 0.02 + Math.random() * 0.04,
-                        offset: Math.random() * 100
+                        offset: Math.random() * 100,
+                        tono: 0.05 + Math.random() * 0.05
                     });
                 }
                 pinos.sort((a, b) => a.altura - b.altura);
@@ -785,12 +747,10 @@
             function actualizarPuntaje() {
                 puntajeHUD.textContent = 'PUNTOS: ' + puntos;
                 const nivel = Math.floor(distancia / 250) + 1;
-                velocidadHUD.textContent = '⚡ Nivel ' + nivel;
+                velocidadHUD.textContent = '⚡ Nivel ' + nivel + ' | 🎯 ' + nivelDificultad;
 
-                // Verificar hitos de bonus
                 verificarHitosBonus();
 
-                // Verificar victoria (6000 puntos)
                 if (puntos >= PUNTOS_VICTORIA && estado === 'jugando') {
                     mostrarVictoria();
                 }
@@ -809,21 +769,17 @@
             function activarBonus(hito) {
                 if (bonusTimeout) {
                     clearTimeout(bonusTimeout);
-                    clearTimeout(bonusTimeout);
                 }
 
-                // Activar puntos dobles por 15 segundos
                 bonusDoblePuntos = true;
                 bonusDobleHasta = Date.now() + 15000;
 
-                // Mostrar indicador
                 bonusIndicador.classList.add('visible');
                 bonusIndicador.innerHTML = `
                     🔥 ¡ME VALE VERGA LO QUE PIENSEN DE MÍ! 
                     <span class="doble">✨ PUNTOS DOBLES ×2 (15s)</span>
                 `;
 
-                // Efecto de partículas de celebración
                 for (let i = 0; i < 40; i++) {
                     particulas.push({
                         x: ANCHO / 2 + (Math.random() - 0.5) * 300,
@@ -837,13 +793,11 @@
                     });
                 }
 
-                // Ocultar después de 3 segundos (el indicador)
                 if (bonusTimeout) clearTimeout(bonusTimeout);
                 bonusTimeout = setTimeout(() => {
                     bonusIndicador.classList.remove('visible');
                 }, 3000);
 
-                // Desactivar puntos dobles después de 15 segundos
                 setTimeout(() => {
                     bonusDoblePuntos = false;
                     bonusIndicador.classList.remove('visible');
@@ -856,7 +810,6 @@
                 pantallaVictoria.classList.remove('oculto');
                 if (animFrame) cancelAnimationFrame(animFrame);
 
-                // Efecto de celebración masivo
                 for (let i = 0; i < 80; i++) {
                     setTimeout(() => {
                         particulas.push({
@@ -874,17 +827,28 @@
                 }
             }
 
+            function actualizarDificultad() {
+                const progreso = puntos / 1000;
+                nivelDificultad = 1 + Math.floor(progreso);
+
+                velocidadJuego = Math.min(VELOCIDAD_MAX, VELOCIDAD_INICIAL + progreso * 1.5);
+
+                maxObstaculosSimultaneos = Math.min(6, 2 + Math.floor(progreso * 0.5));
+
+                intervaloGeneracionBase = Math.max(20, 90 - progreso * 10);
+            }
+
             function tiempoAleatorioObstaculo() {
-                const base = Math.max(35, 90 - velocidadJuego * 3.2);
-                return base + Math.random() * 40;
+                const base = Math.max(20, intervaloGeneracionBase + (Math.random() - 0.5) * 25);
+                return base;
             }
 
             function tiempoAleatorioAnimal() {
-                return 70 + Math.random() * 130;
+                return Math.max(40, 70 + Math.random() * 100 - nivelDificultad * 5);
             }
 
             function tiempoAleatorioPajaro() {
-                return 100 + Math.random() * 200;
+                return Math.max(60, 100 + Math.random() * 150 - nivelDificultad * 3);
             }
 
             function reiniciarEstadoJuego() {
@@ -892,11 +856,14 @@
                 particulas = [];
                 animales = [];
                 pajaroVolando = null;
-                velocidadJuego = 5.5;
+                velocidadJuego = VELOCIDAD_INICIAL;
                 distancia = 0;
                 puntos = 0;
                 vidas = 3;
                 invencibleHasta = 0;
+                nivelDificultad = 1;
+                maxObstaculosSimultaneos = 2;
+                intervaloGeneracionBase = 90;
                 siguienteObstaculo = tiempoAleatorioObstaculo();
                 siguienteAnimal = tiempoAleatorioAnimal();
                 siguientePajaro = tiempoAleatorioPajaro();
@@ -907,7 +874,6 @@
                 scrollFondo = 0;
                 frameCount = 0;
 
-                // Resetear bonus
                 bonusActivo = false;
                 bonusDoblePuntos = false;
                 bonusDobleHasta = 0;
@@ -1137,8 +1103,7 @@
                 distancia += velocidadJuego * dt * 0.055;
                 scrollFondo -= velocidadJuego * dt * 0.04;
 
-                const nivel = Math.floor(distancia / 250) + 1;
-                velocidadJuego = Math.min(VELOCIDAD_MAX, 5.5 + (nivel - 1) * 1.8);
+                actualizarDificultad();
                 actualizarPuntaje();
 
                 personaje.velocidadY += GRAVEDAD * dt * 0.055;
@@ -1156,8 +1121,9 @@
                     personaje.angulo = 0;
                 }
 
+                // Generar obstáculos con límite de cantidad simultánea
                 siguienteObstaculo -= dt * 0.055;
-                if (siguienteObstaculo <= 0) {
+                if (siguienteObstaculo <= 0 && obstaculos.length < maxObstaculosSimultaneos) {
                     generarObstaculo();
                     siguienteObstaculo = tiempoAleatorioObstaculo();
                 }
@@ -1203,9 +1169,7 @@
                         if (colision(cajaPersonaje, o)) {
                             o.golpeado = true;
                             vidas--;
-                            // Al perder vida, se reinicia el contador de bonus
                             hitosAlcanzados = new Set();
-                            // Pero mantiene los puntos
                             corazonesHUD();
                             invencibleHasta = Date.now() + 1200;
                             generarParticulasImpacto(o.x + o.ancho / 2, o.y + o.alto / 2);
@@ -1220,7 +1184,6 @@
 
                     if (o.x + o.ancho < -20) {
                         if (!o.golpeado) {
-                            // Puntos dobles si está activo
                             const puntosGanados = bonusDoblePuntos && Date.now() < bonusDobleHasta ? 20 : 10;
                             puntos += puntosGanados;
                             actualizarPuntaje();
@@ -1256,7 +1219,6 @@
                     if (p.vida <= 0) particulas.splice(i, 1);
                 }
 
-                // Verificar si el bonus de puntos dobles expiró
                 if (bonusDoblePuntos && Date.now() > bonusDobleHasta) {
                     bonusDoblePuntos = false;
                     bonusIndicador.classList.remove('visible');
@@ -1292,7 +1254,7 @@
                     ctx.globalAlpha = 1;
                 });
 
-                // PINOS
+                // ---- PINOS MÁS VISIBLES ----
                 pinos.forEach(pino => {
                     const xOff = (pino.x + scrollFondo * pino.velocidad * 0.5) % (ANCHO + 100) - 50;
                     const sway = Math.sin(frameCount * 0.005 + pino.offset) * 2;
@@ -1301,27 +1263,34 @@
                     ctx.save();
                     ctx.globalAlpha = pino.opacidad;
 
+                    // Tronco más visible
                     ctx.fillStyle = '#0a0a0a';
-                    ctx.fillRect(baseX - 3, SUELO_Y - pino.altura + 10, 6, pino.altura - 10);
+                    ctx.shadowColor = 'rgba(0,0,0,0.5)';
+                    ctx.shadowBlur = 10;
+                    ctx.fillRect(baseX - 4, SUELO_Y - pino.altura + 12, 8, pino.altura - 12);
 
-                    const colores = ['#0a0a0a', '#0d0d0d', '#101010'];
+                    // Capas del pino (más definidas)
+                    const colores = ['#0a0a0a', '#0d0d0d', '#101010', '#151515', '#0f0f0f'];
                     for (let c = 0; c < pino.capas; c++) {
                         const prog = c / pino.capas;
-                        const anchoCapa = pino.ancho * (1 - prog * 0.7);
-                        const alturaCapa = (pino.altura / pino.capas) * 1.2;
-                        const yCapa = SUELO_Y - pino.altura + 4 + c * (pino.altura / pino.capas) * 0.9;
+                        const anchoCapa = pino.ancho * (1 - prog * 0.6);
+                        const alturaCapa = (pino.altura / pino.capas) * 1.3;
+                        const yCapa = SUELO_Y - pino.altura + 2 + c * (pino.altura / pino.capas) * 0.85;
 
                         ctx.fillStyle = colores[c % colores.length];
+                        ctx.shadowColor = 'rgba(0,0,0,0.3)';
+                        ctx.shadowBlur = 8;
+
                         ctx.beginPath();
                         ctx.moveTo(baseX - anchoCapa / 2, yCapa + alturaCapa);
                         ctx.quadraticCurveTo(
-                            baseX - anchoCapa / 2 - 2 + sway * 0.1,
+                            baseX - anchoCapa / 2 - 3 + sway * 0.15,
                             yCapa + alturaCapa * 0.5,
                             baseX,
                             yCapa
                         );
                         ctx.quadraticCurveTo(
-                            baseX + anchoCapa / 2 + 2 + sway * 0.1,
+                            baseX + anchoCapa / 2 + 3 + sway * 0.15,
                             yCapa + alturaCapa * 0.5,
                             baseX + anchoCapa / 2,
                             yCapa + alturaCapa
@@ -1329,14 +1298,28 @@
                         ctx.closePath();
                         ctx.fill();
 
-                        ctx.fillStyle = 'rgba(0,0,0,0.3)';
-                        for (let r = 0; r < 3; r++) {
-                            const rx = baseX + (r - 1) * anchoCapa * 0.25;
-                            const ry = yCapa + alturaCapa * (0.2 + r * 0.2);
-                            ctx.fillRect(rx, ry, 2, 8 + r * 2);
+                        // Ramas laterales más visibles
+                        ctx.fillStyle = 'rgba(20,20,20,0.4)';
+                        ctx.shadowBlur = 4;
+                        for (let r = 0; r < 4; r++) {
+                            const rx = baseX + (r - 1.5) * anchoCapa * 0.2;
+                            const ry = yCapa + alturaCapa * (0.15 + r * 0.2);
+                            ctx.fillRect(rx, ry, 3, 6 + r * 2);
+                            // Pequeñas ramas secundarias
+                            ctx.fillRect(rx - 4, ry + 3, 3, 4);
+                            ctx.fillRect(rx + 4, ry + 3, 3, 4);
                         }
                     }
 
+                    // Brillo en la cima del pino
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = 'rgba(255,255,255,0.03)';
+                    ctx.fillStyle = 'rgba(255,255,255,0.02)';
+                    ctx.beginPath();
+                    ctx.arc(baseX, SUELO_Y - pino.altura + 2, pino.ancho / 4, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.shadowBlur = 0;
                     ctx.restore();
                 });
 
@@ -1388,7 +1371,6 @@
                 ctx.fillStyle = gradSuelo;
                 ctx.fillRect(0, SUELO_Y + 4, ANCHO, ALTO - SUELO_Y - 4);
 
-                // Línea del suelo
                 ctx.strokeStyle = `hsla(${frameCount * 0.3 % 360}, 80%, 60%, 0.06)`;
                 ctx.lineWidth = 2;
                 ctx.setLineDash([15, 25]);
@@ -1408,7 +1390,6 @@
                 ctx.stroke();
                 ctx.setLineDash([]);
 
-                // Brillo psicodélico
                 for (let i = 0; i < 10; i++) {
                     const x = ((i * 120 + scrollFondo * 0.5) % (ANCHO + 150)) - 75;
                     const hue = (frameCount * 0.15 + i * 36) % 360;
@@ -1419,7 +1400,6 @@
                     ctx.fill();
                 }
 
-                // Neblina
                 for (let i = 0; i < 5; i++) {
                     const x = (i * 180 + scrollFondo * 0.15) % (ANCHO + 100) - 50;
                     const hue = (frameCount * 0.05 + i * 72) % 360;
@@ -1591,14 +1571,21 @@
                 ctx.textBaseline = 'bottom';
                 ctx.fillText('🌙 ' + Math.floor(distancia) + 'm', 12, ALTO - 8);
 
-                // Indicador de puntos dobles en el canvas
+                // Indicador de dificultad
+                ctx.fillStyle = `hsla(${Math.min(60, nivelDificultad * 10)}, 80%, 50%, 0.1)`;
+                ctx.font = '10px Poppins, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'bottom';
+                ctx.fillText('⚡ Dificultad ' + nivelDificultad + ' | 🎯 ' + maxObstaculosSimultaneos + ' obstáculos', ANCHO /
+                    2, ALTO - 8);
+
                 if (bonusDoblePuntos && Date.now() < bonusDobleHasta) {
                     const tiempoRestante = Math.ceil((bonusDobleHasta - Date.now()) / 1000);
-                    ctx.fillStyle = 'rgba(255,215,0,0.15)';
-                    ctx.font = '10px Poppins, sans-serif';
+                    ctx.fillStyle = 'rgba(255,215,0,0.2)';
+                    ctx.font = '11px Poppins, sans-serif';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'bottom';
-                    ctx.fillText('×2 PUNTOS (' + tiempoRestante + 's)', ANCHO / 2, ALTO - 8);
+                    ctx.fillText('×2 PUNTOS (' + tiempoRestante + 's)', ANCHO / 2, ALTO - 30);
                 }
             }
 
@@ -1629,9 +1616,9 @@
             dibujar();
 
             console.log('🔥 El Diablo Cumbiambero — Los Hijos de Tencha');
-            console.log('🎯 Hitos de Bonus: 500, 1000, 2500, 5000 puntos');
+            console.log('🎯 Dificultad progresiva: más velocidad y más obstáculos');
+            console.log('🌲 Pinous más visibles en el fondo');
             console.log('🏆 Victoria: 6000 puntos — ¡HAS GANADO!');
-            console.log('💀 "Me Vale Verga lo que Piensen de Mi" — Puntos Dobles ×2 por 15s');
         })();
     </script>
 </body>
