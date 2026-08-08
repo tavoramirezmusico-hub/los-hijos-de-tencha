@@ -108,7 +108,7 @@
         }
 
         .velocidad-indicador {
-            color: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.3);
             font-size: 12px;
             font-weight: 400;
             background: rgba(0, 0, 0, 0.5);
@@ -636,11 +636,11 @@
             let hojas = [];
             let estrellas = [];
 
-            // ===== VELOCIDAD RÁPIDA =====
-            let velocidadJuego = 7.5;
-            const VELOCIDAD_INICIAL = 7.5;
-            const VELOCIDAD_MAX = 20;
-            const VELOCIDAD_INCREMENTO = 0.15;
+            // ===== VELOCIDAD RÁPIDA DESDE EL INICIO =====
+            let velocidadJuego = 10.0;
+            const VELOCIDAD_INICIAL = 10.0;
+            const VELOCIDAD_MAX = 24;
+            const VELOCIDAD_INCREMENTO = 0.12;
 
             let distancia = 0;
             let puntos = 0;
@@ -668,7 +668,7 @@
 
             let nivelDificultad = 1;
             let maxObstaculosSimultaneos = 3;
-            let intervaloGeneracionBase = 65;
+            let intervaloGeneracionBase = 55;
 
             // ---- Generar pinos ----
             function generarPinos() {
@@ -823,28 +823,32 @@
             }
 
             function actualizarDificultad() {
-                const progreso = puntos / 800;
+                // Progreso de 0 a 1 basado en puntos (0 a 6000)
+                const progreso = Math.min(1, puntos / 6000);
 
-                nivelDificultad = 1 + Math.floor(progreso);
+                nivelDificultad = 1 + Math.floor(progreso * 8);
 
-                velocidadJuego = Math.min(VELOCIDAD_MAX, VELOCIDAD_INICIAL + progreso * 2.0);
+                // Velocidad: de 10 a 24
+                velocidadJuego = VELOCIDAD_INICIAL + (VELOCIDAD_MAX - VELOCIDAD_INICIAL) * progreso;
 
-                maxObstaculosSimultaneos = Math.min(7, 3 + Math.floor(progreso * 0.6));
+                // Obstáculos simultáneos: de 3 a 8
+                maxObstaculosSimultaneos = Math.min(8, 3 + Math.floor(progreso * 5));
 
-                intervaloGeneracionBase = Math.max(18, 65 - progreso * 8);
+                // Intervalo: de 55 a 12 frames
+                intervaloGeneracionBase = Math.max(12, 55 - progreso * 43);
             }
 
             function tiempoAleatorioObstaculo() {
-                const base = Math.max(18, intervaloGeneracionBase + (Math.random() - 0.5) * 20);
+                const base = Math.max(12, intervaloGeneracionBase + (Math.random() - 0.5) * 15);
                 return base;
             }
 
             function tiempoAleatorioAnimal() {
-                return Math.max(35, 60 + Math.random() * 80 - nivelDificultad * 4);
+                return Math.max(30, 50 + Math.random() * 60 - nivelDificultad * 3);
             }
 
             function tiempoAleatorioPajaro() {
-                return Math.max(50, 80 + Math.random() * 120 - nivelDificultad * 3);
+                return Math.max(40, 70 + Math.random() * 90 - nivelDificultad * 2);
             }
 
             function reiniciarEstadoJuego() {
@@ -859,7 +863,7 @@
                 invencibleHasta = 0;
                 nivelDificultad = 1;
                 maxObstaculosSimultaneos = 3;
-                intervaloGeneracionBase = 65;
+                intervaloGeneracionBase = 55;
                 siguienteObstaculo = tiempoAleatorioObstaculo();
                 siguienteAnimal = tiempoAleatorioAnimal();
                 siguientePajaro = tiempoAleatorioPajaro();
@@ -1556,13 +1560,15 @@
                 ctx.textBaseline = 'bottom';
                 ctx.fillText('🌙 ' + Math.floor(distancia) + 'm', 12, ALTO - 8);
 
-                ctx.fillStyle = `hsla(${Math.min(60, nivelDificultad * 10)}, 80%, 50%, 0.1)`;
+                // Dificultad
+                ctx.fillStyle = `hsla(${Math.min(60, nivelDificultad * 8)}, 80%, 50%, 0.12)`;
                 ctx.font = '10px Poppins, sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'bottom';
-                ctx.fillText('⚡ Dificultad ' + nivelDificultad + ' | 🎯 ' + maxObstaculosSimultaneos + ' obstáculos', ANCHO /
-                    2, ALTO - 8);
+                ctx.fillText('⚡ Vel: ' + Math.round(velocidadJuego * 10) / 10 + ' | 🎯 ' + maxObstaculosSimultaneos +
+                    ' obs', ANCHO / 2, ALTO - 8);
 
+                // Bonus activo
                 if (bonusDoblePuntos && Date.now() < bonusDobleHasta) {
                     const tiempoRestante = Math.ceil((bonusDobleHasta - Date.now()) / 1000);
                     ctx.fillStyle = 'rgba(255,215,0,0.2)';
@@ -1600,8 +1606,9 @@
             dibujar();
 
             console.log('🔥 El Diablo Cumbiambero — Los Hijos de Tencha');
-            console.log('⚡ Velocidad inicial: 7.5 (RÁPIDA)');
-            console.log('🎯 Dificultad progresiva: más velocidad y más obstáculos');
+            console.log('⚡ Velocidad INICIAL: 10.0 (¡RÁPIDO!)');
+            console.log('🚀 Velocidad MÁXIMA: 24.0');
+            console.log('🎯 Dificultad progresiva: más velocidad y más obstáculos hasta 6000 pts');
             console.log('🏆 Victoria: 6000 puntos — ¡HAS GANADO!');
         })();
     </script>
