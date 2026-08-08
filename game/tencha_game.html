@@ -28,6 +28,7 @@
             user-select: none;
         }
 
+        /* ===== PANTALLA DE ROTACIÓN (MÓVILES) ===== */
         #rotate-overlay {
             position: fixed;
             inset: 0;
@@ -148,12 +149,26 @@
             touch-action: none;
         }
 
+        /* ===== LOGO CENTRAL (SIEMPRE VISIBLE) ===== */
+        .logo-centro {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 6;
+            width: clamp(80px, 13vw, 120px);
+            height: auto;
+            filter: drop-shadow(0 0 30px rgba(255, 204, 0, 0.2));
+            pointer-events: none;
+        }
+
+        /* ===== LOGOS EN PANTALLAS DE INICIO Y PAUSA ===== */
         .logo-inicio-izq {
             position: absolute;
             top: 12px;
             left: 16px;
             z-index: 8;
-            width: clamp(60px, 10vw, 100px);
+            width: clamp(55px, 9vw, 85px);
             height: auto;
             filter: drop-shadow(0 0 25px rgba(255, 204, 0, 0.15));
             pointer-events: none;
@@ -164,7 +179,7 @@
             top: 10px;
             right: 16px;
             z-index: 8;
-            width: clamp(50px, 8vw, 80px);
+            width: clamp(45px, 7vw, 70px);
             height: auto;
             filter: drop-shadow(0 0 25px rgba(255, 204, 0, 0.15));
             pointer-events: none;
@@ -175,11 +190,45 @@
             display: none;
         }
 
+        /* ===== BOTÓN DE SILENCIO ===== */
+        .btn-silenciar {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            z-index: 7;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 204, 0, 0.2);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            color: #ffcc00;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: .3s;
+            backdrop-filter: blur(4px);
+            pointer-events: auto;
+        }
+
+        .btn-silenciar:hover {
+            background: rgba(255, 204, 0, 0.15);
+            border-color: #ffcc00;
+            transform: scale(1.1);
+        }
+
+        .btn-silenciar.mute {
+            color: #666;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ===== AJUSTE DEL HUD PARA EL BOTÓN ===== */
         .hud {
             position: absolute;
             top: 12px;
             left: 16px;
-            right: 16px;
+            right: 60px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -228,7 +277,7 @@
 
         .bonus-indicador {
             position: absolute;
-            top: 55px;
+            top: 60px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 7;
@@ -562,7 +611,15 @@
             .hud {
                 top: 6px;
                 left: 10px;
+                right: 50px;
+            }
+
+            .btn-silenciar {
+                top: 8px;
                 right: 10px;
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
             }
 
             .vidas {
@@ -580,7 +637,7 @@
             }
 
             .bonus-indicador {
-                top: 42px;
+                top: 48px;
                 font-size: clamp(10px, 1.6vw, 14px);
                 padding: 3px 12px;
                 white-space: normal;
@@ -615,16 +672,21 @@
                 padding: 10px 24px;
             }
 
+            .logo-centro {
+                top: 6px;
+                width: clamp(60px, 10vw, 85px);
+            }
+
             .logo-inicio-izq {
                 top: 8px;
                 left: 10px;
-                width: clamp(45px, 8vw, 70px);
+                width: clamp(40px, 7vw, 60px);
             }
 
             .diablito-inicio-der {
                 top: 6px;
                 right: 10px;
-                width: clamp(38px, 6vw, 55px);
+                width: clamp(35px, 6vw, 50px);
             }
         }
 
@@ -637,7 +699,15 @@
             .hud {
                 top: 4px;
                 left: 6px;
+                right: 40px;
+            }
+
+            .btn-silenciar {
+                top: 6px;
                 right: 6px;
+                width: 24px;
+                height: 24px;
+                font-size: 12px;
             }
 
             .vidas {
@@ -656,7 +726,7 @@
             }
 
             .bonus-indicador {
-                top: 36px;
+                top: 40px;
                 font-size: clamp(8px, 1.4vw, 11px);
                 padding: 2px 8px;
             }
@@ -689,16 +759,21 @@
                 padding: 8px 18px;
             }
 
+            .logo-centro {
+                top: 4px;
+                width: clamp(50px, 8vw, 65px);
+            }
+
             .logo-inicio-izq {
                 top: 6px;
                 left: 6px;
-                width: clamp(35px, 7vw, 50px);
+                width: clamp(30px, 6vw, 45px);
             }
 
             .diablito-inicio-der {
                 top: 4px;
                 right: 6px;
-                width: clamp(30px, 5vw, 40px);
+                width: clamp(25px, 5vw, 38px);
             }
 
             #rotate-overlay .rotate-icon {
@@ -720,18 +795,31 @@
         }
 
         @media (max-width: 380px) {
+            .logo-centro {
+                width: clamp(40px, 7vw, 55px);
+                top: 3px;
+            }
+
             .logo-inicio-izq {
-                width: clamp(28px, 6vw, 38px);
+                width: clamp(25px, 5vw, 35px);
             }
 
             .diablito-inicio-der {
-                width: clamp(24px, 5vw, 32px);
+                width: clamp(20px, 4vw, 30px);
             }
 
             .hud {
                 top: 3px;
                 left: 4px;
+                right: 34px;
+            }
+
+            .btn-silenciar {
+                top: 4px;
                 right: 4px;
+                width: 20px;
+                height: 20px;
+                font-size: 10px;
             }
 
             .puntaje {
@@ -744,7 +832,7 @@
             }
 
             .bonus-indicador {
-                top: 30px;
+                top: 34px;
                 font-size: 8px;
                 padding: 2px 6px;
             }
@@ -768,8 +856,15 @@
     <div class="juego-wrap" id="juegoWrap">
         <canvas id="lienzo"></canvas>
 
+        <!-- LOGO CENTRAL (siempre visible) -->
+        <img src="../img/logo.webp" alt="Los Hijos de Tencha" class="logo-centro" id="logoCentral">
+
+        <!-- LOGOS EN PANTALLAS DE INICIO/PAUSA -->
         <img src="../img/logo.webp" alt="Los Hijos de Tencha" class="logo-inicio-izq" id="logoInicioIzq">
         <img src="../img/menu-icono.webp" alt="Diablito" class="diablito-inicio-der" id="diablitoInicioDer">
+
+        <!-- BOTÓN DE SILENCIO -->
+        <button class="btn-silenciar" id="btnSilenciar" title="Silenciar/Activar música">🔊</button>
 
         <div class="hud">
             <div class="hud-izquierda">
@@ -788,6 +883,7 @@
             <button id="btnSalir" class="btn-salir">🚪 Salir</button>
         </div>
 
+        <!-- ===== PANTALLA DE INICIO ===== -->
         <div class="overlay" id="pantallaInicio">
             <h1>El Diablo Cumbianchero</h1>
             <p>Brinca guitarras, bajos, bongós, tumbas, pianos, acordeones y teclados. ¡Tienes 3 vidas!</p>
@@ -798,6 +894,7 @@
             <button class="btn-tencha" id="btnIniciar">🎵 Empezar a bailar</button>
         </div>
 
+        <!-- ===== PANTALLA DE PAUSA ===== -->
         <div class="overlay pausa-overlay oculto" id="pantallaPausa">
             <h1>⏸️ PAUSA</h1>
             <p>Descansa un momento, el diablo te espera.</p>
@@ -831,12 +928,11 @@
     <a href="../index.html" class="volver-link" id="volverLink">← Volver al sitio</a>
 
     <!-- ============================================================
-    SISTEMA DE AUDIO GENÉRICO (Web Audio API)
+    SISTEMA DE AUDIO CON WEB AUDIO API
     ============================================================ -->
     <script>
         // ============================================================
-        //  SISTEMA DE SONIDO - Web Audio API
-        //  (Genera sonidos sintéticos sin archivos externos)
+        //  SISTEMA DE SONIDO - Web Audio API (NUEVA MÚSICA)
         // ============================================================
 
         class AudioManager {
@@ -844,41 +940,56 @@
                 this.ctx = null;
                 this.inicializado = false;
                 this.musicaActiva = false;
+                this.silenciado = false;
                 this.oscillators = [];
                 this.gains = [];
                 this.musicaInterval = null;
-                this.volumenMusica = 0.15;
+                this.volumenMusica = 0.12;
                 this.volumenEfectos = 0.25;
+                this.notaIndex = 0;
             }
 
-            // Inicializar contexto de audio (necesita interacción del usuario)
             init() {
                 if (this.inicializado) return;
                 try {
                     this.ctx = new (window.AudioContext || window.webkitAudioContext)();
                     this.inicializado = true;
                     console.log('🎵 Sistema de audio inicializado');
-                    // Iniciar música de fondo
                     this.iniciarMusicaFondo();
                 } catch (e) {
                     console.warn('⚠️ Error al inicializar audio:', e);
                 }
             }
 
-            // ===== MÚSICA DE FONDO (Cumbia sintética) =====
+            toggleSilencio() {
+                this.silenciado = !this.silenciado;
+                const btn = document.getElementById('btnSilenciar');
+                if (this.silenciado) {
+                    btn.textContent = '🔇';
+                    btn.classList.add('mute');
+                    this.detenerMusicaFondo();
+                } else {
+                    btn.textContent = '🔊';
+                    btn.classList.remove('mute');
+                    this.iniciarMusicaFondo();
+                }
+                return this.silenciado;
+            }
+
+            // ===== NUEVA MÚSICA: CUMBIA MÁS PEGAJOSA =====
             iniciarMusicaFondo() {
-                if (!this.inicializado) return;
+                if (!this.inicializado || this.silenciado) return;
                 if (this.musicaActiva) return;
 
                 this.musicaActiva = true;
-                this.tocarNotaCumbia();
+                this.notaIndex = 0;
+                this.tocarPatronCumbia();
 
-                // Bucle de música: cambiar notas cada 400ms
                 this.musicaInterval = setInterval(() => {
-                    if (this.musicaActiva) {
-                        this.tocarNotaCumbia();
+                    if (this.musicaActiva && !this.silenciado) {
+                        this.tocarPatronCumbia();
                     }
-                }, 500);
+                }, 380);
             }
 
             detenerMusicaFondo() {
@@ -887,7 +998,6 @@
                     clearInterval(this.musicaInterval);
                     this.musicaInterval = null;
                 }
-                // Detener todos los osciladores
                 this.oscillators.forEach(osc => {
                     try { osc.stop(); } catch (e) { }
                 });
@@ -895,123 +1005,136 @@
                 this.gains = [];
             }
 
-            tocarNotaCumbia() {
-                if (!this.inicializado || !this.musicaActiva) return;
+            tocarPatronCumbia() {
+                if (!this.inicializado || !this.musicaActiva || this.silenciado) return;
 
-                // Patrón de cumbia: notas en escala pentatónica
-                const notas = [
-                    261.63, // C4
-                    293.66, // D4
-                    329.63, // E4
-                    392.00, // G4
-                    440.00, // A4
-                    493.88, // B4
-                    523.25 // C5
+                // Patrón de cumbia más movido: secuencia rítmica
+                const patrones = [
+                    // [frecuencia, duración, tipo]
+                    [261.63, 0.15, 'sawtooth'],
+                    [329.63, 0.12, 'square'],
+                    [392.00, 0.15, 'sawtooth'],
+                    [523.25, 0.10, 'square'],
+                    [440.00, 0.15, 'sawtooth'],
+                    [349.23, 0.12, 'square'],
+                    [293.66, 0.18, 'sawtooth'],
+                    [493.88, 0.10, 'square'],
                 ];
 
-                // Elegir 2-3 notas aleatorias para formar un acorde
+                // Elegir 2-3 notas del patrón para formar un acorde
                 const numNotas = 2 + Math.floor(Math.random() * 2);
                 const seleccion = [];
+                const indices = [];
                 for (let i = 0; i < numNotas; i++) {
-                    const idx = Math.floor(Math.random() * notas.length);
-                    seleccion.push(notas[idx]);
+                    let idx;
+                    do {
+                        idx = Math.floor(Math.random() * patrones.length);
+                    } while (indices.includes(idx));
+                    indices.push(idx);
+                    seleccion.push(patrones[idx]);
                 }
 
-                // Tocar cada nota del acorde
-                seleccion.forEach((freq, index) => {
+                // Tocar cada nota con un pequeño offset para ritmo
+                seleccion.forEach((item, index) => {
                     try {
                         const osc = this.ctx.createOscillator();
                         const gain = this.ctx.createGain();
 
-                        osc.type = index % 2 === 0 ? 'sawtooth' : 'square';
-                        osc.frequency.value = freq;
+                        osc.type = item[2] || 'sawtooth';
+                        osc.frequency.value = item[0];
 
-                        // Volumen suave
-                        gain.gain.value = this.volumenMusica * (0.3 + Math.random() * 0.2);
-                        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.35);
+                        const tiempoInicio = this.ctx.currentTime + index * 0.06;
+                        const duracion = item[1] || 0.12;
 
-                        osc.connect(gain);
+                        gain.gain.value = this.volumenMusica * (0.25 + Math.random() * 0.15);
+                        gain.gain.exponentialRampToValueAtTime(0.001, tiempoInicio + duracion);
+
+                        // Filtro para dar calidez
+                        const filter = this.ctx.createBiquadFilter();
+                        filter.type = 'lowpass';
+                        filter.frequency.value = 1200 + Math.random() * 600;
+
+                        osc.connect(filter);
+                        filter.connect(gain);
                         gain.connect(this.ctx.destination);
 
-                        osc.start(this.ctx.currentTime);
-                        osc.stop(this.ctx.currentTime + 0.35);
+                        osc.start(tiempoInicio);
+                        osc.stop(tiempoInicio + duracion + 0.05);
 
-                        // Guardar para poder detenerlos después
                         this.oscillators.push(osc);
                         this.gains.push(gain);
 
-                        // Limpiar lista después de que terminen
                         setTimeout(() => {
                             const idx = this.oscillators.indexOf(osc);
                             if (idx > -1) this.oscillators.splice(idx, 1);
                             const idxG = this.gains.indexOf(gain);
                             if (idxG > -1) this.gains.splice(idxG, 1);
-                        }, 400);
-                    } catch (e) {
-                        // Silenciosamente ignorar errores de audio
-                    }
+                        }, 500);
+                    } catch (e) { }
                 });
+
+                // Añadir un bajo profundo ocasional
+                if (Math.random() < 0.3) {
+                    try {
+                        const oscBajo = this.ctx.createOscillator();
+                        const gainBajo = this.ctx.createGain();
+                        oscBajo.type = 'sawtooth';
+                        oscBajo.frequency.value = 130.81; // C3
+                        gainBajo.gain.value = this.volumenMusica * 0.2;
+                        gainBajo.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.2);
+                        oscBajo.connect(gainBajo);
+                        gainBajo.connect(this.ctx.destination);
+                        oscBajo.start(this.ctx.currentTime);
+                        oscBajo.stop(this.ctx.currentTime + 0.2);
+                    } catch (e) { }
+                }
             }
 
             // ===== EFECTOS DE SONIDO =====
-
-            // Salto: sonido ascendente
             reproducirSalto() {
-                if (!this.inicializado) return;
+                if (!this.inicializado || this.silenciado) return;
                 try {
                     const osc = this.ctx.createOscillator();
                     const gain = this.ctx.createGain();
-
                     osc.type = 'sine';
                     osc.frequency.value = 300;
-                    osc.frequency.exponentialRampToValueAtTime(600, this.ctx.currentTime + 0.1);
-
-                    gain.gain.value = this.volumenEfectos * 0.6;
+                    osc.frequency.exponentialRampToValueAtTime(700, this.ctx.currentTime + 0.1);
+                    gain.gain.value = this.volumenEfectos * 0.5;
                     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.12);
-
                     osc.connect(gain);
                     gain.connect(this.ctx.destination);
-
                     osc.start(this.ctx.currentTime);
                     osc.stop(this.ctx.currentTime + 0.12);
                 } catch (e) { }
             }
 
-            // Colisión: sonido de impacto
             reproducirColision() {
-                if (!this.inicializado) return;
+                if (!this.inicializado || this.silenciado) return;
                 try {
-                    // Ruido blanco filtrado para sonido de impacto
                     const bufferSize = this.ctx.sampleRate * 0.15;
                     const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
                     const data = buffer.getChannelData(0);
                     for (let i = 0; i < bufferSize; i++) {
                         data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
                     }
-
                     const noise = this.ctx.createBufferSource();
                     noise.buffer = buffer;
-
                     const gain = this.ctx.createGain();
-                    gain.gain.value = this.volumenEfectos * 0.8;
+                    gain.gain.value = this.volumenEfectos * 0.7;
                     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.12);
-
                     const filter = this.ctx.createBiquadFilter();
                     filter.type = 'lowpass';
-                    filter.frequency.value = 800;
-
+                    filter.frequency.value = 600;
                     noise.connect(filter);
                     filter.connect(gain);
                     gain.connect(this.ctx.destination);
-
                     noise.start(this.ctx.currentTime);
                     noise.stop(this.ctx.currentTime + 0.15);
                 } catch (e) { }
             }
 
-            // Bonus: sonido de victoria corto
             reproducirBonus() {
-                if (!this.inicializado) return;
+                if (!this.inicializado || this.silenciado) return;
                 try {
                     const notas = [523, 659, 784, 1047];
                     notas.forEach((freq, i) => {
@@ -1019,23 +1142,19 @@
                         const gain = this.ctx.createGain();
                         osc.type = 'square';
                         osc.frequency.value = freq;
-
                         const tiempo = this.ctx.currentTime + i * 0.08;
-                        gain.gain.value = this.volumenEfectos * 0.3;
+                        gain.gain.value = this.volumenEfectos * 0.25;
                         gain.gain.exponentialRampToValueAtTime(0.001, tiempo + 0.12);
-
                         osc.connect(gain);
                         gain.connect(this.ctx.destination);
-
                         osc.start(tiempo);
                         osc.stop(tiempo + 0.12);
                     });
                 } catch (e) { }
             }
 
-            // Victoria: melodía ascendente
             reproducirVictoria() {
-                if (!this.inicializado) return;
+                if (!this.inicializado || this.silenciado) return;
                 try {
                     const notas = [523, 587, 659, 784, 880, 1047];
                     notas.forEach((freq, i) => {
@@ -1043,23 +1162,19 @@
                         const gain = this.ctx.createGain();
                         osc.type = 'sine';
                         osc.frequency.value = freq;
-
                         const tiempo = this.ctx.currentTime + i * 0.1;
                         gain.gain.value = this.volumenEfectos * 0.3;
                         gain.gain.exponentialRampToValueAtTime(0.001, tiempo + 0.15);
-
                         osc.connect(gain);
                         gain.connect(this.ctx.destination);
-
                         osc.start(tiempo);
                         osc.stop(tiempo + 0.15);
                     });
                 } catch (e) { }
             }
 
-            // Game Over: sonido descendente triste
             reproducirGameOver() {
-                if (!this.inicializado) return;
+                if (!this.inicializado || this.silenciado) return;
                 try {
                     const notas = [440, 392, 349, 294];
                     notas.forEach((freq, i) => {
@@ -1067,35 +1182,28 @@
                         const gain = this.ctx.createGain();
                         osc.type = 'sawtooth';
                         osc.frequency.value = freq;
-
                         const tiempo = this.ctx.currentTime + i * 0.2;
-                        gain.gain.value = this.volumenEfectos * 0.3;
+                        gain.gain.value = this.volumenEfectos * 0.25;
                         gain.gain.exponentialRampToValueAtTime(0.001, tiempo + 0.2);
-
                         osc.connect(gain);
                         gain.connect(this.ctx.destination);
-
                         osc.start(tiempo);
                         osc.stop(tiempo + 0.2);
                     });
                 } catch (e) { }
             }
 
-            // Pausa: sonido corto
             reproducirPausa() {
-                if (!this.inicializado) return;
+                if (!this.inicializado || this.silenciado) return;
                 try {
                     const osc = this.ctx.createOscillator();
                     const gain = this.ctx.createGain();
                     osc.type = 'sine';
                     osc.frequency.value = 440;
-
-                    gain.gain.value = this.volumenEfectos * 0.3;
+                    gain.gain.value = this.volumenEfectos * 0.25;
                     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
-
                     osc.connect(gain);
                     gain.connect(this.ctx.destination);
-
                     osc.start(this.ctx.currentTime);
                     osc.stop(this.ctx.currentTime + 0.08);
                 } catch (e) { }
@@ -1108,23 +1216,25 @@
 
         const audio = new AudioManager();
 
-        // Inicializar audio con interacción del usuario
         function iniciarAudio() {
             if (!audio.inicializado) {
                 audio.init();
             }
-            // Si el contexto está suspendido, reanudarlo
             if (audio.ctx && audio.ctx.state === 'suspended') {
                 audio.ctx.resume();
             }
         }
 
-        // Activar audio con cualquier interacción
+        // Botón de silencio
+        document.getElementById('btnSilenciar').addEventListener('click', function (e) {
+            e.stopPropagation();
+            audio.toggleSilencio();
+        });
+
+        // Activar audio con interacción
         document.addEventListener('click', iniciarAudio);
         document.addEventListener('touchstart', iniciarAudio);
         document.addEventListener('keydown', iniciarAudio);
-
-        // También al hacer clic en el botón de pantalla completa
         document.getElementById('btnFullscreen').addEventListener('click', iniciarAudio);
 
         // ============================================================
@@ -1182,7 +1292,7 @@
         }
 
         // ============================================================
-        //  JUEGO (versión simplificada con sonidos)
+        //  JUEGO COMPLETO
         // ============================================================
 
         const canvas = document.getElementById('lienzo');
@@ -1201,6 +1311,7 @@
         const puntosVictoria = document.getElementById('puntosVictoria');
         const logoInicioIzq = document.getElementById('logoInicioIzq');
         const diablitoInicioDer = document.getElementById('diablitoInicioDer');
+        const logoCentral = document.getElementById('logoCentral');
         const btnIniciar = document.getElementById('btnIniciar');
         const btnReiniciar = document.getElementById('btnReiniciar');
         const btnReiniciarPausa = document.getElementById('btnReiniciarPausa');
@@ -1511,7 +1622,6 @@
                     <span class="doble">✨ PUNTOS DOBLES ×2 (15s)</span>
                 `;
 
-            // Sonido de bonus
             audio.reproducirBonus();
 
             for (let i = 0; i < 40; i++) {
@@ -1544,7 +1654,6 @@
             pantallaVictoria.classList.remove('oculto');
             if (animFrame) cancelAnimationFrame(animFrame);
 
-            // Sonido de victoria
             audio.reproducirVictoria();
 
             for (let i = 0; i < 80; i++) {
@@ -1644,6 +1753,8 @@
             pantallaInicio.classList.add('oculto');
             logoInicioIzq.classList.add('oculto');
             diablitoInicioDer.classList.add('oculto');
+            // El logo central SIEMPRE visible
+            logoCentral.classList.remove('oculto');
             corazonesHUD();
             actualizarPuntaje();
             document.getElementById('btnPausa').textContent = '⏸️ Pausa';
@@ -1660,7 +1771,6 @@
             if (!personaje.saltando) {
                 personaje.velocidadY = FUERZA_SALTO;
                 personaje.saltando = true;
-                // Sonido de salto
                 audio.reproducirSalto();
             }
         }
@@ -1671,10 +1781,14 @@
             document.getElementById('btnPausa').textContent = pausado ? '▶️ Reanudar' : '⏸️ Pausa';
             if (pausado) {
                 pantallaPausa.classList.remove('oculto');
+                logoInicioIzq.classList.remove('oculto');
+                diablitoInicioDer.classList.remove('oculto');
                 if (animFrame) cancelAnimationFrame(animFrame);
                 audio.reproducirPausa();
             } else {
                 pantallaPausa.classList.add('oculto');
+                logoInicioIzq.classList.add('oculto');
+                diablitoInicioDer.classList.add('oculto');
                 tiempoAnterior = null;
                 animFrame = requestAnimationFrame(bucle);
                 audio.reproducirPausa();
@@ -1698,13 +1812,13 @@
             pantallaInicio.classList.remove('oculto');
             logoInicioIzq.classList.remove('oculto');
             diablitoInicioDer.classList.remove('oculto');
+            logoCentral.classList.remove('oculto');
             pantallaFin.classList.add('oculto');
             pantallaVictoria.classList.add('oculto');
             pantallaPausa.classList.add('oculto');
             document.getElementById('btnPausa').textContent = '⏸️ Pausa';
             pausado = false;
             dibujar();
-            // Reiniciar música
             audio.detenerMusicaFondo();
             audio.iniciarMusicaFondo();
         }
@@ -1805,7 +1919,6 @@
                 tiempoAnterior = null;
                 if (animFrame) cancelAnimationFrame(animFrame);
                 animFrame = requestAnimationFrame(bucle);
-                // Reiniciar música
                 audio.detenerMusicaFondo();
                 audio.iniciarMusicaFondo();
             }, 1500);
@@ -1827,9 +1940,7 @@
             puntajeFinal.textContent = 'Puntos: ' + puntos + ' | Distancia: ' + Math.floor(distancia) + 'm';
             pantallaFin.classList.remove('oculto');
             if (animFrame) cancelAnimationFrame(animFrame);
-            // Sonido de game over
             audio.reproducirGameOver();
-            // Detener música
             audio.detenerMusicaFondo();
         }
 
@@ -2076,7 +2187,6 @@
                         invencibleHasta = Date.now() + 1200;
                         generarParticulasImpacto(o.x + o.ancho / 2, o.y + o.alto / 2);
 
-                        // Sonido de colisión
                         audio.reproducirColision();
 
                         if (vidas <= 0) {
@@ -2615,7 +2725,7 @@
         actualizarPuntaje();
         dibujar();
 
-        // Iniciar música automáticamente después de un breve retraso
+        // Iniciar música automáticamente
         setTimeout(() => {
             if (!audio.inicializado) {
                 audio.init();
@@ -2624,8 +2734,8 @@
         }, 1000);
 
         console.log('🔥 El Diablo Cumbianchero — Los Hijos de Tencha');
-        console.log('🎵 Sistema de audio con Web Audio API (sin archivos externos)');
-        console.log('🔊 Sonidos: salto, colisión, bonus, victoria, game over');
+        console.log('🎵 Nueva música: Cumbia más pegajosa');
+        console.log('🔊 Botón de silencio en la esquina superior derecha');
         console.log('📱 Responsive: adaptable a móviles y tablets');
         console.log('🔄 Botón Reiniciar en pausa');
         console.log('🏆 Victoria: 6000 puntos — ¡HAS GANADO!');
