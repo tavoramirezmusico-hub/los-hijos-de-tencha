@@ -35,13 +35,28 @@
                 #111;
         }
 
-        .titulo-juego {
+        .header-juego {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 14px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .header-juego .logo-centro {
+            height: clamp(40px, 6vw, 60px);
+            width: auto;
+            filter: drop-shadow(0 0 20px rgba(255, 204, 0, 0.2));
+        }
+
+        .header-juego .titulo-juego {
             color: #ffcc00;
             font-weight: 800;
-            font-size: clamp(22px, 4vw, 34px);
+            font-size: clamp(20px, 3.8vw, 32px);
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 14px;
             text-shadow: 0 0 18px rgba(255, 204, 0, .35);
             text-align: center;
         }
@@ -67,7 +82,7 @@
         /* ---- HUD ---- */
         .hud {
             position: absolute;
-            top: 14px;
+            top: 12px;
             left: 16px;
             right: 16px;
             display: flex;
@@ -81,13 +96,13 @@
         .hud-izquierda {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 14px;
         }
 
         .vidas {
             display: flex;
-            gap: 4px;
-            font-size: clamp(16px, 2.8vw, 24px);
+            gap: 3px;
+            font-size: clamp(14px, 2.5vw, 22px);
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .6));
         }
 
@@ -98,21 +113,20 @@
 
         .puntaje {
             color: #ffcc00;
-            font-size: clamp(13px, 2.2vw, 18px);
+            font-size: clamp(12px, 2vw, 17px);
             background: rgba(0, 0, 0, .5);
             padding: 4px 14px;
             border-radius: 20px;
             border: 1px solid rgba(255, 204, 0, .3);
         }
 
-        .logo-esquina {
-            position: absolute;
-            top: 8px;
-            right: 12px;
-            width: clamp(40px, 7vw, 60px);
-            z-index: 6;
-            filter: drop-shadow(0 3px 8px rgba(0, 0, 0, .7));
-            pointer-events: none;
+        .velocidad-indicador {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 12px;
+            font-weight: 400;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 10px;
+            border-radius: 12px;
         }
 
         /* ---- Botones HUD ---- */
@@ -133,7 +147,7 @@
             background: rgba(0, 0, 0, .6);
             border: 1px solid rgba(255, 204, 0, .3);
             color: #fff;
-            padding: 6px 16px;
+            padding: 6px 18px;
             border-radius: 20px;
             font-family: 'Poppins', sans-serif;
             font-size: 12px;
@@ -286,6 +300,7 @@
             color: #7d7d7d;
             font-size: 13px;
             text-decoration: none;
+            transition: .3s;
         }
 
         .volver:hover {
@@ -315,17 +330,12 @@
         @media (max-width: 600px) {
             .hud-botones {
                 gap: 8px;
+                bottom: 8px;
             }
 
             .hud-botones button {
                 font-size: 10px;
                 padding: 4px 12px;
-            }
-
-            .logo-esquina {
-                top: 4px;
-                right: 6px;
-                width: clamp(30px, 6vw, 40px);
             }
 
             .hud {
@@ -342,25 +352,35 @@
                 font-size: 11px;
                 padding: 2px 10px;
             }
+
+            .header-juego {
+                gap: 10px;
+            }
+
+            .header-juego .logo-centro {
+                height: 30px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="titulo-juego">🔥 El Diablo Cumbiambero 🔥</div>
+    <!-- Header con logo centrado -->
+    <div class="header-juego">
+        <img src="../img/logo.webp" alt="Los Hijos de Tencha" class="logo-centro">
+        <span class="titulo-juego">🔥 El Diablo Cumbiambero 🔥</span>
+    </div>
 
     <div class="juego-wrap" id="juegoWrap">
         <canvas id="lienzo"></canvas>
-
-        <img src="../img/logo.webp" alt="Los Hijos de Tencha" class="logo-esquina" id="logoJuego">
 
         <div class="hud">
             <div class="hud-izquierda">
                 <div class="vidas" id="vidasHUD"></div>
                 <div class="puntaje" id="puntajeHUD">PUNTOS: 0</div>
             </div>
-            <div style="color:rgba(255,255,255,0.3); font-size:12px; font-weight:400;" id="velocidadHUD">⚡ 1x</div>
+            <div class="velocidad-indicador" id="velocidadHUD">⚡ Nivel 1</div>
         </div>
 
         <!-- Botones HUD -->
@@ -399,7 +419,7 @@
 
         <!-- Grito al reiniciar -->
         <div class="overlay oculto" id="pantallaGrito">
-            <div class="grito-diablo">¡La cuuuuumbbbia del diablooooooo! 🔥</div>
+            <div class="grito-diablo">¡La cuuumbbbia del diablooooooo! 🔥</div>
         </div>
     </div>
 
@@ -426,7 +446,6 @@
             const btnSalir = document.getElementById('btnSalir');
             const btnSalirPausa = document.getElementById('btnSalirPausa');
             const btnSalirFin = document.getElementById('btnSalirFin');
-            const logoJuego = document.getElementById('logoJuego');
 
             // Resolución interna
             const ANCHO = 900;
@@ -434,19 +453,9 @@
             canvas.width = ANCHO;
             canvas.height = ALTO;
 
-            const PALETA = {
-                amarillo: '#ffcc00',
-                rojo: '#d72638',
-                verdeClaro: '#4caf50',
-                verdeOscuro: '#1a3a1a',
-                marron: '#5d4037',
-                blanco: '#ffffff',
-                gris: '#999999',
-            };
-
-            const SUELO_Y = ALTO - 80;
+            const SUELO_Y = ALTO - 75;
             const GRAVEDAD = 0.55;
-            const FUERZA_SALTO = -11.8;
+            const FUERZA_SALTO = -12.0;
 
             // ---- Personaje ----
             const spritePersonaje = new Image();
@@ -454,11 +463,14 @@
             spritePersonaje.onload = () => { spriteListo = true; };
             spritePersonaje.src = '../img/menu-icono.webp';
 
+            const PERSONAJE_ANCHO = 50;
+            const PERSONAJE_ALTO = 50;
+
             const personaje = {
                 x: 100,
-                y: SUELO_Y,
-                ancho: 54,
-                alto: 54,
+                y: SUELO_Y - PERSONAJE_ALTO,
+                ancho: PERSONAJE_ANCHO,
+                alto: PERSONAJE_ALTO,
                 velocidadY: 0,
                 saltando: false,
                 angulo: 0
@@ -466,23 +478,23 @@
 
             // ---- Instrumentos ----
             const INSTRUMENTOS = [
-                { emoji: '🎸', nombre: 'guitarra', ancho: 40, alto: 56 },
-                { emoji: '🪕', nombre: 'bajo', ancho: 40, alto: 54 },
-                { emoji: '🥁', nombre: 'bongó', ancho: 44, alto: 42 },
-                { emoji: '🪘', nombre: 'tumba', ancho: 44, alto: 58 },
-                { emoji: '🎹', nombre: 'piano', ancho: 62, alto: 44 },
-                { emoji: '🪗', nombre: 'acordeón', ancho: 48, alto: 48 },
-                { emoji: '🎼', nombre: 'teclado', ancho: 58, alto: 40 }
+                { emoji: '🎸', nombre: 'guitarra', ancho: 40, alto: 52 },
+                { emoji: '🪕', nombre: 'bajo', ancho: 40, alto: 50 },
+                { emoji: '🥁', nombre: 'bongó', ancho: 44, alto: 40 },
+                { emoji: '🪘', nombre: 'tumba', ancho: 44, alto: 54 },
+                { emoji: '🎹', nombre: 'piano', ancho: 58, alto: 42 },
+                { emoji: '🪗', nombre: 'acordeón', ancho: 46, alto: 46 },
+                { emoji: '🎼', nombre: 'teclado', ancho: 54, alto: 38 }
             ];
 
             // ---- Animales ----
             const ANIMALES = [
-                { emoji: '🐒', nombre: 'mono', ancho: 28, alto: 28 },
-                { emoji: '🦜', nombre: 'loro', ancho: 26, alto: 26 },
-                { emoji: '🐆', nombre: 'jaguar', ancho: 34, alto: 26 },
-                { emoji: '🦥', nombre: 'perezoso', ancho: 30, alto: 28 },
-                { emoji: '🐸', nombre: 'rana', ancho: 24, alto: 24 },
-                { emoji: '🦋', nombre: 'mariposa', ancho: 28, alto: 24 }
+                { emoji: '🐒', nombre: 'mono', ancho: 26, alto: 26 },
+                { emoji: '🦜', nombre: 'loro', ancho: 24, alto: 24 },
+                { emoji: '🐆', nombre: 'jaguar', ancho: 32, alto: 24 },
+                { emoji: '🦥', nombre: 'perezoso', ancho: 28, alto: 26 },
+                { emoji: '🐸', nombre: 'rana', ancho: 22, alto: 22 },
+                { emoji: '🦋', nombre: 'mariposa', ancho: 26, alto: 22 }
             ];
 
             // ---- Estado ----
@@ -510,11 +522,11 @@
             // ---- Inicializar vegetación ----
             function generarVegetacion() {
                 vegetacion = [];
-                for (let i = 0; i < 30; i++) {
+                for (let i = 0; i < 35; i++) {
                     const x = Math.random() * ANCHO;
-                    const y = SUELO_Y + 10 + Math.random() * 70;
-                    const altura = 10 + Math.random() * 35;
-                    const ancho = 6 + Math.random() * 14;
+                    const y = SUELO_Y + 5 + Math.random() * 65;
+                    const altura = 8 + Math.random() * 30;
+                    const ancho = 5 + Math.random() * 12;
                     const tipo = Math.random() > 0.5 ? 'arbusto' : 'pasto';
                     const color = Math.random() > 0.5 ? '#2e7d32' : '#1b5e20';
                     vegetacion.push({
@@ -544,17 +556,17 @@
 
             function actualizarPuntaje() {
                 puntajeHUD.textContent = 'PUNTOS: ' + puntos;
-                const nivel = Math.floor(distancia / 300) + 1;
-                velocidadHUD.textContent = '⚡ ' + nivel + 'x';
+                const nivel = Math.floor(distancia / 250) + 1;
+                velocidadHUD.textContent = '⚡ Nivel ' + nivel;
             }
 
             function tiempoAleatorioObstaculo() {
-                const base = Math.max(40, 95 - velocidadJuego * 3.5);
-                return base + Math.random() * 45;
+                const base = Math.max(35, 90 - velocidadJuego * 3.2);
+                return base + Math.random() * 40;
             }
 
             function tiempoAleatorioAnimal() {
-                return 120 + Math.random() * 200;
+                return 100 + Math.random() * 180;
             }
 
             function reiniciarEstadoJuego() {
@@ -568,7 +580,7 @@
                 invencibleHasta = 0;
                 siguienteObstaculo = tiempoAleatorioObstaculo();
                 siguienteAnimal = tiempoAleatorioAnimal();
-                personaje.y = SUELO_Y;
+                personaje.y = SUELO_Y - PERSONAJE_ALTO;
                 personaje.velocidadY = 0;
                 personaje.saltando = false;
                 personaje.angulo = 0;
@@ -619,7 +631,9 @@
                 if (e.code === 'KeyP' && estado === 'jugando') togglePausa();
             });
 
-            wrap.addEventListener('pointerdown', () => {
+            wrap.addEventListener('pointerdown', (e) => {
+                // Evitar que se active si se hizo clic en un botón
+                if (e.target.closest('button')) return;
                 if (estado === 'inicio') empezarJuego();
                 else if (estado === 'jugando' && !pausado) saltar();
                 else if (estado === 'terminado') reiniciar();
@@ -633,11 +647,26 @@
                 e.stopPropagation();
                 reiniciar();
             });
-            btnPausa.addEventListener('click', togglePausa);
-            btnReanudar.addEventListener('click', togglePausa);
-            btnSalir.addEventListener('click', salirAlSitio);
-            btnSalirPausa.addEventListener('click', salirAlSitio);
-            btnSalirFin.addEventListener('click', salirAlSitio);
+            btnPausa.addEventListener('click', (e) => {
+                e.stopPropagation();
+                togglePausa();
+            });
+            btnReanudar.addEventListener('click', (e) => {
+                e.stopPropagation();
+                togglePausa();
+            });
+            btnSalir.addEventListener('click', (e) => {
+                e.stopPropagation();
+                salirAlSitio();
+            });
+            btnSalirPausa.addEventListener('click', (e) => {
+                e.stopPropagation();
+                salirAlSitio();
+            });
+            btnSalirFin.addEventListener('click', (e) => {
+                e.stopPropagation();
+                salirAlSitio();
+            });
 
             // ---- Funciones principales ----
             function empezarJuego() {
@@ -675,7 +704,7 @@
                 const tipo = INSTRUMENTOS[Math.floor(Math.random() * INSTRUMENTOS.length)];
                 obstaculos.push({
                     x: ANCHO + 20,
-                    y: SUELO_Y + 58 - tipo.alto,
+                    y: SUELO_Y - tipo.alto + 4,
                     ancho: tipo.ancho,
                     alto: tipo.alto,
                     emoji: tipo.emoji,
@@ -689,7 +718,7 @@
                 const enSuelo = Math.random() > 0.5;
                 animales.push({
                     x: ANCHO + 20,
-                    y: enSuelo ? SUELO_Y + 8 + Math.random() * 10 : 40 + Math.random() * 100,
+                    y: enSuelo ? SUELO_Y - tipo.alto + 4 : 30 + Math.random() * 120,
                     ancho: tipo.ancho,
                     alto: tipo.alto,
                     emoji: tipo.emoji,
@@ -700,20 +729,22 @@
             }
 
             function generarParticulasImpacto(x, y) {
-                for (let i = 0; i < 12; i++) {
+                for (let i = 0; i < 14; i++) {
                     particulas.push({
                         x,
                         y,
-                        vx: (Math.random() - 0.5) * 8,
-                        vy: (Math.random() - 1.4) * 8,
+                        vx: (Math.random() - 0.5) * 9,
+                        vy: (Math.random() - 1.5) * 9,
                         vida: 35,
-                        color: Math.random() > 0.5 ? PALETA.amarillo : PALETA.rojo
+                        color: Math.random() > 0.5 ? '#ffcc00' : '#d72638',
+                        tamano: 2 + Math.random() * 4
                     });
                 }
             }
 
             function colision(a, b) {
-                const PAD = 10;
+                // Margen de tolerancia para que sea justo pero no imposible
+                const PAD = 8;
                 return (
                     a.x + PAD < b.x + b.ancho - PAD &&
                     a.x + a.ancho - PAD > b.x + PAD &&
@@ -724,67 +755,79 @@
 
             // ---- Actualizar ----
             function actualizar(dt) {
-                distancia += velocidadJuego * dt * 0.06;
+                distancia += velocidadJuego * dt * 0.055;
                 scrollFondo -= velocidadJuego * dt * 0.04;
 
                 // Dificultad progresiva
-                const nivel = Math.floor(distancia / 300) + 1;
+                const nivel = Math.floor(distancia / 250) + 1;
                 velocidadJuego = Math.min(VELOCIDAD_MAX, 5.5 + (nivel - 1) * 1.8);
                 actualizarPuntaje();
 
                 // Física del salto
-                personaje.velocidadY += GRAVEDAD * dt * 0.06;
-                personaje.y += personaje.velocidadY * dt * 0.06;
-                if (personaje.y >= SUELO_Y) {
-                    personaje.y = SUELO_Y;
+                personaje.velocidadY += GRAVEDAD * dt * 0.055;
+                personaje.y += personaje.velocidadY * dt * 0.055;
+
+                // Limitar en el suelo
+                if (personaje.y >= SUELO_Y - PERSONAJE_ALTO) {
+                    personaje.y = SUELO_Y - PERSONAJE_ALTO;
                     personaje.velocidadY = 0;
                     personaje.saltando = false;
                 }
+
                 if (personaje.saltando) {
-                    personaje.angulo += 0.1 * dt * 0.06;
+                    personaje.angulo += 0.08 * dt * 0.055;
                 } else {
                     personaje.angulo = 0;
                 }
 
                 // Generar obstáculos
-                siguienteObstaculo -= dt * 0.06;
+                siguienteObstaculo -= dt * 0.055;
                 if (siguienteObstaculo <= 0) {
                     generarObstaculo();
                     siguienteObstaculo = tiempoAleatorioObstaculo();
                 }
 
                 // Generar animales
-                siguienteAnimal -= dt * 0.06;
+                siguienteAnimal -= dt * 0.055;
                 if (siguienteAnimal <= 0) {
                     generarAnimal();
                     siguienteAnimal = tiempoAleatorioAnimal();
                 }
 
-                // Mover obstáculos
+                // Caja de colisión del personaje
                 const cajaPersonaje = {
                     x: personaje.x,
-                    y: personaje.y - personaje.alto,
+                    y: personaje.y,
                     ancho: personaje.ancho,
                     alto: personaje.alto
                 };
 
+                // Mover obstáculos y verificar colisiones
                 for (let i = obstaculos.length - 1; i >= 0; i--) {
                     const o = obstaculos[i];
-                    o.x -= velocidadJuego * dt * 0.06;
+                    o.x -= velocidadJuego * dt * 0.055;
 
-                    if (!o.golpeado && Date.now() > invencibleHasta && colision(cajaPersonaje, o)) {
-                        o.golpeado = true;
-                        vidas--;
-                        corazonesHUD();
-                        invencibleHasta = Date.now() + 1200;
-                        generarParticulasImpacto(o.x + o.ancho / 2, o.y + o.alto / 2);
-                        if (vidas <= 0) {
-                            if (finTimeout) clearTimeout(finTimeout);
-                            finTimeout = setTimeout(terminarJuego, 150);
-                            return;
+                    // COLISIÓN - AHORA BIEN CALCULADA
+                    if (!o.golpeado && Date.now() > invencibleHasta) {
+                        if (colision(cajaPersonaje, o)) {
+                            o.golpeado = true;
+                            vidas--;
+                            corazonesHUD();
+                            invencibleHasta = Date.now() + 1200;
+                            generarParticulasImpacto(o.x + o.ancho / 2, o.y + o.alto / 2);
+
+                            // Efecto visual de impacto
+                            console.log('💥 ¡Colisión con ' + o.nombre + '! Vidas: ' + vidas);
+
+                            if (vidas <= 0) {
+                                if (finTimeout) clearTimeout(finTimeout);
+                                finTimeout = setTimeout(terminarJuego, 150);
+                                return;
+                            }
                         }
                     }
 
+                    // Eliminar si salió de la pantalla
                     if (o.x + o.ancho < -20) {
                         if (!o.golpeado) {
                             puntos += 10;
@@ -797,7 +840,7 @@
                 // Mover animales
                 for (let i = animales.length - 1; i >= 0; i--) {
                     const a = animales[i];
-                    a.x -= (velocidadJuego * 0.6 + a.velocidad) * dt * 0.06;
+                    a.x -= (velocidadJuego * 0.5 + a.velocidad) * dt * 0.055;
                     if (a.x + a.ancho < -20) {
                         animales.splice(i, 1);
                     }
@@ -806,10 +849,10 @@
                 // Partículas
                 for (let i = particulas.length - 1; i >= 0; i--) {
                     const p = particulas[i];
-                    p.x += p.vx * dt * 0.06;
-                    p.y += p.vy * dt * 0.06;
-                    p.vy += 0.2 * dt * 0.06;
-                    p.vida -= dt * 0.06;
+                    p.x += p.vx * dt * 0.055;
+                    p.y += p.vy * dt * 0.055;
+                    p.vy += 0.25 * dt * 0.055;
+                    p.vida -= dt * 0.055;
                     if (p.vida <= 0) particulas.splice(i, 1);
                 }
             }
@@ -821,14 +864,14 @@
                 // Cielo selvático
                 const gradCielo = ctx.createLinearGradient(0, 0, 0, SUELO_Y);
                 gradCielo.addColorStop(0, '#0d1f0d');
-                gradCielo.addColorStop(0.3, '#1a3a1a');
-                gradCielo.addColorStop(0.6, '#2d5a2d');
-                gradCielo.addColorStop(0.85, '#3a6a3a');
+                gradCielo.addColorStop(0.2, '#1a3a1a');
+                gradCielo.addColorStop(0.5, '#2d5a2d');
+                gradCielo.addColorStop(0.8, '#3a6a3a');
                 gradCielo.addColorStop(1, '#2d5a2d');
                 ctx.fillStyle = gradCielo;
                 ctx.fillRect(0, 0, ANCHO, SUELO_Y);
 
-                // Árboles y vegetación de fondo (estático)
+                // Árboles de fondo
                 ctx.shadowColor = 'rgba(0,0,0,0.3)';
                 ctx.shadowBlur = 10;
 
@@ -843,8 +886,10 @@
 
                 arboles.forEach((a, idx) => {
                     const xOff = (idx * 130 + scrollFondo * 0.1) % (ANCHO + 100) - 50;
+                    // Tronco
                     ctx.fillStyle = '#1a3a1a';
                     ctx.fillRect(xOff + a.w / 2 - 4, SUELO_Y - a.h + 10, 8, a.h - 10);
+                    // Copa
                     ctx.fillStyle = '#1b5e20';
                     ctx.beginPath();
                     ctx.arc(xOff + a.w / 2, SUELO_Y - a.h + 5, a.w / 2 + 8, 0, Math.PI * 2);
@@ -860,7 +905,7 @@
 
                 ctx.shadowBlur = 0;
 
-                // Vegetación (arbustos y pasto)
+                // Vegetación
                 vegetacion.forEach(v => {
                     const xOff = (v.x + scrollFondo * v.velocidad * 0.3) % (ANCHO + 40) - 20;
                     if (v.tipo === 'arbusto') {
@@ -883,31 +928,31 @@
                     }
                 });
 
-                // Línea del suelo
-                const gradSuelo = ctx.createLinearGradient(0, SUELO_Y + 58, 0, ALTO);
+                // Suelo
+                const gradSuelo = ctx.createLinearGradient(0, SUELO_Y + 4, 0, ALTO);
                 gradSuelo.addColorStop(0, '#2d4a2d');
                 gradSuelo.addColorStop(0.3, '#1a3a1a');
                 gradSuelo.addColorStop(1, '#0d1f0d');
                 ctx.fillStyle = gradSuelo;
-                ctx.fillRect(0, SUELO_Y + 58, ANCHO, ALTO - SUELO_Y - 58);
+                ctx.fillRect(0, SUELO_Y + 4, ANCHO, ALTO - SUELO_Y - 4);
 
-                ctx.strokeStyle = 'rgba(255,204,0,0.15)';
+                // Líneas decorativas del suelo
+                ctx.strokeStyle = 'rgba(255,204,0,0.12)';
                 ctx.lineWidth = 2;
                 ctx.setLineDash([15, 20]);
                 ctx.lineDashOffset = -scrollFondo * 1.5;
                 ctx.beginPath();
-                ctx.moveTo(0, SUELO_Y + 30);
-                ctx.lineTo(ANCHO, SUELO_Y + 30);
+                ctx.moveTo(0, SUELO_Y + 4);
+                ctx.lineTo(ANCHO, SUELO_Y + 4);
                 ctx.stroke();
-                ctx.setLineDash([]);
 
-                ctx.strokeStyle = 'rgba(255,204,0,0.08)';
+                ctx.strokeStyle = 'rgba(255,204,0,0.06)';
                 ctx.lineWidth = 1;
                 ctx.setLineDash([8, 12]);
                 ctx.lineDashOffset = -scrollFondo * 0.5;
                 ctx.beginPath();
-                ctx.moveTo(0, SUELO_Y + 45);
-                ctx.lineTo(ANCHO, SUELO_Y + 45);
+                ctx.moveTo(0, SUELO_Y + 20);
+                ctx.lineTo(ANCHO, SUELO_Y + 20);
                 ctx.stroke();
                 ctx.setLineDash([]);
             }
@@ -917,7 +962,7 @@
                 if (parpadea) return;
 
                 const cx = personaje.x + personaje.ancho / 2;
-                const cy = personaje.y - personaje.alto / 2;
+                const cy = personaje.y + personaje.alto / 2;
 
                 ctx.save();
                 ctx.translate(cx, cy);
@@ -926,14 +971,14 @@
                 }
 
                 // Sombra
-                const alturaSalto = SUELO_Y - personaje.y;
-                const escalaSombra = Math.max(0.2, 1 - alturaSalto / 140);
+                const alturaSalto = (SUELO_Y - PERSONAJE_ALTO) - personaje.y;
+                const escalaSombra = Math.max(0.15, 1 - alturaSalto / 150);
                 ctx.save();
-                ctx.translate(0, personaje.alto / 2 + 6 + alturaSalto * 0.02);
-                ctx.scale(escalaSombra, escalaSombra * 0.3);
+                ctx.translate(0, personaje.alto / 2 + 4 + alturaSalto * 0.02);
+                ctx.scale(escalaSombra, escalaSombra * 0.25);
                 ctx.beginPath();
-                ctx.ellipse(0, 0, personaje.ancho / 2, 8, 0, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(0,0,0,0.4)';
+                ctx.ellipse(0, 0, personaje.ancho / 2.2, 6, 0, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0,0,0,0.35)';
                 ctx.fill();
                 ctx.restore();
 
@@ -941,11 +986,23 @@
                     ctx.drawImage(spritePersonaje, -personaje.ancho / 2, -personaje.alto / 2, personaje.ancho, personaje
                         .alto);
                 } else {
-                    ctx.font = '44px sans-serif';
+                    ctx.font = '42px sans-serif';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText('😈', 0, 4);
+                    ctx.fillText('😈', 0, 2);
                 }
+
+                // Aura de invencibilidad
+                if (Date.now() < invencibleHasta) {
+                    ctx.strokeStyle = 'rgba(255,204,0,0.2)';
+                    ctx.lineWidth = 3;
+                    ctx.setLineDash([4, 8]);
+                    ctx.beginPath();
+                    ctx.arc(0, 0, personaje.ancho / 2 + 10, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
                 ctx.restore();
             }
 
@@ -958,17 +1015,17 @@
 
                     // Sombra
                     ctx.beginPath();
-                    ctx.ellipse(0, o.alto / 2 + 5, o.ancho / 2.2, 6, 0, 0, Math.PI * 2);
-                    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                    ctx.ellipse(0, o.alto / 2 + 4, o.ancho / 2.2, 5, 0, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(0,0,0,0.25)';
                     ctx.fill();
 
-                    // Resplandor de peligro (cuando está cerca)
+                    // Resplandor de peligro
                     if (o.x < ANCHO * 0.7) {
-                        ctx.shadowColor = 'rgba(255,0,0,0.15)';
-                        ctx.shadowBlur = 20;
+                        ctx.shadowColor = 'rgba(255,0,0,0.12)';
+                        ctx.shadowBlur = 18;
                     }
 
-                    ctx.font = Math.max(o.ancho, o.alto) * 0.8 + 'px sans-serif';
+                    ctx.font = Math.max(o.ancho, o.alto) * 0.78 + 'px sans-serif';
                     ctx.fillText(o.emoji, 0, 2);
 
                     ctx.shadowBlur = 0;
@@ -981,7 +1038,7 @@
                 ctx.textBaseline = 'middle';
                 animales.forEach(a => {
                     ctx.save();
-                    const bobY = a.enSuelo ? 0 : Math.sin(Date.now() / 800 + a.bob) * 6;
+                    const bobY = a.enSuelo ? 0 : Math.sin(Date.now() / 800 + a.bob) * 5;
                     ctx.translate(a.x + a.ancho / 2, a.y + a.alto / 2 + bobY);
                     ctx.font = a.ancho + 'px sans-serif';
                     ctx.fillText(a.emoji, 0, 2);
@@ -994,9 +1051,9 @@
                     ctx.globalAlpha = Math.max(0, p.vida / 35);
                     ctx.fillStyle = p.color;
                     ctx.shadowColor = p.color;
-                    ctx.shadowBlur = 8;
+                    ctx.shadowBlur = 10;
                     ctx.beginPath();
-                    ctx.arc(p.x, p.y, 3 + (1 - p.vida / 35) * 2, 0, Math.PI * 2);
+                    ctx.arc(p.x, p.y, p.tamano || 3, 0, Math.PI * 2);
                     ctx.fill();
                     ctx.shadowBlur = 0;
                     ctx.globalAlpha = 1;
@@ -1011,12 +1068,12 @@
                 dibujarParticulas();
 
                 // Nivel actual
-                const nivel = Math.floor(distancia / 300) + 1;
-                ctx.fillStyle = 'rgba(255,255,255,0.05)';
-                ctx.font = '12px Poppins, sans-serif';
+                const nivel = Math.floor(distancia / 250) + 1;
+                ctx.fillStyle = 'rgba(255,255,255,0.04)';
+                ctx.font = '11px Poppins, sans-serif';
                 ctx.textAlign = 'right';
                 ctx.textBaseline = 'bottom';
-                ctx.fillText('Nivel ' + nivel, ANCHO - 16, ALTO - 10);
+                ctx.fillText('Nivel ' + nivel, ANCHO - 14, ALTO - 8);
             }
 
             // ---- Bucle principal ----
@@ -1047,6 +1104,7 @@
 
             console.log('🔥 El Diablo Cumbiambero — Los Hijos de Tencha');
             console.log('🎮 Presiona ESPACIO para saltar, P para pausar');
+            console.log('📐 Personaje en Y: ' + personaje.y + ', SUELO_Y: ' + SUELO_Y);
         })();
     </script>
 </body>
