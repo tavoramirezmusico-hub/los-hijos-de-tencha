@@ -28,7 +28,6 @@
             user-select: none;
         }
 
-        /* ===== PANTALLA DE ROTACIÓN (MÓVILES) ===== */
         #rotate-overlay {
             position: fixed;
             inset: 0;
@@ -149,7 +148,6 @@
             touch-action: none;
         }
 
-        /* ===== LOGOS EN PANTALLA DE INICIO ===== */
         .logo-inicio-izq {
             position: absolute;
             top: 12px;
@@ -770,7 +768,6 @@
     <div class="juego-wrap" id="juegoWrap">
         <canvas id="lienzo"></canvas>
 
-        <!-- Logos en pantalla de inicio -->
         <img src="../img/logo.webp" alt="Los Hijos de Tencha" class="logo-inicio-izq" id="logoInicioIzq">
         <img src="../img/menu-icono.webp" alt="Diablito" class="diablito-inicio-der" id="diablitoInicioDer">
 
@@ -791,7 +788,6 @@
             <button id="btnSalir" class="btn-salir">🚪 Salir</button>
         </div>
 
-        <!-- ===== PANTALLA DE INICIO ===== -->
         <div class="overlay" id="pantallaInicio">
             <h1>El Diablo Cumbianchero</h1>
             <p>Brinca guitarras, bajos, bongós, tumbas, pianos, acordeones y teclados. ¡Tienes 3 vidas!</p>
@@ -802,7 +798,6 @@
             <button class="btn-tencha" id="btnIniciar">🎵 Empezar a bailar</button>
         </div>
 
-        <!-- ===== PANTALLA DE PAUSA (con Reiniciar) ===== -->
         <div class="overlay pausa-overlay oculto" id="pantallaPausa">
             <h1>⏸️ PAUSA</h1>
             <p>Descansa un momento, el diablo te espera.</p>
@@ -835,62 +830,307 @@
 
     <a href="../index.html" class="volver-link" id="volverLink">← Volver al sitio</a>
 
-    <!-- ===== REPRODUCTOR DE MÚSICA (OCULTO) ===== -->
-    <iframe id="musicaFondo" style="position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;"
-        src="https://www.youtube.com/embed/vhTF7G1sIyw?autoplay=1&loop=1&playlist=vhTF7G1sIyw&mute=0"
-        allow="autoplay; encrypted-media" allowfullscreen>
-    </iframe>
-
+    <!-- ============================================================
+    SISTEMA DE AUDIO GENÉRICO (Web Audio API)
+    ============================================================ -->
     <script>
         // ============================================================
-        //  ACTIVAR MÚSICA AL CARGAR LA PÁGINA
+        //  SISTEMA DE SONIDO - Web Audio API
+        //  (Genera sonidos sintéticos sin archivos externos)
         // ============================================================
-        const musicaIframe = document.getElementById('musicaFondo');
 
-        // Intentar reproducir música automáticamente
-        function iniciarMusica() {
-            try {
-                const src = musicaIframe.src;
-                musicaIframe.src = '';
-                setTimeout(() => {
-                    musicaIframe.src = src;
-                }, 100);
-                console.log('🎵 Música iniciada');
-            } catch (e) {
-                console.log('⏳ Esperando interacción para música');
+        class AudioManager {
+            constructor() {
+                this.ctx = null;
+                this.inicializado = false;
+                this.musicaActiva = false;
+                this.oscillators = [];
+                this.gains = [];
+                this.musicaInterval = null;
+                this.volumenMusica = 0.15;
+                this.volumenEfectos = 0.25;
             }
-        }
 
-        // Al hacer clic en cualquier parte, activar música si no suena
-        function activarMusicaPorInteraccion() {
-            try {
-                const src = musicaIframe.src;
-                if (src.includes('mute=1')) {
-                    musicaIframe.src = src.replace('mute=1', 'mute=0');
+            // Inicializar contexto de audio (necesita interacción del usuario)
+            init() {
+                if (this.inicializado) return;
+                try {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    this.inicializado = true;
+                    console.log('🎵 Sistema de audio inicializado');
+                    // Iniciar música de fondo
+                    this.iniciarMusicaFondo();
+                } catch (e) {
+                    console.warn('⚠️ Error al inicializar audio:', e);
                 }
-                // Recargar para asegurar reproducción
-                const currentSrc = musicaIframe.src;
-                musicaIframe.src = '';
-                setTimeout(() => {
-                    musicaIframe.src = currentSrc;
-                }, 100);
-                console.log('🎵 Música activada por interacción');
-            } catch (e) {
-                console.log('Error al activar música:', e);
+            }
+
+            // ===== MÚSICA DE FONDO (Cumbia sintética) =====
+            iniciarMusicaFondo() {
+                if (!this.inicializado) return;
+                if (this.musicaActiva) return;
+
+                this.musicaActiva = true;
+                this.tocarNotaCumbia();
+
+                // Bucle de música: cambiar notas cada 400ms
+                this.musicaInterval = setInterval(() => {
+                    if (this.musicaActiva) {
+                        this.tocarNotaCumbia();
+                    }
+                }, 500);
+            }
+
+            detenerMusicaFondo() {
+                this.musicaActiva = false;
+                if (this.musicaInterval) {
+                    clearInterval(this.musicaInterval);
+                    this.musicaInterval = null;
+                }
+                // Detener todos los osciladores
+                this.oscillators.forEach(osc => {
+                    try { osc.stop(); } catch (e) { }
+                });
+                this.oscillators = [];
+                this.gains = [];
+            }
+
+            tocarNotaCumbia() {
+                if (!this.inicializado || !this.musicaActiva) return;
+
+                // Patrón de cumbia: notas en escala pentatónica
+                const notas = [
+                    261.63, // C4
+                    293.66, // D4
+                    329.63, // E4
+                    392.00, // G4
+                    440.00, // A4
+                    493.88, // B4
+                    523.25 // C5
+                ];
+
+                // Elegir 2-3 notas aleatorias para formar un acorde
+                const numNotas = 2 + Math.floor(Math.random() * 2);
+                const seleccion = [];
+                for (let i = 0; i < numNotas; i++) {
+                    const idx = Math.floor(Math.random() * notas.length);
+                    seleccion.push(notas[idx]);
+                }
+
+                // Tocar cada nota del acorde
+                seleccion.forEach((freq, index) => {
+                    try {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+
+                        osc.type = index % 2 === 0 ? 'sawtooth' : 'square';
+                        osc.frequency.value = freq;
+
+                        // Volumen suave
+                        gain.gain.value = this.volumenMusica * (0.3 + Math.random() * 0.2);
+                        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.35);
+
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+
+                        osc.start(this.ctx.currentTime);
+                        osc.stop(this.ctx.currentTime + 0.35);
+
+                        // Guardar para poder detenerlos después
+                        this.oscillators.push(osc);
+                        this.gains.push(gain);
+
+                        // Limpiar lista después de que terminen
+                        setTimeout(() => {
+                            const idx = this.oscillators.indexOf(osc);
+                            if (idx > -1) this.oscillators.splice(idx, 1);
+                            const idxG = this.gains.indexOf(gain);
+                            if (idxG > -1) this.gains.splice(idxG, 1);
+                        }, 400);
+                    } catch (e) {
+                        // Silenciosamente ignorar errores de audio
+                    }
+                });
+            }
+
+            // ===== EFECTOS DE SONIDO =====
+
+            // Salto: sonido ascendente
+            reproducirSalto() {
+                if (!this.inicializado) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+
+                    osc.type = 'sine';
+                    osc.frequency.value = 300;
+                    osc.frequency.exponentialRampToValueAtTime(600, this.ctx.currentTime + 0.1);
+
+                    gain.gain.value = this.volumenEfectos * 0.6;
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.12);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    osc.start(this.ctx.currentTime);
+                    osc.stop(this.ctx.currentTime + 0.12);
+                } catch (e) { }
+            }
+
+            // Colisión: sonido de impacto
+            reproducirColision() {
+                if (!this.inicializado) return;
+                try {
+                    // Ruido blanco filtrado para sonido de impacto
+                    const bufferSize = this.ctx.sampleRate * 0.15;
+                    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
+                    }
+
+                    const noise = this.ctx.createBufferSource();
+                    noise.buffer = buffer;
+
+                    const gain = this.ctx.createGain();
+                    gain.gain.value = this.volumenEfectos * 0.8;
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.12);
+
+                    const filter = this.ctx.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.value = 800;
+
+                    noise.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    noise.start(this.ctx.currentTime);
+                    noise.stop(this.ctx.currentTime + 0.15);
+                } catch (e) { }
+            }
+
+            // Bonus: sonido de victoria corto
+            reproducirBonus() {
+                if (!this.inicializado) return;
+                try {
+                    const notas = [523, 659, 784, 1047];
+                    notas.forEach((freq, i) => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'square';
+                        osc.frequency.value = freq;
+
+                        const tiempo = this.ctx.currentTime + i * 0.08;
+                        gain.gain.value = this.volumenEfectos * 0.3;
+                        gain.gain.exponentialRampToValueAtTime(0.001, tiempo + 0.12);
+
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+
+                        osc.start(tiempo);
+                        osc.stop(tiempo + 0.12);
+                    });
+                } catch (e) { }
+            }
+
+            // Victoria: melodía ascendente
+            reproducirVictoria() {
+                if (!this.inicializado) return;
+                try {
+                    const notas = [523, 587, 659, 784, 880, 1047];
+                    notas.forEach((freq, i) => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.value = freq;
+
+                        const tiempo = this.ctx.currentTime + i * 0.1;
+                        gain.gain.value = this.volumenEfectos * 0.3;
+                        gain.gain.exponentialRampToValueAtTime(0.001, tiempo + 0.15);
+
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+
+                        osc.start(tiempo);
+                        osc.stop(tiempo + 0.15);
+                    });
+                } catch (e) { }
+            }
+
+            // Game Over: sonido descendente triste
+            reproducirGameOver() {
+                if (!this.inicializado) return;
+                try {
+                    const notas = [440, 392, 349, 294];
+                    notas.forEach((freq, i) => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'sawtooth';
+                        osc.frequency.value = freq;
+
+                        const tiempo = this.ctx.currentTime + i * 0.2;
+                        gain.gain.value = this.volumenEfectos * 0.3;
+                        gain.gain.exponentialRampToValueAtTime(0.001, tiempo + 0.2);
+
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+
+                        osc.start(tiempo);
+                        osc.stop(tiempo + 0.2);
+                    });
+                } catch (e) { }
+            }
+
+            // Pausa: sonido corto
+            reproducirPausa() {
+                if (!this.inicializado) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.value = 440;
+
+                    gain.gain.value = this.volumenEfectos * 0.3;
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    osc.start(this.ctx.currentTime);
+                    osc.stop(this.ctx.currentTime + 0.08);
+                } catch (e) { }
             }
         }
 
-        // Intentar iniciar música al cargar
-        setTimeout(iniciarMusica, 500);
+        // ============================================================
+        //  INICIALIZAR AUDIO
+        // ============================================================
 
-        // Activar música con cualquier interacción del usuario
-        document.addEventListener('click', activarMusicaPorInteraccion);
-        document.addEventListener('touchstart', activarMusicaPorInteraccion);
-        document.addEventListener('keydown', activarMusicaPorInteraccion);
+        const audio = new AudioManager();
+
+        // Inicializar audio con interacción del usuario
+        function iniciarAudio() {
+            if (!audio.inicializado) {
+                audio.init();
+            }
+            // Si el contexto está suspendido, reanudarlo
+            if (audio.ctx && audio.ctx.state === 'suspended') {
+                audio.ctx.resume();
+            }
+        }
+
+        // Activar audio con cualquier interacción
+        document.addEventListener('click', iniciarAudio);
+        document.addEventListener('touchstart', iniciarAudio);
+        document.addEventListener('keydown', iniciarAudio);
+
+        // También al hacer clic en el botón de pantalla completa
+        document.getElementById('btnFullscreen').addEventListener('click', iniciarAudio);
 
         // ============================================================
         //  PANTALLA COMPLETA Y ROTACIÓN
         // ============================================================
+
         const wrap = document.getElementById('juegoWrap');
         const rotateOverlay = document.getElementById('rotate-overlay');
         const btnFullscreen = document.getElementById('btnFullscreen');
@@ -921,7 +1161,6 @@
             setTimeout(checkOrientation, 300);
         });
 
-        // Pantalla completa
         btnFullscreen.addEventListener('click', function () {
             if (document.documentElement.requestFullscreen) {
                 document.documentElement.requestFullscreen();
@@ -934,8 +1173,7 @@
                 if (isLandscape()) {
                     rotateOverlay.classList.remove('active');
                 }
-                // Activar música
-                activarMusicaPorInteraccion();
+                iniciarAudio();
             }, 500);
         });
 
@@ -944,8 +1182,9 @@
         }
 
         // ============================================================
-        //  JUEGO
+        //  JUEGO (versión simplificada con sonidos)
         // ============================================================
+
         const canvas = document.getElementById('lienzo');
         const ctx = canvas.getContext('2d');
 
@@ -1272,6 +1511,9 @@
                     <span class="doble">✨ PUNTOS DOBLES ×2 (15s)</span>
                 `;
 
+            // Sonido de bonus
+            audio.reproducirBonus();
+
             for (let i = 0; i < 40; i++) {
                 particulas.push({
                     x: ANCHO / 2 + (Math.random() - 0.5) * 300,
@@ -1301,6 +1543,9 @@
             puntosVictoria.textContent = '🎵 ' + puntos + ' PUNTOS 🎵';
             pantallaVictoria.classList.remove('oculto');
             if (animFrame) cancelAnimationFrame(animFrame);
+
+            // Sonido de victoria
+            audio.reproducirVictoria();
 
             for (let i = 0; i < 80; i++) {
                 setTimeout(() => {
@@ -1404,6 +1649,10 @@
             document.getElementById('btnPausa').textContent = '⏸️ Pausa';
             pausado = false;
             pantallaPausa.classList.add('oculto');
+
+            // Reiniciar música
+            audio.detenerMusicaFondo();
+            audio.iniciarMusicaFondo();
         }
 
         function saltar() {
@@ -1411,6 +1660,8 @@
             if (!personaje.saltando) {
                 personaje.velocidadY = FUERZA_SALTO;
                 personaje.saltando = true;
+                // Sonido de salto
+                audio.reproducirSalto();
             }
         }
 
@@ -1421,10 +1672,12 @@
             if (pausado) {
                 pantallaPausa.classList.remove('oculto');
                 if (animFrame) cancelAnimationFrame(animFrame);
+                audio.reproducirPausa();
             } else {
                 pantallaPausa.classList.add('oculto');
                 tiempoAnterior = null;
                 animFrame = requestAnimationFrame(bucle);
+                audio.reproducirPausa();
             }
         }
 
@@ -1432,6 +1685,7 @@
             if (animFrame) cancelAnimationFrame(animFrame);
             if (finTimeout) clearTimeout(finTimeout);
             if (bonusTimeout) clearTimeout(bonusTimeout);
+            audio.detenerMusicaFondo();
             window.location.href = '../index.html';
         }
 
@@ -1451,7 +1705,8 @@
             pausado = false;
             dibujar();
             // Reiniciar música
-            activarMusicaPorInteraccion();
+            audio.detenerMusicaFondo();
+            audio.iniciarMusicaFondo();
         }
 
         // ---- Eventos ----
@@ -1551,7 +1806,8 @@
                 if (animFrame) cancelAnimationFrame(animFrame);
                 animFrame = requestAnimationFrame(bucle);
                 // Reiniciar música
-                activarMusicaPorInteraccion();
+                audio.detenerMusicaFondo();
+                audio.iniciarMusicaFondo();
             }, 1500);
         }
 
@@ -1562,7 +1818,8 @@
             tiempoAnterior = null;
             if (animFrame) cancelAnimationFrame(animFrame);
             animFrame = requestAnimationFrame(bucle);
-            activarMusicaPorInteraccion();
+            audio.detenerMusicaFondo();
+            audio.iniciarMusicaFondo();
         }
 
         function terminarJuego() {
@@ -1570,6 +1827,10 @@
             puntajeFinal.textContent = 'Puntos: ' + puntos + ' | Distancia: ' + Math.floor(distancia) + 'm';
             pantallaFin.classList.remove('oculto');
             if (animFrame) cancelAnimationFrame(animFrame);
+            // Sonido de game over
+            audio.reproducirGameOver();
+            // Detener música
+            audio.detenerMusicaFondo();
         }
 
         function generarObstaculo() {
@@ -1814,6 +2075,9 @@
                         corazonesHUD();
                         invencibleHasta = Date.now() + 1200;
                         generarParticulasImpacto(o.x + o.ancho / 2, o.y + o.alto / 2);
+
+                        // Sonido de colisión
+                        audio.reproducirColision();
 
                         if (vidas <= 0) {
                             if (finTimeout) clearTimeout(finTimeout);
@@ -2351,10 +2615,17 @@
         actualizarPuntaje();
         dibujar();
 
+        // Iniciar música automáticamente después de un breve retraso
+        setTimeout(() => {
+            if (!audio.inicializado) {
+                audio.init();
+            }
+            audio.iniciarMusicaFondo();
+        }, 1000);
+
         console.log('🔥 El Diablo Cumbianchero — Los Hijos de Tencha');
-        console.log('🌕 Luna llena y destellos en el cielo');
-        console.log('💨 VIENTO FUERTE: hojas volando, líneas y polvo');
-        console.log('🎵 Música de fondo: Cumbia del Diablo (loop)');
+        console.log('🎵 Sistema de audio con Web Audio API (sin archivos externos)');
+        console.log('🔊 Sonidos: salto, colisión, bonus, victoria, game over');
         console.log('📱 Responsive: adaptable a móviles y tablets');
         console.log('🔄 Botón Reiniciar en pausa');
         console.log('🏆 Victoria: 6000 puntos — ¡HAS GANADO!');
