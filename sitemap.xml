@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
-    <!-- ============================================================ -->
-    <!-- PÁGINAS PRINCIPALES                                           -->
-    <!-- ============================================================ -->
-
-    <!-- PÁGINA PRINCIPAL - INDEX -->
+    <!-- PÁGINA PRINCIPAL -->
     <url>
         <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/</loc>
         <lastmod>2026-08-07</lastmod>
@@ -45,47 +40,11 @@
         <priority>0.7</priority>
     </url>
 
-    <!-- ============================================================ -->
-    <!-- JUEGO - DIABLITO MUSICAL                                      -->
-    <!-- ============================================================ -->
-
+    <!-- JUEGO - DIABLITO MUSICAL -->
     <url>
         <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/game/tencha_game.html</loc>
         <lastmod>2026-08-07</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.6</priority>
     </url>
-
-    <!-- ============================================================ -->
-    <!-- ADMINISTRACIÓN (privado, pero incluido por si acaso)         -->
-    <!-- ============================================================ -->
-
-    <url>
-        <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/dashboard.html</loc>
-        <lastmod>2026-08-07</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.3</priority>
-    </url>
-
-    <url>
-        <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html</loc>
-        <lastmod>2026-08-07</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.3</priority>
-    </url>
-
-    <url>
-        <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/entradas.html</loc>
-        <lastmod>2026-08-07</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.3</priority>
-    </url>
-
-    <url>
-        <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/gestion_asistentes.html</loc>
-        <lastmod>2026-08-07</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.3</priority>
-    </url>
-
 </urlset>
