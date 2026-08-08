@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>El Diablo Cumbianchero — Los Hijos de Tencha</title>
+    <title>El Diablito Cumbianchero — Los Hijos de Tencha</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap"
         rel="stylesheet">
@@ -149,7 +149,7 @@
             touch-action: none;
         }
 
-        /* ===== LOGO CENTRAL (SIEMPRE VISIBLE) ===== */
+        /* ===== LOGO CENTRAL (SIEMPRE VISIBLE DURANTE EL JUEGO) ===== */
         .logo-centro {
             position: absolute;
             top: 10px;
@@ -190,45 +190,11 @@
             display: none;
         }
 
-        /* ===== BOTÓN DE SILENCIO ===== */
-        .btn-silenciar {
-            position: absolute;
-            top: 12px;
-            right: 16px;
-            z-index: 7;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 204, 0, 0.2);
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            color: #ffcc00;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: .3s;
-            backdrop-filter: blur(4px);
-            pointer-events: auto;
-        }
-
-        .btn-silenciar:hover {
-            background: rgba(255, 204, 0, 0.15);
-            border-color: #ffcc00;
-            transform: scale(1.1);
-        }
-
-        .btn-silenciar.mute {
-            color: #666;
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        /* ===== AJUSTE DEL HUD PARA EL BOTÓN ===== */
         .hud {
             position: absolute;
             top: 12px;
             left: 16px;
-            right: 60px;
+            right: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -246,7 +212,7 @@
         .vidas {
             display: flex;
             gap: 3px;
-            font-size: clamp(14px, 2.5vw, 22px);
+            font-size: clamp(12px, 2.2vw, 20px);
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .8));
         }
 
@@ -459,6 +425,32 @@
             border-color: #ffcc00;
         }
 
+        /* ===== BOTÓN DE SILENCIO DENTRO DE PAUSA ===== */
+        .btn-silenciar-pausa {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffcc00;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .3s;
+            backdrop-filter: blur(4px);
+        }
+
+        .btn-silenciar-pausa:hover {
+            background: rgba(255, 204, 0, 0.1);
+            border-color: #ffcc00;
+            transform: scale(1.05);
+        }
+
+        .btn-silenciar-pausa.mute {
+            color: #666;
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
         .grito-diablo {
             color: #ffcc00;
             font-size: clamp(18px, 3.6vw, 30px);
@@ -611,19 +603,12 @@
             .hud {
                 top: 6px;
                 left: 10px;
-                right: 50px;
-            }
-
-            .btn-silenciar {
-                top: 8px;
                 right: 10px;
-                width: 28px;
-                height: 28px;
-                font-size: 14px;
             }
 
             .vidas {
-                font-size: clamp(12px, 2.5vw, 18px);
+                font-size: clamp(10px, 2.2vw, 16px);
+                gap: 2px;
             }
 
             .puntaje {
@@ -688,6 +673,11 @@
                 right: 10px;
                 width: clamp(35px, 6vw, 50px);
             }
+
+            .btn-silenciar-pausa {
+                font-size: 12px;
+                padding: 8px 18px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -699,24 +689,16 @@
             .hud {
                 top: 4px;
                 left: 6px;
-                right: 40px;
-            }
-
-            .btn-silenciar {
-                top: 6px;
                 right: 6px;
-                width: 24px;
-                height: 24px;
-                font-size: 12px;
             }
 
             .vidas {
-                font-size: clamp(10px, 2.2vw, 14px);
+                font-size: clamp(8px, 2vw, 12px);
                 gap: 2px;
             }
 
             .puntaje {
-                font-size: clamp(9px, 1.6vw, 12px);
+                font-size: clamp(8px, 1.6vw, 11px);
                 padding: 2px 8px;
             }
 
@@ -776,6 +758,11 @@
                 width: clamp(25px, 5vw, 38px);
             }
 
+            .btn-silenciar-pausa {
+                font-size: 11px;
+                padding: 6px 14px;
+            }
+
             #rotate-overlay .rotate-icon {
                 font-size: 50px;
             }
@@ -802,38 +789,34 @@
 
             .logo-inicio-izq {
                 width: clamp(25px, 5vw, 35px);
+                top: 4px;
+                left: 4px;
             }
 
             .diablito-inicio-der {
                 width: clamp(20px, 4vw, 30px);
+                top: 3px;
+                right: 4px;
             }
 
             .hud {
                 top: 3px;
                 left: 4px;
-                right: 34px;
-            }
-
-            .btn-silenciar {
-                top: 4px;
                 right: 4px;
-                width: 20px;
-                height: 20px;
-                font-size: 10px;
             }
 
             .puntaje {
-                font-size: 8px;
-                padding: 1px 6px;
+                font-size: 7px;
+                padding: 1px 5px;
             }
 
             .vidas {
-                font-size: 10px;
+                font-size: 9px;
             }
 
             .bonus-indicador {
                 top: 34px;
-                font-size: 8px;
+                font-size: 7px;
                 padding: 2px 6px;
             }
         }
@@ -846,7 +829,8 @@
     <div id="rotate-overlay">
         <div class="rotate-icon">📱</div>
         <h2>Gira tu dispositivo</h2>
-        <p>Para jugar "El Diablo Cumbianchero" necesitas poner tu teléfono o tablet en <strong>horizontal</strong>.</p>
+        <p>Para jugar "El Diablito Cumbianchero" necesitas poner tu teléfono o tablet en <strong>horizontal</strong>.
+        </p>
         <button class="btn-fullscreen" id="btnFullscreen">⛶ Pantalla completa</button>
         <p style="font-size: 12px; color: #666; margin-top: 10px;">Al hacer clic, el juego se abrirá en pantalla
             completa y sonará la música</p>
@@ -856,15 +840,12 @@
     <div class="juego-wrap" id="juegoWrap">
         <canvas id="lienzo"></canvas>
 
-        <!-- LOGO CENTRAL (siempre visible) -->
+        <!-- LOGO CENTRAL (siempre visible durante el juego) -->
         <img src="../img/logo.webp" alt="Los Hijos de Tencha" class="logo-centro" id="logoCentral">
 
         <!-- LOGOS EN PANTALLAS DE INICIO/PAUSA -->
         <img src="../img/logo.webp" alt="Los Hijos de Tencha" class="logo-inicio-izq" id="logoInicioIzq">
         <img src="../img/menu-icono.webp" alt="Diablito" class="diablito-inicio-der" id="diablitoInicioDer">
-
-        <!-- BOTÓN DE SILENCIO -->
-        <button class="btn-silenciar" id="btnSilenciar" title="Silenciar/Activar música">🔊</button>
 
         <div class="hud">
             <div class="hud-izquierda">
@@ -883,24 +864,26 @@
             <button id="btnSalir" class="btn-salir">🚪 Salir</button>
         </div>
 
-        <!-- ===== PANTALLA DE INICIO ===== -->
+        <!-- ===== PANTALLA DE INICIO (con logos) ===== -->
         <div class="overlay" id="pantallaInicio">
-            <h1>El Diablo Cumbianchero</h1>
-            <p>Brinca guitarras, bajos, bongós, tumbas, pianos, acordeones y teclados. ¡Tienes 3 vidas!</p>
+            <h1>El Diablito Cumbianchero</h1>
+            <p>Brinca guitarras, bajos, bongós, tumbas, pianos, acordeones y teclados. ¡Tienes 5 vidas!</p>
             <div class="instrucciones">
                 <span class="tecla"><kbd>ESPACIO</kbd> para saltar</span>
+                <span class="tecla"><kbd>P</kbd> para pausar</span>
                 <span class="tecla-touch">Toca la pantalla para saltar</span>
             </div>
             <button class="btn-tencha" id="btnIniciar">🎵 Empezar a bailar</button>
         </div>
 
-        <!-- ===== PANTALLA DE PAUSA ===== -->
+        <!-- ===== PANTALLA DE PAUSA (con logos y botón de silencio) ===== -->
         <div class="overlay pausa-overlay oculto" id="pantallaPausa">
             <h1>⏸️ PAUSA</h1>
-            <p>Descansa un momento, el diablo te espera.</p>
+            <p>Descansa un momento, el diablito te espera.</p>
             <div class="botones-pausa">
                 <button class="btn-tencha" id="btnReanudar">▶️ Reanudar</button>
                 <button class="btn-tencha secundario" id="btnReiniciarPausa">🔄 Reiniciar juego</button>
+                <button class="btn-silenciar-pausa" id="btnSilenciarPausa">🔊 Música activa</button>
                 <button class="btn-tencha rojo" id="btnSalirPausa">🚪 Salir al sitio</button>
             </div>
         </div>
@@ -914,7 +897,7 @@
 
         <div class="victoria-overlay oculto" id="pantallaVictoria">
             <h1>🏆 ¡HAS GANADO!</h1>
-            <p>¡Eres un verdadero Diablo Cumbianchero!</p>
+            <p>¡Eres un verdadero Diablito Cumbianchero!</p>
             <p class="puntos-finales" id="puntosVictoria">🎵 6000 PUNTOS 🎵</p>
             <button class="btn-tencha" id="btnReiniciarVictoria">🔄 Reiniciar</button>
             <button class="btn-tencha rojo" id="btnSalirVictoria">🚪 Salir al sitio</button>
@@ -932,7 +915,7 @@
     ============================================================ -->
     <script>
         // ============================================================
-        //  SISTEMA DE SONIDO - Web Audio API (NUEVA MÚSICA)
+        //  SISTEMA DE SONIDO - Web Audio API
         // ============================================================
 
         class AudioManager {
@@ -963,20 +946,19 @@
 
             toggleSilencio() {
                 this.silenciado = !this.silenciado;
-                const btn = document.getElementById('btnSilenciar');
+                const btn = document.getElementById('btnSilenciarPausa');
                 if (this.silenciado) {
-                    btn.textContent = '🔇';
+                    btn.textContent = '🔇 Música silenciada';
                     btn.classList.add('mute');
                     this.detenerMusicaFondo();
                 } else {
-                    btn.textContent = '🔊';
+                    btn.textContent = '🔊 Música activa';
                     btn.classList.remove('mute');
                     this.iniciarMusicaFondo();
                 }
                 return this.silenciado;
             }
 
-            // ===== NUEVA MÚSICA: CUMBIA MÁS PEGAJOSA =====
             iniciarMusicaFondo() {
                 if (!this.inicializado || this.silenciado) return;
                 if (this.musicaActiva) return;
@@ -1008,9 +990,7 @@
             tocarPatronCumbia() {
                 if (!this.inicializado || !this.musicaActiva || this.silenciado) return;
 
-                // Patrón de cumbia más movido: secuencia rítmica
                 const patrones = [
-                    // [frecuencia, duración, tipo]
                     [261.63, 0.15, 'sawtooth'],
                     [329.63, 0.12, 'square'],
                     [392.00, 0.15, 'sawtooth'],
@@ -1021,7 +1001,6 @@
                     [493.88, 0.10, 'square'],
                 ];
 
-                // Elegir 2-3 notas del patrón para formar un acorde
                 const numNotas = 2 + Math.floor(Math.random() * 2);
                 const seleccion = [];
                 const indices = [];
@@ -1034,7 +1013,6 @@
                     seleccion.push(patrones[idx]);
                 }
 
-                // Tocar cada nota con un pequeño offset para ritmo
                 seleccion.forEach((item, index) => {
                     try {
                         const osc = this.ctx.createOscillator();
@@ -1049,7 +1027,6 @@
                         gain.gain.value = this.volumenMusica * (0.25 + Math.random() * 0.15);
                         gain.gain.exponentialRampToValueAtTime(0.001, tiempoInicio + duracion);
 
-                        // Filtro para dar calidez
                         const filter = this.ctx.createBiquadFilter();
                         filter.type = 'lowpass';
                         filter.frequency.value = 1200 + Math.random() * 600;
@@ -1073,13 +1050,12 @@
                     } catch (e) { }
                 });
 
-                // Añadir un bajo profundo ocasional
                 if (Math.random() < 0.3) {
                     try {
                         const oscBajo = this.ctx.createOscillator();
                         const gainBajo = this.ctx.createGain();
                         oscBajo.type = 'sawtooth';
-                        oscBajo.frequency.value = 130.81; // C3
+                        oscBajo.frequency.value = 130.81;
                         gainBajo.gain.value = this.volumenMusica * 0.2;
                         gainBajo.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.2);
                         oscBajo.connect(gainBajo);
@@ -1215,6 +1191,7 @@
         // ============================================================
 
         const audio = new AudioManager();
+        const btnSilenciarPausa = document.getElementById('btnSilenciarPausa');
 
         function iniciarAudio() {
             if (!audio.inicializado) {
@@ -1225,8 +1202,8 @@
             }
         }
 
-        // Botón de silencio
-        document.getElementById('btnSilenciar').addEventListener('click', function (e) {
+        // Botón de silencio dentro de pausa
+        btnSilenciarPausa.addEventListener('click', function (e) {
             e.stopPropagation();
             audio.toggleSilencio();
         });
@@ -1379,6 +1356,7 @@
 
         const HITOS_BONUS = [500, 1000, 2500, 5000];
         const PUNTOS_VICTORIA = 6000;
+        const VIDAS_MAX = 5;
 
         let obstaculos = [];
         let particulas = [];
@@ -1399,8 +1377,7 @@
 
         let distancia = 0;
         let puntos = 0;
-        let vidas = 3;
-        const VIDAS_MAX = 3;
+        let vidas = VIDAS_MAX;
         let invencibleHasta = 0;
 
         let siguienteObstaculo = 0;
@@ -1721,7 +1698,7 @@
             intensidadViento = VIENTO_MIN;
             distancia = 0;
             puntos = 0;
-            vidas = 3;
+            vidas = VIDAS_MAX;
             invencibleHasta = 0;
             nivelDificultad = 1;
             maxObstaculosSimultaneos = 3;
@@ -1753,7 +1730,6 @@
             pantallaInicio.classList.add('oculto');
             logoInicioIzq.classList.add('oculto');
             diablitoInicioDer.classList.add('oculto');
-            // El logo central SIEMPRE visible
             logoCentral.classList.remove('oculto');
             corazonesHUD();
             actualizarPuntaje();
@@ -1761,7 +1737,6 @@
             pausado = false;
             pantallaPausa.classList.add('oculto');
 
-            // Reiniciar música
             audio.detenerMusicaFondo();
             audio.iniciarMusicaFondo();
         }
@@ -1785,6 +1760,15 @@
                 diablitoInicioDer.classList.remove('oculto');
                 if (animFrame) cancelAnimationFrame(animFrame);
                 audio.reproducirPausa();
+                // Actualizar estado del botón de silencio
+                const btnSilencio = document.getElementById('btnSilenciarPausa');
+                if (audio.silenciado) {
+                    btnSilencio.textContent = '🔇 Música silenciada';
+                    btnSilencio.classList.add('mute');
+                } else {
+                    btnSilencio.textContent = '🔊 Música activa';
+                    btnSilencio.classList.remove('mute');
+                }
             } else {
                 pantallaPausa.classList.add('oculto');
                 logoInicioIzq.classList.add('oculto');
@@ -1837,7 +1821,10 @@
                     }
                 }
             }
-            if (e.code === 'KeyP' && estado === 'jugando') togglePausa();
+            if (e.code === 'KeyP' && estado === 'jugando') {
+                e.preventDefault();
+                togglePausa();
+            }
         });
 
         wrap.addEventListener('pointerdown', (e) => {
@@ -2725,7 +2712,6 @@
         actualizarPuntaje();
         dibujar();
 
-        // Iniciar música automáticamente
         setTimeout(() => {
             if (!audio.inicializado) {
                 audio.init();
@@ -2733,11 +2719,10 @@
             audio.iniciarMusicaFondo();
         }, 1000);
 
-        console.log('🔥 El Diablo Cumbianchero — Los Hijos de Tencha');
-        console.log('🎵 Nueva música: Cumbia más pegajosa');
-        console.log('🔊 Botón de silencio en la esquina superior derecha');
-        console.log('📱 Responsive: adaptable a móviles y tablets');
-        console.log('🔄 Botón Reiniciar en pausa');
+        console.log('🔥 El Diablito Cumbianchero — Los Hijos de Tencha');
+        console.log('❤️ 5 vidas');
+        console.log('🎵 Música con botón de silencio dentro de pausa');
+        console.log('⌨️ Presiona P para pausar');
         console.log('🏆 Victoria: 6000 puntos — ¡HAS GANADO!');
     </script>
 </body>
