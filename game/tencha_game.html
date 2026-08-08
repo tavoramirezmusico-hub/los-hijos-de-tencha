@@ -625,11 +625,9 @@
                 { emoji: '🦩', nombre: 'flamenco', ancho: 30, alto: 26 }
             ];
 
-            // ---- HITOS DE BONUS ----
             const HITOS_BONUS = [500, 1000, 2500, 5000];
             const PUNTOS_VICTORIA = 6000;
 
-            // ---- Estado ----
             let obstaculos = [];
             let particulas = [];
             let animales = [];
@@ -638,10 +636,11 @@
             let hojas = [];
             let estrellas = [];
 
-            let velocidadJuego = 4.5;
-            const VELOCIDAD_INICIAL = 4.5;
-            const VELOCIDAD_MAX = 16;
-            const VELOCIDAD_INCREMENTO = 0.08;
+            // ===== VELOCIDAD RÁPIDA =====
+            let velocidadJuego = 7.5;
+            const VELOCIDAD_INICIAL = 7.5;
+            const VELOCIDAD_MAX = 20;
+            const VELOCIDAD_INCREMENTO = 0.15;
 
             let distancia = 0;
             let puntos = 0;
@@ -661,19 +660,17 @@
             let finTimeout = null;
             let frameCount = 0;
 
-            // ---- Sistema de Bonus ----
             let bonusActivo = false;
             let bonusTimeout = null;
             let bonusDoblePuntos = false;
             let bonusDobleHasta = 0;
             let hitosAlcanzados = new Set();
 
-            // ---- NIVEL DE DIFICULTAD ----
             let nivelDificultad = 1;
-            let maxObstaculosSimultaneos = 2;
-            let intervaloGeneracionBase = 90;
+            let maxObstaculosSimultaneos = 3;
+            let intervaloGeneracionBase = 65;
 
-            // ---- Generar pinos (más visibles) ----
+            // ---- Generar pinos ----
             function generarPinos() {
                 pinos = [];
                 for (let i = 0; i < 40; i++) {
@@ -696,7 +693,6 @@
             }
             generarPinos();
 
-            // ---- Estrellas ----
             function generarEstrellas() {
                 estrellas = [];
                 for (let i = 0; i < 80; i++) {
@@ -713,7 +709,6 @@
             }
             generarEstrellas();
 
-            // ---- Hojas ----
             function generarHojas() {
                 hojas = [];
                 for (let i = 0; i < 20; i++) {
@@ -828,27 +823,28 @@
             }
 
             function actualizarDificultad() {
-                const progreso = puntos / 1000;
+                const progreso = puntos / 800;
+
                 nivelDificultad = 1 + Math.floor(progreso);
 
-                velocidadJuego = Math.min(VELOCIDAD_MAX, VELOCIDAD_INICIAL + progreso * 1.5);
+                velocidadJuego = Math.min(VELOCIDAD_MAX, VELOCIDAD_INICIAL + progreso * 2.0);
 
-                maxObstaculosSimultaneos = Math.min(6, 2 + Math.floor(progreso * 0.5));
+                maxObstaculosSimultaneos = Math.min(7, 3 + Math.floor(progreso * 0.6));
 
-                intervaloGeneracionBase = Math.max(20, 90 - progreso * 10);
+                intervaloGeneracionBase = Math.max(18, 65 - progreso * 8);
             }
 
             function tiempoAleatorioObstaculo() {
-                const base = Math.max(20, intervaloGeneracionBase + (Math.random() - 0.5) * 25);
+                const base = Math.max(18, intervaloGeneracionBase + (Math.random() - 0.5) * 20);
                 return base;
             }
 
             function tiempoAleatorioAnimal() {
-                return Math.max(40, 70 + Math.random() * 100 - nivelDificultad * 5);
+                return Math.max(35, 60 + Math.random() * 80 - nivelDificultad * 4);
             }
 
             function tiempoAleatorioPajaro() {
-                return Math.max(60, 100 + Math.random() * 150 - nivelDificultad * 3);
+                return Math.max(50, 80 + Math.random() * 120 - nivelDificultad * 3);
             }
 
             function reiniciarEstadoJuego() {
@@ -862,8 +858,8 @@
                 vidas = 3;
                 invencibleHasta = 0;
                 nivelDificultad = 1;
-                maxObstaculosSimultaneos = 2;
-                intervaloGeneracionBase = 90;
+                maxObstaculosSimultaneos = 3;
+                intervaloGeneracionBase = 65;
                 siguienteObstaculo = tiempoAleatorioObstaculo();
                 siguienteAnimal = tiempoAleatorioAnimal();
                 siguientePajaro = tiempoAleatorioPajaro();
@@ -1121,7 +1117,6 @@
                     personaje.angulo = 0;
                 }
 
-                // Generar obstáculos con límite de cantidad simultánea
                 siguienteObstaculo -= dt * 0.055;
                 if (siguienteObstaculo <= 0 && obstaculos.length < maxObstaculosSimultaneos) {
                     generarObstaculo();
@@ -1240,7 +1235,6 @@
                 ctx.fillStyle = grad;
                 ctx.fillRect(0, 0, ANCHO, SUELO_Y);
 
-                // Estrellas
                 estrellas.forEach(e => {
                     const brillo = 0.3 + Math.sin(frameCount * e.parpadeo + e.fase) * 0.3;
                     ctx.globalAlpha = Math.max(0.1, brillo);
@@ -1254,7 +1248,6 @@
                     ctx.globalAlpha = 1;
                 });
 
-                // ---- PINOS MÁS VISIBLES ----
                 pinos.forEach(pino => {
                     const xOff = (pino.x + scrollFondo * pino.velocidad * 0.5) % (ANCHO + 100) - 50;
                     const sway = Math.sin(frameCount * 0.005 + pino.offset) * 2;
@@ -1263,13 +1256,11 @@
                     ctx.save();
                     ctx.globalAlpha = pino.opacidad;
 
-                    // Tronco más visible
                     ctx.fillStyle = '#0a0a0a';
                     ctx.shadowColor = 'rgba(0,0,0,0.5)';
                     ctx.shadowBlur = 10;
                     ctx.fillRect(baseX - 4, SUELO_Y - pino.altura + 12, 8, pino.altura - 12);
 
-                    // Capas del pino (más definidas)
                     const colores = ['#0a0a0a', '#0d0d0d', '#101010', '#151515', '#0f0f0f'];
                     for (let c = 0; c < pino.capas; c++) {
                         const prog = c / pino.capas;
@@ -1298,20 +1289,17 @@
                         ctx.closePath();
                         ctx.fill();
 
-                        // Ramas laterales más visibles
                         ctx.fillStyle = 'rgba(20,20,20,0.4)';
                         ctx.shadowBlur = 4;
                         for (let r = 0; r < 4; r++) {
                             const rx = baseX + (r - 1.5) * anchoCapa * 0.2;
                             const ry = yCapa + alturaCapa * (0.15 + r * 0.2);
                             ctx.fillRect(rx, ry, 3, 6 + r * 2);
-                            // Pequeñas ramas secundarias
                             ctx.fillRect(rx - 4, ry + 3, 3, 4);
                             ctx.fillRect(rx + 4, ry + 3, 3, 4);
                         }
                     }
 
-                    // Brillo en la cima del pino
                     ctx.shadowBlur = 15;
                     ctx.shadowColor = 'rgba(255,255,255,0.03)';
                     ctx.fillStyle = 'rgba(255,255,255,0.02)';
@@ -1323,7 +1311,6 @@
                     ctx.restore();
                 });
 
-                // Nubes
                 const nubes = [
                     { x: 80, y: 30, w: 90, h: 25, color: 'rgba(30,20,40,0.15)' },
                     { x: 350, y: 18, w: 120, h: 30, color: 'rgba(40,20,50,0.12)' },
@@ -1345,7 +1332,6 @@
                     ctx.fill();
                 });
 
-                // Hojas
                 hojas.forEach(h => {
                     ctx.save();
                     ctx.translate(h.x, h.y);
@@ -1362,7 +1348,6 @@
                     ctx.restore();
                 });
 
-                // Suelo
                 const gradSuelo = ctx.createLinearGradient(0, SUELO_Y + 4, 0, ALTO);
                 gradSuelo.addColorStop(0, '#0d0a0f');
                 gradSuelo.addColorStop(0.2, '#080810');
@@ -1571,7 +1556,6 @@
                 ctx.textBaseline = 'bottom';
                 ctx.fillText('🌙 ' + Math.floor(distancia) + 'm', 12, ALTO - 8);
 
-                // Indicador de dificultad
                 ctx.fillStyle = `hsla(${Math.min(60, nivelDificultad * 10)}, 80%, 50%, 0.1)`;
                 ctx.font = '10px Poppins, sans-serif';
                 ctx.textAlign = 'center';
@@ -1616,8 +1600,8 @@
             dibujar();
 
             console.log('🔥 El Diablo Cumbiambero — Los Hijos de Tencha');
+            console.log('⚡ Velocidad inicial: 7.5 (RÁPIDA)');
             console.log('🎯 Dificultad progresiva: más velocidad y más obstáculos');
-            console.log('🌲 Pinous más visibles en el fondo');
             console.log('🏆 Victoria: 6000 puntos — ¡HAS GANADO!');
         })();
     </script>
