@@ -53,7 +53,6 @@
             background: linear-gradient(180deg, #1c3a1c 0%, #2d5a2d 30%, #1a3a1a 65%, #0d1f0d 100%);
         }
 
-        /* ===== LOGO CENTRAL ===== */
         .logo-centro {
             position: absolute;
             top: 10px;
@@ -66,7 +65,6 @@
             pointer-events: none;
         }
 
-        /* ---- HUD ---- */
         .hud {
             position: absolute;
             top: 12px;
@@ -116,7 +114,6 @@
             border-radius: 12px;
         }
 
-        /* ---- Botones HUD ---- */
         .hud-botones {
             position: absolute;
             bottom: 12px;
@@ -160,7 +157,6 @@
             border-color: #d72638;
         }
 
-        /* ---- Overlays ---- */
         .overlay {
             position: absolute;
             inset: 0;
@@ -294,7 +290,6 @@
             color: #ffcc00;
         }
 
-        /* ---- Pausa ---- */
         .pausa-overlay {
             background: rgba(0, 0, 0, .65);
             backdrop-filter: blur(8px);
@@ -366,7 +361,6 @@
     <div class="juego-wrap" id="juegoWrap">
         <canvas id="lienzo"></canvas>
 
-        <!-- LOGO CENTRADO ARRIBA -->
         <img src="../img/logo.webp" alt="Los Hijos de Tencha" class="logo-centro">
 
         <div class="hud">
@@ -377,13 +371,11 @@
             <div class="velocidad-indicador" id="velocidadHUD">⚡ Nivel 1</div>
         </div>
 
-        <!-- Botones HUD -->
         <div class="hud-botones">
             <button id="btnPausa" class="btn-pausa">⏸️ Pausa</button>
             <button id="btnSalir" class="btn-salir">🚪 Salir</button>
         </div>
 
-        <!-- Pantalla de inicio -->
         <div class="overlay" id="pantallaInicio">
             <h1>El Diablo Cumbiambero</h1>
             <p>Brinca guitarras, bajos, bongós, tumbas, pianos, acordeones y teclados que se te atraviesan en el camino.
@@ -395,7 +387,6 @@
             <button class="btn-tencha" id="btnIniciar">Empezar a bailar</button>
         </div>
 
-        <!-- Pantalla de pausa -->
         <div class="overlay pausa-overlay oculto" id="pantallaPausa">
             <h1>⏸️ PAUSA</h1>
             <p>Descansa un momento, el diablo te espera.</p>
@@ -403,7 +394,6 @@
             <button class="btn-tencha rojo" id="btnSalirPausa" style="margin-top:4px;">🚪 Salir al sitio</button>
         </div>
 
-        <!-- Pantalla de juego terminado -->
         <div class="overlay oculto" id="pantallaFin">
             <h1 class="rojo">Juego Terminado</h1>
             <p class="score-final" id="puntajeFinal">Puntos: 0</p>
@@ -411,7 +401,6 @@
             <button class="btn-tencha rojo" id="btnSalirFin">🚪 Salir al sitio</button>
         </div>
 
-        <!-- Grito al reiniciar -->
         <div class="overlay oculto" id="pantallaGrito">
             <div class="grito-diablo">¡La cuuumbbbia del diablooooooo! 🔥</div>
         </div>
@@ -441,7 +430,6 @@
             const btnSalirPausa = document.getElementById('btnSalirPausa');
             const btnSalirFin = document.getElementById('btnSalirFin');
 
-            // Resolución interna
             const ANCHO = 900;
             const ALTO = 500;
             canvas.width = ANCHO;
@@ -451,7 +439,6 @@
             const GRAVEDAD = 0.55;
             const FUERZA_SALTO = -12.0;
 
-            // ---- Personaje ----
             const spritePersonaje = new Image();
             let spriteListo = false;
             spritePersonaje.onload = () => { spriteListo = true; };
@@ -470,7 +457,6 @@
                 angulo: 0
             };
 
-            // ---- Instrumentos ----
             const INSTRUMENTOS = [
                 { emoji: '🎸', nombre: 'guitarra', ancho: 40, alto: 52 },
                 { emoji: '🪕', nombre: 'bajo', ancho: 40, alto: 50 },
@@ -481,20 +467,30 @@
                 { emoji: '🎼', nombre: 'teclado', ancho: 54, alto: 38 }
             ];
 
-            // ---- Animales ----
+            // ---- ANIMALES TERRESTRES ----
             const ANIMALES = [
                 { emoji: '🐒', nombre: 'mono', ancho: 26, alto: 26 },
-                { emoji: '🦜', nombre: 'loro', ancho: 24, alto: 24 },
                 { emoji: '🐆', nombre: 'jaguar', ancho: 32, alto: 24 },
                 { emoji: '🦥', nombre: 'perezoso', ancho: 28, alto: 26 },
                 { emoji: '🐸', nombre: 'rana', ancho: 22, alto: 22 },
-                { emoji: '🦋', nombre: 'mariposa', ancho: 26, alto: 22 }
+                { emoji: '🦎', nombre: 'iguana', ancho: 26, alto: 20 },
+                { emoji: '🐿️', nombre: 'ardilla', ancho: 24, alto: 22 }
+            ];
+
+            // ---- PÁJAROS (vuelan, no afectan) ----
+            const PAJAROS = [
+                { emoji: '🦜', nombre: 'loro', ancho: 28, alto: 22 },
+                { emoji: '🦅', nombre: 'águila', ancho: 34, alto: 26 },
+                { emoji: '🕊️', nombre: 'paloma', ancho: 26, alto: 20 },
+                { emoji: '🐦', nombre: 'pájaro', ancho: 24, alto: 18 },
+                { emoji: '🦩', nombre: 'flamenco', ancho: 30, alto: 26 }
             ];
 
             // ---- Estado ----
             let obstaculos = [];
             let particulas = [];
             let animales = [];
+            let pajaroVolando = null;
             let vegetacion = [];
 
             let velocidadJuego = 5.5;
@@ -506,32 +502,90 @@
             let invencibleHasta = 0;
             let siguienteObstaculo = 0;
             let siguienteAnimal = 0;
+            let siguientePajaro = 0;
             let estado = 'inicio';
             let pausado = false;
             let tiempoAnterior = null;
             let scrollFondo = 0;
             let animFrame = null;
             let finTimeout = null;
+            let frameCount = 0;
 
-            // ---- Inicializar vegetación ----
+            // ---- Vegetación mejorada ----
             function generarVegetacion() {
                 vegetacion = [];
-                for (let i = 0; i < 35; i++) {
+                // Arbustos grandes
+                for (let i = 0; i < 20; i++) {
                     const x = Math.random() * ANCHO;
-                    const y = SUELO_Y + 5 + Math.random() * 65;
-                    const altura = 8 + Math.random() * 30;
-                    const ancho = 5 + Math.random() * 12;
-                    const tipo = Math.random() > 0.5 ? 'arbusto' : 'pasto';
-                    const color = Math.random() > 0.5 ? '#2e7d32' : '#1b5e20';
+                    const y = SUELO_Y + 2 + Math.random() * 30;
+                    const ancho = 20 + Math.random() * 30;
+                    const altura = 15 + Math.random() * 25;
                     vegetacion.push({
                         x,
                         y,
                         ancho,
                         altura,
-                        tipo,
-                        color,
-                        offset: Math.random() * 1000,
-                        velocidad: 0.3 + Math.random() * 0.5
+                        tipo: 'arbusto',
+                        color: ['#2e7d32', '#388e3c', '#1b5e20', '#4caf50'][Math.floor(Math.random() * 4)],
+                        velocidad: 0.2 + Math.random() * 0.3
+                    });
+                }
+                // Pasto alto
+                for (let i = 0; i < 40; i++) {
+                    const x = Math.random() * ANCHO;
+                    const y = SUELO_Y + 4 + Math.random() * 20;
+                    const ancho = 4 + Math.random() * 8;
+                    const altura = 8 + Math.random() * 20;
+                    vegetacion.push({
+                        x,
+                        y,
+                        ancho,
+                        altura,
+                        tipo: 'pasto',
+                        color: ['#388e3c', '#2e7d32', '#4caf50', '#1b5e20'][Math.floor(Math.random() * 4)],
+                        velocidad: 0.3 + Math.random() * 0.4
+                    });
+                }
+                // Flores (decorativas)
+                for (let i = 0; i < 12; i++) {
+                    const x = Math.random() * ANCHO;
+                    const y = SUELO_Y + 2 + Math.random() * 15;
+                    vegetacion.push({
+                        x,
+                        y,
+                        ancho: 6,
+                        altura: 8,
+                        tipo: 'flor',
+                        color: ['#ff6b6b', '#ffd93d', '#ff8a5c', '#ffcc00', '#ff9ff3'][Math.floor(Math.random() * 5)],
+                        velocidad: 0.1 + Math.random() * 0.2
+                    });
+                }
+                // Helechos
+                for (let i = 0; i < 15; i++) {
+                    const x = Math.random() * ANCHO;
+                    const y = SUELO_Y + 4 + Math.random() * 25;
+                    vegetacion.push({
+                        x,
+                        y,
+                        ancho: 12 + Math.random() * 16,
+                        altura: 10 + Math.random() * 18,
+                        tipo: 'helecho',
+                        color: ['#1b5e20', '#2e7d32', '#388e3c'][Math.floor(Math.random() * 3)],
+                        velocidad: 0.15 + Math.random() * 0.25
+                    });
+                }
+                // Troncos caídos
+                for (let i = 0; i < 6; i++) {
+                    const x = Math.random() * ANCHO;
+                    const y = SUELO_Y + 4 + Math.random() * 10;
+                    vegetacion.push({
+                        x,
+                        y,
+                        ancho: 30 + Math.random() * 40,
+                        altura: 6 + Math.random() * 8,
+                        tipo: 'tronco',
+                        color: '#4e342e',
+                        velocidad: 0.1 + Math.random() * 0.15
                     });
                 }
             }
@@ -560,13 +614,18 @@
             }
 
             function tiempoAleatorioAnimal() {
-                return 100 + Math.random() * 180;
+                return 80 + Math.random() * 150;
+            }
+
+            function tiempoAleatorioPajaro() {
+                return 120 + Math.random() * 250;
             }
 
             function reiniciarEstadoJuego() {
                 obstaculos = [];
                 particulas = [];
                 animales = [];
+                pajaroVolando = null;
                 velocidadJuego = 5.5;
                 distancia = 0;
                 puntos = 0;
@@ -574,11 +633,13 @@
                 invencibleHasta = 0;
                 siguienteObstaculo = tiempoAleatorioObstaculo();
                 siguienteAnimal = tiempoAleatorioAnimal();
+                siguientePajaro = tiempoAleatorioPajaro();
                 personaje.y = SUELO_Y - PERSONAJE_ALTO;
                 personaje.velocidadY = 0;
                 personaje.saltando = false;
                 personaje.angulo = 0;
                 scrollFondo = 0;
+                frameCount = 0;
                 corazonesHUD();
                 actualizarPuntaje();
                 document.getElementById('btnPausa').textContent = '⏸️ Pausa';
@@ -708,17 +769,34 @@
 
             function generarAnimal() {
                 const tipo = ANIMALES[Math.floor(Math.random() * ANIMALES.length)];
-                const enSuelo = Math.random() > 0.5;
+                const enSuelo = Math.random() > 0.3;
                 animales.push({
                     x: ANCHO + 20,
-                    y: enSuelo ? SUELO_Y - tipo.alto + 4 : 30 + Math.random() * 120,
+                    y: enSuelo ? SUELO_Y - tipo.alto + 4 : 40 + Math.random() * 80,
                     ancho: tipo.ancho,
                     alto: tipo.alto,
                     emoji: tipo.emoji,
                     enSuelo: enSuelo,
-                    velocidad: 0.5 + Math.random() * 0.5,
-                    bob: Math.random() * 100
+                    velocidad: 0.4 + Math.random() * 0.6,
+                    bob: Math.random() * 100,
+                    direccion: Math.random() > 0.5 ? 1 : -1
                 });
+            }
+
+            function generarPajaro() {
+                const tipo = PAJAROS[Math.floor(Math.random() * PAJAROS.length)];
+                const y = 30 + Math.random() * 120;
+                pajaroVolando = {
+                    x: ANCHO + 30,
+                    y: y,
+                    ancho: tipo.ancho,
+                    alto: tipo.alto,
+                    emoji: tipo.emoji,
+                    velocidad: 1.2 + Math.random() * 0.8,
+                    bob: Math.random() * 100,
+                    flap: 0,
+                    nombre: tipo.nombre
+                };
             }
 
             function generarParticulasImpacto(x, y) {
@@ -747,6 +825,7 @@
 
             // ---- Actualizar ----
             function actualizar(dt) {
+                frameCount++;
                 distancia += velocidadJuego * dt * 0.055;
                 scrollFondo -= velocidadJuego * dt * 0.04;
 
@@ -769,16 +848,25 @@
                     personaje.angulo = 0;
                 }
 
+                // Obstáculos
                 siguienteObstaculo -= dt * 0.055;
                 if (siguienteObstaculo <= 0) {
                     generarObstaculo();
                     siguienteObstaculo = tiempoAleatorioObstaculo();
                 }
 
+                // Animales terrestres
                 siguienteAnimal -= dt * 0.055;
                 if (siguienteAnimal <= 0) {
                     generarAnimal();
                     siguienteAnimal = tiempoAleatorioAnimal();
+                }
+
+                // Pájaros
+                siguientePajaro -= dt * 0.055;
+                if (siguientePajaro <= 0 && !pajaroVolando) {
+                    generarPajaro();
+                    siguientePajaro = tiempoAleatorioPajaro();
                 }
 
                 const cajaPersonaje = {
@@ -788,6 +876,7 @@
                     alto: personaje.alto
                 };
 
+                // Mover obstáculos
                 for (let i = obstaculos.length - 1; i >= 0; i--) {
                     const o = obstaculos[i];
                     o.x -= velocidadJuego * dt * 0.055;
@@ -817,14 +906,32 @@
                     }
                 }
 
+                // Mover animales terrestres
                 for (let i = animales.length - 1; i >= 0; i--) {
                     const a = animales[i];
-                    a.x -= (velocidadJuego * 0.5 + a.velocidad) * dt * 0.055;
+                    a.x -= (velocidadJuego * 0.4 + a.velocidad) * dt * 0.055;
+                    // Los animales en el suelo a veces cambian de dirección (pequeño efecto)
+                    if (a.enSuelo && Math.random() < 0.001) {
+                        a.direccion *= -1;
+                    }
                     if (a.x + a.ancho < -20) {
                         animales.splice(i, 1);
                     }
                 }
 
+                // Mover pájaro
+                if (pajaroVolando) {
+                    pajaroVolando.x -= (velocidadJuego * 0.3 + pajaroVolando.velocidad) * dt * 0.055;
+                    pajaroVolando.flap += 0.08 * dt * 0.055;
+                    // Efecto de aleteo: sube y baja suavemente
+                    pajaroVolando.y += Math.sin(pajaroVolando.flap) * 0.15 * dt * 0.055;
+
+                    if (pajaroVolando.x + pajaroVolando.ancho < -30) {
+                        pajaroVolando = null;
+                    }
+                }
+
+                // Partículas
                 for (let i = particulas.length - 1; i >= 0; i--) {
                     const p = particulas[i];
                     p.x += p.vx * dt * 0.055;
@@ -839,73 +946,156 @@
             function dibujarFondo() {
                 ctx.clearRect(0, 0, ANCHO, ALTO);
 
+                // Cielo con capas
                 const gradCielo = ctx.createLinearGradient(0, 0, 0, SUELO_Y);
-                gradCielo.addColorStop(0, '#0d1f0d');
-                gradCielo.addColorStop(0.2, '#1a3a1a');
-                gradCielo.addColorStop(0.5, '#2d5a2d');
-                gradCielo.addColorStop(0.8, '#3a6a3a');
-                gradCielo.addColorStop(1, '#2d5a2d');
+                gradCielo.addColorStop(0, '#0a1a0a');
+                gradCielo.addColorStop(0.15, '#1a3a1a');
+                gradCielo.addColorStop(0.4, '#2d5a2d');
+                gradCielo.addColorStop(0.7, '#3a6a3a');
+                gradCielo.addColorStop(0.9, '#2d5a2d');
+                gradCielo.addColorStop(1, '#1a3a1a');
                 ctx.fillStyle = gradCielo;
                 ctx.fillRect(0, 0, ANCHO, SUELO_Y);
 
+                // Nubes (decorativas)
+                ctx.fillStyle = 'rgba(255,255,255,0.03)';
+                const nubes = [
+                    { x: 100, y: 40, w: 80, h: 25 },
+                    { x: 400, y: 25, w: 100, h: 30 },
+                    { x: 700, y: 50, w: 70, h: 22 }
+                ];
+                nubes.forEach(n => {
+                    const xOff = (n.x + scrollFondo * 0.05) % (ANCHO + 200) - 100;
+                    ctx.beginPath();
+                    ctx.ellipse(xOff, n.y, n.w, n.h, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.ellipse(xOff - n.w * 0.6, n.y + 5, n.w * 0.5, n.h * 0.7, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.ellipse(xOff + n.w * 0.6, n.y + 5, n.w * 0.5, n.h * 0.7, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                // Árboles de fondo más detallados
                 ctx.shadowColor = 'rgba(0,0,0,0.3)';
                 ctx.shadowBlur = 10;
 
                 const arboles = [
-                    { x: 50, h: 70, w: 20 }, { x: 180, h: 90, w: 25 },
-                    { x: 340, h: 60, w: 18 }, { x: 520, h: 100, w: 28 },
-                    { x: 700, h: 65, w: 20 }, { x: 820, h: 85, w: 24 }
+                    { x: 30, h: 80, w: 22 },
+                    { x: 160, h: 100, w: 26 },
+                    { x: 310, h: 65, w: 18 },
+                    { x: 480, h: 110, w: 28 },
+                    { x: 660, h: 70, w: 20 },
+                    { x: 790, h: 95, w: 24 }
                 ];
 
                 arboles.forEach((a, idx) => {
                     const xOff = (idx * 130 + scrollFondo * 0.1) % (ANCHO + 100) - 50;
+                    // Tronco con detalle
                     ctx.fillStyle = '#1a3a1a';
-                    ctx.fillRect(xOff + a.w / 2 - 4, SUELO_Y - a.h + 10, 8, a.h - 10);
+                    ctx.fillRect(xOff + a.w / 2 - 5, SUELO_Y - a.h + 12, 10, a.h - 12);
+                    ctx.fillStyle = '#2d2d1a';
+                    ctx.fillRect(xOff + a.w / 2 - 3, SUELO_Y - a.h + 12, 6, a.h - 12);
+
+                    // Copa con varias capas
                     ctx.fillStyle = '#1b5e20';
                     ctx.beginPath();
-                    ctx.arc(xOff + a.w / 2, SUELO_Y - a.h + 5, a.w / 2 + 8, 0, Math.PI * 2);
+                    ctx.arc(xOff + a.w / 2, SUELO_Y - a.h + 6, a.w / 2 + 10, 0, Math.PI * 2);
                     ctx.fill();
+
                     ctx.fillStyle = '#2e7d32';
                     ctx.beginPath();
-                    ctx.arc(xOff + a.w / 2 - 6, SUELO_Y - a.h + 2, a.w / 3, 0, Math.PI * 2);
+                    ctx.arc(xOff + a.w / 2 - 8, SUELO_Y - a.h + 2, a.w / 2.8, 0, Math.PI * 2);
                     ctx.fill();
+
+                    ctx.fillStyle = '#388e3c';
                     ctx.beginPath();
-                    ctx.arc(xOff + a.w / 2 + 8, SUELO_Y - a.h + 4, a.w / 3.5, 0, Math.PI * 2);
+                    ctx.arc(xOff + a.w / 2 + 10, SUELO_Y - a.h + 4, a.w / 3.2, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#1b5e20';
+                    ctx.beginPath();
+                    ctx.arc(xOff + a.w / 2, SUELO_Y - a.h - 2, a.w / 3.5, 0, Math.PI * 2);
                     ctx.fill();
                 });
 
                 ctx.shadowBlur = 0;
 
+                // Vegetación con animación de balanceo
                 vegetacion.forEach(v => {
-                    const xOff = (v.x + scrollFondo * v.velocidad * 0.3) % (ANCHO + 40) - 20;
+                    const xOff = (v.x + scrollFondo * v.velocidad * 0.3) % (ANCHO + 60) - 30;
+                    const sway = Math.sin(frameCount * 0.02 + v.x) * 1.5;
+
                     if (v.tipo === 'arbusto') {
                         ctx.fillStyle = v.color;
                         ctx.beginPath();
-                        ctx.arc(xOff, v.y - v.altura / 2, v.ancho / 1.5, 0, Math.PI * 2);
+                        ctx.ellipse(xOff + sway * 0.3, v.y - v.altura / 2, v.ancho / 2, v.altura / 2, 0, 0, Math.PI * 2);
                         ctx.fill();
                         ctx.beginPath();
-                        ctx.arc(xOff - v.ancho / 3, v.y - v.altura / 3, v.ancho / 2, 0, Math.PI * 2);
+                        ctx.ellipse(xOff - v.ancho / 3 + sway * 0.2, v.y - v.altura / 3, v.ancho / 2.5, v.altura / 2.2, 0, 0,
+                            Math.PI * 2);
                         ctx.fill();
                         ctx.beginPath();
-                        ctx.arc(xOff + v.ancho / 3, v.y - v.altura / 3, v.ancho / 2, 0, Math.PI * 2);
+                        ctx.ellipse(xOff + v.ancho / 3 + sway * 0.2, v.y - v.altura / 3, v.ancho / 2.5, v.altura / 2.2, 0, 0,
+                            Math.PI * 2);
                         ctx.fill();
-                    } else {
+                    } else if (v.tipo === 'pasto') {
                         ctx.fillStyle = v.color;
                         for (let i = 0; i < 5; i++) {
-                            const px = xOff - v.ancho / 2 + i * (v.ancho / 4);
-                            ctx.fillRect(px, v.y - v.altura + 4 + Math.random() * 6, 2, v.altura - 4);
+                            const px = xOff - v.ancho / 2 + i * (v.ancho / 4) + sway * 0.2;
+                            const h = v.altura + Math.sin(frameCount * 0.03 + i + v.x) * 2;
+                            ctx.fillRect(px, v.y - h + 2, 2, h - 2);
+                        }
+                    } else if (v.tipo === 'flor') {
+                        const tam = 4 + Math.sin(frameCount * 0.025 + v.x) * 1;
+                        ctx.fillStyle = v.color;
+                        ctx.shadowColor = v.color;
+                        ctx.shadowBlur = 8;
+                        ctx.beginPath();
+                        ctx.arc(xOff + sway * 0.2, v.y - v.altura, tam, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                        ctx.fillStyle = '#2e7d32';
+                        ctx.fillRect(xOff + sway * 0.2 - 1, v.y - v.altura + 2, 2, v.altura - 2);
+                    } else if (v.tipo === 'helecho') {
+                        ctx.fillStyle = v.color;
+                        for (let i = 0; i < 6; i++) {
+                            const angle = (i / 6) * Math.PI * 2 + sway * 0.1;
+                            const h = v.altura * (0.4 + i / 10);
+                            ctx.beginPath();
+                            ctx.ellipse(
+                                xOff + Math.cos(angle) * h * 0.3,
+                                v.y - v.altura * 0.4 + Math.sin(angle) * h * 0.4,
+                                h * 0.2,
+                                h * 0.15,
+                                angle,
+                                0, Math.PI * 2
+                            );
+                            ctx.fill();
+                        }
+                    } else if (v.tipo === 'tronco') {
+                        ctx.fillStyle = v.color;
+                        ctx.fillRect(xOff + sway * 0.1, v.y - v.altura, v.ancho, v.altura);
+                        ctx.fillStyle = '#3e2723';
+                        for (let i = 0; i < 3; i++) {
+                            ctx.fillRect(xOff + v.ancho * 0.2 + i * v.ancho * 0.3 + sway * 0.1, v.y - v.altura + 2, 2, v
+                                .altura - 4);
                         }
                     }
                 });
 
+                // Suelo
                 const gradSuelo = ctx.createLinearGradient(0, SUELO_Y + 4, 0, ALTO);
                 gradSuelo.addColorStop(0, '#2d4a2d');
-                gradSuelo.addColorStop(0.3, '#1a3a1a');
-                gradSuelo.addColorStop(1, '#0d1f0d');
+                gradSuelo.addColorStop(0.2, '#1a3a1a');
+                gradSuelo.addColorStop(0.6, '#0d1f0d');
+                gradSuelo.addColorStop(1, '#0a150a');
                 ctx.fillStyle = gradSuelo;
                 ctx.fillRect(0, SUELO_Y + 4, ANCHO, ALTO - SUELO_Y - 4);
 
-                ctx.strokeStyle = 'rgba(255,204,0,0.12)';
+                // Línea del suelo con efecto de camino
+                ctx.strokeStyle = 'rgba(255,204,0,0.1)';
                 ctx.lineWidth = 2;
                 ctx.setLineDash([15, 20]);
                 ctx.lineDashOffset = -scrollFondo * 1.5;
@@ -914,15 +1104,24 @@
                 ctx.lineTo(ANCHO, SUELO_Y + 4);
                 ctx.stroke();
 
-                ctx.strokeStyle = 'rgba(255,204,0,0.06)';
+                ctx.strokeStyle = 'rgba(255,204,0,0.05)';
                 ctx.lineWidth = 1;
                 ctx.setLineDash([8, 12]);
                 ctx.lineDashOffset = -scrollFondo * 0.5;
                 ctx.beginPath();
-                ctx.moveTo(0, SUELO_Y + 20);
-                ctx.lineTo(ANCHO, SUELO_Y + 20);
+                ctx.moveTo(0, SUELO_Y + 18);
+                ctx.lineTo(ANCHO, SUELO_Y + 18);
                 ctx.stroke();
                 ctx.setLineDash([]);
+
+                // Brillo en el suelo (decorativo)
+                ctx.fillStyle = 'rgba(255,204,0,0.02)';
+                for (let i = 0; i < 5; i++) {
+                    const x = ((i * 180 + scrollFondo * 0.8) % (ANCHO + 100)) - 50;
+                    ctx.beginPath();
+                    ctx.ellipse(x, SUELO_Y + 20, 30, 4, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                }
             }
 
             function dibujarPersonaje() {
@@ -1010,6 +1209,45 @@
                 });
             }
 
+            function dibujarPajaro() {
+                if (!pajaroVolando) return;
+                const p = pajaroVolando;
+                ctx.save();
+                const flapY = Math.sin(p.flap) * 2;
+                ctx.translate(p.x + p.ancho / 2, p.y + p.alto / 2 + flapY);
+
+                // Sombra del pájaro en el suelo
+                ctx.save();
+                const altura = p.y + p.alto / 2;
+                const sombraY = SUELO_Y + 10;
+                const escalaSombra = Math.max(0.1, 1 - (sombraY - altura) / 250);
+                ctx.translate(0, (sombraY - altura) * 0.8);
+                ctx.scale(escalaSombra, escalaSombra * 0.1);
+                ctx.beginPath();
+                ctx.ellipse(0, 0, p.ancho, 8, 0, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0,0,0,0.15)';
+                ctx.fill();
+                ctx.restore();
+
+                // Efecto de aleteo (rotación)
+                const flapAngle = Math.sin(p.flap * 1.5) * 0.15;
+                ctx.rotate(flapAngle);
+
+                ctx.font = p.ancho + 'px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(p.emoji, 0, 2);
+
+                // Estela de brillo
+                ctx.shadowColor = 'rgba(255,255,255,0.05)';
+                ctx.shadowBlur = 15;
+                ctx.font = (p.ancho * 0.6) + 'px sans-serif';
+                ctx.fillText('✦', -p.ancho * 0.8, -2);
+                ctx.shadowBlur = 0;
+
+                ctx.restore();
+            }
+
             function dibujarParticulas() {
                 particulas.forEach(p => {
                     ctx.globalAlpha = Math.max(0, p.vida / 35);
@@ -1026,6 +1264,7 @@
 
             function dibujar() {
                 dibujarFondo();
+                dibujarPajaro();
                 dibujarAnimales();
                 dibujarObstaculos();
                 dibujarPersonaje();
@@ -1037,6 +1276,13 @@
                 ctx.textAlign = 'right';
                 ctx.textBaseline = 'bottom';
                 ctx.fillText('Nivel ' + nivel, ANCHO - 14, ALTO - 8);
+
+                // Distancia recorrida
+                ctx.fillStyle = 'rgba(255,255,255,0.02)';
+                ctx.font = '10px Poppins, sans-serif';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'bottom';
+                ctx.fillText('🌿 ' + Math.floor(distancia) + 'm', 12, ALTO - 8);
             }
 
             // ---- Bucle principal ----
@@ -1067,6 +1313,7 @@
 
             console.log('🔥 El Diablo Cumbiambero — Los Hijos de Tencha');
             console.log('🎮 Presiona ESPACIO para saltar, P para pausar');
+            console.log('🐦 Pájaros volando ocasionalmente!');
         })();
     </script>
 </body>
