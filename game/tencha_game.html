@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>El Diablo Cumbiambero — Los Hijos de Tencha</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap"
@@ -22,6 +22,83 @@
             color: #fff;
             font-family: 'Poppins', sans-serif;
             overflow: hidden;
+            touch-action: none;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* ===== PANTALLA DE ROTACIÓN (MÓVILES) ===== */
+        #rotate-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: #000000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 30px;
+            gap: 20px;
+        }
+
+        #rotate-overlay.active {
+            display: flex;
+        }
+
+        #rotate-overlay .rotate-icon {
+            font-size: 80px;
+            animation: rotar 2s ease-in-out infinite;
+        }
+
+        @keyframes rotar {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            50% {
+                transform: rotate(90deg);
+            }
+
+            100% {
+                transform: rotate(0deg);
+            }
+        }
+
+        #rotate-overlay h2 {
+            color: #ffcc00;
+            font-size: clamp(22px, 5vw, 36px);
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+
+        #rotate-overlay p {
+            color: #aaa;
+            font-size: clamp(14px, 2.5vw, 20px);
+            max-width: 400px;
+            line-height: 1.6;
+        }
+
+        #rotate-overlay .btn-fullscreen {
+            margin-top: 10px;
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            padding: 14px 40px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: .3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #rotate-overlay .btn-fullscreen:hover {
+            background: #fff;
+            transform: scale(1.05);
         }
 
         body {
@@ -30,7 +107,7 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            padding: 20px;
+            padding: 10px;
             background:
                 radial-gradient(circle at 50% 0%, rgba(255, 204, 0, .04), transparent 70%),
                 #000000;
@@ -38,13 +115,30 @@
 
         .juego-wrap {
             position: relative;
-            width: min(900px, 96vw);
+            width: min(900px, 98vw);
             aspect-ratio: 900 / 500;
             border-radius: 18px;
             border: 3px solid #ffcc00;
             box-shadow: 0 0 0 6px #000, 0 20px 50px rgba(0, 0, 0, .8), 0 0 60px rgba(255, 204, 0, .08);
             overflow: hidden;
             background: #000000;
+            touch-action: none;
+        }
+
+        .juego-wrap.fullscreen {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            aspect-ratio: auto;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+            z-index: 99998;
+        }
+
+        .juego-wrap.fullscreen canvas {
+            border-radius: 0;
         }
 
         canvas {
@@ -52,18 +146,36 @@
             width: 100%;
             height: 100%;
             background: #000000;
+            touch-action: none;
         }
 
-        .logo-centro {
+        /* ===== LOGOS EN PANTALLA DE INICIO ===== */
+        .logo-inicio-izq {
             position: absolute;
-            top: 8px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 6;
-            width: clamp(88px, 15vw, 138px);
+            top: 12px;
+            left: 16px;
+            z-index: 8;
+            width: clamp(60px, 10vw, 100px);
             height: auto;
-            filter: drop-shadow(0 0 35px rgba(255, 204, 0, 0.15));
+            filter: drop-shadow(0 0 25px rgba(255, 204, 0, 0.15));
             pointer-events: none;
+        }
+
+        .diablito-inicio-der {
+            position: absolute;
+            top: 10px;
+            right: 16px;
+            z-index: 8;
+            width: clamp(50px, 8vw, 80px);
+            height: auto;
+            filter: drop-shadow(0 0 25px rgba(255, 204, 0, 0.15));
+            pointer-events: none;
+        }
+
+        /* Ocultar logos cuando no está en inicio */
+        .logo-inicio-izq.oculto,
+        .diablito-inicio-der.oculto {
+            display: none;
         }
 
         .hud {
@@ -290,6 +402,17 @@
             box-shadow: 0 8px 30px rgba(215, 38, 56, .3);
         }
 
+        .btn-tencha.secundario {
+            background: transparent;
+            border: 2px solid rgba(255, 204, 0, .3);
+            color: #fff;
+        }
+
+        .btn-tencha.secundario:hover {
+            background: rgba(255, 204, 0, .1);
+            border-color: #ffcc00;
+        }
+
         .grito-diablo {
             color: #ffcc00;
             font-size: clamp(18px, 3.6vw, 30px);
@@ -316,18 +439,6 @@
             font-size: 18px;
         }
 
-        .volver {
-            margin-top: 18px;
-            color: #555;
-            font-size: 13px;
-            text-decoration: none;
-            transition: .3s;
-        }
-
-        .volver:hover {
-            color: #ffcc00;
-        }
-
         .pausa-overlay {
             background: rgba(0, 0, 0, .7);
             backdrop-filter: blur(10px);
@@ -339,6 +450,14 @@
 
         .pausa-overlay .btn-tencha {
             min-width: 160px;
+        }
+
+        .pausa-overlay .botones-pausa {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            margin-top: 6px;
         }
 
         .victoria-overlay {
@@ -414,16 +533,66 @@
             background: #ff3b4f;
         }
 
+        .volver-link {
+            margin-top: 18px;
+            color: #555;
+            font-size: 13px;
+            text-decoration: none;
+            transition: .3s;
+        }
+
+        .volver-link:hover {
+            color: #ffcc00;
+        }
+
         @media (hover: none) {
             .instrucciones .tecla {
                 display: none;
             }
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+
+            .juego-wrap {
+                border-radius: 12px;
+                border-width: 2px;
+                box-shadow: 0 0 0 4px #000, 0 10px 30px rgba(0, 0, 0, .8);
+            }
+
+            .hud {
+                top: 6px;
+                left: 10px;
+                right: 10px;
+            }
+
+            .vidas {
+                font-size: clamp(12px, 2.5vw, 18px);
+            }
+
+            .puntaje {
+                font-size: clamp(10px, 1.8vw, 14px);
+                padding: 2px 10px;
+            }
+
+            .velocidad-indicador {
+                font-size: 10px;
+                padding: 2px 8px;
+            }
+
+            .bonus-indicador {
+                top: 42px;
+                font-size: clamp(10px, 1.6vw, 14px);
+                padding: 3px 12px;
+                white-space: normal;
+                max-width: 90%;
+            }
+
             .hud-botones {
-                gap: 8px;
                 bottom: 8px;
+                gap: 8px;
             }
 
             .hud-botones button {
@@ -431,39 +600,41 @@
                 padding: 4px 12px;
             }
 
-            .hud {
+            .overlay {
+                padding: 14px;
+                gap: 10px;
+            }
+
+            .overlay h1 {
+                font-size: clamp(20px, 5vw, 32px);
+            }
+
+            .overlay p {
+                font-size: clamp(11px, 2vw, 15px);
+            }
+
+            .btn-tencha {
+                font-size: 14px;
+                padding: 10px 24px;
+            }
+
+            .logo-inicio-izq {
                 top: 8px;
                 left: 10px;
-                right: 10px;
+                width: clamp(45px, 8vw, 70px);
             }
 
-            .vidas {
-                font-size: 14px;
-            }
-
-            .puntaje {
-                font-size: 11px;
-                padding: 2px 10px;
-            }
-
-            .logo-centro {
+            .diablito-inicio-der {
                 top: 6px;
-                width: clamp(60px, 12vw, 85px);
-            }
-
-            .bonus-indicador {
-                top: 48px;
-                font-size: 11px;
-                padding: 3px 14px;
-                white-space: normal;
-                max-width: 90%;
+                right: 10px;
+                width: clamp(38px, 6vw, 55px);
             }
         }
 
-        @media (max-width: 400px) {
-            .logo-centro {
-                top: 4px;
-                width: clamp(50px, 10vw, 70px);
+        @media (max-width: 480px) {
+            .juego-wrap {
+                border-radius: 10px;
+                border-width: 2px;
             }
 
             .hud {
@@ -472,10 +643,113 @@
                 right: 6px;
             }
 
+            .vidas {
+                font-size: clamp(10px, 2.2vw, 14px);
+                gap: 2px;
+            }
+
+            .puntaje {
+                font-size: clamp(9px, 1.6vw, 12px);
+                padding: 2px 8px;
+            }
+
+            .velocidad-indicador {
+                font-size: 8px;
+                padding: 1px 6px;
+            }
+
             .bonus-indicador {
-                top: 42px;
+                top: 36px;
+                font-size: clamp(8px, 1.4vw, 11px);
+                padding: 2px 8px;
+            }
+
+            .hud-botones {
+                bottom: 4px;
+                gap: 4px;
+            }
+
+            .hud-botones button {
+                font-size: 8px;
+                padding: 3px 8px;
+            }
+
+            .overlay {
+                padding: 10px;
+                gap: 8px;
+            }
+
+            .overlay h1 {
+                font-size: clamp(16px, 4vw, 24px);
+            }
+
+            .overlay p {
+                font-size: clamp(10px, 1.6vw, 13px);
+            }
+
+            .btn-tencha {
+                font-size: 12px;
+                padding: 8px 18px;
+            }
+
+            .logo-inicio-izq {
+                top: 6px;
+                left: 6px;
+                width: clamp(35px, 7vw, 50px);
+            }
+
+            .diablito-inicio-der {
+                top: 4px;
+                right: 6px;
+                width: clamp(30px, 5vw, 40px);
+            }
+
+            #rotate-overlay .rotate-icon {
+                font-size: 50px;
+            }
+
+            #rotate-overlay h2 {
+                font-size: 20px;
+            }
+
+            #rotate-overlay p {
+                font-size: 14px;
+            }
+
+            #rotate-overlay .btn-fullscreen {
+                font-size: 14px;
+                padding: 10px 28px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .logo-inicio-izq {
+                width: clamp(28px, 6vw, 38px);
+            }
+
+            .diablito-inicio-der {
+                width: clamp(24px, 5vw, 32px);
+            }
+
+            .hud {
+                top: 3px;
+                left: 4px;
+                right: 4px;
+            }
+
+            .puntaje {
+                font-size: 8px;
+                padding: 1px 6px;
+            }
+
+            .vidas {
                 font-size: 10px;
-                padding: 2px 10px;
+            }
+
+            .bonus-indicador {
+                top: 30px;
+                font-size: 8px;
+                padding: 2px 6px;
             }
         }
     </style>
@@ -483,10 +757,23 @@
 
 <body>
 
+    <!-- ===== PANTALLA DE ROTACIÓN (MÓVILES) ===== -->
+    <div id="rotate-overlay">
+        <div class="rotate-icon">📱</div>
+        <h2>Gira tu dispositivo</h2>
+        <p>Para jugar "El Diablo Cumbiambero" necesitas poner tu teléfono o tablet en <strong>horizontal</strong>.</p>
+        <button class="btn-fullscreen" id="btnFullscreen">⛶ Pantalla completa</button>
+        <p style="font-size: 12px; color: #666; margin-top: 10px;">Al hacer clic, el juego se abrirá en pantalla
+            completa</p>
+    </div>
+
+    <!-- ===== JUEGO ===== -->
     <div class="juego-wrap" id="juegoWrap">
         <canvas id="lienzo"></canvas>
 
-        <img src="../img/logo.webp" alt="Los Hijos de Tencha" class="logo-centro">
+        <!-- Logos en pantalla de inicio -->
+        <img src="../img/logo.webp" alt="Los Hijos de Tencha" class="logo-inicio-izq" id="logoInicioIzq">
+        <img src="../img/menu-icono.webp" alt="Diablito" class="diablito-inicio-der" id="diablitoInicioDer">
 
         <div class="hud">
             <div class="hud-izquierda">
@@ -505,6 +792,7 @@
             <button id="btnSalir" class="btn-salir">🚪 Salir</button>
         </div>
 
+        <!-- ===== PANTALLA DE INICIO ===== -->
         <div class="overlay" id="pantallaInicio">
             <h1>El Diablo Cumbiambero</h1>
             <p>Brinca guitarras, bajos, bongós, tumbas, pianos, acordeones y teclados. ¡Tienes 3 vidas!</p>
@@ -512,20 +800,24 @@
                 <span class="tecla"><kbd>ESPACIO</kbd> para saltar</span>
                 <span class="tecla-touch">Toca la pantalla para saltar</span>
             </div>
-            <button class="btn-tencha" id="btnIniciar">Empezar a bailar</button>
+            <button class="btn-tencha" id="btnIniciar">🎵 Empezar a bailar</button>
         </div>
 
+        <!-- ===== PANTALLA DE PAUSA (con Reiniciar) ===== -->
         <div class="overlay pausa-overlay oculto" id="pantallaPausa">
             <h1>⏸️ PAUSA</h1>
             <p>Descansa un momento, el diablo te espera.</p>
-            <button class="btn-tencha" id="btnReanudar">▶️ Reanudar</button>
-            <button class="btn-tencha rojo" id="btnSalirPausa" style="margin-top:4px;">🚪 Salir al sitio</button>
+            <div class="botones-pausa">
+                <button class="btn-tencha" id="btnReanudar">▶️ Reanudar</button>
+                <button class="btn-tencha secundario" id="btnReiniciarPausa">🔄 Reiniciar juego</button>
+                <button class="btn-tencha rojo" id="btnSalirPausa">🚪 Salir al sitio</button>
+            </div>
         </div>
 
         <div class="overlay oculto" id="pantallaFin">
             <h1 class="rojo">Juego Terminado</h1>
             <p class="score-final" id="puntajeFinal">Puntos: 0</p>
-            <button class="btn-tencha" id="btnReiniciar">Reiniciar</button>
+            <button class="btn-tencha" id="btnReiniciar">🔄 Reiniciar</button>
             <button class="btn-tencha rojo" id="btnSalirFin">🚪 Salir al sitio</button>
         </div>
 
@@ -533,7 +825,7 @@
             <h1>🏆 ¡HAS GANADO!</h1>
             <p>¡Eres un verdadero Diablo Cumbiambero!</p>
             <p class="puntos-finales" id="puntosVictoria">🎵 6000 PUNTOS 🎵</p>
-            <button class="btn-tencha" id="btnReiniciarVictoria">Reiniciar</button>
+            <button class="btn-tencha" id="btnReiniciarVictoria">🔄 Reiniciar</button>
             <button class="btn-tencha rojo" id="btnSalirVictoria">🚪 Salir al sitio</button>
         </div>
 
@@ -542,501 +834,604 @@
         </div>
     </div>
 
-    <a href="../index.html" class="volver" id="volverLink">← Volver al sitio</a>
+    <a href="../index.html" class="volver-link" id="volverLink">← Volver al sitio</a>
+
+    <!-- ===== REPRODUCTOR DE MÚSICA (OCULTO) ===== -->
+    <iframe id="musicaFondo" style="display:none;"
+        src="https://www.youtube.com/embed/vhTF7G1sIyw?autoplay=1&loop=1&playlist=vhTF7G1sIyw&mute=1"
+        allow="autoplay; encrypted-media" allowfullscreen>
+    </iframe>
 
     <script>
-        (function () {
-            const canvas = document.getElementById('lienzo');
-            const ctx = canvas.getContext('2d');
-            const wrap = document.getElementById('juegoWrap');
+        // ============================================================
+        //  PANTALLA COMPLETA Y ROTACIÓN
+        // ============================================================
+        const wrap = document.getElementById('juegoWrap');
+        const rotateOverlay = document.getElementById('rotate-overlay');
+        const btnFullscreen = document.getElementById('btnFullscreen');
+        const musicaIframe = document.getElementById('musicaFondo');
 
-            const vidasHUD = document.getElementById('vidasHUD');
-            const puntajeHUD = document.getElementById('puntajeHUD');
-            const velocidadHUD = document.getElementById('velocidadHUD');
-            const bonusIndicador = document.getElementById('bonusIndicador');
-            const pantallaInicio = document.getElementById('pantallaInicio');
-            const pantallaPausa = document.getElementById('pantallaPausa');
-            const pantallaFin = document.getElementById('pantallaFin');
-            const pantallaVictoria = document.getElementById('pantallaVictoria');
-            const pantallaGrito = document.getElementById('pantallaGrito');
-            const puntajeFinal = document.getElementById('puntajeFinal');
-            const puntosVictoria = document.getElementById('puntosVictoria');
-            const btnIniciar = document.getElementById('btnIniciar');
-            const btnReiniciar = document.getElementById('btnReiniciar');
-            const btnReiniciarVictoria = document.getElementById('btnReiniciarVictoria');
-            const btnSalirVictoria = document.getElementById('btnSalirVictoria');
-            const btnPausa = document.getElementById('btnPausa');
-            const btnReanudar = document.getElementById('btnReanudar');
-            const btnSalir = document.getElementById('btnSalir');
-            const btnSalirPausa = document.getElementById('btnSalirPausa');
-            const btnSalirFin = document.getElementById('btnSalirFin');
+        function isMobile() {
+            return /Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(navigator.userAgent);
+        }
 
-            const ANCHO = 900;
-            const ALTO = 500;
-            canvas.width = ANCHO;
-            canvas.height = ALTO;
+        function isLandscape() {
+            return window.innerWidth > window.innerHeight;
+        }
 
-            const SUELO_Y = ALTO - 75;
-            const GRAVEDAD = 0.55;
-            const FUERZA_SALTO = -12.0;
-
-            const spritePersonaje = new Image();
-            let spriteListo = false;
-            spritePersonaje.onload = () => { spriteListo = true; };
-            spritePersonaje.src = '../img/menu-icono.webp';
-
-            const PERSONAJE_ANCHO = 50;
-            const PERSONAJE_ALTO = 50;
-
-            const personaje = {
-                x: 100,
-                y: SUELO_Y - PERSONAJE_ALTO,
-                ancho: PERSONAJE_ANCHO,
-                alto: PERSONAJE_ALTO,
-                velocidadY: 0,
-                saltando: false,
-                angulo: 0
-            };
-
-            const INSTRUMENTOS = [
-                { emoji: '🎸', nombre: 'guitarra', ancho: 40, alto: 52 },
-                { emoji: '🪕', nombre: 'bajo', ancho: 40, alto: 50 },
-                { emoji: '🥁', nombre: 'bongó', ancho: 44, alto: 40 },
-                { emoji: '🪘', nombre: 'tumba', ancho: 44, alto: 54 },
-                { emoji: '🎹', nombre: 'piano', ancho: 58, alto: 42 },
-                { emoji: '🪗', nombre: 'acordeón', ancho: 46, alto: 46 },
-                { emoji: '🎼', nombre: 'teclado', ancho: 54, alto: 38 }
-            ];
-
-            const ANIMALES = [
-                { emoji: '🐒', nombre: 'mono', ancho: 26, alto: 26 },
-                { emoji: '🐆', nombre: 'jaguar', ancho: 32, alto: 24 },
-                { emoji: '🦥', nombre: 'perezoso', ancho: 28, alto: 26 },
-                { emoji: '🐸', nombre: 'rana', ancho: 22, alto: 22 },
-                { emoji: '🦎', nombre: 'iguana', ancho: 26, alto: 20 },
-                { emoji: '🐿️', nombre: 'ardilla', ancho: 24, alto: 22 }
-            ];
-
-            const PAJAROS = [
-                { emoji: '🦜', nombre: 'loro', ancho: 28, alto: 22 },
-                { emoji: '🦅', nombre: 'águila', ancho: 34, alto: 26 },
-                { emoji: '🕊️', nombre: 'paloma', ancho: 26, alto: 20 },
-                { emoji: '🐦', nombre: 'pájaro', ancho: 24, alto: 18 },
-                { emoji: '🦩', nombre: 'flamenco', ancho: 30, alto: 26 }
-            ];
-
-            const HITOS_BONUS = [500, 1000, 2500, 5000];
-            const PUNTOS_VICTORIA = 6000;
-
-            let obstaculos = [];
-            let particulas = [];
-            let animales = [];
-            let pajaroVolando = null;
-            let pinos = [];
-            let hojas = [];
-            let hojasViento = [];
-            let lineasViento = [];
-            let estrellas = [];
-            let lluvia = [];
-            let destellos = [];
-            let polvoViento = [];
-
-            let velocidadJuego = 8.5;
-            const VELOCIDAD_INICIAL = 8.5;
-            const VELOCIDAD_MAX = 24;
-
-            let distancia = 0;
-            let puntos = 0;
-            let vidas = 3;
-            const VIDAS_MAX = 3;
-            let invencibleHasta = 0;
-
-            let siguienteObstaculo = 0;
-            let siguienteAnimal = 0;
-            let siguientePajaro = 0;
-            let siguienteDestello = 0;
-
-            let estado = 'inicio';
-            let pausado = false;
-            let tiempoAnterior = null;
-            let scrollFondo = 0;
-            let animFrame = null;
-            let finTimeout = null;
-            let frameCount = 0;
-
-            let bonusActivo = false;
-            let bonusTimeout = null;
-            let bonusDoblePuntos = false;
-            let bonusDobleHasta = 0;
-            let hitosAlcanzados = new Set();
-
-            let nivelDificultad = 1;
-            let maxObstaculosSimultaneos = 3;
-            let intervaloGeneracionBase = 55;
-
-            let intensidadViento = 0.6;
-            const VIENTO_MIN = 0.4;
-            const VIENTO_MAX = 1.2;
-
-            const luna = {
-                x: 720,
-                y: 65,
-                radio: 55,
-                brillo: 0.15,
-                fase: 0
-            };
-
-            function generarPinos() {
-                pinos = [];
-                for (let i = 0; i < 30; i++) {
-                    const x = Math.random() * ANCHO;
-                    const altura = 90 + Math.random() * 190;
-                    const ancho = 26 + Math.random() * 26;
-                    const capas = 3 + Math.floor(Math.random() * 3);
-                    pinos.push({
-                        x,
-                        altura,
-                        ancho,
-                        capas,
-                        opacidad: 0.5 + Math.random() * 0.4,
-                        velocidad: 0.02 + Math.random() * 0.04,
-                        offset: Math.random() * 100,
-                        inclinacion: 0
-                    });
+        function checkOrientation() {
+            if (isMobile()) {
+                if (isLandscape()) {
+                    rotateOverlay.classList.remove('active');
+                } else {
+                    rotateOverlay.classList.add('active');
                 }
-                pinos.sort((a, b) => a.altura - b.altura);
+            } else {
+                rotateOverlay.classList.remove('active');
             }
-            generarPinos();
+        }
 
-            function generarEstrellas() {
-                estrellas = [];
-                for (let i = 0; i < 80; i++) {
-                    estrellas.push({
-                        x: Math.random() * ANCHO,
-                        y: Math.random() * (SUELO_Y - 40),
-                        tam: 0.5 + Math.random() * 1.5,
-                        parpadeo: 0.02 + Math.random() * 0.04,
-                        fase: Math.random() * Math.PI * 2,
-                        color: ['#ffcc00', '#ff6b6b', '#ffd93d', '#ff9ff3', '#48dbfb', '#ff6348'][Math.floor(Math.random() *
-                            6)]
-                    });
+        checkOrientation();
+        window.addEventListener('resize', checkOrientation);
+        window.addEventListener('orientationchange', function () {
+            setTimeout(checkOrientation, 300);
+        });
+
+        // Pantalla completa
+        btnFullscreen.addEventListener('click', function () {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.webkitRequestFullscreen) {
+                document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) {
+                document.documentElement.msRequestFullscreen();
+            }
+            setTimeout(function () {
+                if (isLandscape()) {
+                    rotateOverlay.classList.remove('active');
                 }
+                // Activar música después de la interacción del usuario
+                activarMusica();
+            }, 500);
+        });
+
+        // Activar música con cualquier interacción
+        function activarMusica() {
+            try {
+                musicaIframe.src = musicaIframe.src.replace('mute=1', 'mute=0');
+                // Recargar el iframe para que suene
+                const src = musicaIframe.src;
+                musicaIframe.src = '';
+                setTimeout(() => {
+                    musicaIframe.src = src;
+                }, 100);
+            } catch (e) {
+                console.log('Música activada');
             }
-            generarEstrellas();
+        }
 
-            function generarHojas() {
-                hojas = [];
-                for (let i = 0; i < 15; i++) {
-                    hojas.push({
-                        x: Math.random() * ANCHO,
-                        y: Math.random() * (SUELO_Y - 20),
-                        vx: (Math.random() - 0.5) * 0.3,
-                        vy: 0.1 + Math.random() * 0.2,
-                        tam: 3 + Math.random() * 4,
-                        rot: Math.random() * Math.PI * 2,
-                        velRot: (Math.random() - 0.5) * 0.03,
-                        color: '#ffcc00',
-                        opacidad: 0.3 + Math.random() * 0.3
-                    });
-                }
-            }
-            generarHojas();
+        // Al hacer clic en el juego, activar música
+        document.addEventListener('click', activarMusica);
+        document.addEventListener('touchstart', activarMusica);
 
-            function generarHojasViento() {
-                hojasViento = [];
-                for (let i = 0; i < 25; i++) {
-                    hojasViento.push({
-                        x: Math.random() * ANCHO,
-                        y: 20 + Math.random() * (SUELO_Y - 40),
-                        vx: 2 + Math.random() * 4,
-                        vy: (Math.random() - 0.5) * 0.5,
-                        tam: 2 + Math.random() * 4,
-                        rot: Math.random() * Math.PI * 2,
-                        velRot: (Math.random() - 0.5) * 0.05,
-                        color: ['#ffcc00', '#ffd93d', '#ff8a5c', '#ff6b6b', '#ff9ff3'][Math.floor(Math.random() * 5)],
-                        opacidad: 0.2 + Math.random() * 0.3,
-                        vida: 0,
-                        maxVida: 60 + Math.random() * 40
-                    });
-                }
-            }
-            generarHojasViento();
+        if (isLandscape() && isMobile()) {
+            rotateOverlay.classList.remove('active');
+        }
 
-            function generarLineasViento() {
-                lineasViento = [];
-                for (let i = 0; i < 18; i++) {
-                    lineasViento.push({
-                        x: Math.random() * ANCHO,
-                        y: 10 + Math.random() * (SUELO_Y - 30),
-                        largo: 20 + Math.random() * 40,
-                        opacidad: 0.04 + Math.random() * 0.08,
-                        velocidad: 2 + Math.random() * 3
-                    });
-                }
-            }
-            generarLineasViento();
+        // ============================================================
+        //  JUEGO
+        // ============================================================
+        const canvas = document.getElementById('lienzo');
+        const ctx = canvas.getContext('2d');
 
-            function generarPolvoViento() {
-                polvoViento = [];
-                for (let i = 0; i < 30; i++) {
-                    polvoViento.push({
-                        x: Math.random() * ANCHO,
-                        y: 5 + Math.random() * (SUELO_Y - 10),
-                        tam: 1 + Math.random() * 2.5,
-                        velocidad: 1.5 + Math.random() * 3,
-                        opacidad: 0.05 + Math.random() * 0.1,
-                        offsetY: Math.random() * 100
-                    });
-                }
-            }
-            generarPolvoViento();
+        const vidasHUD = document.getElementById('vidasHUD');
+        const puntajeHUD = document.getElementById('puntajeHUD');
+        const velocidadHUD = document.getElementById('velocidadHUD');
+        const bonusIndicador = document.getElementById('bonusIndicador');
+        const pantallaInicio = document.getElementById('pantallaInicio');
+        const pantallaPausa = document.getElementById('pantallaPausa');
+        const pantallaFin = document.getElementById('pantallaFin');
+        const pantallaVictoria = document.getElementById('pantallaVictoria');
+        const pantallaGrito = document.getElementById('pantallaGrito');
+        const puntajeFinal = document.getElementById('puntajeFinal');
+        const puntosVictoria = document.getElementById('puntosVictoria');
+        const logoInicioIzq = document.getElementById('logoInicioIzq');
+        const diablitoInicioDer = document.getElementById('diablitoInicioDer');
+        const btnIniciar = document.getElementById('btnIniciar');
+        const btnReiniciar = document.getElementById('btnReiniciar');
+        const btnReiniciarPausa = document.getElementById('btnReiniciarPausa');
+        const btnReiniciarVictoria = document.getElementById('btnReiniciarVictoria');
+        const btnSalirVictoria = document.getElementById('btnSalirVictoria');
+        const btnPausa = document.getElementById('btnPausa');
+        const btnReanudar = document.getElementById('btnReanudar');
+        const btnSalir = document.getElementById('btnSalir');
+        const btnSalirPausa = document.getElementById('btnSalirPausa');
+        const btnSalirFin = document.getElementById('btnSalirFin');
 
-            const SIMBOLOS_LLUVIA = ['♪', '♫', '♩', '♬'];
+        const ANCHO = 900;
+        const ALTO = 500;
+        canvas.width = ANCHO;
+        canvas.height = ALTO;
 
-            function generarLluvia() {
-                lluvia = [];
-                for (let i = 0; i < 20; i++) {
-                    lluvia.push({
-                        x: Math.random() * ANCHO,
-                        y: Math.random() * ALTO,
-                        vy: 0.6 + Math.random() * 0.8,
-                        vx: 1.5 + Math.random() * 2.5,
-                        tam: 8 + Math.random() * 8,
-                        rot: (Math.random() - 0.5) * 0.3,
-                        simbolo: SIMBOLOS_LLUVIA[Math.floor(Math.random() * SIMBOLOS_LLUVIA.length)],
-                        opacidad: 0.04 + Math.random() * 0.06
-                    });
-                }
-            }
-            generarLluvia();
+        const SUELO_Y = ALTO - 75;
+        const GRAVEDAD = 0.55;
+        const FUERZA_SALTO = -12.0;
 
-            function generarDestello() {
-                destellos.push({
-                    x: 50 + Math.random() * (ANCHO - 100),
-                    y: 10 + Math.random() * (SUELO_Y - 100),
-                    vida: 1.0,
-                    maxVida: 1.0,
-                    tam: 3 + Math.random() * 6,
-                    tipo: Math.random() > 0.6 ? 'relampago' : 'fugaz',
-                    velocidad: 0.2 + Math.random() * 0.3
+        const spritePersonaje = new Image();
+        let spriteListo = false;
+        spritePersonaje.onload = () => { spriteListo = true; };
+        spritePersonaje.src = '../img/menu-icono.webp';
+
+        const PERSONAJE_ANCHO = 50;
+        const PERSONAJE_ALTO = 50;
+
+        const personaje = {
+            x: 100,
+            y: SUELO_Y - PERSONAJE_ALTO,
+            ancho: PERSONAJE_ANCHO,
+            alto: PERSONAJE_ALTO,
+            velocidadY: 0,
+            saltando: false,
+            angulo: 0
+        };
+
+        const INSTRUMENTOS = [
+            { emoji: '🎸', nombre: 'guitarra', ancho: 40, alto: 52 },
+            { emoji: '🪕', nombre: 'bajo', ancho: 40, alto: 50 },
+            { emoji: '🥁', nombre: 'bongó', ancho: 44, alto: 40 },
+            { emoji: '🪘', nombre: 'tumba', ancho: 44, alto: 54 },
+            { emoji: '🎹', nombre: 'piano', ancho: 58, alto: 42 },
+            { emoji: '🪗', nombre: 'acordeón', ancho: 46, alto: 46 },
+            { emoji: '🎼', nombre: 'teclado', ancho: 54, alto: 38 }
+        ];
+
+        const ANIMALES = [
+            { emoji: '🐒', nombre: 'mono', ancho: 26, alto: 26 },
+            { emoji: '🐆', nombre: 'jaguar', ancho: 32, alto: 24 },
+            { emoji: '🦥', nombre: 'perezoso', ancho: 28, alto: 26 },
+            { emoji: '🐸', nombre: 'rana', ancho: 22, alto: 22 },
+            { emoji: '🦎', nombre: 'iguana', ancho: 26, alto: 20 },
+            { emoji: '🐿️', nombre: 'ardilla', ancho: 24, alto: 22 }
+        ];
+
+        const PAJAROS = [
+            { emoji: '🦜', nombre: 'loro', ancho: 28, alto: 22 },
+            { emoji: '🦅', nombre: 'águila', ancho: 34, alto: 26 },
+            { emoji: '🕊️', nombre: 'paloma', ancho: 26, alto: 20 },
+            { emoji: '🐦', nombre: 'pájaro', ancho: 24, alto: 18 },
+            { emoji: '🦩', nombre: 'flamenco', ancho: 30, alto: 26 }
+        ];
+
+        const HITOS_BONUS = [500, 1000, 2500, 5000];
+        const PUNTOS_VICTORIA = 6000;
+
+        let obstaculos = [];
+        let particulas = [];
+        let animales = [];
+        let pajaroVolando = null;
+        let pinos = [];
+        let hojas = [];
+        let hojasViento = [];
+        let lineasViento = [];
+        let estrellas = [];
+        let lluvia = [];
+        let destellos = [];
+        let polvoViento = [];
+
+        let velocidadJuego = 8.5;
+        const VELOCIDAD_INICIAL = 8.5;
+        const VELOCIDAD_MAX = 24;
+
+        let distancia = 0;
+        let puntos = 0;
+        let vidas = 3;
+        const VIDAS_MAX = 3;
+        let invencibleHasta = 0;
+
+        let siguienteObstaculo = 0;
+        let siguienteAnimal = 0;
+        let siguientePajaro = 0;
+        let siguienteDestello = 0;
+
+        let estado = 'inicio';
+        let pausado = false;
+        let tiempoAnterior = null;
+        let scrollFondo = 0;
+        let animFrame = null;
+        let finTimeout = null;
+        let frameCount = 0;
+
+        let bonusActivo = false;
+        let bonusTimeout = null;
+        let bonusDoblePuntos = false;
+        let bonusDobleHasta = 0;
+        let hitosAlcanzados = new Set();
+
+        let nivelDificultad = 1;
+        let maxObstaculosSimultaneos = 3;
+        let intervaloGeneracionBase = 55;
+
+        let intensidadViento = 0.6;
+        const VIENTO_MIN = 0.4;
+        const VIENTO_MAX = 1.2;
+
+        const luna = {
+            x: 720,
+            y: 65,
+            radio: 55,
+            brillo: 0.15,
+            fase: 0
+        };
+
+        // ---- Generar pinos ----
+        function generarPinos() {
+            pinos = [];
+            for (let i = 0; i < 30; i++) {
+                const x = Math.random() * ANCHO;
+                const altura = 90 + Math.random() * 190;
+                const ancho = 26 + Math.random() * 26;
+                const capas = 3 + Math.floor(Math.random() * 3);
+                pinos.push({
+                    x,
+                    altura,
+                    ancho,
+                    capas,
+                    opacidad: 0.5 + Math.random() * 0.4,
+                    velocidad: 0.02 + Math.random() * 0.04,
+                    offset: Math.random() * 100,
+                    inclinacion: 0
                 });
             }
+            pinos.sort((a, b) => a.altura - b.altura);
+        }
+        generarPinos();
 
-            function corazonesHUD() {
-                vidasHUD.innerHTML = '';
-                for (let i = 0; i < VIDAS_MAX; i++) {
-                    const s = document.createElement('span');
-                    s.textContent = '❤️';
-                    if (i >= vidas) s.className = 'vida-perdida';
-                    vidasHUD.appendChild(s);
+        function generarEstrellas() {
+            estrellas = [];
+            for (let i = 0; i < 80; i++) {
+                estrellas.push({
+                    x: Math.random() * ANCHO,
+                    y: Math.random() * (SUELO_Y - 40),
+                    tam: 0.5 + Math.random() * 1.5,
+                    parpadeo: 0.02 + Math.random() * 0.04,
+                    fase: Math.random() * Math.PI * 2,
+                    color: ['#ffcc00', '#ff6b6b', '#ffd93d', '#ff9ff3', '#48dbfb', '#ff6348'][Math.floor(Math.random() *
+                        6)]
+                });
+            }
+        }
+        generarEstrellas();
+
+        function generarHojas() {
+            hojas = [];
+            for (let i = 0; i < 15; i++) {
+                hojas.push({
+                    x: Math.random() * ANCHO,
+                    y: Math.random() * (SUELO_Y - 20),
+                    vx: (Math.random() - 0.5) * 0.3,
+                    vy: 0.1 + Math.random() * 0.2,
+                    tam: 3 + Math.random() * 4,
+                    rot: Math.random() * Math.PI * 2,
+                    velRot: (Math.random() - 0.5) * 0.03,
+                    color: '#ffcc00',
+                    opacidad: 0.3 + Math.random() * 0.3
+                });
+            }
+        }
+        generarHojas();
+
+        function generarHojasViento() {
+            hojasViento = [];
+            for (let i = 0; i < 25; i++) {
+                hojasViento.push({
+                    x: Math.random() * ANCHO,
+                    y: 20 + Math.random() * (SUELO_Y - 40),
+                    vx: 2 + Math.random() * 4,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    tam: 2 + Math.random() * 4,
+                    rot: Math.random() * Math.PI * 2,
+                    velRot: (Math.random() - 0.5) * 0.05,
+                    color: ['#ffcc00', '#ffd93d', '#ff8a5c', '#ff6b6b', '#ff9ff3'][Math.floor(Math.random() * 5)],
+                    opacidad: 0.2 + Math.random() * 0.3,
+                    vida: 0,
+                    maxVida: 60 + Math.random() * 40
+                });
+            }
+        }
+        generarHojasViento();
+
+        function generarLineasViento() {
+            lineasViento = [];
+            for (let i = 0; i < 18; i++) {
+                lineasViento.push({
+                    x: Math.random() * ANCHO,
+                    y: 10 + Math.random() * (SUELO_Y - 30),
+                    largo: 20 + Math.random() * 40,
+                    opacidad: 0.04 + Math.random() * 0.08,
+                    velocidad: 2 + Math.random() * 3
+                });
+            }
+        }
+        generarLineasViento();
+
+        function generarPolvoViento() {
+            polvoViento = [];
+            for (let i = 0; i < 30; i++) {
+                polvoViento.push({
+                    x: Math.random() * ANCHO,
+                    y: 5 + Math.random() * (SUELO_Y - 10),
+                    tam: 1 + Math.random() * 2.5,
+                    velocidad: 1.5 + Math.random() * 3,
+                    opacidad: 0.05 + Math.random() * 0.1,
+                    offsetY: Math.random() * 100
+                });
+            }
+        }
+        generarPolvoViento();
+
+        const SIMBOLOS_LLUVIA = ['♪', '♫', '♩', '♬'];
+
+        function generarLluvia() {
+            lluvia = [];
+            for (let i = 0; i < 20; i++) {
+                lluvia.push({
+                    x: Math.random() * ANCHO,
+                    y: Math.random() * ALTO,
+                    vy: 0.6 + Math.random() * 0.8,
+                    vx: 1.5 + Math.random() * 2.5,
+                    tam: 8 + Math.random() * 8,
+                    rot: (Math.random() - 0.5) * 0.3,
+                    simbolo: SIMBOLOS_LLUVIA[Math.floor(Math.random() * SIMBOLOS_LLUVIA.length)],
+                    opacidad: 0.04 + Math.random() * 0.06
+                });
+            }
+        }
+        generarLluvia();
+
+        function generarDestello() {
+            destellos.push({
+                x: 50 + Math.random() * (ANCHO - 100),
+                y: 10 + Math.random() * (SUELO_Y - 100),
+                vida: 1.0,
+                maxVida: 1.0,
+                tam: 3 + Math.random() * 6,
+                tipo: Math.random() > 0.6 ? 'relampago' : 'fugaz',
+                velocidad: 0.2 + Math.random() * 0.3
+            });
+        }
+
+        // ---- Funciones ----
+        function corazonesHUD() {
+            vidasHUD.innerHTML = '';
+            for (let i = 0; i < VIDAS_MAX; i++) {
+                const s = document.createElement('span');
+                s.textContent = '❤️';
+                if (i >= vidas) s.className = 'vida-perdida';
+                vidasHUD.appendChild(s);
+            }
+        }
+
+        function actualizarPuntaje() {
+            puntajeHUD.textContent = 'PUNTOS: ' + puntos;
+            const nivel = Math.floor(distancia / 250) + 1;
+            velocidadHUD.textContent = '⚡ Nivel ' + nivel + ' | 🎯 ' + nivelDificultad;
+
+            verificarHitosBonus();
+
+            if (puntos >= PUNTOS_VICTORIA && estado === 'jugando') {
+                mostrarVictoria();
+            }
+        }
+
+        function verificarHitosBonus() {
+            for (const hito of HITOS_BONUS) {
+                if (puntos >= hito && !hitosAlcanzados.has(hito) && estado === 'jugando') {
+                    hitosAlcanzados.add(hito);
+                    activarBonus(hito);
+                    break;
                 }
             }
+        }
 
-            function actualizarPuntaje() {
-                puntajeHUD.textContent = 'PUNTOS: ' + puntos;
-                const nivel = Math.floor(distancia / 250) + 1;
-                velocidadHUD.textContent = '⚡ Nivel ' + nivel + ' | 🎯 ' + nivelDificultad;
-
-                verificarHitosBonus();
-
-                if (puntos >= PUNTOS_VICTORIA && estado === 'jugando') {
-                    mostrarVictoria();
-                }
+        function activarBonus(hito) {
+            if (bonusTimeout) {
+                clearTimeout(bonusTimeout);
             }
 
-            function verificarHitosBonus() {
-                for (const hito of HITOS_BONUS) {
-                    if (puntos >= hito && !hitosAlcanzados.has(hito) && estado === 'jugando') {
-                        hitosAlcanzados.add(hito);
-                        activarBonus(hito);
-                        break;
-                    }
-                }
-            }
+            bonusDoblePuntos = true;
+            bonusDobleHasta = Date.now() + 15000;
 
-            function activarBonus(hito) {
-                if (bonusTimeout) {
-                    clearTimeout(bonusTimeout);
-                }
-
-                bonusDoblePuntos = true;
-                bonusDobleHasta = Date.now() + 15000;
-
-                bonusIndicador.classList.add('visible');
-                bonusIndicador.innerHTML = `
+            bonusIndicador.classList.add('visible');
+            bonusIndicador.innerHTML = `
                     🔥 ¡ME VALE VERGA LO QUE PIENSEN DE MÍ! 
                     <span class="doble">✨ PUNTOS DOBLES ×2 (15s)</span>
                 `;
 
-                for (let i = 0; i < 40; i++) {
-                    particulas.push({
-                        x: ANCHO / 2 + (Math.random() - 0.5) * 300,
-                        y: ALTO / 2 + (Math.random() - 0.5) * 150,
-                        vx: (Math.random() - 0.5) * 14,
-                        vy: (Math.random() - 2) * 10 - 3,
-                        vida: 55,
-                        color: ['#ffcc00', '#ff6b6b', '#ffd93d', '#ff9ff3', '#48dbfb', '#ff6348', '#ff8a5c'][Math.floor(Math
-                            .random() * 7)],
-                        tamano: 3 + Math.random() * 6
-                    });
-                }
-
-                if (bonusTimeout) clearTimeout(bonusTimeout);
-                bonusTimeout = setTimeout(() => {
-                    bonusIndicador.classList.remove('visible');
-                }, 3000);
-
-                setTimeout(() => {
-                    bonusDoblePuntos = false;
-                    bonusIndicador.classList.remove('visible');
-                }, 15000);
+            for (let i = 0; i < 40; i++) {
+                particulas.push({
+                    x: ANCHO / 2 + (Math.random() - 0.5) * 300,
+                    y: ALTO / 2 + (Math.random() - 0.5) * 150,
+                    vx: (Math.random() - 0.5) * 14,
+                    vy: (Math.random() - 2) * 10 - 3,
+                    vida: 55,
+                    color: ['#ffcc00', '#ff6b6b', '#ffd93d', '#ff9ff3', '#48dbfb', '#ff6348', '#ff8a5c'][Math.floor(Math
+                        .random() * 7)],
+                    tamano: 3 + Math.random() * 6
+                });
             }
 
-            function mostrarVictoria() {
-                estado = 'terminado';
-                puntosVictoria.textContent = '🎵 ' + puntos + ' PUNTOS 🎵';
-                pantallaVictoria.classList.remove('oculto');
-                if (animFrame) cancelAnimationFrame(animFrame);
-
-                for (let i = 0; i < 80; i++) {
-                    setTimeout(() => {
-                        particulas.push({
-                            x: ANCHO / 2 + (Math.random() - 0.5) * 400,
-                            y: ALTO / 2 + (Math.random() - 0.5) * 200,
-                            vx: (Math.random() - 0.5) * 16,
-                            vy: (Math.random() - 3) * 12 - 4,
-                            vida: 70,
-                            color: ['#ffcc00', '#ff6b6b', '#ffd93d', '#ff9ff3', '#48dbfb', '#ff6348', '#ff8a5c', '#ff4757',
-                                '#2ed573'
-                            ][Math.floor(Math.random() * 9)],
-                            tamano: 4 + Math.random() * 8
-                        });
-                    }, i * 30);
-                }
-            }
-
-            function actualizarDificultad() {
-                const progreso = Math.min(1, puntos / 6000);
-                const progresoCurva = Math.pow(progreso, 1.6);
-
-                nivelDificultad = 1 + Math.floor(progresoCurva * 8);
-                velocidadJuego = VELOCIDAD_INICIAL + (VELOCIDAD_MAX - VELOCIDAD_INICIAL) * progresoCurva;
-                maxObstaculosSimultaneos = Math.min(8, 3 + Math.floor(progresoCurva * 5));
-                intervaloGeneracionBase = Math.max(12, 55 - progresoCurva * 43);
-
-                intensidadViento = VIENTO_MIN + (VIENTO_MAX - VIENTO_MIN) * (velocidadJuego - VELOCIDAD_INICIAL) / (VELOCIDAD_MAX -
-                    VELOCIDAD_INICIAL);
-            }
-
-            function tiempoAleatorioObstaculo() {
-                const base = Math.max(12, intervaloGeneracionBase + (Math.random() - 0.5) * 15);
-                return base;
-            }
-
-            function tiempoAleatorioAnimal() {
-                return Math.max(30, 50 + Math.random() * 60 - nivelDificultad * 3);
-            }
-
-            function tiempoAleatorioPajaro() {
-                return Math.max(40, 70 + Math.random() * 90 - nivelDificultad * 2);
-            }
-
-            function tiempoAleatorioDestello() {
-                return 60 + Math.random() * 120;
-            }
-
-            function reiniciarEstadoJuego() {
-                obstaculos = [];
-                particulas = [];
-                animales = [];
-                pajaroVolando = null;
-                destellos = [];
-                velocidadJuego = VELOCIDAD_INICIAL;
-                intensidadViento = VIENTO_MIN;
-                distancia = 0;
-                puntos = 0;
-                vidas = 3;
-                invencibleHasta = 0;
-                nivelDificultad = 1;
-                maxObstaculosSimultaneos = 3;
-                intervaloGeneracionBase = 55;
-                siguienteObstaculo = tiempoAleatorioObstaculo();
-                siguienteAnimal = tiempoAleatorioAnimal();
-                siguientePajaro = tiempoAleatorioPajaro();
-                siguienteDestello = tiempoAleatorioDestello();
-                personaje.y = SUELO_Y - PERSONAJE_ALTO;
-                personaje.velocidadY = 0;
-                personaje.saltando = false;
-                personaje.angulo = 0;
-                scrollFondo = 0;
-                frameCount = 0;
-
-                bonusActivo = false;
-                bonusDoblePuntos = false;
-                bonusDobleHasta = 0;
-                hitosAlcanzados = new Set();
-                if (bonusTimeout) clearTimeout(bonusTimeout);
+            if (bonusTimeout) clearTimeout(bonusTimeout);
+            bonusTimeout = setTimeout(() => {
                 bonusIndicador.classList.remove('visible');
+            }, 3000);
 
-                generarHojasViento();
-                generarLineasViento();
-                generarPolvoViento();
+            setTimeout(() => {
+                bonusDoblePuntos = false;
+                bonusIndicador.classList.remove('visible');
+            }, 15000);
+        }
 
-                pantallaVictoria.classList.add('oculto');
-                corazonesHUD();
-                actualizarPuntaje();
-                document.getElementById('btnPausa').textContent = '⏸️ Pausa';
-                pausado = false;
-                pantallaPausa.classList.add('oculto');
+        function mostrarVictoria() {
+            estado = 'terminado';
+            puntosVictoria.textContent = '🎵 ' + puntos + ' PUNTOS 🎵';
+            pantallaVictoria.classList.remove('oculto');
+            if (animFrame) cancelAnimationFrame(animFrame);
+
+            for (let i = 0; i < 80; i++) {
+                setTimeout(() => {
+                    particulas.push({
+                        x: ANCHO / 2 + (Math.random() - 0.5) * 400,
+                        y: ALTO / 2 + (Math.random() - 0.5) * 200,
+                        vx: (Math.random() - 0.5) * 16,
+                        vy: (Math.random() - 3) * 12 - 4,
+                        vida: 70,
+                        color: ['#ffcc00', '#ff6b6b', '#ffd93d', '#ff9ff3', '#48dbfb', '#ff6348', '#ff8a5c', '#ff4757',
+                            '#2ed573'
+                        ][Math.floor(Math.random() * 9)],
+                        tamano: 4 + Math.random() * 8
+                    });
+                }, i * 30);
             }
+        }
 
-            function saltar() {
-                if (estado !== 'jugando' || pausado) return;
-                if (!personaje.saltando) {
-                    personaje.velocidadY = FUERZA_SALTO;
-                    personaje.saltando = true;
-                }
+        function actualizarDificultad() {
+            const progreso = Math.min(1, puntos / 6000);
+            const progresoCurva = Math.pow(progreso, 1.6);
+
+            nivelDificultad = 1 + Math.floor(progresoCurva * 8);
+            velocidadJuego = VELOCIDAD_INICIAL + (VELOCIDAD_MAX - VELOCIDAD_INICIAL) * progresoCurva;
+            maxObstaculosSimultaneos = Math.min(8, 3 + Math.floor(progresoCurva * 5));
+            intervaloGeneracionBase = Math.max(12, 55 - progresoCurva * 43);
+
+            intensidadViento = VIENTO_MIN + (VIENTO_MAX - VIENTO_MIN) * (velocidadJuego - VELOCIDAD_INICIAL) / (VELOCIDAD_MAX -
+                VELOCIDAD_INICIAL);
+        }
+
+        function tiempoAleatorioObstaculo() {
+            const base = Math.max(12, intervaloGeneracionBase + (Math.random() - 0.5) * 15);
+            return base;
+        }
+
+        function tiempoAleatorioAnimal() {
+            // Los animales aparecen progresivamente: al inicio casi no, luego más
+            const prob = Math.min(0.8, 0.1 + (puntos / 6000) * 0.7);
+            if (Math.random() > prob) {
+                return 999; // No generar animal
             }
+            return Math.max(30, 50 + Math.random() * 60 - nivelDificultad * 3);
+        }
 
-            function togglePausa() {
-                if (estado !== 'jugando') return;
-                pausado = !pausado;
-                document.getElementById('btnPausa').textContent = pausado ? '▶️ Reanudar' : '⏸️ Pausa';
-                if (pausado) {
-                    pantallaPausa.classList.remove('oculto');
-                    if (animFrame) cancelAnimationFrame(animFrame);
-                } else {
-                    pantallaPausa.classList.add('oculto');
-                    tiempoAnterior = null;
-                    animFrame = requestAnimationFrame(bucle);
-                }
+        function tiempoAleatorioPajaro() {
+            const prob = Math.min(0.6, 0.05 + (puntos / 6000) * 0.55);
+            if (Math.random() > prob) {
+                return 999;
             }
+            return Math.max(40, 70 + Math.random() * 90 - nivelDificultad * 2);
+        }
 
-            function salirAlSitio() {
+        function tiempoAleatorioDestello() {
+            return 60 + Math.random() * 120;
+        }
+
+        function reiniciarEstadoJuego() {
+            obstaculos = [];
+            particulas = [];
+            animales = [];
+            pajaroVolando = null;
+            destellos = [];
+            velocidadJuego = VELOCIDAD_INICIAL;
+            intensidadViento = VIENTO_MIN;
+            distancia = 0;
+            puntos = 0;
+            vidas = 3;
+            invencibleHasta = 0;
+            nivelDificultad = 1;
+            maxObstaculosSimultaneos = 3;
+            intervaloGeneracionBase = 55;
+            siguienteObstaculo = tiempoAleatorioObstaculo();
+            siguienteAnimal = tiempoAleatorioAnimal();
+            siguientePajaro = tiempoAleatorioPajaro();
+            siguienteDestello = tiempoAleatorioDestello();
+            personaje.y = SUELO_Y - PERSONAJE_ALTO;
+            personaje.velocidadY = 0;
+            personaje.saltando = false;
+            personaje.angulo = 0;
+            scrollFondo = 0;
+            frameCount = 0;
+
+            bonusActivo = false;
+            bonusDoblePuntos = false;
+            bonusDobleHasta = 0;
+            hitosAlcanzados = new Set();
+            if (bonusTimeout) clearTimeout(bonusTimeout);
+            bonusIndicador.classList.remove('visible');
+
+            generarHojasViento();
+            generarLineasViento();
+            generarPolvoViento();
+
+            pantallaVictoria.classList.add('oculto');
+            pantallaFin.classList.add('oculto');
+            pantallaInicio.classList.add('oculto');
+            logoInicioIzq.classList.add('oculto');
+            diablitoInicioDer.classList.add('oculto');
+            corazonesHUD();
+            actualizarPuntaje();
+            document.getElementById('btnPausa').textContent = '⏸️ Pausa';
+            pausado = false;
+            pantallaPausa.classList.add('oculto');
+        }
+
+        function saltar() {
+            if (estado !== 'jugando' || pausado) return;
+            if (!personaje.saltando) {
+                personaje.velocidadY = FUERZA_SALTO;
+                personaje.saltando = true;
+            }
+        }
+
+        function togglePausa() {
+            if (estado !== 'jugando') return;
+            pausado = !pausado;
+            document.getElementById('btnPausa').textContent = pausado ? '▶️ Reanudar' : '⏸️ Pausa';
+            if (pausado) {
+                pantallaPausa.classList.remove('oculto');
                 if (animFrame) cancelAnimationFrame(animFrame);
-                if (finTimeout) clearTimeout(finTimeout);
-                if (bonusTimeout) clearTimeout(bonusTimeout);
-                window.location.href = '../index.html';
+            } else {
+                pantallaPausa.classList.add('oculto');
+                tiempoAnterior = null;
+                animFrame = requestAnimationFrame(bucle);
             }
+        }
 
-            window.addEventListener('keydown', (e) => {
-                if (e.code === 'Space') {
-                    e.preventDefault();
-                    if (estado === 'inicio') empezarJuego();
-                    else if (estado === 'jugando' && !pausado) saltar();
-                    else if (estado === 'terminado') {
-                        if (!pantallaVictoria.classList.contains('oculto')) {
-                            reiniciarDesdeVictoria();
-                        } else {
-                            reiniciar();
-                        }
-                    }
-                }
-                if (e.code === 'KeyP' && estado === 'jugando') togglePausa();
-            });
+        function salirAlSitio() {
+            if (animFrame) cancelAnimationFrame(animFrame);
+            if (finTimeout) clearTimeout(finTimeout);
+            if (bonusTimeout) clearTimeout(bonusTimeout);
+            window.location.href = '../index.html';
+        }
 
-            wrap.addEventListener('pointerdown', (e) => {
-                if (e.target.closest('button')) return;
+        function reiniciarCompleto() {
+            if (animFrame) cancelAnimationFrame(animFrame);
+            if (finTimeout) clearTimeout(finTimeout);
+            if (bonusTimeout) clearTimeout(bonusTimeout);
+            reiniciarEstadoJuego();
+            estado = 'inicio';
+            pantallaInicio.classList.remove('oculto');
+            logoInicioIzq.classList.remove('oculto');
+            diablitoInicioDer.classList.remove('oculto');
+            pantallaFin.classList.add('oculto');
+            pantallaVictoria.classList.add('oculto');
+            pantallaPausa.classList.add('oculto');
+            document.getElementById('btnPausa').textContent = '⏸️ Pausa';
+            pausado = false;
+            dibujar();
+        }
+
+        // ---- Eventos ----
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
                 if (estado === 'inicio') empezarJuego();
                 else if (estado === 'jugando' && !pausado) saltar();
                 else if (estado === 'terminado') {
@@ -1046,867 +1441,894 @@
                         reiniciar();
                     }
                 }
-            });
-
-            btnIniciar.addEventListener('click', (e) => {
-                e.stopPropagation();
-                empezarJuego();
-            });
-            btnReiniciar.addEventListener('click', (e) => {
-                e.stopPropagation();
-                reiniciar();
-            });
-            btnReiniciarVictoria.addEventListener('click', (e) => {
-                e.stopPropagation();
-                reiniciarDesdeVictoria();
-            });
-            btnSalirVictoria.addEventListener('click', (e) => {
-                e.stopPropagation();
-                salirAlSitio();
-            });
-            btnPausa.addEventListener('click', (e) => {
-                e.stopPropagation();
-                togglePausa();
-            });
-            btnReanudar.addEventListener('click', (e) => {
-                e.stopPropagation();
-                togglePausa();
-            });
-            btnSalir.addEventListener('click', (e) => {
-                e.stopPropagation();
-                salirAlSitio();
-            });
-            btnSalirPausa.addEventListener('click', (e) => {
-                e.stopPropagation();
-                salirAlSitio();
-            });
-            btnSalirFin.addEventListener('click', (e) => {
-                e.stopPropagation();
-                salirAlSitio();
-            });
-
-            function empezarJuego() {
-                pantallaInicio.classList.add('oculto');
-                pantallaFin.classList.add('oculto');
-                pantallaVictoria.classList.add('oculto');
-                reiniciarEstadoJuego();
-                estado = 'jugando';
-                tiempoAnterior = null;
-                if (animFrame) cancelAnimationFrame(animFrame);
-                animFrame = requestAnimationFrame(bucle);
             }
+            if (e.code === 'KeyP' && estado === 'jugando') togglePausa();
+        });
 
-            function reiniciar() {
-                pantallaFin.classList.add('oculto');
-                pantallaGrito.classList.remove('oculto');
-                if (finTimeout) clearTimeout(finTimeout);
-                finTimeout = setTimeout(() => {
-                    pantallaGrito.classList.add('oculto');
-                    reiniciarEstadoJuego();
-                    estado = 'jugando';
-                    tiempoAnterior = null;
-                    if (animFrame) cancelAnimationFrame(animFrame);
-                    animFrame = requestAnimationFrame(bucle);
-                }, 1500);
-            }
-
-            function reiniciarDesdeVictoria() {
-                pantallaVictoria.classList.add('oculto');
-                reiniciarEstadoJuego();
-                estado = 'jugando';
-                tiempoAnterior = null;
-                if (animFrame) cancelAnimationFrame(animFrame);
-                animFrame = requestAnimationFrame(bucle);
-            }
-
-            function terminarJuego() {
-                estado = 'terminado';
-                puntajeFinal.textContent = 'Puntos: ' + puntos + ' | Distancia: ' + Math.floor(distancia) + 'm';
-                pantallaFin.classList.remove('oculto');
-                if (animFrame) cancelAnimationFrame(animFrame);
-            }
-
-            function generarObstaculo() {
-                const tipo = INSTRUMENTOS[Math.floor(Math.random() * INSTRUMENTOS.length)];
-                obstaculos.push({
-                    x: ANCHO + 20,
-                    y: SUELO_Y - tipo.alto + 4,
-                    ancho: tipo.ancho,
-                    alto: tipo.alto,
-                    emoji: tipo.emoji,
-                    golpeado: false,
-                    nombre: tipo.nombre
-                });
-            }
-
-            function generarAnimal() {
-                const tipo = ANIMALES[Math.floor(Math.random() * ANIMALES.length)];
-                animales.push({
-                    x: ANCHO + 20,
-                    y: SUELO_Y - tipo.alto + 4,
-                    ancho: tipo.ancho,
-                    alto: tipo.alto,
-                    emoji: tipo.emoji,
-                    velocidad: 0.4 + Math.random() * 0.6,
-                    paso: Math.random() * 100
-                });
-            }
-
-            function generarPajaro() {
-                const tipo = PAJAROS[Math.floor(Math.random() * PAJAROS.length)];
-                const y = 25 + Math.random() * 130;
-                pajaroVolando = {
-                    x: ANCHO + 30,
-                    y: y,
-                    ancho: tipo.ancho,
-                    alto: tipo.alto,
-                    emoji: tipo.emoji,
-                    velocidad: 1.2 + Math.random() * 0.8,
-                    bob: Math.random() * 100,
-                    flap: 0,
-                    nombre: tipo.nombre
-                };
-            }
-
-            function generarParticulasImpacto(x, y) {
-                for (let i = 0; i < 20; i++) {
-                    particulas.push({
-                        x,
-                        y,
-                        vx: (Math.random() - 0.5) * 12,
-                        vy: (Math.random() - 2) * 9,
-                        vida: 45,
-                        color: ['#ffcc00', '#ff6b6b', '#ffd93d', '#ff9ff3', '#48dbfb', '#ff6348'][Math.floor(Math.random() *
-                            6)],
-                        tamano: 2 + Math.random() * 6
-                    });
-                }
-            }
-
-            function colision(a, b) {
-                const PAD = 8;
-                return (
-                    a.x + PAD < b.x + b.ancho - PAD &&
-                    a.x + a.ancho - PAD > b.x + PAD &&
-                    a.y + PAD < b.y + b.alto - PAD &&
-                    a.y + a.alto - PAD > b.y + PAD
-                );
-            }
-
-            function dibujarPinoSilueta(baseX, baseY, altura, anchoBase, dientes, inclinacion) {
-                const alturaCopa = altura * 0.86;
-                const apexY = baseY - altura;
-                const mitadAncho = anchoBase / 2;
-                const inclinar = inclinacion || 0;
-
-                ctx.beginPath();
-                ctx.moveTo(baseX + inclinar * 2, apexY);
-
-                for (let i = 1; i <= dientes; i++) {
-                    const tValle = (i - 0.55) / dientes;
-                    const tPico = i / dientes;
-                    const anchoValle = mitadAncho * Math.pow(tValle, 0.85) * 0.42;
-                    const anchoPico = mitadAncho * Math.pow(tPico, 0.85);
-                    const inclinacionValle = inclinar * tValle * 4;
-                    const inclinacionPico = inclinar * tPico * 4;
-                    ctx.lineTo(baseX + anchoValle + inclinacionValle, apexY + alturaCopa * tValle);
-                    ctx.lineTo(baseX + anchoPico + inclinacionPico, apexY + alturaCopa * tPico);
-                }
-
-                for (let i = dientes; i >= 1; i--) {
-                    const tValle = (i - 0.55) / dientes;
-                    const tPico = i / dientes;
-                    const anchoValle = mitadAncho * Math.pow(tValle, 0.85) * 0.42;
-                    const anchoPico = mitadAncho * Math.pow(tPico, 0.85);
-                    const inclinacionValle = inclinar * tValle * 4;
-                    const inclinacionPico = inclinar * tPico * 4;
-                    ctx.lineTo(baseX - anchoPico + inclinacionPico, apexY + alturaCopa * tPico);
-                    ctx.lineTo(baseX - anchoValle + inclinacionValle, apexY + alturaCopa * tValle);
-                }
-
-                ctx.closePath();
-                ctx.fill();
-
-                const anchoTronco = Math.max(3, anchoBase * 0.13);
-                ctx.fillRect(baseX + inclinar * 2 - anchoTronco / 2, baseY - altura * 0.16, anchoTronco, altura * 0.16 + 2);
-            }
-
-            function actualizar(dt) {
-                frameCount++;
-                distancia += velocidadJuego * dt * 0.055;
-                scrollFondo -= velocidadJuego * dt * 0.04;
-
-                actualizarDificultad();
-                actualizarPuntaje();
-
-                personaje.velocidadY += GRAVEDAD * dt * 0.055;
-                personaje.y += personaje.velocidadY * dt * 0.055;
-
-                if (personaje.y >= SUELO_Y - PERSONAJE_ALTO) {
-                    personaje.y = SUELO_Y - PERSONAJE_ALTO;
-                    personaje.velocidadY = 0;
-                    personaje.saltando = false;
-                }
-
-                if (personaje.saltando) {
-                    personaje.angulo += 0.08 * dt * 0.055;
+        wrap.addEventListener('pointerdown', (e) => {
+            if (e.target.closest('button')) return;
+            if (estado === 'inicio') empezarJuego();
+            else if (estado === 'jugando' && !pausado) saltar();
+            else if (estado === 'terminado') {
+                if (!pantallaVictoria.classList.contains('oculto')) {
+                    reiniciarDesdeVictoria();
                 } else {
-                    personaje.angulo = 0;
+                    reiniciar();
                 }
+            }
+        });
 
-                siguienteObstaculo -= dt * 0.055;
-                if (siguienteObstaculo <= 0 && obstaculos.length < maxObstaculosSimultaneos) {
-                    generarObstaculo();
-                    siguienteObstaculo = tiempoAleatorioObstaculo();
-                }
+        btnIniciar.addEventListener('click', (e) => {
+            e.stopPropagation();
+            empezarJuego();
+        });
+        btnReiniciar.addEventListener('click', (e) => {
+            e.stopPropagation();
+            reiniciar();
+        });
+        btnReiniciarPausa.addEventListener('click', (e) => {
+            e.stopPropagation();
+            reiniciarCompleto();
+        });
+        btnReiniciarVictoria.addEventListener('click', (e) => {
+            e.stopPropagation();
+            reiniciarDesdeVictoria();
+        });
+        btnSalirVictoria.addEventListener('click', (e) => {
+            e.stopPropagation();
+            salirAlSitio();
+        });
+        btnPausa.addEventListener('click', (e) => {
+            e.stopPropagation();
+            togglePausa();
+        });
+        btnReanudar.addEventListener('click', (e) => {
+            e.stopPropagation();
+            togglePausa();
+        });
+        btnSalir.addEventListener('click', (e) => {
+            e.stopPropagation();
+            salirAlSitio();
+        });
+        btnSalirPausa.addEventListener('click', (e) => {
+            e.stopPropagation();
+            salirAlSitio();
+        });
+        btnSalirFin.addEventListener('click', (e) => {
+            e.stopPropagation();
+            salirAlSitio();
+        });
 
-                siguienteAnimal -= dt * 0.055;
-                if (siguienteAnimal <= 0) {
-                    generarAnimal();
-                    siguienteAnimal = tiempoAleatorioAnimal();
-                }
+        // ---- Funciones principales ----
+        function empezarJuego() {
+            pantallaInicio.classList.add('oculto');
+            logoInicioIzq.classList.add('oculto');
+            diablitoInicioDer.classList.add('oculto');
+            pantallaFin.classList.add('oculto');
+            pantallaVictoria.classList.add('oculto');
+            reiniciarEstadoJuego();
+            estado = 'jugando';
+            tiempoAnterior = null;
+            if (animFrame) cancelAnimationFrame(animFrame);
+            animFrame = requestAnimationFrame(bucle);
+        }
 
-                siguientePajaro -= dt * 0.055;
-                if (siguientePajaro <= 0 && !pajaroVolando) {
-                    generarPajaro();
-                    siguientePajaro = tiempoAleatorioPajaro();
-                }
+        function reiniciar() {
+            pantallaFin.classList.add('oculto');
+            pantallaGrito.classList.remove('oculto');
+            if (finTimeout) clearTimeout(finTimeout);
+            finTimeout = setTimeout(() => {
+                pantallaGrito.classList.add('oculto');
+                reiniciarEstadoJuego();
+                estado = 'jugando';
+                tiempoAnterior = null;
+                if (animFrame) cancelAnimationFrame(animFrame);
+                animFrame = requestAnimationFrame(bucle);
+            }, 1500);
+        }
 
-                siguienteDestello -= dt * 0.055;
-                if (siguienteDestello <= 0) {
-                    generarDestello();
-                    siguienteDestello = tiempoAleatorioDestello();
-                }
+        function reiniciarDesdeVictoria() {
+            pantallaVictoria.classList.add('oculto');
+            reiniciarEstadoJuego();
+            estado = 'jugando';
+            tiempoAnterior = null;
+            if (animFrame) cancelAnimationFrame(animFrame);
+            animFrame = requestAnimationFrame(bucle);
+        }
 
-                for (let i = destellos.length - 1; i >= 0; i--) {
-                    const d = destellos[i];
-                    d.vida -= dt * 0.055 * 0.8;
-                    if (d.tipo === 'fugaz') {
-                        d.x += d.velocidad * dt * 0.055 * 2;
-                        d.y += d.velocidad * dt * 0.055 * 1.5;
-                    }
-                    if (d.vida <= 0) {
-                        destellos.splice(i, 1);
-                    }
-                }
+        function terminarJuego() {
+            estado = 'terminado';
+            puntajeFinal.textContent = 'Puntos: ' + puntos + ' | Distancia: ' + Math.floor(distancia) + 'm';
+            pantallaFin.classList.remove('oculto');
+            if (animFrame) cancelAnimationFrame(animFrame);
+        }
 
-                hojasViento.forEach(h => {
-                    h.x += (h.vx + intensidadViento * 1.5) * dt * 0.055;
-                    h.y += h.vy * dt * 0.055 + Math.sin(frameCount * 0.02 + h.x) * 0.15;
-                    h.rot += h.velRot * dt * 0.055;
-                    h.vida += dt * 0.055;
-                    if (h.x > ANCHO + 30) {
-                        h.x = -30;
-                        h.y = 20 + Math.random() * (SUELO_Y - 40);
-                        h.vida = 0;
-                    }
+        function generarObstaculo() {
+            const tipo = INSTRUMENTOS[Math.floor(Math.random() * INSTRUMENTOS.length)];
+            obstaculos.push({
+                x: ANCHO + 20,
+                y: SUELO_Y - tipo.alto + 4,
+                ancho: tipo.ancho,
+                alto: tipo.alto,
+                emoji: tipo.emoji,
+                golpeado: false,
+                nombre: tipo.nombre
+            });
+        }
+
+        function generarAnimal() {
+            const tipo = ANIMALES[Math.floor(Math.random() * ANIMALES.length)];
+            animales.push({
+                x: ANCHO + 20,
+                y: SUELO_Y - tipo.alto + 4,
+                ancho: tipo.ancho,
+                alto: tipo.alto,
+                emoji: tipo.emoji,
+                velocidad: 0.4 + Math.random() * 0.6,
+                paso: Math.random() * 100
+            });
+        }
+
+        function generarPajaro() {
+            const tipo = PAJAROS[Math.floor(Math.random() * PAJAROS.length)];
+            const y = 25 + Math.random() * 130;
+            pajaroVolando = {
+                x: ANCHO + 30,
+                y: y,
+                ancho: tipo.ancho,
+                alto: tipo.alto,
+                emoji: tipo.emoji,
+                velocidad: 1.2 + Math.random() * 0.8,
+                bob: Math.random() * 100,
+                flap: 0,
+                nombre: tipo.nombre
+            };
+        }
+
+        function generarParticulasImpacto(x, y) {
+            for (let i = 0; i < 20; i++) {
+                particulas.push({
+                    x,
+                    y,
+                    vx: (Math.random() - 0.5) * 12,
+                    vy: (Math.random() - 2) * 9,
+                    vida: 45,
+                    color: ['#ffcc00', '#ff6b6b', '#ffd93d', '#ff9ff3', '#48dbfb', '#ff6348'][Math.floor(Math.random() *
+                        6)],
+                    tamano: 2 + Math.random() * 6
                 });
+            }
+        }
 
-                lineasViento.forEach(l => {
-                    l.x += (l.velocidad + intensidadViento * 1.2) * dt * 0.055;
-                    if (l.x > ANCHO + 20) {
-                        l.x = -l.largo - 20;
-                        l.y = 10 + Math.random() * (SUELO_Y - 30);
-                    }
-                });
+        function colision(a, b) {
+            const PAD = 8;
+            return (
+                a.x + PAD < b.x + b.ancho - PAD &&
+                a.x + a.ancho - PAD > b.x + PAD &&
+                a.y + PAD < b.y + b.alto - PAD &&
+                a.y + a.alto - PAD > b.y + PAD
+            );
+        }
 
-                polvoViento.forEach(p => {
-                    p.x += (p.velocidad + intensidadViento * 1.8) * dt * 0.055;
-                    p.y += Math.sin(frameCount * 0.015 + p.offsetY) * 0.1 * dt * 0.055;
-                    if (p.x > ANCHO + 10) {
-                        p.x = -10;
-                        p.y = 5 + Math.random() * (SUELO_Y - 10);
-                    }
-                });
+        // ---- Dibujar funciones ----
+        function dibujarPinoSilueta(baseX, baseY, altura, anchoBase, dientes, inclinacion) {
+            const alturaCopa = altura * 0.86;
+            const apexY = baseY - altura;
+            const mitadAncho = anchoBase / 2;
+            const inclinar = inclinacion || 0;
 
-                hojas.forEach(h => {
-                    h.x += (h.vx + intensidadViento * 0.3) * dt * 0.055;
-                    h.y += h.vy * dt * 0.055;
-                    h.rot += h.velRot * dt * 0.055;
-                    if (h.y > SUELO_Y + 20) {
-                        h.y = -20;
-                        h.x = Math.random() * ANCHO;
-                    }
-                    if (h.x > ANCHO + 20) h.x = -20;
-                    if (h.x < -20) h.x = ANCHO + 20;
-                });
+            ctx.beginPath();
+            ctx.moveTo(baseX + inclinar * 2, apexY);
 
-                lluvia.forEach(n => {
-                    n.y += n.vy * dt * 0.16;
-                    n.x += (n.vx + intensidadViento * 1.5) * dt * 0.055;
-                    if (n.y > ALTO + 20) {
-                        n.y = -20;
-                        n.x = Math.random() * ANCHO;
-                    }
-                    if (n.x < -20) n.x = ANCHO + 20;
-                    if (n.x > ANCHO + 20) n.x = -20;
-                });
-
-                pinos.forEach(p => {
-                    const fuerzaViento = intensidadViento * 1.2;
-                    p.inclinacion = fuerzaViento * 0.8 + Math.sin(frameCount * 0.003 + p.offset) * 0.3;
-                });
-
-                const cajaPersonaje = {
-                    x: personaje.x,
-                    y: personaje.y,
-                    ancho: personaje.ancho,
-                    alto: personaje.alto
-                };
-
-                for (let i = obstaculos.length - 1; i >= 0; i--) {
-                    const o = obstaculos[i];
-                    o.x -= velocidadJuego * dt * 0.055;
-
-                    if (!o.golpeado && Date.now() > invencibleHasta) {
-                        if (colision(cajaPersonaje, o)) {
-                            o.golpeado = true;
-                            vidas--;
-                            hitosAlcanzados = new Set();
-                            corazonesHUD();
-                            invencibleHasta = Date.now() + 1200;
-                            generarParticulasImpacto(o.x + o.ancho / 2, o.y + o.alto / 2);
-
-                            if (vidas <= 0) {
-                                if (finTimeout) clearTimeout(finTimeout);
-                                finTimeout = setTimeout(terminarJuego, 150);
-                                return;
-                            }
-                        }
-                    }
-
-                    if (o.x + o.ancho < -20) {
-                        if (!o.golpeado) {
-                            const puntosGanados = bonusDoblePuntos && Date.now() < bonusDobleHasta ? 20 : 10;
-                            puntos += puntosGanados;
-                            actualizarPuntaje();
-                        }
-                        obstaculos.splice(i, 1);
-                    }
-                }
-
-                for (let i = animales.length - 1; i >= 0; i--) {
-                    const a = animales[i];
-                    a.x -= (velocidadJuego * 0.4 + a.velocidad) * dt * 0.055;
-                    if (a.x + a.ancho < -20) {
-                        animales.splice(i, 1);
-                    }
-                }
-
-                if (pajaroVolando) {
-                    pajaroVolando.x -= (velocidadJuego * 0.3 + pajaroVolando.velocidad) * dt * 0.055;
-                    pajaroVolando.flap += 0.08 * dt * 0.055;
-                    pajaroVolando.y += Math.sin(pajaroVolando.flap) * 0.15 * dt * 0.055;
-
-                    if (pajaroVolando.x + pajaroVolando.ancho < -30) {
-                        pajaroVolando = null;
-                    }
-                }
-
-                for (let i = particulas.length - 1; i >= 0; i--) {
-                    const p = particulas[i];
-                    p.x += p.vx * dt * 0.055;
-                    p.y += p.vy * dt * 0.055;
-                    p.vy += 0.2 * dt * 0.055;
-                    p.vida -= dt * 0.055;
-                    if (p.vida <= 0) particulas.splice(i, 1);
-                }
-
-                if (bonusDoblePuntos && Date.now() > bonusDobleHasta) {
-                    bonusDoblePuntos = false;
-                    bonusIndicador.classList.remove('visible');
-                }
-
-                luna.brillo = 0.12 + Math.sin(frameCount * 0.005) * 0.04;
+            for (let i = 1; i <= dientes; i++) {
+                const tValle = (i - 0.55) / dientes;
+                const tPico = i / dientes;
+                const anchoValle = mitadAncho * Math.pow(tValle, 0.85) * 0.42;
+                const anchoPico = mitadAncho * Math.pow(tPico, 0.85);
+                const inclinacionValle = inclinar * tValle * 4;
+                const inclinacionPico = inclinar * tPico * 4;
+                ctx.lineTo(baseX + anchoValle + inclinacionValle, apexY + alturaCopa * tValle);
+                ctx.lineTo(baseX + anchoPico + inclinacionPico, apexY + alturaCopa * tPico);
             }
 
-            function dibujarFondo() {
-                const grad = ctx.createLinearGradient(0, 0, 0, ALTO);
-                grad.addColorStop(0, '#0a0a0f');
-                grad.addColorStop(0.3, '#0d0d18');
-                grad.addColorStop(0.6, '#0a0a12');
-                grad.addColorStop(0.85, '#050508');
-                grad.addColorStop(1, '#000000');
-                ctx.fillStyle = grad;
-                ctx.fillRect(0, 0, ANCHO, ALTO);
+            for (let i = dientes; i >= 1; i--) {
+                const tValle = (i - 0.55) / dientes;
+                const tPico = i / dientes;
+                const anchoValle = mitadAncho * Math.pow(tValle, 0.85) * 0.42;
+                const anchoPico = mitadAncho * Math.pow(tPico, 0.85);
+                const inclinacionValle = inclinar * tValle * 4;
+                const inclinacionPico = inclinar * tPico * 4;
+                ctx.lineTo(baseX - anchoPico + inclinacionPico, apexY + alturaCopa * tPico);
+                ctx.lineTo(baseX - anchoValle + inclinacionValle, apexY + alturaCopa * tValle);
+            }
 
-                const lx = luna.x + Math.sin(frameCount * 0.002) * 8;
-                const ly = luna.y + Math.sin(frameCount * 0.003 + 1) * 5;
+            ctx.closePath();
+            ctx.fill();
 
-                const gradLuna = ctx.createRadialGradient(lx, ly, 10, lx, ly, luna.radio * 3.5);
-                gradLuna.addColorStop(0, `rgba(255, 235, 200, ${luna.brillo * 0.6})`);
-                gradLuna.addColorStop(0.3, `rgba(255, 220, 180, ${luna.brillo * 0.3})`);
-                gradLuna.addColorStop(0.7, `rgba(255, 200, 150, ${luna.brillo * 0.1})`);
-                gradLuna.addColorStop(1, 'rgba(255, 200, 150, 0)');
-                ctx.fillStyle = gradLuna;
-                ctx.beginPath();
-                ctx.arc(lx, ly, luna.radio * 3.5, 0, Math.PI * 2);
-                ctx.fill();
+            const anchoTronco = Math.max(3, anchoBase * 0.13);
+            ctx.fillRect(baseX + inclinar * 2 - anchoTronco / 2, baseY - altura * 0.16, anchoTronco, altura * 0.16 + 2);
+        }
 
-                const gradLuna2 = ctx.createRadialGradient(lx, ly, 5, lx, ly, luna.radio * 1.8);
-                gradLuna2.addColorStop(0, `rgba(255, 245, 220, ${luna.brillo * 0.5})`);
-                gradLuna2.addColorStop(0.5, `rgba(255, 230, 200, ${luna.brillo * 0.2})`);
-                gradLuna2.addColorStop(1, 'rgba(255, 220, 180, 0)');
-                ctx.fillStyle = gradLuna2;
-                ctx.beginPath();
-                ctx.arc(lx, ly, luna.radio * 1.8, 0, Math.PI * 2);
-                ctx.fill();
+        // ---- Actualizar ----
+        function actualizar(dt) {
+            frameCount++;
+            distancia += velocidadJuego * dt * 0.055;
+            scrollFondo -= velocidadJuego * dt * 0.04;
 
-                ctx.shadowColor = 'rgba(255, 235, 200, 0.3)';
-                ctx.shadowBlur = 40;
-                ctx.fillStyle = '#fff8ee';
-                ctx.beginPath();
-                ctx.arc(lx, ly, luna.radio, 0, Math.PI * 2);
-                ctx.fill();
+            actualizarDificultad();
+            actualizarPuntaje();
 
-                ctx.shadowBlur = 0;
-                ctx.fillStyle = 'rgba(220, 210, 190, 0.15)';
-                ctx.beginPath();
-                ctx.arc(lx - 15, ly - 10, 10, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.beginPath();
-                ctx.arc(lx + 20, ly + 8, 14, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.beginPath();
-                ctx.arc(lx + 5, ly + 20, 8, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.beginPath();
-                ctx.arc(lx - 22, ly + 15, 6, 0, Math.PI * 2);
-                ctx.fill();
+            personaje.velocidadY += GRAVEDAD * dt * 0.055;
+            personaje.y += personaje.velocidadY * dt * 0.055;
 
-                ctx.shadowBlur = 0;
+            if (personaje.y >= SUELO_Y - PERSONAJE_ALTO) {
+                personaje.y = SUELO_Y - PERSONAJE_ALTO;
+                personaje.velocidadY = 0;
+                personaje.saltando = false;
+            }
 
-                estrellas.forEach(e => {
-                    const brillo = 0.35 + Math.sin(frameCount * e.parpadeo + e.fase) * 0.35;
-                    ctx.globalAlpha = Math.max(0.15, brillo);
-                    ctx.fillStyle = e.color;
-                    ctx.beginPath();
-                    ctx.arc(e.x, e.y, e.tam, 0, Math.PI * 2);
-                    ctx.fill();
+            if (personaje.saltando) {
+                personaje.angulo += 0.08 * dt * 0.055;
+            } else {
+                personaje.angulo = 0;
+            }
+
+            siguienteObstaculo -= dt * 0.055;
+            if (siguienteObstaculo <= 0 && obstaculos.length < maxObstaculosSimultaneos) {
+                generarObstaculo();
+                siguienteObstaculo = tiempoAleatorioObstaculo();
+            }
+
+            siguienteAnimal -= dt * 0.055;
+            if (siguienteAnimal <= 0) {
+                generarAnimal();
+                siguienteAnimal = tiempoAleatorioAnimal();
+            }
+
+            siguientePajaro -= dt * 0.055;
+            if (siguientePajaro <= 0 && !pajaroVolando) {
+                generarPajaro();
+                siguientePajaro = tiempoAleatorioPajaro();
+            }
+
+            siguienteDestello -= dt * 0.055;
+            if (siguienteDestello <= 0) {
+                generarDestello();
+                siguienteDestello = tiempoAleatorioDestello();
+            }
+
+            for (let i = destellos.length - 1; i >= 0; i--) {
+                const d = destellos[i];
+                d.vida -= dt * 0.055 * 0.8;
+                if (d.tipo === 'fugaz') {
+                    d.x += d.velocidad * dt * 0.055 * 2;
+                    d.y += d.velocidad * dt * 0.055 * 1.5;
+                }
+                if (d.vida <= 0) {
+                    destellos.splice(i, 1);
+                }
+            }
+
+            hojasViento.forEach(h => {
+                h.x += (h.vx + intensidadViento * 1.5) * dt * 0.055;
+                h.y += h.vy * dt * 0.055 + Math.sin(frameCount * 0.02 + h.x) * 0.15;
+                h.rot += h.velRot * dt * 0.055;
+                h.vida += dt * 0.055;
+                if (h.x > ANCHO + 30) {
+                    h.x = -30;
+                    h.y = 20 + Math.random() * (SUELO_Y - 40);
+                    h.vida = 0;
+                }
+            });
+
+            lineasViento.forEach(l => {
+                l.x += (l.velocidad + intensidadViento * 1.2) * dt * 0.055;
+                if (l.x > ANCHO + 20) {
+                    l.x = -l.largo - 20;
+                    l.y = 10 + Math.random() * (SUELO_Y - 30);
+                }
+            });
+
+            polvoViento.forEach(p => {
+                p.x += (p.velocidad + intensidadViento * 1.8) * dt * 0.055;
+                p.y += Math.sin(frameCount * 0.015 + p.offsetY) * 0.1 * dt * 0.055;
+                if (p.x > ANCHO + 10) {
+                    p.x = -10;
+                    p.y = 5 + Math.random() * (SUELO_Y - 10);
+                }
+            });
+
+            hojas.forEach(h => {
+                h.x += (h.vx + intensidadViento * 0.3) * dt * 0.055;
+                h.y += h.vy * dt * 0.055;
+                h.rot += h.velRot * dt * 0.055;
+                if (h.y > SUELO_Y + 20) {
+                    h.y = -20;
+                    h.x = Math.random() * ANCHO;
+                }
+                if (h.x > ANCHO + 20) h.x = -20;
+                if (h.x < -20) h.x = ANCHO + 20;
+            });
+
+            lluvia.forEach(n => {
+                n.y += n.vy * dt * 0.16;
+                n.x += (n.vx + intensidadViento * 1.5) * dt * 0.055;
+                if (n.y > ALTO + 20) {
+                    n.y = -20;
+                    n.x = Math.random() * ANCHO;
+                }
+                if (n.x < -20) n.x = ANCHO + 20;
+                if (n.x > ANCHO + 20) n.x = -20;
+            });
+
+            pinos.forEach(p => {
+                const fuerzaViento = intensidadViento * 1.2;
+                p.inclinacion = fuerzaViento * 0.8 + Math.sin(frameCount * 0.003 + p.offset) * 0.3;
+            });
+
+            const cajaPersonaje = {
+                x: personaje.x,
+                y: personaje.y,
+                ancho: personaje.ancho,
+                alto: personaje.alto
+            };
+
+            for (let i = obstaculos.length - 1; i >= 0; i--) {
+                const o = obstaculos[i];
+                o.x -= velocidadJuego * dt * 0.055;
+
+                if (!o.golpeado && Date.now() > invencibleHasta) {
+                    if (colision(cajaPersonaje, o)) {
+                        o.golpeado = true;
+                        vidas--;
+                        hitosAlcanzados = new Set();
+                        corazonesHUD();
+                        invencibleHasta = Date.now() + 1200;
+                        generarParticulasImpacto(o.x + o.ancho / 2, o.y + o.alto / 2);
+
+                        if (vidas <= 0) {
+                            if (finTimeout) clearTimeout(finTimeout);
+                            finTimeout = setTimeout(terminarJuego, 150);
+                            return;
+                        }
+                    }
+                }
+
+                if (o.x + o.ancho < -20) {
+                    if (!o.golpeado) {
+                        const puntosGanados = bonusDoblePuntos && Date.now() < bonusDobleHasta ? 20 : 10;
+                        puntos += puntosGanados;
+                        actualizarPuntaje();
+                    }
+                    obstaculos.splice(i, 1);
+                }
+            }
+
+            for (let i = animales.length - 1; i >= 0; i--) {
+                const a = animales[i];
+                a.x -= (velocidadJuego * 0.4 + a.velocidad) * dt * 0.055;
+                if (a.x + a.ancho < -20) {
+                    animales.splice(i, 1);
+                }
+            }
+
+            if (pajaroVolando) {
+                pajaroVolando.x -= (velocidadJuego * 0.3 + pajaroVolando.velocidad) * dt * 0.055;
+                pajaroVolando.flap += 0.08 * dt * 0.055;
+                pajaroVolando.y += Math.sin(pajaroVolando.flap) * 0.15 * dt * 0.055;
+
+                if (pajaroVolando.x + pajaroVolando.ancho < -30) {
+                    pajaroVolando = null;
+                }
+            }
+
+            for (let i = particulas.length - 1; i >= 0; i--) {
+                const p = particulas[i];
+                p.x += p.vx * dt * 0.055;
+                p.y += p.vy * dt * 0.055;
+                p.vy += 0.2 * dt * 0.055;
+                p.vida -= dt * 0.055;
+                if (p.vida <= 0) particulas.splice(i, 1);
+            }
+
+            if (bonusDoblePuntos && Date.now() > bonusDobleHasta) {
+                bonusDoblePuntos = false;
+                bonusIndicador.classList.remove('visible');
+            }
+
+            luna.brillo = 0.12 + Math.sin(frameCount * 0.005) * 0.04;
+        }
+
+        // ---- Dibujar ----
+        function dibujarFondo() {
+            const grad = ctx.createLinearGradient(0, 0, 0, ALTO);
+            grad.addColorStop(0, '#0a0a0f');
+            grad.addColorStop(0.3, '#0d0d18');
+            grad.addColorStop(0.6, '#0a0a12');
+            grad.addColorStop(0.85, '#050508');
+            grad.addColorStop(1, '#000000');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, ANCHO, ALTO);
+
+            const lx = luna.x + Math.sin(frameCount * 0.002) * 8;
+            const ly = luna.y + Math.sin(frameCount * 0.003 + 1) * 5;
+
+            const gradLuna = ctx.createRadialGradient(lx, ly, 10, lx, ly, luna.radio * 3.5);
+            gradLuna.addColorStop(0, `rgba(255, 235, 200, ${luna.brillo * 0.6})`);
+            gradLuna.addColorStop(0.3, `rgba(255, 220, 180, ${luna.brillo * 0.3})`);
+            gradLuna.addColorStop(0.7, `rgba(255, 200, 150, ${luna.brillo * 0.1})`);
+            gradLuna.addColorStop(1, 'rgba(255, 200, 150, 0)');
+            ctx.fillStyle = gradLuna;
+            ctx.beginPath();
+            ctx.arc(lx, ly, luna.radio * 3.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            const gradLuna2 = ctx.createRadialGradient(lx, ly, 5, lx, ly, luna.radio * 1.8);
+            gradLuna2.addColorStop(0, `rgba(255, 245, 220, ${luna.brillo * 0.5})`);
+            gradLuna2.addColorStop(0.5, `rgba(255, 230, 200, ${luna.brillo * 0.2})`);
+            gradLuna2.addColorStop(1, 'rgba(255, 220, 180, 0)');
+            ctx.fillStyle = gradLuna2;
+            ctx.beginPath();
+            ctx.arc(lx, ly, luna.radio * 1.8, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.shadowColor = 'rgba(255, 235, 200, 0.3)';
+            ctx.shadowBlur = 40;
+            ctx.fillStyle = '#fff8ee';
+            ctx.beginPath();
+            ctx.arc(lx, ly, luna.radio, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = 'rgba(220, 210, 190, 0.15)';
+            ctx.beginPath();
+            ctx.arc(lx - 15, ly - 10, 10, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(lx + 20, ly + 8, 14, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(lx + 5, ly + 20, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(lx - 22, ly + 15, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.shadowBlur = 0;
+
+            estrellas.forEach(e => {
+                const brillo = 0.35 + Math.sin(frameCount * e.parpadeo + e.fase) * 0.35;
+                ctx.globalAlpha = Math.max(0.15, brillo);
+                ctx.fillStyle = e.color;
+                ctx.beginPath();
+                ctx.arc(e.x, e.y, e.tam, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+
+            for (let capa = 0; capa < 2; capa++) {
+                pinos.forEach((pino, idx) => {
+                    if (idx % 2 !== capa) return;
+
+                    const factorParallax = capa === 0 ? 0.35 : 0.65;
+                    const xOff = (pino.x + scrollFondo * factorParallax) % (ANCHO + 100) - 50;
+                    const sway = Math.sin(frameCount * 0.004 + pino.offset) * 1.5;
+                    const baseX = xOff + sway;
+                    const baseY = SUELO_Y + 2;
+
+                    ctx.globalAlpha = pino.opacidad * (capa === 0 ? 0.55 : 1);
+                    ctx.fillStyle = '#ffcc00';
+                    ctx.shadowColor = 'rgba(255, 204, 0, 0.05)';
+                    ctx.shadowBlur = 15;
+
+                    dibujarPinoSilueta(baseX, baseY, pino.altura, pino.ancho, pino.capas, pino.inclinacion);
+
+                    ctx.shadowBlur = 0;
                 });
+            }
+            ctx.globalAlpha = 1;
+
+            hojasViento.forEach(h => {
+                ctx.save();
+                ctx.translate(h.x, h.y);
+                ctx.rotate(h.rot);
+                ctx.globalAlpha = h.opacidad * (0.5 + Math.sin(h.vida * 0.05) * 0.3);
+                ctx.fillStyle = h.color;
+                ctx.shadowColor = 'rgba(255, 204, 0, 0.03)';
+                ctx.shadowBlur = 6;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, h.tam, h.tam * 0.4, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
                 ctx.globalAlpha = 1;
+                ctx.restore();
+            });
 
-                for (let capa = 0; capa < 2; capa++) {
-                    pinos.forEach((pino, idx) => {
-                        if (idx % 2 !== capa) return;
+            lineasViento.forEach(l => {
+                ctx.globalAlpha = l.opacidad * (0.5 + Math.sin(frameCount * 0.02 + l.y) * 0.5);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.shadowColor = 'rgba(255, 255, 255, 0.02)';
+                ctx.shadowBlur = 10;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(l.x, l.y);
+                const endX = l.x + l.largo * (1 + intensidadViento * 0.5);
+                ctx.quadraticCurveTo(
+                    l.x + l.largo * 0.5,
+                    l.y + Math.sin(frameCount * 0.025 + l.x * 0.01) * 4,
+                    endX,
+                    l.y + Math.sin(frameCount * 0.03 + l.x * 0.01 + 1) * 4
+                );
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+                ctx.globalAlpha = 1;
+            });
 
-                        const factorParallax = capa === 0 ? 0.35 : 0.65;
-                        const xOff = (pino.x + scrollFondo * factorParallax) % (ANCHO + 100) - 50;
-                        const sway = Math.sin(frameCount * 0.004 + pino.offset) * 1.5;
-                        const baseX = xOff + sway;
-                        const baseY = SUELO_Y + 2;
+            polvoViento.forEach(p => {
+                ctx.globalAlpha = p.opacidad * (0.5 + Math.sin(frameCount * 0.015 + p.offsetY) * 0.5);
+                ctx.fillStyle = 'rgba(255, 255, 200, 0.3)';
+                ctx.shadowColor = 'rgba(255, 255, 200, 0.02)';
+                ctx.shadowBlur = 8;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.tam, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.globalAlpha = 1;
+            });
 
-                        ctx.globalAlpha = pino.opacidad * (capa === 0 ? 0.55 : 1);
-                        ctx.fillStyle = '#ffcc00';
-                        ctx.shadowColor = 'rgba(255, 204, 0, 0.05)';
-                        ctx.shadowBlur = 15;
+            hojas.forEach(h => {
+                ctx.save();
+                ctx.translate(h.x, h.y);
+                ctx.rotate(h.rot);
+                ctx.globalAlpha = h.opacidad * 0.7;
+                ctx.fillStyle = '#ffcc00';
+                ctx.shadowColor = 'rgba(255, 204, 0, 0.03)';
+                ctx.shadowBlur = 6;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, h.tam, h.tam * 0.5, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.globalAlpha = 1;
+                ctx.restore();
+            });
 
-                        dibujarPinoSilueta(baseX, baseY, pino.altura, pino.ancho, pino.capas, pino.inclinacion);
+            destellos.forEach(d => {
+                const alpha = Math.max(0, d.vida / d.maxVida);
+                const size = d.tam * (1 + (1 - alpha) * 0.5);
 
-                        ctx.shadowBlur = 0;
-                    });
+                if (d.tipo === 'relampago') {
+                    ctx.save();
+                    ctx.globalAlpha = alpha * 0.6;
+                    ctx.strokeStyle = `rgba(255, 255, 240, ${alpha * 0.9})`;
+                    ctx.shadowColor = 'rgba(255, 255, 240, 0.4)';
+                    ctx.shadowBlur = 30;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(d.x, d.y - size * 2);
+                    ctx.lineTo(d.x + (Math.random() - 0.5) * 4, d.y);
+                    ctx.stroke();
+                    for (let i = 0; i < 4; i++) {
+                        const ry = d.y - size * 0.5 + i * size * 0.4;
+                        const rx = d.x + (Math.random() - 0.5) * 15;
+                        ctx.beginPath();
+                        ctx.moveTo(d.x + (Math.random() - 0.5) * 3, ry);
+                        ctx.lineTo(rx, ry + 6 + Math.random() * 8);
+                        ctx.stroke();
+                    }
+                    ctx.shadowBlur = 0;
+                    ctx.restore();
+                } else {
+                    ctx.save();
+                    ctx.globalAlpha = alpha * 0.8;
+                    ctx.fillStyle = `rgba(255, 255, 240, ${alpha * 0.9})`;
+                    ctx.shadowColor = 'rgba(255, 255, 240, 0.5)';
+                    ctx.shadowBlur = 40;
+                    const gradFugaz = ctx.createRadialGradient(
+                        d.x, d.y, 2,
+                        d.x, d.y, size * 1.5
+                    );
+                    gradFugaz.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.9})`);
+                    gradFugaz.addColorStop(0.3, `rgba(255, 240, 200, ${alpha * 0.5})`);
+                    gradFugaz.addColorStop(1, `rgba(255, 220, 180, 0)`);
+                    ctx.fillStyle = gradFugaz;
+                    ctx.beginPath();
+                    ctx.arc(d.x, d.y, size * 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 20;
+                    ctx.fillStyle = `rgba(255, 240, 200, ${alpha * 0.2})`;
+                    ctx.beginPath();
+                    ctx.ellipse(d.x - size * 2.5, d.y + size * 0.8, size * 2.5, size * 0.6, -0.3, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.restore();
                 }
                 ctx.globalAlpha = 1;
+            });
 
-                hojasViento.forEach(h => {
-                    ctx.save();
-                    ctx.translate(h.x, h.y);
-                    ctx.rotate(h.rot);
-                    ctx.globalAlpha = h.opacidad * (0.5 + Math.sin(h.vida * 0.05) * 0.3);
-                    ctx.fillStyle = h.color;
-                    ctx.shadowColor = 'rgba(255, 204, 0, 0.03)';
-                    ctx.shadowBlur = 6;
-                    ctx.beginPath();
-                    ctx.ellipse(0, 0, h.tam, h.tam * 0.4, 0, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-                    ctx.globalAlpha = 1;
-                    ctx.restore();
-                });
+            ctx.shadowBlur = 0;
+            const gradSuelo = ctx.createLinearGradient(0, SUELO_Y + 4, 0, ALTO);
+            gradSuelo.addColorStop(0, '#0d0a0f');
+            gradSuelo.addColorStop(0.15, '#080810');
+            gradSuelo.addColorStop(0.5, '#050508');
+            gradSuelo.addColorStop(1, '#000000');
+            ctx.fillStyle = gradSuelo;
+            ctx.fillRect(0, SUELO_Y + 4, ANCHO, ALTO - SUELO_Y - 4);
 
-                lineasViento.forEach(l => {
-                    ctx.globalAlpha = l.opacidad * (0.5 + Math.sin(frameCount * 0.02 + l.y) * 0.5);
-                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-                    ctx.shadowColor = 'rgba(255, 255, 255, 0.02)';
-                    ctx.shadowBlur = 10;
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.moveTo(l.x, l.y);
-                    const endX = l.x + l.largo * (1 + intensidadViento * 0.5);
-                    ctx.quadraticCurveTo(
-                        l.x + l.largo * 0.5,
-                        l.y + Math.sin(frameCount * 0.025 + l.x * 0.01) * 4,
-                        endX,
-                        l.y + Math.sin(frameCount * 0.03 + l.x * 0.01 + 1) * 4
-                    );
-                    ctx.stroke();
-                    ctx.shadowBlur = 0;
-                    ctx.globalAlpha = 1;
-                });
+            ctx.shadowColor = 'rgba(255, 204, 0, 0.2)';
+            ctx.shadowBlur = 20;
+            ctx.strokeStyle = 'rgba(255, 204, 0, 0.3)';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([15, 25]);
+            ctx.lineDashOffset = -scrollFondo * 1.5;
+            ctx.beginPath();
+            ctx.moveTo(0, SUELO_Y + 4);
+            ctx.lineTo(ANCHO, SUELO_Y + 4);
+            ctx.stroke();
 
-                polvoViento.forEach(p => {
-                    ctx.globalAlpha = p.opacidad * (0.5 + Math.sin(frameCount * 0.015 + p.offsetY) * 0.5);
-                    ctx.fillStyle = 'rgba(255, 255, 200, 0.3)';
-                    ctx.shadowColor = 'rgba(255, 255, 200, 0.02)';
-                    ctx.shadowBlur = 8;
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.tam, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-                    ctx.globalAlpha = 1;
-                });
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = 'rgba(255, 204, 0, 0.08)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([8, 15]);
+            ctx.lineDashOffset = -scrollFondo * 0.5;
+            ctx.beginPath();
+            ctx.moveTo(0, SUELO_Y + 18);
+            ctx.lineTo(ANCHO, SUELO_Y + 18);
+            ctx.stroke();
+            ctx.setLineDash([]);
 
-                hojas.forEach(h => {
-                    ctx.save();
-                    ctx.translate(h.x, h.y);
-                    ctx.rotate(h.rot);
-                    ctx.globalAlpha = h.opacidad * 0.7;
-                    ctx.fillStyle = '#ffcc00';
-                    ctx.shadowColor = 'rgba(255, 204, 0, 0.03)';
-                    ctx.shadowBlur = 6;
-                    ctx.beginPath();
-                    ctx.ellipse(0, 0, h.tam, h.tam * 0.5, 0, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-                    ctx.globalAlpha = 1;
-                    ctx.restore();
-                });
+            for (let i = 0; i < 15; i++) {
+                const x = ((i * 97 + scrollFondo * 0.3) % (ANCHO + 80)) - 40;
+                const brillo = 0.3 + Math.sin(i * 1.7 + frameCount * 0.01) * 0.2;
+                ctx.fillStyle = `rgba(255, 204, 0, ${brillo * 0.04})`;
+                ctx.shadowColor = 'rgba(255, 204, 0, 0.02)';
+                ctx.shadowBlur = 15;
+                ctx.beginPath();
+                ctx.ellipse(x, SUELO_Y + 20 + Math.sin(i * 0.5) * 5, 20 + Math.sin(i * 0.7) * 8, 3, 0, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.shadowBlur = 0;
 
-                destellos.forEach(d => {
-                    const alpha = Math.max(0, d.vida / d.maxVida);
-                    const size = d.tam * (1 + (1 - alpha) * 0.5);
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#ffcc00';
+            lluvia.forEach(n => {
+                ctx.globalAlpha = n.opacidad * (0.6 + Math.sin(frameCount * 0.02 + n.x) * 0.4);
+                ctx.save();
+                ctx.translate(n.x, n.y);
+                ctx.rotate(n.rot);
+                ctx.font = n.tam + 'px sans-serif';
+                ctx.fillText(n.simbolo, 0, 0);
+                ctx.restore();
+            });
+            ctx.globalAlpha = 1;
+        }
 
-                    if (d.tipo === 'relampago') {
-                        ctx.save();
-                        ctx.globalAlpha = alpha * 0.6;
-                        ctx.strokeStyle = `rgba(255, 255, 240, ${alpha * 0.9})`;
-                        ctx.shadowColor = 'rgba(255, 255, 240, 0.4)';
-                        ctx.shadowBlur = 30;
-                        ctx.lineWidth = 2;
-                        ctx.beginPath();
-                        ctx.moveTo(d.x, d.y - size * 2);
-                        ctx.lineTo(d.x + (Math.random() - 0.5) * 4, d.y);
-                        ctx.stroke();
-                        for (let i = 0; i < 4; i++) {
-                            const ry = d.y - size * 0.5 + i * size * 0.4;
-                            const rx = d.x + (Math.random() - 0.5) * 15;
-                            ctx.beginPath();
-                            ctx.moveTo(d.x + (Math.random() - 0.5) * 3, ry);
-                            ctx.lineTo(rx, ry + 6 + Math.random() * 8);
-                            ctx.stroke();
-                        }
-                        ctx.shadowBlur = 0;
-                        ctx.restore();
-                    } else {
-                        ctx.save();
-                        ctx.globalAlpha = alpha * 0.8;
-                        ctx.fillStyle = `rgba(255, 255, 240, ${alpha * 0.9})`;
-                        ctx.shadowColor = 'rgba(255, 255, 240, 0.5)';
-                        ctx.shadowBlur = 40;
-                        const gradFugaz = ctx.createRadialGradient(
-                            d.x, d.y, 2,
-                            d.x, d.y, size * 1.5
-                        );
-                        gradFugaz.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.9})`);
-                        gradFugaz.addColorStop(0.3, `rgba(255, 240, 200, ${alpha * 0.5})`);
-                        gradFugaz.addColorStop(1, `rgba(255, 220, 180, 0)`);
-                        ctx.fillStyle = gradFugaz;
-                        ctx.beginPath();
-                        ctx.arc(d.x, d.y, size * 1.5, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.shadowBlur = 20;
-                        ctx.fillStyle = `rgba(255, 240, 200, ${alpha * 0.2})`;
-                        ctx.beginPath();
-                        ctx.ellipse(d.x - size * 2.5, d.y + size * 0.8, size * 2.5, size * 0.6, -0.3, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.shadowBlur = 0;
-                        ctx.restore();
-                    }
-                    ctx.globalAlpha = 1;
-                });
+        function dibujarPersonaje() {
+            const parpadea = Date.now() < invencibleHasta && Math.floor(Date.now() / 90) % 2 === 0;
+            if (parpadea) return;
 
-                ctx.shadowBlur = 0;
-                const gradSuelo = ctx.createLinearGradient(0, SUELO_Y + 4, 0, ALTO);
-                gradSuelo.addColorStop(0, '#0d0a0f');
-                gradSuelo.addColorStop(0.15, '#080810');
-                gradSuelo.addColorStop(0.5, '#050508');
-                gradSuelo.addColorStop(1, '#000000');
-                ctx.fillStyle = gradSuelo;
-                ctx.fillRect(0, SUELO_Y + 4, ANCHO, ALTO - SUELO_Y - 4);
+            const cx = personaje.x + personaje.ancho / 2;
+            const cy = personaje.y + personaje.alto / 2;
 
-                ctx.shadowColor = 'rgba(255, 204, 0, 0.2)';
-                ctx.shadowBlur = 20;
-                ctx.strokeStyle = 'rgba(255, 204, 0, 0.3)';
+            ctx.save();
+            ctx.translate(cx, cy);
+            if (personaje.saltando) {
+                ctx.rotate(Math.min(0.3, personaje.angulo * 0.04));
+            }
+
+            const alturaSalto = (SUELO_Y - PERSONAJE_ALTO) - personaje.y;
+            const escalaSombra = Math.max(0.15, 1 - alturaSalto / 150);
+            ctx.save();
+            ctx.translate(0, personaje.alto / 2 + 4 + alturaSalto * 0.02);
+            ctx.scale(escalaSombra, escalaSombra * 0.25);
+            ctx.beginPath();
+            ctx.ellipse(0, 0, personaje.ancho / 2.2, 6, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0,0,0,0.5)';
+            ctx.fill();
+            ctx.restore();
+
+            if (spriteListo) {
+                ctx.drawImage(spritePersonaje, -personaje.ancho / 2, -personaje.alto / 2, personaje.ancho, personaje
+                    .alto);
+            } else {
+                ctx.font = '42px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('😈', 0, 2);
+            }
+
+            if (Date.now() < invencibleHasta) {
+                ctx.strokeStyle = `hsla(${frameCount * 2 % 360}, 80%, 60%, 0.3)`;
                 ctx.lineWidth = 3;
-                ctx.setLineDash([15, 25]);
-                ctx.lineDashOffset = -scrollFondo * 1.5;
+                ctx.setLineDash([4, 8]);
                 ctx.beginPath();
-                ctx.moveTo(0, SUELO_Y + 4);
-                ctx.lineTo(ANCHO, SUELO_Y + 4);
-                ctx.stroke();
-
-                ctx.shadowBlur = 0;
-                ctx.strokeStyle = 'rgba(255, 204, 0, 0.08)';
-                ctx.lineWidth = 1;
-                ctx.setLineDash([8, 15]);
-                ctx.lineDashOffset = -scrollFondo * 0.5;
-                ctx.beginPath();
-                ctx.moveTo(0, SUELO_Y + 18);
-                ctx.lineTo(ANCHO, SUELO_Y + 18);
+                ctx.arc(0, 0, personaje.ancho / 2 + 12, 0, Math.PI * 2);
                 ctx.stroke();
                 ctx.setLineDash([]);
+            }
 
-                for (let i = 0; i < 15; i++) {
-                    const x = ((i * 97 + scrollFondo * 0.3) % (ANCHO + 80)) - 40;
-                    const brillo = 0.3 + Math.sin(i * 1.7 + frameCount * 0.01) * 0.2;
-                    ctx.fillStyle = `rgba(255, 204, 0, ${brillo * 0.04})`;
-                    ctx.shadowColor = 'rgba(255, 204, 0, 0.02)';
-                    ctx.shadowBlur = 15;
-                    ctx.beginPath();
-                    ctx.ellipse(x, SUELO_Y + 20 + Math.sin(i * 0.5) * 5, 20 + Math.sin(i * 0.7) * 8, 3, 0, 0, Math.PI * 2);
-                    ctx.fill();
+            ctx.restore();
+        }
+
+        function dibujarObstaculos() {
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            obstaculos.forEach(o => {
+                ctx.save();
+                ctx.translate(o.x + o.ancho / 2, o.y + o.alto / 2);
+
+                ctx.beginPath();
+                ctx.ellipse(0, o.alto / 2 + 4, o.ancho / 2.2, 5, 0, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0,0,0,0.4)';
+                ctx.fill();
+
+                if (o.x < ANCHO * 0.7) {
+                    ctx.shadowColor = `hsla(${frameCount * 1.5 % 360}, 80%, 60%, 0.15)`;
+                    ctx.shadowBlur = 25;
                 }
+
+                ctx.font = Math.max(o.ancho, o.alto) * 0.78 + 'px sans-serif';
+                ctx.fillText(o.emoji, 0, 2);
+
                 ctx.shadowBlur = 0;
-
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillStyle = '#ffcc00';
-                lluvia.forEach(n => {
-                    ctx.globalAlpha = n.opacidad * (0.6 + Math.sin(frameCount * 0.02 + n.x) * 0.4);
-                    ctx.save();
-                    ctx.translate(n.x, n.y);
-                    ctx.rotate(n.rot);
-                    ctx.font = n.tam + 'px sans-serif';
-                    ctx.fillText(n.simbolo, 0, 0);
-                    ctx.restore();
-                });
-                ctx.globalAlpha = 1;
-            }
-
-            function dibujarPersonaje() {
-                const parpadea = Date.now() < invencibleHasta && Math.floor(Date.now() / 90) % 2 === 0;
-                if (parpadea) return;
-
-                const cx = personaje.x + personaje.ancho / 2;
-                const cy = personaje.y + personaje.alto / 2;
-
-                ctx.save();
-                ctx.translate(cx, cy);
-                if (personaje.saltando) {
-                    ctx.rotate(Math.min(0.3, personaje.angulo * 0.04));
-                }
-
-                const alturaSalto = (SUELO_Y - PERSONAJE_ALTO) - personaje.y;
-                const escalaSombra = Math.max(0.15, 1 - alturaSalto / 150);
-                ctx.save();
-                ctx.translate(0, personaje.alto / 2 + 4 + alturaSalto * 0.02);
-                ctx.scale(escalaSombra, escalaSombra * 0.25);
-                ctx.beginPath();
-                ctx.ellipse(0, 0, personaje.ancho / 2.2, 6, 0, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(0,0,0,0.5)';
-                ctx.fill();
                 ctx.restore();
+            });
+        }
 
-                if (spriteListo) {
-                    ctx.drawImage(spritePersonaje, -personaje.ancho / 2, -personaje.alto / 2, personaje.ancho, personaje
-                        .alto);
-                } else {
-                    ctx.font = '42px sans-serif';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText('😈', 0, 2);
-                }
+        const cacheSiluetas = {};
 
-                if (Date.now() < invencibleHasta) {
-                    ctx.strokeStyle = `hsla(${frameCount * 2 % 360}, 80%, 60%, 0.3)`;
-                    ctx.lineWidth = 3;
-                    ctx.setLineDash([4, 8]);
-                    ctx.beginPath();
-                    ctx.arc(0, 0, personaje.ancho / 2 + 12, 0, Math.PI * 2);
-                    ctx.stroke();
-                    ctx.setLineDash([]);
-                }
+        function obtenerSiluetaEmoji(emoji, tamanoPx, color) {
+            const clave = emoji + '|' + tamanoPx + '|' + color;
+            if (cacheSiluetas[clave]) return cacheSiluetas[clave];
+            const dim = Math.ceil(tamanoPx * 1.5);
+            const off = document.createElement('canvas');
+            off.width = dim;
+            off.height = dim;
+            const octx = off.getContext('2d');
+            octx.font = tamanoPx + 'px sans-serif';
+            octx.textAlign = 'center';
+            octx.textBaseline = 'middle';
+            octx.fillText(emoji, dim / 2, dim / 2 + 1);
+            octx.globalCompositeOperation = 'source-in';
+            octx.fillStyle = color;
+            octx.fillRect(0, 0, dim, dim);
+            cacheSiluetas[clave] = off;
+            return off;
+        }
 
-                ctx.restore();
-            }
-
-            function dibujarObstaculos() {
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                obstaculos.forEach(o => {
-                    ctx.save();
-                    ctx.translate(o.x + o.ancho / 2, o.y + o.alto / 2);
-
-                    ctx.beginPath();
-                    ctx.ellipse(0, o.alto / 2 + 4, o.ancho / 2.2, 5, 0, 0, Math.PI * 2);
-                    ctx.fillStyle = 'rgba(0,0,0,0.4)';
-                    ctx.fill();
-
-                    if (o.x < ANCHO * 0.7) {
-                        ctx.shadowColor = `hsla(${frameCount * 1.5 % 360}, 80%, 60%, 0.15)`;
-                        ctx.shadowBlur = 25;
-                    }
-
-                    ctx.font = Math.max(o.ancho, o.alto) * 0.78 + 'px sans-serif';
-                    ctx.fillText(o.emoji, 0, 2);
-
-                    ctx.shadowBlur = 0;
-                    ctx.restore();
-                });
-            }
-
-            const cacheSiluetas = {};
-
-            function obtenerSiluetaEmoji(emoji, tamanoPx, color) {
-                const clave = emoji + '|' + tamanoPx + '|' + color;
-                if (cacheSiluetas[clave]) return cacheSiluetas[clave];
-                const dim = Math.ceil(tamanoPx * 1.5);
-                const off = document.createElement('canvas');
-                off.width = dim;
-                off.height = dim;
-                const octx = off.getContext('2d');
-                octx.font = tamanoPx + 'px sans-serif';
-                octx.textAlign = 'center';
-                octx.textBaseline = 'middle';
-                octx.fillText(emoji, dim / 2, dim / 2 + 1);
-                octx.globalCompositeOperation = 'source-in';
-                octx.fillStyle = color;
-                octx.fillRect(0, 0, dim, dim);
-                cacheSiluetas[clave] = off;
-                return off;
-            }
-
-            function dibujarAnimales() {
-                animales.forEach(a => {
-                    ctx.save();
-                    const paso = Math.sin(Date.now() / 180 + a.paso) * 1.5;
-                    ctx.translate(a.x + a.ancho / 2, a.y + a.alto / 2 + paso);
-                    const img = obtenerSiluetaEmoji(a.emoji, Math.round(a.ancho), '#ffcc00');
-                    ctx.drawImage(img, -img.width / 2, -img.height / 2);
-                    ctx.restore();
-                });
-            }
-
-            function dibujarPajaro() {
-                if (!pajaroVolando) return;
-                const p = pajaroVolando;
+        function dibujarAnimales() {
+            animales.forEach(a => {
                 ctx.save();
-                const flapY = Math.sin(p.flap) * 2;
-                ctx.translate(p.x + p.ancho / 2, p.y + p.alto / 2 + flapY);
-
-                ctx.save();
-                const altura = p.y + p.alto / 2;
-                const sombraY = SUELO_Y + 10;
-                const escalaSombra = Math.max(0.1, 1 - (sombraY - altura) / 250);
-                ctx.translate(0, (sombraY - altura) * 0.8);
-                ctx.scale(escalaSombra, escalaSombra * 0.1);
-                ctx.beginPath();
-                ctx.ellipse(0, 0, p.ancho, 8, 0, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(0,0,0,0.15)';
-                ctx.fill();
+                const paso = Math.sin(Date.now() / 180 + a.paso) * 1.5;
+                ctx.translate(a.x + a.ancho / 2, a.y + a.alto / 2 + paso);
+                const img = obtenerSiluetaEmoji(a.emoji, Math.round(a.ancho), '#ffcc00');
+                ctx.drawImage(img, -img.width / 2, -img.height / 2);
                 ctx.restore();
+            });
+        }
 
-                const flapAngle = Math.sin(p.flap * 1.5) * 0.15;
-                ctx.rotate(flapAngle);
+        function dibujarPajaro() {
+            if (!pajaroVolando) return;
+            const p = pajaroVolando;
+            ctx.save();
+            const flapY = Math.sin(p.flap) * 2;
+            ctx.translate(p.x + p.ancho / 2, p.y + p.alto / 2 + flapY);
 
-                ctx.shadowColor = 'rgba(255,255,255,0.05)';
+            ctx.save();
+            const altura = p.y + p.alto / 2;
+            const sombraY = SUELO_Y + 10;
+            const escalaSombra = Math.max(0.1, 1 - (sombraY - altura) / 250);
+            ctx.translate(0, (sombraY - altura) * 0.8);
+            ctx.scale(escalaSombra, escalaSombra * 0.1);
+            ctx.beginPath();
+            ctx.ellipse(0, 0, p.ancho, 8, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0,0,0,0.15)';
+            ctx.fill();
+            ctx.restore();
+
+            const flapAngle = Math.sin(p.flap * 1.5) * 0.15;
+            ctx.rotate(flapAngle);
+
+            ctx.shadowColor = 'rgba(255,255,255,0.05)';
+            ctx.shadowBlur = 15;
+            ctx.font = p.ancho + 'px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(p.emoji, 0, 2);
+
+            ctx.shadowBlur = 0;
+            ctx.font = (p.ancho * 0.4) + 'px sans-serif';
+            ctx.fillStyle = `hsla(${frameCount * 0.5 % 360}, 80%, 70%, 0.15)`;
+            ctx.fillText('✦', -p.ancho * 0.9, -p.alto * 0.2);
+
+            ctx.restore();
+        }
+
+        function dibujarParticulas() {
+            particulas.forEach(p => {
+                ctx.globalAlpha = Math.max(0, p.vida / 45);
+                ctx.fillStyle = p.color;
+                ctx.shadowColor = p.color;
                 ctx.shadowBlur = 15;
-                ctx.font = p.ancho + 'px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(p.emoji, 0, 2);
-
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.tamano || 3, 0, Math.PI * 2);
+                ctx.fill();
                 ctx.shadowBlur = 0;
-                ctx.font = (p.ancho * 0.4) + 'px sans-serif';
-                ctx.fillStyle = `hsla(${frameCount * 0.5 % 360}, 80%, 70%, 0.15)`;
-                ctx.fillText('✦', -p.ancho * 0.9, -p.alto * 0.2);
+                ctx.globalAlpha = 1;
+            });
+        }
 
-                ctx.restore();
-            }
+        function dibujar() {
+            dibujarFondo();
+            dibujarPajaro();
+            dibujarAnimales();
+            dibujarObstaculos();
+            dibujarPersonaje();
+            dibujarParticulas();
 
-            function dibujarParticulas() {
-                particulas.forEach(p => {
-                    ctx.globalAlpha = Math.max(0, p.vida / 45);
-                    ctx.fillStyle = p.color;
-                    ctx.shadowColor = p.color;
-                    ctx.shadowBlur = 15;
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.tamano || 3, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-                    ctx.globalAlpha = 1;
-                });
-            }
+            const nivel = Math.floor(distancia / 250) + 1;
+            ctx.fillStyle = 'rgba(255,255,255,0.03)';
+            ctx.font = '11px Poppins, sans-serif';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText('Nivel ' + nivel, ANCHO - 14, ALTO - 8);
 
-            function dibujar() {
-                dibujarFondo();
-                dibujarPajaro();
-                dibujarAnimales();
-                dibujarObstaculos();
-                dibujarPersonaje();
-                dibujarParticulas();
+            ctx.fillStyle = 'rgba(255,255,255,0.02)';
+            ctx.font = '10px Poppins, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText('🌙 ' + Math.floor(distancia) + 'm', 12, ALTO - 8);
 
-                const nivel = Math.floor(distancia / 250) + 1;
-                ctx.fillStyle = 'rgba(255,255,255,0.03)';
+            ctx.fillStyle = `hsla(${Math.min(60, nivelDificultad * 8)}, 80%, 50%, 0.12)`;
+            ctx.font = '10px Poppins, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText('⚡ Vel: ' + Math.round(velocidadJuego * 10) / 10 + ' | 🎯 ' + maxObstaculosSimultaneos +
+                ' obs | 💨 ' + Math.round(intensidadViento * 10) / 10, ANCHO / 2, ALTO - 8);
+
+            if (bonusDoblePuntos && Date.now() < bonusDobleHasta) {
+                const tiempoRestante = Math.ceil((bonusDobleHasta - Date.now()) / 1000);
+                ctx.fillStyle = 'rgba(255,215,0,0.2)';
                 ctx.font = '11px Poppins, sans-serif';
-                ctx.textAlign = 'right';
-                ctx.textBaseline = 'bottom';
-                ctx.fillText('Nivel ' + nivel, ANCHO - 14, ALTO - 8);
-
-                ctx.fillStyle = 'rgba(255,255,255,0.02)';
-                ctx.font = '10px Poppins, sans-serif';
-                ctx.textAlign = 'left';
-                ctx.textBaseline = 'bottom';
-                ctx.fillText('🌙 ' + Math.floor(distancia) + 'm', 12, ALTO - 8);
-
-                ctx.fillStyle = `hsla(${Math.min(60, nivelDificultad * 8)}, 80%, 50%, 0.12)`;
-                ctx.font = '10px Poppins, sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'bottom';
-                ctx.fillText('⚡ Vel: ' + Math.round(velocidadJuego * 10) / 10 + ' | 🎯 ' + maxObstaculosSimultaneos +
-                    ' obs | 💨 ' + Math.round(intensidadViento * 10) / 10, ANCHO / 2, ALTO - 8);
-
-                if (bonusDoblePuntos && Date.now() < bonusDobleHasta) {
-                    const tiempoRestante = Math.ceil((bonusDobleHasta - Date.now()) / 1000);
-                    ctx.fillStyle = 'rgba(255,215,0,0.2)';
-                    ctx.font = '11px Poppins, sans-serif';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'bottom';
-                    ctx.fillText('×2 PUNTOS (' + tiempoRestante + 's)', ANCHO / 2, ALTO - 30);
-                }
+                ctx.fillText('×2 PUNTOS (' + tiempoRestante + 's)', ANCHO / 2, ALTO - 30);
             }
+        }
 
-            function bucle(marca) {
-                if (estado !== 'jugando' || pausado) {
-                    if (pausado) {
-                        dibujar();
-                    }
-                    animFrame = requestAnimationFrame(bucle);
-                    return;
+        // ---- Bucle ----
+        function bucle(marca) {
+            if (estado !== 'jugando' || pausado) {
+                if (pausado) {
+                    dibujar();
                 }
-
-                if (tiempoAnterior === null) tiempoAnterior = marca;
-                let dt = marca - tiempoAnterior;
-                tiempoAnterior = marca;
-                dt = Math.min(dt, 35);
-
-                actualizar(dt);
-                dibujar();
-
                 animFrame = requestAnimationFrame(bucle);
+                return;
             }
 
-            corazonesHUD();
-            actualizarPuntaje();
+            if (tiempoAnterior === null) tiempoAnterior = marca;
+            let dt = marca - tiempoAnterior;
+            tiempoAnterior = marca;
+            dt = Math.min(dt, 35);
+
+            actualizar(dt);
             dibujar();
 
-            console.log('🔥 El Diablo Cumbiambero — Los Hijos de Tencha');
-            console.log('🌕 Luna llena y destellos en el cielo');
-            console.log('💨 VIENTO FUERTE: hojas volando, líneas y polvo');
-            console.log('⚡ Velocidad INICIAL: 8.5 (entretenida)');
-            console.log('🚀 Velocidad MÁXIMA: 24.0 (se acelera hacia 6000 pts)');
-            console.log('🏆 Victoria: 6000 puntos — ¡HAS GANADO!');
-        })();
+            animFrame = requestAnimationFrame(bucle);
+        }
+
+        // ---- Inicialización ----
+        corazonesHUD();
+        actualizarPuntaje();
+        dibujar();
+
+        console.log('🔥 El Diablo Cumbiambero — Los Hijos de Tencha');
+        console.log('🌕 Luna llena y destellos en el cielo');
+        console.log('💨 VIENTO FUERTE: hojas volando, líneas y polvo');
+        console.log('🎵 Música de fondo: Cumbia del Diablo');
+        console.log('📱 Responsive: adaptable a móviles y tablets');
+        console.log('🔄 Botón Reiniciar en pausa');
+        console.log('🏆 Victoria: 6000 puntos — ¡HAS GANADO!');
     </script>
 </body>
 
