@@ -636,6 +636,7 @@
             let hojas = [];
             let estrellas = [];
             let lluvia = [];
+            let destellos = [];
 
             // ===== VELOCIDAD: entretenida desde el inicio, acelera al acercarse a 6000 =====
             let velocidadJuego = 8.5;
@@ -652,6 +653,7 @@
             let siguienteObstaculo = 0;
             let siguienteAnimal = 0;
             let siguientePajaro = 0;
+            let siguienteDestello = 0;
 
             let estado = 'inicio';
             let pausado = false;
@@ -671,10 +673,19 @@
             let maxObstaculosSimultaneos = 3;
             let intervaloGeneracionBase = 55;
 
+            // ---- LUNA ----
+            const luna = {
+                x: 720,
+                y: 65,
+                radio: 55,
+                brillo: 0.15,
+                fase: 0
+            };
+
             // ---- Generar pinos (siluetas) ----
             function generarPinos() {
                 pinos = [];
-                for (let i = 0; i < 26; i++) {
+                for (let i = 0; i < 30; i++) {
                     const x = Math.random() * ANCHO;
                     const altura = 90 + Math.random() * 190;
                     const ancho = 26 + Math.random() * 26;
@@ -728,7 +739,7 @@
             }
             generarHojas();
 
-            // ---- Lluvia de notas musicales (decorativa, no interfiere con el juego) ----
+            // ---- Lluvia de notas musicales ----
             const SIMBOLOS_LLUVIA = ['♪', '♫', '♩', '♬'];
             function generarLluvia() {
                 lluvia = [];
@@ -746,6 +757,19 @@
                 }
             }
             generarLluvia();
+
+            // ---- Destellos en el cielo ----
+            function generarDestello() {
+                destellos.push({
+                    x: 50 + Math.random() * (ANCHO - 100),
+                    y: 10 + Math.random() * (SUELO_Y - 100),
+                    vida: 1.0,
+                    maxVida: 1.0,
+                    tam: 3 + Math.random() * 6,
+                    tipo: Math.random() > 0.6 ? 'relampago' : 'fugaz',
+                    velocidad: 0.2 + Math.random() * 0.3
+                });
+            }
 
             // ---- Funciones ----
             function corazonesHUD() {
@@ -842,22 +866,12 @@
             }
 
             function actualizarDificultad() {
-                // Progreso de 0 a 1 basado en puntos (0 a 6000)
                 const progreso = Math.min(1, puntos / 6000);
-
-                // Curva acelerada: al inicio sube poco a poco (para que sea
-                // entretenido sin ser abrumador) y se dispara más cerca de 6000
                 const progresoCurva = Math.pow(progreso, 1.6);
 
                 nivelDificultad = 1 + Math.floor(progresoCurva * 8);
-
-                // Velocidad: de 8.5 a 24, con la curva acelerada
                 velocidadJuego = VELOCIDAD_INICIAL + (VELOCIDAD_MAX - VELOCIDAD_INICIAL) * progresoCurva;
-
-                // Obstáculos simultáneos: de 3 a 8
                 maxObstaculosSimultaneos = Math.min(8, 3 + Math.floor(progresoCurva * 5));
-
-                // Intervalo: de 55 a 12 frames
                 intervaloGeneracionBase = Math.max(12, 55 - progresoCurva * 43);
             }
 
@@ -874,11 +888,16 @@
                 return Math.max(40, 70 + Math.random() * 90 - nivelDificultad * 2);
             }
 
+            function tiempoAleatorioDestello() {
+                return 60 + Math.random() * 120;
+            }
+
             function reiniciarEstadoJuego() {
                 obstaculos = [];
                 particulas = [];
                 animales = [];
                 pajaroVolando = null;
+                destellos = [];
                 velocidadJuego = VELOCIDAD_INICIAL;
                 distancia = 0;
                 puntos = 0;
@@ -890,6 +909,7 @@
                 siguienteObstaculo = tiempoAleatorioObstaculo();
                 siguienteAnimal = tiempoAleatorioAnimal();
                 siguientePajaro = tiempoAleatorioPajaro();
+                siguienteDestello = tiempoAleatorioDestello();
                 personaje.y = SUELO_Y - PERSONAJE_ALTO;
                 personaje.velocidadY = 0;
                 personaje.saltando = false;
@@ -1117,6 +1137,40 @@
                 );
             }
 
+            // ---- Dibujar funciones auxiliares ----
+            function dibujarPinoSilueta(baseX, baseY, altura, anchoBase, dientes) {
+                const alturaCopa = altura * 0.86;
+                const apexY = baseY - altura;
+                const mitadAncho = anchoBase / 2;
+
+                ctx.beginPath();
+                ctx.moveTo(baseX, apexY);
+
+                for (let i = 1; i <= dientes; i++) {
+                    const tValle = (i - 0.55) / dientes;
+                    const tPico = i / dientes;
+                    const anchoValle = mitadAncho * Math.pow(tValle, 0.85) * 0.42;
+                    const anchoPico = mitadAncho * Math.pow(tPico, 0.85);
+                    ctx.lineTo(baseX + anchoValle, apexY + alturaCopa * tValle);
+                    ctx.lineTo(baseX + anchoPico, apexY + alturaCopa * tPico);
+                }
+
+                for (let i = dientes; i >= 1; i--) {
+                    const tValle = (i - 0.55) / dientes;
+                    const tPico = i / dientes;
+                    const anchoValle = mitadAncho * Math.pow(tValle, 0.85) * 0.42;
+                    const anchoPico = mitadAncho * Math.pow(tPico, 0.85);
+                    ctx.lineTo(baseX - anchoPico, apexY + alturaCopa * tPico);
+                    ctx.lineTo(baseX - anchoValle, apexY + alturaCopa * tValle);
+                }
+
+                ctx.closePath();
+                ctx.fill();
+
+                const anchoTronco = Math.max(3, anchoBase * 0.13);
+                ctx.fillRect(baseX - anchoTronco / 2, baseY - altura * 0.16, anchoTronco, altura * 0.16 + 2);
+            }
+
             // ---- Actualizar ----
             function actualizar(dt) {
                 frameCount++;
@@ -1159,6 +1213,26 @@
                     siguientePajaro = tiempoAleatorioPajaro();
                 }
 
+                // Destellos en el cielo
+                siguienteDestello -= dt * 0.055;
+                if (siguienteDestello <= 0) {
+                    generarDestello();
+                    siguienteDestello = tiempoAleatorioDestello();
+                }
+
+                // Actualizar destellos
+                for (let i = destellos.length - 1; i >= 0; i--) {
+                    const d = destellos[i];
+                    d.vida -= dt * 0.055 * 0.8;
+                    if (d.tipo === 'fugaz') {
+                        d.x += d.velocidad * dt * 0.055 * 2;
+                        d.y += d.velocidad * dt * 0.055 * 1.5;
+                    }
+                    if (d.vida <= 0) {
+                        destellos.splice(i, 1);
+                    }
+                }
+
                 hojas.forEach(h => {
                     h.x += h.vx * dt * 0.055;
                     h.y += h.vy * dt * 0.055;
@@ -1173,7 +1247,6 @@
                     if (h.x < -20) h.x = ANCHO + 20;
                 });
 
-                // Lluvia de notas musicales: puramente decorativa, sin colisiones
                 lluvia.forEach(n => {
                     n.y += n.vy * dt * 0.16;
                     n.x += n.vx * dt * 0.055;
@@ -1253,63 +1326,93 @@
                     bonusDoblePuntos = false;
                     bonusIndicador.classList.remove('visible');
                 }
-            }
 
-            // Dibuja un pino como silueta solida en zigzag (forma de picos apilados)
-            function dibujarPinoSilueta(baseX, baseY, altura, anchoBase, dientes) {
-                const alturaCopa = altura * 0.86;
-                const apexY = baseY - altura;
-                const mitadAncho = anchoBase / 2;
-
-                ctx.beginPath();
-                ctx.moveTo(baseX, apexY);
-
-                // lado derecho: de la punta hacia la base, alternando pico/valle
-                for (let i = 1; i <= dientes; i++) {
-                    const tValle = (i - 0.55) / dientes;
-                    const tPico = i / dientes;
-                    const anchoValle = mitadAncho * Math.pow(tValle, 0.85) * 0.42;
-                    const anchoPico = mitadAncho * Math.pow(tPico, 0.85);
-                    ctx.lineTo(baseX + anchoValle, apexY + alturaCopa * tValle);
-                    ctx.lineTo(baseX + anchoPico, apexY + alturaCopa * tPico);
-                }
-
-                // lado izquierdo: de la base hacia la punta (espejado)
-                for (let i = dientes; i >= 1; i--) {
-                    const tValle = (i - 0.55) / dientes;
-                    const tPico = i / dientes;
-                    const anchoValle = mitadAncho * Math.pow(tValle, 0.85) * 0.42;
-                    const anchoPico = mitadAncho * Math.pow(tPico, 0.85);
-                    ctx.lineTo(baseX - anchoPico, apexY + alturaCopa * tPico);
-                    ctx.lineTo(baseX - anchoValle, apexY + alturaCopa * tValle);
-                }
-
-                ctx.closePath();
-                ctx.fill();
-
-                // tronco
-                const anchoTronco = Math.max(3, anchoBase * 0.13);
-                ctx.fillRect(baseX - anchoTronco / 2, baseY - altura * 0.16, anchoTronco, altura * 0.16 + 2);
+                // Luna: brillo sutilmente variable
+                luna.brillo = 0.12 + Math.sin(frameCount * 0.005) * 0.04;
             }
 
             // ---- Dibujar ----
             function dibujarFondo() {
-                // Fondo negro solido de punta a punta
-                ctx.fillStyle = '#000000';
+                // Fondo con degradado para contraste
+                const grad = ctx.createLinearGradient(0, 0, 0, ALTO);
+                grad.addColorStop(0, '#0a0a0f');
+                grad.addColorStop(0.3, '#0d0d18');
+                grad.addColorStop(0.6, '#0a0a12');
+                grad.addColorStop(0.85, '#050508');
+                grad.addColorStop(1, '#000000');
+                ctx.fillStyle = grad;
                 ctx.fillRect(0, 0, ANCHO, ALTO);
 
-                // Estrellas simples (sin sombras costosas)
-                ctx.fillStyle = '#ffcc00';
+                // ---- LUNA LLENA ----
+                const lx = luna.x + Math.sin(frameCount * 0.002) * 8;
+                const ly = luna.y + Math.sin(frameCount * 0.003 + 1) * 5;
+
+                // Resplandor exterior
+                const gradLuna = ctx.createRadialGradient(lx, ly, 10, lx, ly, luna.radio * 3.5);
+                gradLuna.addColorStop(0, `rgba(255, 235, 200, ${luna.brillo * 0.6})`);
+                gradLuna.addColorStop(0.3, `rgba(255, 220, 180, ${luna.brillo * 0.3})`);
+                gradLuna.addColorStop(0.7, `rgba(255, 200, 150, ${luna.brillo * 0.1})`);
+                gradLuna.addColorStop(1, 'rgba(255, 200, 150, 0)');
+                ctx.fillStyle = gradLuna;
+                ctx.beginPath();
+                ctx.arc(lx, ly, luna.radio * 3.5, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Resplandor medio
+                const gradLuna2 = ctx.createRadialGradient(lx, ly, 5, lx, ly, luna.radio * 1.8);
+                gradLuna2.addColorStop(0, `rgba(255, 245, 220, ${luna.brillo * 0.5})`);
+                gradLuna2.addColorStop(0.5, `rgba(255, 230, 200, ${luna.brillo * 0.2})`);
+                gradLuna2.addColorStop(1, 'rgba(255, 220, 180, 0)');
+                ctx.fillStyle = gradLuna2;
+                ctx.beginPath();
+                ctx.arc(lx, ly, luna.radio * 1.8, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Cuerpo de la luna
+                ctx.shadowColor = 'rgba(255, 235, 200, 0.3)';
+                ctx.shadowBlur = 40;
+                ctx.fillStyle = '#fff8ee';
+                ctx.beginPath();
+                ctx.arc(lx, ly, luna.radio, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Detalles de la luna (cráteres sutiles)
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = 'rgba(220, 210, 190, 0.15)';
+                ctx.beginPath();
+                ctx.arc(lx - 15, ly - 10, 10, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(lx + 20, ly + 8, 14, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(lx + 5, ly + 20, 8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(lx - 22, ly + 15, 6, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Brillo en el borde de la luna
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+                ctx.beginPath();
+                ctx.arc(lx - 8, ly - 12, luna.radio * 0.3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // ---- Estrellas ----
+                ctx.shadowBlur = 0;
                 estrellas.forEach(e => {
                     const brillo = 0.35 + Math.sin(frameCount * e.parpadeo + e.fase) * 0.35;
                     ctx.globalAlpha = Math.max(0.15, brillo);
+                    ctx.fillStyle = e.color;
                     ctx.beginPath();
                     ctx.arc(e.x, e.y, e.tam, 0, Math.PI * 2);
                     ctx.fill();
                 });
                 ctx.globalAlpha = 1;
 
-                // Pinos: siluetas amarillas en zigzag, en dos planos de profundidad (parallax)
+                // ---- Pinos (siluetas doradas) ----
                 for (let capa = 0; capa < 2; capa++) {
                     pinos.forEach((pino, idx) => {
                         if (idx % 2 !== capa) return;
@@ -1322,39 +1425,160 @@
 
                         ctx.globalAlpha = pino.opacidad * (capa === 0 ? 0.55 : 1);
                         ctx.fillStyle = '#ffcc00';
+                        ctx.shadowColor = 'rgba(255, 204, 0, 0.05)';
+                        ctx.shadowBlur = 15;
 
                         dibujarPinoSilueta(baseX, baseY, pino.altura, pino.ancho, pino.capas);
+
+                        ctx.shadowBlur = 0;
                     });
                 }
                 ctx.globalAlpha = 1;
 
-                // Hojas cayendo (acento calido, tono amarillo)
+                // ---- Hojas cayendo ----
                 hojas.forEach(h => {
                     ctx.save();
                     ctx.translate(h.x, h.y);
                     ctx.rotate(h.rot);
                     ctx.globalAlpha = h.opacidad * 0.7;
                     ctx.fillStyle = '#ffcc00';
+                    ctx.shadowColor = 'rgba(255, 204, 0, 0.05)';
+                    ctx.shadowBlur = 8;
                     ctx.beginPath();
                     ctx.ellipse(0, 0, h.tam, h.tam * 0.5, 0, 0, Math.PI * 2);
                     ctx.fill();
+                    ctx.shadowBlur = 0;
                     ctx.globalAlpha = 1;
                     ctx.restore();
                 });
 
-                // Suelo: negro, con una linea sutil amarilla que marca el limite
-                ctx.fillStyle = '#000000';
+                // ---- DESTELLOS EN EL CIELO ----
+                destellos.forEach(d => {
+                    const alpha = Math.max(0, d.vida / d.maxVida);
+                    const size = d.tam * (1 + (1 - alpha) * 0.5);
+
+                    if (d.tipo === 'relampago') {
+                        // Relámpago: línea vertical con ramas
+                        ctx.save();
+                        ctx.globalAlpha = alpha * 0.6;
+                        ctx.strokeStyle = `rgba(255, 255, 240, ${alpha * 0.9})`;
+                        ctx.shadowColor = 'rgba(255, 255, 240, 0.4)';
+                        ctx.shadowBlur = 30;
+                        ctx.lineWidth = 2;
+
+                        // Línea principal
+                        ctx.beginPath();
+                        ctx.moveTo(d.x, d.y - size * 2);
+                        ctx.lineTo(d.x + (Math.random() - 0.5) * 4, d.y);
+                        ctx.stroke();
+
+                        // Ramas
+                        for (let i = 0; i < 4; i++) {
+                            const ry = d.y - size * 0.5 + i * size * 0.4;
+                            const rx = d.x + (Math.random() - 0.5) * 15;
+                            ctx.beginPath();
+                            ctx.moveTo(d.x + (Math.random() - 0.5) * 3, ry);
+                            ctx.lineTo(rx, ry + 6 + Math.random() * 8);
+                            ctx.stroke();
+                        }
+
+                        ctx.shadowBlur = 0;
+                        ctx.restore();
+                    } else {
+                        // Estrella fugaz: trazo diagonal con cola
+                        ctx.save();
+                        ctx.globalAlpha = alpha * 0.8;
+                        ctx.fillStyle = `rgba(255, 255, 240, ${alpha * 0.9})`;
+                        ctx.shadowColor = 'rgba(255, 255, 240, 0.5)';
+                        ctx.shadowBlur = 40;
+
+                        // Cuerpo de la estrella
+                        const gradFugaz = ctx.createRadialGradient(
+                            d.x, d.y, 2,
+                            d.x, d.y, size * 1.5
+                        );
+                        gradFugaz.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.9})`);
+                        gradFugaz.addColorStop(0.3, `rgba(255, 240, 200, ${alpha * 0.5})`);
+                        gradFugaz.addColorStop(1, `rgba(255, 220, 180, 0)`);
+                        ctx.fillStyle = gradFugaz;
+                        ctx.beginPath();
+                        ctx.arc(d.x, d.y, size * 1.5, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        // Cola
+                        ctx.shadowBlur = 20;
+                        ctx.fillStyle = `rgba(255, 240, 200, ${alpha * 0.2})`;
+                        ctx.beginPath();
+                        ctx.ellipse(d.x - size * 2.5, d.y + size * 0.8, size * 2.5, size * 0.6, -0.3, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        ctx.shadowBlur = 0;
+                        ctx.restore();
+                    }
+                    ctx.globalAlpha = 1;
+                });
+
+                // ---- SUELO (contraste mejorado) ----
+                ctx.shadowBlur = 0;
+                const gradSuelo = ctx.createLinearGradient(0, SUELO_Y + 4, 0, ALTO);
+                gradSuelo.addColorStop(0, '#0d0a0f');
+                gradSuelo.addColorStop(0.15, '#080810');
+                gradSuelo.addColorStop(0.5, '#050508');
+                gradSuelo.addColorStop(1, '#000000');
+                ctx.fillStyle = gradSuelo;
                 ctx.fillRect(0, SUELO_Y + 4, ANCHO, ALTO - SUELO_Y - 4);
 
-                ctx.strokeStyle = 'rgba(255, 204, 0, 0.15)';
-                ctx.lineWidth = 2;
+                // Línea del suelo con brillo (más gruesa y visible)
+                ctx.shadowColor = 'rgba(255, 204, 0, 0.2)';
+                ctx.shadowBlur = 20;
+                ctx.strokeStyle = 'rgba(255, 204, 0, 0.3)';
+                ctx.lineWidth = 3;
                 ctx.setLineDash([15, 25]);
                 ctx.lineDashOffset = -scrollFondo * 1.5;
                 ctx.beginPath();
                 ctx.moveTo(0, SUELO_Y + 4);
                 ctx.lineTo(ANCHO, SUELO_Y + 4);
                 ctx.stroke();
+
+                // Segunda línea más sutil
+                ctx.shadowBlur = 0;
+                ctx.strokeStyle = 'rgba(255, 204, 0, 0.08)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([8, 15]);
+                ctx.lineDashOffset = -scrollFondo * 0.5;
+                ctx.beginPath();
+                ctx.moveTo(0, SUELO_Y + 18);
+                ctx.lineTo(ANCHO, SUELO_Y + 18);
+                ctx.stroke();
                 ctx.setLineDash([]);
+
+                // Brillo en el suelo (puntos de luz)
+                for (let i = 0; i < 15; i++) {
+                    const x = ((i * 97 + scrollFondo * 0.3) % (ANCHO + 80)) - 40;
+                    const brillo = 0.3 + Math.sin(i * 1.7 + frameCount * 0.01) * 0.2;
+                    ctx.fillStyle = `rgba(255, 204, 0, ${brillo * 0.04})`;
+                    ctx.shadowColor = 'rgba(255, 204, 0, 0.02)';
+                    ctx.shadowBlur = 15;
+                    ctx.beginPath();
+                    ctx.ellipse(x, SUELO_Y + 20 + Math.sin(i * 0.5) * 5, 20 + Math.sin(i * 0.7) * 8, 3, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.shadowBlur = 0;
+
+                // ---- Lluvia de notas ----
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#ffcc00';
+                lluvia.forEach(n => {
+                    ctx.globalAlpha = n.opacidad;
+                    ctx.save();
+                    ctx.translate(n.x, n.y);
+                    ctx.rotate(n.rot);
+                    ctx.font = n.tam + 'px sans-serif';
+                    ctx.fillText(n.simbolo, 0, 0);
+                    ctx.restore();
+                });
+                ctx.globalAlpha = 1;
             }
 
             function dibujarPersonaje() {
@@ -1429,8 +1653,8 @@
                 });
             }
 
-            // Convierte un emoji en una silueta solida de un color (usado para los animales)
             const cacheSiluetas = {};
+
             function obtenerSiluetaEmoji(emoji, tamanoPx, color) {
                 const clave = emoji + '|' + tamanoPx + '|' + color;
                 if (cacheSiluetas[clave]) return cacheSiluetas[clave];
@@ -1453,7 +1677,6 @@
             function dibujarAnimales() {
                 animales.forEach(a => {
                     ctx.save();
-                    // pequeño balanceo al caminar, siempre sobre el suelo
                     const paso = Math.sin(Date.now() / 180 + a.paso) * 1.5;
                     ctx.translate(a.x + a.ancho / 2, a.y + a.alto / 2 + paso);
                     const img = obtenerSiluetaEmoji(a.emoji, Math.round(a.ancho), '#ffcc00');
@@ -1513,26 +1736,8 @@
                 });
             }
 
-            function dibujarLluvia() {
-                // Decorativa: baja opacidad y siempre detrás del juego para no interrumpir la visualización
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillStyle = '#ffcc00';
-                lluvia.forEach(n => {
-                    ctx.globalAlpha = n.opacidad;
-                    ctx.save();
-                    ctx.translate(n.x, n.y);
-                    ctx.rotate(n.rot);
-                    ctx.font = n.tam + 'px sans-serif';
-                    ctx.fillText(n.simbolo, 0, 0);
-                    ctx.restore();
-                });
-                ctx.globalAlpha = 1;
-            }
-
             function dibujar() {
                 dibujarFondo();
-                dibujarLluvia();
                 dibujarPajaro();
                 dibujarAnimales();
                 dibujarObstaculos();
@@ -1552,7 +1757,6 @@
                 ctx.textBaseline = 'bottom';
                 ctx.fillText('🌙 ' + Math.floor(distancia) + 'm', 12, ALTO - 8);
 
-                // Dificultad
                 ctx.fillStyle = `hsla(${Math.min(60, nivelDificultad * 8)}, 80%, 50%, 0.12)`;
                 ctx.font = '10px Poppins, sans-serif';
                 ctx.textAlign = 'center';
@@ -1560,7 +1764,6 @@
                 ctx.fillText('⚡ Vel: ' + Math.round(velocidadJuego * 10) / 10 + ' | 🎯 ' + maxObstaculosSimultaneos +
                     ' obs', ANCHO / 2, ALTO - 8);
 
-                // Bonus activo
                 if (bonusDoblePuntos && Date.now() < bonusDobleHasta) {
                     const tiempoRestante = Math.ceil((bonusDobleHasta - Date.now()) / 1000);
                     ctx.fillStyle = 'rgba(255,215,0,0.2)';
@@ -1598,9 +1801,9 @@
             dibujar();
 
             console.log('🔥 El Diablo Cumbiambero — Los Hijos de Tencha');
+            console.log('🌕 Luna llena y destellos en el cielo');
             console.log('⚡ Velocidad INICIAL: 8.5 (entretenida desde el inicio)');
             console.log('🚀 Velocidad MÁXIMA: 24.0 (se acelera al acercarse a 6000 pts)');
-            console.log('🎯 Dificultad progresiva con curva acelerada hacia el final');
             console.log('🏆 Victoria: 6000 puntos — ¡HAS GANADO!');
         })();
     </script>
