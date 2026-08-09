@@ -1,4 +1,49 @@
+# ============================================================
+# ROBOTS.TXT - LOS HIJOS DE TENCHA
+# ============================================================
+
 User-agent: *
 Allow: /
+
+# ============================================================
+# PERMITIR TODAS LAS PÁGINAS PRINCIPALES
+# ============================================================
+
+Allow: /index.html
+Allow: /canciones.html
+Allow: /videoteca.html
+Allow: /galeria.html
+Allow: /noticias.html
+Allow: /tencha_game.html
+
+# ============================================================
+# ACCESO RESTRINGIDO A ADMIN (NO INDEXAR)
+# ============================================================
+
+Disallow: /admin/
+Disallow: /admin/dashboard.html
+Disallow: /admin/login.html
+Disallow: /admin/validador.html
+Disallow: /admin/eventos.html
+Disallow: /admin/noticias.html
+Disallow: /admin/galeria.html
+Disallow: /admin/canciones.html
+Disallow: /admin/videos.html
+Disallow: /admin/lanzamientos.html
+Disallow: /admin/tienda.html
+Disallow: /admin/generador.html
+Disallow: /admin/asistentes.html
+
+# ============================================================
+# BLOQUEAR ARCHIVOS INNECESARIOS
+# ============================================================
+
+Disallow: /css/
+Disallow: /js/
+Disallow: /img/
+
+# ============================================================
+# RUTA AL SITEMAP
+# ============================================================
 
 Sitemap: https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/sitemap.xml

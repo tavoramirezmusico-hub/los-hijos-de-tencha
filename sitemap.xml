@@ -1,50 +1,108 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <!-- PÁGINA PRINCIPAL -->
+    
+    <!-- ========================================== -->
+    <!-- PÁGINAS PRINCIPALES                       -->
+    <!-- ========================================== -->
+    
     <url>
         <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/</loc>
-        <lastmod>2026-08-07</lastmod>
+        <lastmod>2026-08-08</lastmod>
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
     </url>
 
-    <!-- CANCIONERO -->
+    <url>
+        <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/index.html</loc>
+        <lastmod>2026-08-08</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+
+    <!-- ========================================== -->
+    <!-- SECCIONES PRINCIPALES                     -->
+    <!-- ========================================== -->
+
     <url>
         <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/canciones.html</loc>
-        <lastmod>2026-08-07</lastmod>
-        <changefreq>monthly</changefreq>
+        <lastmod>2026-08-08</lastmod>
+        <changefreq>weekly</changefreq>
         <priority>0.9</priority>
     </url>
 
-    <!-- VIDEOTECA -->
     <url>
         <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/videoteca.html</loc>
-        <lastmod>2026-08-07</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
-    </url>
-
-    <!-- TENCHA NOTICIAS -->
-    <url>
-        <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/noticias.html</loc>
-        <lastmod>2026-08-07</lastmod>
+        <lastmod>2026-08-08</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
 
-    <!-- GALERÍA -->
     <url>
         <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/galeria.html</loc>
-        <lastmod>2026-08-07</lastmod>
+        <lastmod>2026-08-08</lastmod>
         <changefreq>monthly</changefreq>
-        <priority>0.7</priority>
+        <priority>0.8</priority>
     </url>
 
-    <!-- JUEGO - DIABLITO MUSICAL -->
     <url>
-        <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/game/tencha_game.html</loc>
-        <lastmod>2026-08-07</lastmod>
+        <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/noticias.html</loc>
+        <lastmod>2026-08-08</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- ========================================== -->
+    <!-- ADMIN (ACCESO RESTRINGIDO)               -->
+    <!-- ========================================== -->
+
+    <url>
+        <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/</loc>
+        <lastmod>2026-08-08</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.3</priority>
+    </url>
+
+    <url>
+        <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/dashboard.html</loc>
+        <lastmod>2026-08-08</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/validador.html</loc>
+        <lastmod>2026-08-08</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/admin/login.html</loc>
+        <lastmod>2026-08-08</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.1</priority>
+    </url>
+
+    <!-- ========================================== -->
+    <!-- JUEGO                                      -->
+    <!-- ========================================== -->
+
+    <url>
+        <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/tencha_game.html</loc>
+        <lastmod>2026-08-08</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.6</priority>
     </url>
+
+    <!-- ========================================== -->
+    <!-- REDIRECCIONES Y SECUNDARIAS              -->
+    <!-- ========================================== -->
+
+    <url>
+        <loc>https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/game/tencha_game.html</loc>
+        <lastmod>2026-08-08</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
 </urlset>
