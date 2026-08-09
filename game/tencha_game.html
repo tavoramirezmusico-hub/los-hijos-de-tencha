@@ -167,7 +167,7 @@
             position: absolute;
             top: 12px;
             left: 16px;
-            z-index: 8;
+            z-index: 12;
             width: clamp(55px, 9vw, 85px);
             height: auto;
             filter: drop-shadow(0 0 25px rgba(255, 204, 0, 0.15));
@@ -178,7 +178,7 @@
             position: absolute;
             top: 10px;
             right: 16px;
-            z-index: 8;
+            z-index: 12;
             width: clamp(45px, 7vw, 70px);
             height: auto;
             filter: drop-shadow(0 0 25px rgba(255, 204, 0, 0.15));
@@ -243,25 +243,27 @@
 
         .bonus-indicador {
             position: absolute;
-            top: 60px;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translate(-50%, -50%);
             z-index: 7;
             color: #ff6b6b;
             font-weight: 900;
-            font-size: clamp(13px, 2vw, 18px);
+            font-size: clamp(13px, 2.4vw, 20px);
             text-shadow: 0 0 30px rgba(255, 107, 107, 0.3), 0 0 60px rgba(255, 107, 107, 0.1);
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.4s ease;
             text-align: center;
             letter-spacing: 1px;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 4px 20px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 107, 107, 0.2);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 24px;
+            border-radius: 22px;
+            border: 1px solid rgba(255, 107, 107, 0.25);
             backdrop-filter: blur(4px);
-            white-space: nowrap;
+            white-space: normal;
+            max-width: min(85%, 480px);
+            line-height: 1.5;
         }
 
         .bonus-indicador.visible {
@@ -271,6 +273,59 @@
         .bonus-indicador .doble {
             color: #ffd93d;
             font-size: clamp(11px, 1.6vw, 15px);
+        }
+
+        /* ===== AVISO AL PERDER UNA VIDA ===== */
+        .continuar-indicador {
+            position: absolute;
+            inset: 0;
+            z-index: 9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: rgba(0, 0, 0, .55);
+            backdrop-filter: blur(2px);
+            pointer-events: none;
+        }
+
+        .continuar-indicador.oculto {
+            display: none;
+        }
+
+        .continuar-caja {
+            background: rgba(0, 0, 0, .75);
+            border: 1px solid rgba(255, 204, 0, .25);
+            border-radius: 18px;
+            padding: 18px 34px;
+            animation: pulsoContinuar 1.3s ease-in-out infinite;
+        }
+
+        .continuar-titulo {
+            color: #ff6b6b;
+            font-weight: 900;
+            font-size: clamp(16px, 3.2vw, 24px);
+            text-shadow: 0 0 20px rgba(255, 107, 107, .3);
+        }
+
+        .continuar-sub {
+            color: #ffcc00;
+            font-weight: 700;
+            font-size: clamp(12px, 2.2vw, 16px);
+            margin-top: 8px;
+            letter-spacing: .5px;
+        }
+
+        @keyframes pulsoContinuar {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.03);
+            }
         }
 
         .hud-botones {
@@ -859,6 +914,14 @@
             🔥 ¡ME VALE VERGA LO QUE PIENSEN DE MÍ! <span class="doble">✨ PUNTOS DOBLES</span>
         </div>
 
+        <!-- ===== AVISO AL PERDER UNA VIDA (requiere toque para continuar) ===== -->
+        <div class="continuar-indicador oculto" id="continuarIndicador">
+            <div class="continuar-caja">
+                <p class="continuar-titulo">💔 ¡Perdiste una vida!</p>
+                <p class="continuar-sub">Toca la pantalla para continuar</p>
+            </div>
+        </div>
+
         <div class="hud-botones">
             <button id="btnPausa" class="btn-pausa">⏸️ Pausa</button>
             <button id="btnSalir" class="btn-salir">🚪 Salir</button>
@@ -1289,6 +1352,7 @@
         const logoInicioIzq = document.getElementById('logoInicioIzq');
         const diablitoInicioDer = document.getElementById('diablitoInicioDer');
         const logoCentral = document.getElementById('logoCentral');
+        const continuarIndicador = document.getElementById('continuarIndicador');
         const btnIniciar = document.getElementById('btnIniciar');
         const btnReiniciar = document.getElementById('btnReiniciar');
         const btnReiniciarPausa = document.getElementById('btnReiniciarPausa');
@@ -1371,9 +1435,9 @@
         let destellos = [];
         let polvoViento = [];
 
-        let velocidadJuego = 8.5;
-        const VELOCIDAD_INICIAL = 8.5;
-        const VELOCIDAD_MAX = 24;
+        let velocidadJuego = 7.5;
+        const VELOCIDAD_INICIAL = 7.5;
+        const VELOCIDAD_MAX = 17;
 
         let distancia = 0;
         let puntos = 0;
@@ -1398,6 +1462,8 @@
         let bonusDoblePuntos = false;
         let bonusDobleHasta = 0;
         let hitosAlcanzados = new Set();
+
+        let esperandoContinuar = false;
 
         let nivelDificultad = 1;
         let maxObstaculosSimultaneos = 3;
@@ -1601,19 +1667,6 @@
 
             audio.reproducirBonus();
 
-            for (let i = 0; i < 40; i++) {
-                particulas.push({
-                    x: ANCHO / 2 + (Math.random() - 0.5) * 300,
-                    y: ALTO / 2 + (Math.random() - 0.5) * 150,
-                    vx: (Math.random() - 0.5) * 14,
-                    vy: (Math.random() - 2) * 10 - 3,
-                    vida: 55,
-                    color: ['#ffcc00', '#ff6b6b', '#ffd93d', '#ff9ff3', '#48dbfb', '#ff6348', '#ff8a5c'][Math.floor(Math
-                        .random() * 7)],
-                    tamano: 3 + Math.random() * 6
-                });
-            }
-
             if (bonusTimeout) clearTimeout(bonusTimeout);
             bonusTimeout = setTimeout(() => {
                 bonusIndicador.classList.remove('visible');
@@ -1652,12 +1705,14 @@
 
         function actualizarDificultad() {
             const progreso = Math.min(1, puntos / 6000);
-            const progresoCurva = Math.pow(progreso, 1.6);
+            // Curva más suave (exponente mayor = arranque más gentil y
+            // la parte difícil se concentra cerca de la meta de 6000 pts)
+            const progresoCurva = Math.pow(progreso, 2.4);
 
             nivelDificultad = 1 + Math.floor(progresoCurva * 8);
             velocidadJuego = VELOCIDAD_INICIAL + (VELOCIDAD_MAX - VELOCIDAD_INICIAL) * progresoCurva;
-            maxObstaculosSimultaneos = Math.min(8, 3 + Math.floor(progresoCurva * 5));
-            intervaloGeneracionBase = Math.max(12, 55 - progresoCurva * 43);
+            maxObstaculosSimultaneos = Math.min(6, 3 + Math.floor(progresoCurva * 4));
+            intervaloGeneracionBase = Math.max(18, 55 - progresoCurva * 35);
 
             intensidadViento = VIENTO_MIN + (VIENTO_MAX - VIENTO_MIN) * (velocidadJuego - VELOCIDAD_INICIAL) / (VELOCIDAD_MAX -
                 VELOCIDAD_INICIAL);
@@ -1721,6 +1776,9 @@
             if (bonusTimeout) clearTimeout(bonusTimeout);
             bonusIndicador.classList.remove('visible');
 
+            esperandoContinuar = false;
+            continuarIndicador.classList.add('oculto');
+
             generarHojasViento();
             generarLineasViento();
             generarPolvoViento();
@@ -1742,12 +1800,20 @@
         }
 
         function saltar() {
-            if (estado !== 'jugando' || pausado) return;
+            if (estado !== 'jugando' || pausado || esperandoContinuar) return;
             if (!personaje.saltando) {
                 personaje.velocidadY = FUERZA_SALTO;
                 personaje.saltando = true;
                 audio.reproducirSalto();
             }
+        }
+
+        function continuarTrasVida() {
+            if (!esperandoContinuar) return;
+            esperandoContinuar = false;
+            continuarIndicador.classList.add('oculto');
+            invencibleHasta = Date.now() + 1500;
+            tiempoAnterior = null;
         }
 
         function togglePausa() {
@@ -1811,7 +1877,9 @@
         window.addEventListener('keydown', (e) => {
             if (e.code === 'Space') {
                 e.preventDefault();
-                if (estado === 'inicio') empezarJuego();
+                if (estado === 'jugando' && esperandoContinuar) {
+                    continuarTrasVida();
+                } else if (estado === 'inicio') empezarJuego();
                 else if (estado === 'jugando' && !pausado) saltar();
                 else if (estado === 'terminado') {
                     if (!pantallaVictoria.classList.contains('oculto')) {
@@ -1821,7 +1889,7 @@
                     }
                 }
             }
-            if (e.code === 'KeyP' && estado === 'jugando') {
+            if (e.code === 'KeyP' && estado === 'jugando' && !esperandoContinuar) {
                 e.preventDefault();
                 togglePausa();
             }
@@ -1829,7 +1897,9 @@
 
         wrap.addEventListener('pointerdown', (e) => {
             if (e.target.closest('button')) return;
-            if (estado === 'inicio') empezarJuego();
+            if (estado === 'jugando' && esperandoContinuar) {
+                continuarTrasVida();
+            } else if (estado === 'inicio') empezarJuego();
             else if (estado === 'jugando' && !pausado) saltar();
             else if (estado === 'terminado') {
                 if (!pantallaVictoria.classList.contains('oculto')) {
@@ -2171,14 +2241,20 @@
                         vidas--;
                         hitosAlcanzados = new Set();
                         corazonesHUD();
-                        invencibleHasta = Date.now() + 1200;
                         generarParticulasImpacto(o.x + o.ancho / 2, o.y + o.alto / 2);
 
                         audio.reproducirColision();
 
                         if (vidas <= 0) {
+                            invencibleHasta = Date.now() + 1200;
                             if (finTimeout) clearTimeout(finTimeout);
                             finTimeout = setTimeout(terminarJuego, 150);
+                            return;
+                        } else {
+                            // Se pierde una vida pero el juego continúa:
+                            // se congela y espera un toque/click para seguir
+                            esperandoContinuar = true;
+                            continuarIndicador.classList.remove('oculto');
                             return;
                         }
                     }
@@ -2688,8 +2764,8 @@
 
         // ---- Bucle ----
         function bucle(marca) {
-            if (estado !== 'jugando' || pausado) {
-                if (pausado) {
+            if (estado !== 'jugando' || pausado || esperandoContinuar) {
+                if (pausado || esperandoContinuar) {
                     dibujar();
                 }
                 animFrame = requestAnimationFrame(bucle);
