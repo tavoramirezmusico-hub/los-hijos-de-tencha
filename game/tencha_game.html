@@ -2666,8 +2666,9 @@
             ctx.restore();
 
             const enBonus = bonusDoblePuntos && Date.now() < bonusDobleHasta;
+            let pulso = 0;
             if (enBonus) {
-                const pulso = 0.5 + Math.sin(frameCount * 0.15) * 0.5;
+                pulso = 0.5 + Math.sin(frameCount * 0.15) * 0.5;
                 ctx.shadowColor = `rgba(255, 204, 0, ${0.55 + pulso * 0.35})`;
                 ctx.shadowBlur = 18 + pulso * 14;
             }
