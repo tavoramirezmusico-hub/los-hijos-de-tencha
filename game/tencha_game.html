@@ -1067,7 +1067,7 @@
                     if (this.musicaActiva && !this.silenciado) {
                         this.tocarPatronCumbia();
                     }
-                }, 380);
+                }, 195);
             }
 
             detenerMusicaFondo() {
@@ -1086,99 +1086,74 @@
             tocarPatronCumbia() {
                 if (!this.inicializado || !this.musicaActiva || this.silenciado) return;
 
-                const patrones = [
-                    [261.63, 0.15, 'sawtooth'],
-                    [329.63, 0.12, 'square'],
-                    [392.00, 0.15, 'sawtooth'],
-                    [523.25, 0.10, 'square'],
-                    [440.00, 0.15, 'sawtooth'],
-                    [349.23, 0.12, 'square'],
-                    [293.66, 0.18, 'sawtooth'],
-                    [493.88, 0.10, 'square'],
+                // Secuencia fija (melodía + bajo "oom-pah" + güira) en vez de notas al azar,
+                // para que suene a una cumbia de videojuego real y no a ruido aleatorio.
+                const MELODIA = [
+                    392.00, 0, 440.00, 0, 493.88, 440.00, 392.00, 0,
+                    329.63, 0, 392.00, 0, 440.00, 392.00, 349.23, 0,
+                    392.00, 0, 440.00, 0, 493.88, 523.25, 440.00, 0,
+                    392.00, 349.23, 329.63, 0, 293.66, 329.63, 349.23, 0
+                ];
+                const BAJO = [
+                    130.81, 0, 0, 130.81, 0, 0, 174.61, 0,
+                    98.00, 0, 0, 98.00, 0, 0, 130.81, 0,
+                    130.81, 0, 0, 130.81, 0, 0, 164.81, 0,
+                    110.00, 0, 0, 110.00, 0, 0, 130.81, 0
                 ];
 
-                const numNotas = 2 + Math.floor(Math.random() * 2);
-                const seleccion = [];
-                const indices = [];
-                for (let i = 0; i < numNotas; i++) {
-                    let idx;
-                    do {
-                        idx = Math.floor(Math.random() * patrones.length);
-                    } while (indices.includes(idx));
-                    indices.push(idx);
-                    seleccion.push(patrones[idx]);
-                }
+                const paso = this.notaIndex % MELODIA.length;
+                this.notaIndex++;
 
-                seleccion.forEach((item, index) => {
+                // Melodía — onda triangular, sonido limpio tipo videojuego retro
+                const notaMelodia = MELODIA[paso];
+                if (notaMelodia) {
                     try {
                         const osc = this.ctx.createOscillator();
                         const gain = this.ctx.createGain();
-
-                        osc.type = item[2] || 'sawtooth';
-                        osc.frequency.value = item[0];
-
-                        const tiempoInicio = this.ctx.currentTime + index * 0.06;
-                        const duracion = item[1] || 0.12;
-
-                        gain.gain.value = this.volumenMusica * (0.25 + Math.random() * 0.15);
-                        gain.gain.exponentialRampToValueAtTime(0.001, tiempoInicio + duracion);
-
-                        const filter = this.ctx.createBiquadFilter();
-                        filter.type = 'lowpass';
-                        filter.frequency.value = 1200 + Math.random() * 600;
-
-                        osc.connect(filter);
-                        filter.connect(gain);
+                        osc.type = 'triangle';
+                        osc.frequency.value = notaMelodia;
+                        gain.gain.value = this.volumenMusica * 0.6;
+                        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.17);
+                        osc.connect(gain);
                         gain.connect(this.ctx.destination);
-
-                        osc.start(tiempoInicio);
-                        osc.stop(tiempoInicio + duracion + 0.05);
-
-                        this.oscillators.push(osc);
-                        this.gains.push(gain);
-
-                        setTimeout(() => {
-                            const idx = this.oscillators.indexOf(osc);
-                            if (idx > -1) this.oscillators.splice(idx, 1);
-                            const idxG = this.gains.indexOf(gain);
-                            if (idxG > -1) this.gains.splice(idxG, 1);
-                        }, 500);
+                        osc.start(this.ctx.currentTime);
+                        osc.stop(this.ctx.currentTime + 0.17);
                     } catch (e) { }
-                });
+                }
 
-                // Bajo constante (marca el pulso "oom-pah" típico de la cumbia)
-                try {
-                    const notasBajo = [130.81, 130.81, 174.61, 146.83];
-                    const freqBajo = notasBajo[this.notaIndex % notasBajo.length];
-                    this.notaIndex++;
-                    const oscBajo = this.ctx.createOscillator();
-                    const gainBajo = this.ctx.createGain();
-                    oscBajo.type = 'sawtooth';
-                    oscBajo.frequency.value = freqBajo;
-                    gainBajo.gain.value = this.volumenMusica * 0.28;
-                    gainBajo.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.22);
-                    oscBajo.connect(gainBajo);
-                    gainBajo.connect(this.ctx.destination);
-                    oscBajo.start(this.ctx.currentTime);
-                    oscBajo.stop(this.ctx.currentTime + 0.22);
-                } catch (e) { }
+                // Bajo — pulso "oom-pah" constante, suave (onda seno)
+                const notaBajo = BAJO[paso];
+                if (notaBajo) {
+                    try {
+                        const oscBajo = this.ctx.createOscillator();
+                        const gainBajo = this.ctx.createGain();
+                        oscBajo.type = 'sine';
+                        oscBajo.frequency.value = notaBajo;
+                        gainBajo.gain.value = this.volumenMusica * 0.55;
+                        gainBajo.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.2);
+                        oscBajo.connect(gainBajo);
+                        gainBajo.connect(this.ctx.destination);
+                        oscBajo.start(this.ctx.currentTime);
+                        oscBajo.stop(this.ctx.currentTime + 0.2);
+                    } catch (e) { }
+                }
 
-                // Golpe percusivo ligero (tipo güira/tambora) para reforzar el ritmo
+                // Güira — clic percusivo suave en cada paso, más fuerte en el golpe principal
                 try {
-                    const dur = 0.06;
+                    const dur = 0.04;
                     const bufferSize = Math.floor(this.ctx.sampleRate * dur);
                     const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
                     const data = buffer.getChannelData(0);
                     for (let i = 0; i < bufferSize; i++) {
-                        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.25));
+                        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
                     }
                     const ruido = this.ctx.createBufferSource();
                     ruido.buffer = buffer;
                     const gainRuido = this.ctx.createGain();
-                    gainRuido.gain.value = this.volumenMusica * 0.5;
+                    gainRuido.gain.value = this.volumenMusica * (paso % 8 === 0 ? 0.4 : 0.14);
                     const filtroRuido = this.ctx.createBiquadFilter();
                     filtroRuido.type = 'highpass';
-                    filtroRuido.frequency.value = 4000;
+                    filtroRuido.frequency.value = 5000;
                     ruido.connect(filtroRuido);
                     filtroRuido.connect(gainRuido);
                     gainRuido.connect(this.ctx.destination);
@@ -1186,8 +1161,8 @@
                     ruido.stop(this.ctx.currentTime + dur);
                 } catch (e) { }
 
-                // Aviso visual: sincroniza un brillo sutil en el logo con el golpe musical
-                if (typeof pulsoMusical === 'function') pulsoMusical();
+                // Brillo sutil en el logo sincronizado con el golpe principal del ritmo
+                if (paso % 8 === 0 && typeof pulsoMusical === 'function') pulsoMusical();
             }
 
             // ===== EFECTOS DE SONIDO =====
@@ -2416,23 +2391,68 @@
             ctx.beginPath();
             ctx.arc(lx, ly, luna.radio, 0, Math.PI * 2);
             ctx.fill();
-
             ctx.shadowBlur = 0;
-            ctx.fillStyle = 'rgba(220, 210, 190, 0.15)';
+
+            // Sombreado tipo terminador (le da volumen esférico, más "luna" y menos círculo plano)
+            const gradSombra = ctx.createRadialGradient(
+                lx - luna.radio * 0.35, ly - luna.radio * 0.35, luna.radio * 0.2,
+                lx, ly, luna.radio * 1.05
+            );
+            gradSombra.addColorStop(0, 'rgba(255, 255, 255, 0)');
+            gradSombra.addColorStop(0.55, 'rgba(210, 190, 165, 0)');
+            gradSombra.addColorStop(1, 'rgba(150, 120, 110, 0.35)');
+            ctx.save();
             ctx.beginPath();
-            ctx.arc(lx - 15, ly - 10, 10, 0, Math.PI * 2);
+            ctx.arc(lx, ly, luna.radio, 0, Math.PI * 2);
+            ctx.clip();
+            ctx.fillStyle = gradSombra;
+            ctx.fillRect(lx - luna.radio, ly - luna.radio, luna.radio * 2, luna.radio * 2);
+            ctx.restore();
+
+            // Cráteres (reposicionados para no chocar con la cara)
+            ctx.fillStyle = 'rgba(210, 195, 175, 0.18)';
+            ctx.beginPath();
+            ctx.arc(lx - luna.radio * 0.55, ly + luna.radio * 0.5, luna.radio * 0.13, 0, Math.PI * 2);
             ctx.fill();
             ctx.beginPath();
-            ctx.arc(lx + 20, ly + 8, 14, 0, Math.PI * 2);
+            ctx.arc(lx + luna.radio * 0.5, ly - luna.radio * 0.55, luna.radio * 0.1, 0, Math.PI * 2);
             ctx.fill();
             ctx.beginPath();
-            ctx.arc(lx + 5, ly + 20, 8, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(lx - 22, ly + 15, 6, 0, Math.PI * 2);
+            ctx.arc(lx - luna.radio * 0.6, ly - luna.radio * 0.2, luna.radio * 0.08, 0, Math.PI * 2);
             ctx.fill();
 
-            ctx.shadowBlur = 0;
+            // Cara pícara / sonrisa burlona
+            ctx.save();
+            ctx.translate(lx, ly);
+            const r = luna.radio;
+            ctx.strokeStyle = 'rgba(95, 75, 60, 0.55)';
+            ctx.fillStyle = 'rgba(95, 75, 60, 0.5)';
+            ctx.lineWidth = Math.max(2, r * 0.05);
+            ctx.lineCap = 'round';
+
+            // Ojo izquierdo (entrecerrado, relajado)
+            ctx.beginPath();
+            ctx.arc(-r * 0.32, -r * 0.08, r * 0.17, Math.PI * 0.12, Math.PI * 0.88);
+            ctx.stroke();
+
+            // Ojo derecho (más alzado y abierto, gesto pícaro)
+            ctx.beginPath();
+            ctx.arc(r * 0.36, -r * 0.18, r * 0.14, Math.PI * 0.08, Math.PI * 0.8);
+            ctx.stroke();
+
+            // Ceja derecha levantada (remata el gesto burlón)
+            ctx.beginPath();
+            ctx.moveTo(r * 0.2, -r * 0.44);
+            ctx.quadraticCurveTo(r * 0.38, -r * 0.56, r * 0.56, -r * 0.4);
+            ctx.stroke();
+
+            // Sonrisa asimétrica (una esquina bien levantada, tipo sonrisa de lado)
+            ctx.beginPath();
+            ctx.moveTo(-r * 0.4, r * 0.26);
+            ctx.quadraticCurveTo(r * 0.02, r * 0.5, r * 0.5, r * 0.05);
+            ctx.stroke();
+
+            ctx.restore();
 
             estrellas.forEach(e => {
                 const brillo = 0.35 + Math.sin(frameCount * e.parpadeo + e.fase) * 0.35;
