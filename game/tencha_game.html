@@ -123,6 +123,19 @@
             overflow: hidden;
             background: #000000;
             touch-action: none;
+            animation: brilloBorde 4.5s ease-in-out infinite;
+        }
+
+        @keyframes brilloBorde {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 6px #000, 0 20px 50px rgba(0, 0, 0, .8), 0 0 60px rgba(255, 204, 0, .08);
+            }
+
+            50% {
+                box-shadow: 0 0 0 6px #000, 0 20px 50px rgba(0, 0, 0, .8), 0 0 80px rgba(255, 204, 0, .16);
+            }
         }
 
         .juego-wrap.fullscreen {
@@ -160,6 +173,11 @@
             height: auto;
             filter: drop-shadow(0 0 30px rgba(255, 204, 0, 0.2));
             pointer-events: none;
+            transition: filter 0.25s ease;
+        }
+
+        .logo-centro.beat {
+            filter: drop-shadow(0 0 40px rgba(255, 204, 0, 0.45));
         }
 
         /* ===== LOGOS EN PANTALLAS DE INICIO Y PAUSA ===== */
@@ -268,6 +286,21 @@
 
         .bonus-indicador.visible {
             opacity: 1;
+            animation: pulsoBonus 0.9s ease-in-out infinite;
+        }
+
+        @keyframes pulsoBonus {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                text-shadow: 0 0 30px rgba(255, 107, 107, 0.3), 0 0 60px rgba(255, 107, 107, 0.1);
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.035);
+                text-shadow: 0 0 40px rgba(255, 204, 0, 0.45), 0 0 70px rgba(255, 204, 0, 0.2);
+            }
         }
 
         .bonus-indicador .doble {
@@ -1113,20 +1146,48 @@
                     } catch (e) { }
                 });
 
-                if (Math.random() < 0.3) {
-                    try {
-                        const oscBajo = this.ctx.createOscillator();
-                        const gainBajo = this.ctx.createGain();
-                        oscBajo.type = 'sawtooth';
-                        oscBajo.frequency.value = 130.81;
-                        gainBajo.gain.value = this.volumenMusica * 0.2;
-                        gainBajo.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.2);
-                        oscBajo.connect(gainBajo);
-                        gainBajo.connect(this.ctx.destination);
-                        oscBajo.start(this.ctx.currentTime);
-                        oscBajo.stop(this.ctx.currentTime + 0.2);
-                    } catch (e) { }
-                }
+                // Bajo constante (marca el pulso "oom-pah" típico de la cumbia)
+                try {
+                    const notasBajo = [130.81, 130.81, 174.61, 146.83];
+                    const freqBajo = notasBajo[this.notaIndex % notasBajo.length];
+                    this.notaIndex++;
+                    const oscBajo = this.ctx.createOscillator();
+                    const gainBajo = this.ctx.createGain();
+                    oscBajo.type = 'sawtooth';
+                    oscBajo.frequency.value = freqBajo;
+                    gainBajo.gain.value = this.volumenMusica * 0.28;
+                    gainBajo.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.22);
+                    oscBajo.connect(gainBajo);
+                    gainBajo.connect(this.ctx.destination);
+                    oscBajo.start(this.ctx.currentTime);
+                    oscBajo.stop(this.ctx.currentTime + 0.22);
+                } catch (e) { }
+
+                // Golpe percusivo ligero (tipo güira/tambora) para reforzar el ritmo
+                try {
+                    const dur = 0.06;
+                    const bufferSize = Math.floor(this.ctx.sampleRate * dur);
+                    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.25));
+                    }
+                    const ruido = this.ctx.createBufferSource();
+                    ruido.buffer = buffer;
+                    const gainRuido = this.ctx.createGain();
+                    gainRuido.gain.value = this.volumenMusica * 0.5;
+                    const filtroRuido = this.ctx.createBiquadFilter();
+                    filtroRuido.type = 'highpass';
+                    filtroRuido.frequency.value = 4000;
+                    ruido.connect(filtroRuido);
+                    filtroRuido.connect(gainRuido);
+                    gainRuido.connect(this.ctx.destination);
+                    ruido.start(this.ctx.currentTime);
+                    ruido.stop(this.ctx.currentTime + dur);
+                } catch (e) { }
+
+                // Aviso visual: sincroniza un brillo sutil en el logo con el golpe musical
+                if (typeof pulsoMusical === 'function') pulsoMusical();
             }
 
             // ===== EFECTOS DE SONIDO =====
@@ -1352,6 +1413,17 @@
         const logoInicioIzq = document.getElementById('logoInicioIzq');
         const diablitoInicioDer = document.getElementById('diablitoInicioDer');
         const logoCentral = document.getElementById('logoCentral');
+
+        // Sincroniza un brillo breve en el logo con cada golpe musical (ambiente más musical)
+        let pulsoMusicalTimeout = null;
+        function pulsoMusical() {
+            if (!logoCentral) return;
+            logoCentral.classList.add('beat');
+            if (pulsoMusicalTimeout) clearTimeout(pulsoMusicalTimeout);
+            pulsoMusicalTimeout = setTimeout(() => {
+                logoCentral.classList.remove('beat');
+            }, 140);
+        }
         const continuarIndicador = document.getElementById('continuarIndicador');
         const btnIniciar = document.getElementById('btnIniciar');
         const btnReiniciar = document.getElementById('btnReiniciar');
@@ -1437,7 +1509,7 @@
 
         let velocidadJuego = 7.5;
         const VELOCIDAD_INICIAL = 7.5;
-        const VELOCIDAD_MAX = 17;
+        const VELOCIDAD_MAX = 13;
 
         let distancia = 0;
         let puntos = 0;
@@ -1466,7 +1538,7 @@
         let esperandoContinuar = false;
 
         let nivelDificultad = 1;
-        let maxObstaculosSimultaneos = 3;
+        let maxObstaculosSimultaneos = 2;
         let intervaloGeneracionBase = 55;
 
         let intensidadViento = 0.6;
@@ -1711,15 +1783,15 @@
 
             nivelDificultad = 1 + Math.floor(progresoCurva * 8);
             velocidadJuego = VELOCIDAD_INICIAL + (VELOCIDAD_MAX - VELOCIDAD_INICIAL) * progresoCurva;
-            maxObstaculosSimultaneos = Math.min(6, 3 + Math.floor(progresoCurva * 4));
-            intervaloGeneracionBase = Math.max(18, 55 - progresoCurva * 35);
+            maxObstaculosSimultaneos = Math.min(4, 2 + Math.floor(progresoCurva * 2));
+            intervaloGeneracionBase = Math.max(30, 55 - progresoCurva * 25);
 
             intensidadViento = VIENTO_MIN + (VIENTO_MAX - VIENTO_MIN) * (velocidadJuego - VELOCIDAD_INICIAL) / (VELOCIDAD_MAX -
                 VELOCIDAD_INICIAL);
         }
 
         function tiempoAleatorioObstaculo() {
-            const base = Math.max(12, intervaloGeneracionBase + (Math.random() - 0.5) * 15);
+            const base = Math.max(22, intervaloGeneracionBase + (Math.random() - 0.5) * 10);
             return base;
         }
 
@@ -1756,7 +1828,7 @@
             vidas = VIDAS_MAX;
             invencibleHasta = 0;
             nivelDificultad = 1;
-            maxObstaculosSimultaneos = 3;
+            maxObstaculosSimultaneos = 2;
             intervaloGeneracionBase = 55;
             siguienteObstaculo = tiempoAleatorioObstaculo();
             siguienteAnimal = tiempoAleatorioAnimal();
@@ -2593,6 +2665,13 @@
             ctx.fill();
             ctx.restore();
 
+            const enBonus = bonusDoblePuntos && Date.now() < bonusDobleHasta;
+            if (enBonus) {
+                const pulso = 0.5 + Math.sin(frameCount * 0.15) * 0.5;
+                ctx.shadowColor = `rgba(255, 204, 0, ${0.55 + pulso * 0.35})`;
+                ctx.shadowBlur = 18 + pulso * 14;
+            }
+
             if (spriteListo) {
                 ctx.drawImage(spritePersonaje, -personaje.ancho / 2, -personaje.alto / 2, personaje.ancho, personaje
                     .alto);
@@ -2601,6 +2680,15 @@
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText('😈', 0, 2);
+            }
+
+            if (enBonus) {
+                ctx.shadowBlur = 0;
+                ctx.strokeStyle = `rgba(255, 204, 0, ${0.25 + pulso * 0.25})`;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(0, 0, personaje.ancho / 2 + 9 + pulso * 3, 0, Math.PI * 2);
+                ctx.stroke();
             }
 
             if (Date.now() < invencibleHasta) {
