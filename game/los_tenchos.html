@@ -10,14 +10,14 @@
         rel="stylesheet">
     <style>
         :root {
-            --night: #1B0F2E;
-            --night-2: #2A1840;
-            --tangerine: #F2600C;
+            --night: #1A0D10;
+            --night-2: #2E1015;
+            --tangerine: #C4302B;
             --teal: #0FADA0;
-            --gold: #F7B32B;
+            --gold: #F2B705;
             --cream: #FFF3E0;
-            --danger: #E63946;
-            --purple-deep: #6b1f3a;
+            --danger: #FF4B4B;
+            --purple-deep: #5c1414;
         }
 
         * {
@@ -164,16 +164,16 @@
             padding: 14px 30px;
             border-radius: 40px;
             border: none;
-            background: linear-gradient(180deg, var(--tangerine), #c94a08);
-            color: var(--cream);
+            background: linear-gradient(180deg, var(--gold), #b3860a);
+            color: var(--night);
             cursor: pointer;
-            box-shadow: 0 6px 0 #8a3405, 0 10px 20px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 6px 0 #7a5c05, 0 10px 20px rgba(0, 0, 0, 0.4);
             transition: transform .08s ease;
         }
 
         .btn:active {
             transform: translateY(4px);
-            box-shadow: 0 2px 0 #8a3405;
+            box-shadow: 0 2px 0 #7a5c05;
         }
 
         .btn.secondary {
@@ -442,6 +442,62 @@
             opacity: 0.7;
             max-width: 480px;
         }
+
+        .howto-box {
+            text-align: left;
+            max-width: 560px;
+            font-size: 12.5px;
+            line-height: 1.55;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 14px 18px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .howto-box p {
+            margin: 8px 0;
+        }
+
+        .note-icon {
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .level-intro-box {
+            background: rgba(255, 255, 255, 0.06);
+            border: 2px solid var(--teal);
+            border-radius: 14px;
+            padding: 16px 22px;
+            max-width: 500px;
+        }
+
+        .level-intro-box p {
+            margin: 6px 0;
+            font-size: 13px;
+        }
+
+        .level-intro-title {
+            font-family: 'Bungee', cursive;
+            color: var(--gold);
+            font-size: 18px;
+            margin: 0 0 4px;
+        }
+
+        #sound-toggle {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            z-index: 8;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: var(--cream);
+            border-radius: 8px;
+            font-size: 15px;
+            padding: 4px 8px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -452,6 +508,7 @@
 
         <div class="game-frame" id="game-frame">
             <canvas id="game-canvas" width="900" height="560"></canvas>
+            <button id="sound-toggle">🔊</button>
 
             <!-- HUD -->
             <div id="hud" class="hidden">
@@ -488,7 +545,26 @@
                 <p class="subtitle">Aventura Cumbianchera</p>
                 <img class="diablito-img" src="img/menu-icono.webp" alt="Diablito" onerror="this.style.display='none'">
                 <button class="btn" id="btn-play">▶ JUGAR</button>
+                <button class="btn secondary" id="btn-howto">❓ CÓMO SE JUEGA</button>
                 <p class="footer-note">5 vidas · 5 escenarios · sube el volumen 🎺</p>
+            </div>
+
+            <!-- INSTRUCCIONES -->
+            <div class="screen hidden" id="screen-instructions">
+                <h2 class="title-main" style="font-size:20px;">CÓMO SE JUEGA</h2>
+                <div class="howto-box">
+                    <p><strong>🎯 Objetivo:</strong> en cada escenario, recolecta las notas musicales <span
+                            class="note-icon">♪</span> hasta juntar la cantidad pedida. Al lograrlo se abre la puerta de
+                        salida — llega a ella para pasar al siguiente escenario.</p>
+                    <p><strong>🕹️ Moverte:</strong> flechas o WASD (o el D-pad en pantalla si estás en el celular).</p>
+                    <p><strong>⚠️ Cuidado:</strong> evita tocar a los "viejillos cumbiancheros" (los enemigos de
+                        colores) — si te tocan, pierdes una vida y debes elegir personaje de nuevo.</p>
+                    <p><strong>⭐ Poder especial:</strong> cada integrante de la banda tiene un poder único. Actívalo con
+                        la barra espaciadora (o el botón PODER en el celular) cuando esté listo.</p>
+                    <p><strong>❤️ Vidas y puntos:</strong> empiezas con 5 vidas. Ganas puntos por cada nota recolectada
+                        y por completar cada escenario. Si pierdes las 5 vidas, se acaba la partida.</p>
+                </div>
+                <button class="btn secondary" id="btn-howto-back">◀ VOLVER</button>
             </div>
 
             <!-- CHARACTER SELECT -->
@@ -497,6 +573,18 @@
                 <div class="char-grid" id="char-grid"></div>
                 <p class="power-detail" id="power-detail">Selecciona a un integrante de la banda.</p>
                 <button class="btn" id="btn-start" disabled>COMENZAR AVENTURA</button>
+            </div>
+
+            <!-- OBJETIVO DEL NIVEL -->
+            <div class="screen hidden" id="screen-levelintro">
+                <img src="/img/logo.webp" alt="" style="width:120px; opacity:0.9;" onerror="this.style.display='none'">
+                <p class="level-intro-title" id="levelintro-title">Escenario</p>
+                <div class="level-intro-box">
+                    <p id="levelintro-goal">Objetivo</p>
+                    <p id="levelintro-danger">Peligros</p>
+                    <p id="levelintro-power">Tu poder</p>
+                </div>
+                <button class="btn" id="btn-levelintro-start">¡A LA PISTA! ▶</button>
             </div>
 
             <!-- LIFE LOST -->
@@ -515,6 +603,8 @@
 
             <!-- GAME OVER -->
             <div class="screen hidden" id="screen-gameover">
+                <img class="diablito-img" src="img/menu-icono.webp" alt="Diablito"
+                    style="width:56px; animation:none; opacity:0.8;" onerror="this.style.display='none'">
                 <p class="msg-big">SE ACABÓ<br>LA FIESTA</p>
                 <p class="hint">Los viejillos cumbiancheros ganaron esta vez...</p>
                 <p class="final-score" id="gameover-score">0 pts</p>
@@ -550,6 +640,115 @@
             }
             function dist(ax, ay, bx, by) { return Math.hypot(ax - bx, ay - by); }
             function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+            /* ============================================================
+               1B. AUDIO — todo sintetizado con Web Audio API (sin archivos
+               externos), así que no hay que subir ni licenciar ningún .mp3.
+            ============================================================ */
+            const Audio1 = (function () {
+                let ctxA = null;
+                let enabled = true;
+                let musicTimer = null;
+                let musicStep = 0;
+
+                function ensureCtx() {
+                    if (!ctxA) {
+                        const AC = window.AudioContext || window.webkitAudioContext;
+                        ctxA = new AC();
+                    }
+                    if (ctxA.state === 'suspended') ctxA.resume();
+                    return ctxA;
+                }
+
+                function tone(freq, dur, opts) {
+                    if (!enabled) return;
+                    opts = opts || {};
+                    const c = ensureCtx();
+                    const osc = c.createOscillator();
+                    const gain = c.createGain();
+                    osc.type = opts.type || 'square';
+                    osc.frequency.setValueAtTime(freq, c.currentTime);
+                    if (opts.slideTo) {
+                        osc.frequency.exponentialRampToValueAtTime(opts.slideTo, c.currentTime + dur);
+                    }
+                    const vol = opts.vol || 0.12;
+                    gain.gain.setValueAtTime(0.0001, c.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(vol, c.currentTime + 0.015);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + dur);
+                    osc.connect(gain); gain.connect(c.destination);
+                    osc.start(c.currentTime);
+                    osc.stop(c.currentTime + dur + 0.02);
+                }
+
+                function noiseBurst(dur, vol) {
+                    if (!enabled) return;
+                    const c = ensureCtx();
+                    const bufferSize = c.sampleRate * dur;
+                    const buffer = c.createBuffer(1, bufferSize, c.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+                    const src = c.createBufferSource();
+                    src.buffer = buffer;
+                    const gain = c.createGain();
+                    gain.gain.value = vol || 0.08;
+                    src.connect(gain); gain.connect(c.destination);
+                    src.start();
+                }
+
+                return {
+                    unlock() { ensureCtx(); },
+                    setEnabled(v) {
+                        enabled = v;
+                        if (!v) this.stopMusic();
+                    },
+                    isEnabled() { return enabled; },
+
+                    click() { tone(420, 0.06, { type: 'triangle', vol: 0.08 }); },
+                    collect() { tone(660, 0.09, { type: 'square', slideTo: 880, vol: 0.1 }); },
+                    power() {
+                        tone(220, 0.18, { type: 'sawtooth', slideTo: 440, vol: 0.11 });
+                        setTimeout(() => tone(440, 0.15, { type: 'sawtooth', slideTo: 660, vol: 0.09 }), 90);
+                    },
+                    hit() {
+                        tone(180, 0.28, { type: 'sawtooth', slideTo: 60, vol: 0.14 });
+                        noiseBurst(0.15, 0.1);
+                    },
+                    levelClear() {
+                        [523, 659, 784, 1046].forEach((f, i) => {
+                            setTimeout(() => tone(f, 0.16, { type: 'triangle', vol: 0.1 }), i * 95);
+                        });
+                    },
+                    gameOver() {
+                        [392, 330, 262, 196].forEach((f, i) => {
+                            setTimeout(() => tone(f, 0.3, { type: 'sawtooth', vol: 0.1 }), i * 160);
+                        });
+                    },
+                    win() {
+                        [523, 659, 784, 1046, 1318].forEach((f, i) => {
+                            setTimeout(() => tone(f, 0.22, { type: 'square', vol: 0.09 }), i * 110);
+                        });
+                    },
+                    doorUnlock() { tone(300, 0.12, { type: 'triangle', slideTo: 700, vol: 0.09 }); },
+
+                    startMusic() {
+                        this.stopMusic();
+                        if (!enabled) return;
+                        ensureCtx();
+                        const bassPattern = [130.8, 0, 164.8, 0, 130.8, 0, 196.0, 0];
+                        musicStep = 0;
+                        musicTimer = setInterval(() => {
+                            if (!enabled) return;
+                            const note = bassPattern[musicStep % bassPattern.length];
+                            if (note) tone(note, 0.18, { type: 'triangle', vol: 0.05 });
+                            if (musicStep % 2 === 0) noiseBurst(0.04, 0.03); // guiro-like tick
+                            musicStep++;
+                        }, 230);
+                    },
+                    stopMusic() {
+                        if (musicTimer) { clearInterval(musicTimer); musicTimer = null; }
+                    }
+                };
+            })();
 
             /* ============================================================
                1. DATOS: PERSONAJES Y NIVELES
@@ -631,7 +830,9 @@
 
             const screens = {
                 menu: document.getElementById('screen-menu'),
+                instructions: document.getElementById('screen-instructions'),
                 select: document.getElementById('screen-select'),
+                levelintro: document.getElementById('screen-levelintro'),
                 lifelost: document.getElementById('screen-lifelost'),
                 levelcomplete: document.getElementById('screen-levelcomplete'),
                 gameover: document.getElementById('screen-gameover'),
@@ -850,15 +1051,34 @@
                 showScreen('select');
             }
 
+            function showLevelIntro() {
+                const lvl = LEVELS[state.levelIndex];
+                document.getElementById('levelintro-title').textContent =
+                    'Escenario ' + (state.levelIndex + 1) + '/5 — ' + lvl.name;
+                document.getElementById('levelintro-goal').textContent =
+                    '🎯 Recolecta ' + lvl.required + ' de ' + lvl.itemCount + ' notas ♪ para abrir la puerta de salida (arriba en el centro).';
+                document.getElementById('levelintro-danger').textContent =
+                    lvl.boss
+                        ? '⚠️ Cuidado: en este escenario hay un jefe que te persigue sin parar.'
+                        : '⚠️ Evita a los viejillos cumbiancheros que patrullan y rebotan por la pista.';
+                document.getElementById('levelintro-power').textContent =
+                    '⭐ Tu poder: ' + state.selectedChar.power.name + ' — ' + state.selectedChar.power.desc + ' (tecla Espacio).';
+                showScreen('levelintro');
+            }
+
             function beginPlaying() {
+                Audio1.startMusic();
                 showScreen('playing');
                 state.lastTime = performance.now();
                 requestAnimationFrame(loop);
             }
 
             function loseLife() {
+                Audio1.hit();
+                Audio1.stopMusic();
                 state.lives -= 1;
                 if (state.lives <= 0) {
+                    Audio1.gameOver();
                     document.getElementById('gameover-score').textContent = state.score + ' pts';
                     showScreen('gameover');
                     return;
@@ -872,6 +1092,8 @@
             }
 
             function onLevelClear() {
+                Audio1.stopMusic();
+                Audio1.levelClear();
                 const lvl = LEVELS[state.levelIndex];
                 const bonus = 200 * (state.levelIndex + 1);
                 state.score += bonus;
@@ -883,6 +1105,7 @@
             function onNextLevel() {
                 state.levelIndex += 1;
                 if (state.levelIndex >= LEVELS.length) {
+                    Audio1.win();
                     document.getElementById('win-score').textContent = state.score + ' pts';
                     showScreen('win');
                     return;
@@ -895,6 +1118,7 @@
             function activatePower() {
                 const now = performance.now();
                 if (now < state.powerCooldownUntil) return;
+                Audio1.power();
                 const power = state.selectedChar.power;
                 state.powerCooldownUntil = now + power.cooldown;
                 state.powerActiveUntil = now + power.duration;
@@ -1003,11 +1227,14 @@
                         it.collected = true;
                         state.collectedCount++;
                         state.score += 50 * pointMult;
+                        Audio1.collect();
                     }
                 });
 
                 const lvl = LEVELS[state.levelIndex];
+                const wasUnlocked = state.exit.unlocked;
                 state.exit.unlocked = state.collectedCount >= lvl.required;
+                if (state.exit.unlocked && !wasUnlocked) Audio1.doorUnlock();
 
                 // colisión salida
                 if (state.exit.unlocked && dist(p.x, p.y, state.exit.x, state.exit.y) < p.r + state.exit.r) {
@@ -1057,6 +1284,12 @@
 
             function drawExit() {
                 const ex = state.exit;
+                ctx.save();
+                ctx.fillStyle = ex.unlocked ? '#F7B32B' : 'rgba(255,255,255,0.5)';
+                ctx.font = 'bold 11px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('SALIDA', ex.x, ex.y - ex.r - 8);
+                ctx.restore();
                 ctx.save();
                 ctx.translate(ex.x, ex.y);
                 const pulse = 1 + Math.sin(performance.now() / 180) * 0.08;
@@ -1220,15 +1453,52 @@
             /* ============================================================
                11. BOTONES DE PANTALLA
             ============================================================ */
-            document.getElementById('btn-play').addEventListener('click', startRun);
+            document.getElementById('btn-play').addEventListener('click', () => {
+                Audio1.unlock(); Audio1.click();
+                startRun();
+            });
+            document.getElementById('btn-howto').addEventListener('click', () => {
+                Audio1.unlock(); Audio1.click();
+                showScreen('instructions');
+            });
+            document.getElementById('btn-howto-back').addEventListener('click', () => {
+                Audio1.click();
+                showScreen('menu');
+            });
             document.getElementById('btn-start').addEventListener('click', () => {
                 if (!state.selectedChar) return;
+                Audio1.click();
+                showLevelIntro();
+            });
+            document.getElementById('btn-levelintro-start').addEventListener('click', () => {
+                Audio1.click();
                 beginPlaying();
             });
-            document.getElementById('btn-continue').addEventListener('click', onLifeLostContinue);
-            document.getElementById('btn-next-level').addEventListener('click', onNextLevel);
-            document.getElementById('btn-retry').addEventListener('click', startRun);
-            document.getElementById('btn-play-again').addEventListener('click', startRun);
+            document.getElementById('btn-continue').addEventListener('click', () => {
+                Audio1.click();
+                onLifeLostContinue();
+            });
+            document.getElementById('btn-next-level').addEventListener('click', () => {
+                Audio1.click();
+                onNextLevel();
+            });
+            document.getElementById('btn-retry').addEventListener('click', () => {
+                Audio1.click();
+                startRun();
+            });
+            document.getElementById('btn-play-again').addEventListener('click', () => {
+                Audio1.click();
+                startRun();
+            });
+
+            const soundToggleBtn = document.getElementById('sound-toggle');
+            soundToggleBtn.addEventListener('click', () => {
+                Audio1.unlock();
+                const next = !Audio1.isEnabled();
+                Audio1.setEnabled(next);
+                soundToggleBtn.textContent = next ? '🔊' : '🔇';
+                if (next && state.screen === 'playing') Audio1.startMusic();
+            });
 
             /* estado inicial */
             showScreen('menu');
