@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Los Hijos de Tencha — Aventura Cumbianchera</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Poppins:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --night: #1B0F2E;
+            --night-2: #2A1840;
+            --tangerine: #F2600C;
+            --teal: #0FADA0;
+            --gold: #F7B32B;
+            --cream: #FFF3E0;
+            --danger: #E63946;
+            --purple-deep: #6b1f3a;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--night);
+            color: var(--cream);
+            font-family: 'Poppins', sans-serif;
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .display {
+            font-family: 'Bungee', cursive;
+            letter-spacing: 0.5px;
+        }
+
+        #game-root {
+            position: relative;
+            width: 100%;
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 12px;
+        }
+
+        /* ---------- Papel picado bunting ---------- */
+        .bunting {
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+            height: 26px;
+            margin-bottom: -6px;
+            overflow: hidden;
+        }
+
+        .bunting .flag {
+            width: 30px;
+            height: 22px;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            flex-shrink: 0;
+        }
+
+        .bunting .flag:nth-child(5n+1) {
+            background: var(--tangerine);
+        }
+
+        .bunting .flag:nth-child(5n+2) {
+            background: var(--teal);
+        }
+
+        .bunting .flag:nth-child(5n+3) {
+            background: var(--gold);
+        }
+
+        .bunting .flag:nth-child(5n+4) {
+            background: var(--danger);
+        }
+
+        .bunting .flag:nth-child(5n+5) {
+            background: #9C6ADE;
+        }
+
+        .game-frame {
+            position: relative;
+            background: linear-gradient(180deg, var(--night-2), var(--night));
+            border: 3px solid var(--tangerine);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            background: var(--night-2);
+            touch-action: none;
+        }
+
+        /* ---------- Screens (overlays) ---------- */
+        .screen {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            background: radial-gradient(circle at 50% 20%, rgba(242, 96, 12, 0.25), rgba(27, 15, 46, 0.96) 70%);
+            gap: 14px;
+        }
+
+        .screen.hidden {
+            display: none;
+        }
+
+        .logo-img {
+            max-width: 220px;
+            width: 55%;
+            filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.5));
+        }
+
+        .title-main {
+            font-size: clamp(22px, 5vw, 36px);
+            color: var(--gold);
+            text-shadow: 3px 3px 0 var(--purple-deep);
+            margin: 0;
+        }
+
+        .subtitle {
+            font-size: clamp(13px, 2.6vw, 16px);
+            color: var(--cream);
+            opacity: 0.85;
+            margin: -8px 0 4px;
+        }
+
+        .diablito-img {
+            width: 74px;
+            animation: bounce 1.4s ease-in-out infinite;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(-4deg);
+            }
+
+            50% {
+                transform: translateY(-14px) rotate(4deg);
+            }
+        }
+
+        .btn {
+            font-family: 'Bungee', cursive;
+            font-size: 15px;
+            padding: 14px 30px;
+            border-radius: 40px;
+            border: none;
+            background: linear-gradient(180deg, var(--tangerine), #c94a08);
+            color: var(--cream);
+            cursor: pointer;
+            box-shadow: 0 6px 0 #8a3405, 0 10px 20px rgba(0, 0, 0, 0.4);
+            transition: transform .08s ease;
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #8a3405;
+        }
+
+        .btn.secondary {
+            background: linear-gradient(180deg, var(--teal), #0a7c73);
+            box-shadow: 0 6px 0 #075450, 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn.secondary:active {
+            box-shadow: 0 2px 0 #075450;
+        }
+
+        .btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* ---------- Character select ---------- */
+        .char-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 720px;
+        }
+
+        @media (max-width: 640px) {
+            .char-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .char-card {
+            background: rgba(255, 255, 255, 0.06);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 14px;
+            padding: 10px 6px 12px;
+            cursor: pointer;
+            transition: all .15s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .char-card:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .char-card.selected {
+            border-color: var(--gold);
+            background: rgba(247, 179, 43, 0.18);
+            box-shadow: 0 0 0 2px var(--gold), 0 8px 18px rgba(0, 0, 0, 0.4);
+        }
+
+        .char-card canvas {
+            width: 64px;
+            height: 64px;
+        }
+
+        .char-name {
+            font-weight: 700;
+            font-size: 12.5px;
+            margin: 0;
+        }
+
+        .char-instrument {
+            font-size: 10.5px;
+            opacity: 0.75;
+            margin: 0;
+        }
+
+        .char-power {
+            font-size: 9.5px;
+            color: var(--teal);
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .power-detail {
+            min-height: 40px;
+            font-size: 13px;
+            color: var(--gold);
+            max-width: 500px;
+        }
+
+        /* ---------- HUD ---------- */
+        #hud {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 10px 12px;
+            pointer-events: none;
+            font-size: 13px;
+            z-index: 5;
+        }
+
+        #hud.hidden {
+            display: none;
+        }
+
+        .hud-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            padding: 6px 10px;
+            backdrop-filter: blur(2px);
+        }
+
+        #hearts span {
+            font-size: 16px;
+            margin-right: 1px;
+        }
+
+        #hearts span.lost {
+            opacity: 0.25;
+        }
+
+        #level-label {
+            font-family: 'Bungee', cursive;
+            font-size: 11px;
+            color: var(--gold);
+        }
+
+        #score-box {
+            text-align: right;
+            font-weight: 700;
+        }
+
+        #items-box {
+            text-align: right;
+            font-size: 11.5px;
+            opacity: 0.85;
+        }
+
+        #power-bar-wrap {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 14px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            z-index: 5;
+        }
+
+        #power-bar-wrap.hidden {
+            display: none;
+        }
+
+        #power-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--teal), var(--gold));
+            width: 0%;
+        }
+
+        #power-label {
+            position: absolute;
+            bottom: 26px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            opacity: 0.85;
+            white-space: nowrap;
+        }
+
+        /* ---------- touch controls ---------- */
+        #touch-controls {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            display: none;
+            z-index: 6;
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            #touch-controls.active {
+                display: block;
+            }
+        }
+
+        .dpad {
+            position: absolute;
+            left: 14px;
+            bottom: 14px;
+            width: 120px;
+            height: 120px;
+            pointer-events: auto;
+        }
+
+        .dpad button {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            color: var(--cream);
+            font-size: 16px;
+        }
+
+        .dpad .up {
+            top: 0;
+            left: 40px;
+        }
+
+        .dpad .down {
+            bottom: 0;
+            left: 40px;
+        }
+
+        .dpad .left {
+            top: 40px;
+            left: 0;
+        }
+
+        .dpad .right {
+            top: 40px;
+            right: 0;
+        }
+
+        .power-btn-touch {
+            position: absolute;
+            right: 20px;
+            bottom: 24px;
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--gold), var(--tangerine));
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            color: var(--night);
+            font-family: 'Bungee', cursive;
+            font-size: 10px;
+            pointer-events: auto;
+        }
+
+        .msg-big {
+            font-family: 'Bungee', cursive;
+            font-size: clamp(20px, 5.5vw, 32px);
+            color: var(--danger);
+            text-shadow: 3px 3px 0 #4a0d14;
+            line-height: 1.3;
+        }
+
+        .final-score {
+            font-family: 'Bungee', cursive;
+            font-size: clamp(28px, 7vw, 46px);
+            color: var(--gold);
+        }
+
+        .footer-note {
+            font-size: 10.5px;
+            opacity: 0.5;
+            margin-top: 14px;
+        }
+
+        .hint {
+            font-size: 12px;
+            opacity: 0.7;
+            max-width: 480px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="game-root">
+        <div class="bunting" id="bunting"></div>
+
+        <div class="game-frame" id="game-frame">
+            <canvas id="game-canvas" width="900" height="560"></canvas>
+
+            <!-- HUD -->
+            <div id="hud" class="hidden">
+                <div>
+                    <div class="hud-box" id="hearts"></div>
+                    <div class="hud-box" id="level-label" style="margin-top:6px;">Nivel</div>
+                </div>
+                <div>
+                    <div class="hud-box" id="score-box">0 pts</div>
+                    <div class="hud-box" id="items-box" style="margin-top:6px;">Ítems: 0/0</div>
+                </div>
+            </div>
+            <div id="power-label"></div>
+            <div id="power-bar-wrap" class="hidden">
+                <div id="power-bar-fill"></div>
+            </div>
+
+            <!-- Touch controls -->
+            <div id="touch-controls">
+                <div class="dpad">
+                    <button class="up" id="btn-up">▲</button>
+                    <button class="down" id="btn-down">▼</button>
+                    <button class="left" id="btn-left">◀</button>
+                    <button class="right" id="btn-right">▶</button>
+                </div>
+                <button class="power-btn-touch" id="btn-power">PODER</button>
+            </div>
+
+            <!-- MENU -->
+            <div class="screen" id="screen-menu">
+                <img class="logo-img" src="/img/logo.webp" alt="Los Hijos de Tencha"
+                    onerror="this.style.display='none'">
+                <h1 class="title-main">LOS HIJOS DE TENCHA</h1>
+                <p class="subtitle">Aventura Cumbianchera</p>
+                <img class="diablito-img" src="img/menu-icono.webp" alt="Diablito" onerror="this.style.display='none'">
+                <button class="btn" id="btn-play">▶ JUGAR</button>
+                <p class="footer-note">5 vidas · 5 escenarios · sube el volumen 🎺</p>
+            </div>
+
+            <!-- CHARACTER SELECT -->
+            <div class="screen hidden" id="screen-select">
+                <h2 class="title-main" style="font-size:20px;" id="select-title">ELIGE TU PERSONAJE</h2>
+                <div class="char-grid" id="char-grid"></div>
+                <p class="power-detail" id="power-detail">Selecciona a un integrante de la banda.</p>
+                <button class="btn" id="btn-start" disabled>COMENZAR AVENTURA</button>
+            </div>
+
+            <!-- LIFE LOST -->
+            <div class="screen hidden" id="screen-lifelost">
+                <p class="msg-big">¡UNOS VIEJILLOS<br>CUMBIANCHEROS!!!</p>
+                <p class="hint">Perdiste una vida. Elige de nuevo tu personaje para seguir la fiesta.</p>
+                <button class="btn secondary" id="btn-continue">ELEGIR PERSONAJE</button>
+            </div>
+
+            <!-- LEVEL COMPLETE -->
+            <div class="screen hidden" id="screen-levelcomplete">
+                <h2 class="title-main" style="font-size:22px; color:var(--teal);">¡ESCENARIO SUPERADO!</h2>
+                <p class="hint" id="levelcomplete-text"></p>
+                <button class="btn" id="btn-next-level">SIGUIENTE ESCENARIO ▶</button>
+            </div>
+
+            <!-- GAME OVER -->
+            <div class="screen hidden" id="screen-gameover">
+                <p class="msg-big">SE ACABÓ<br>LA FIESTA</p>
+                <p class="hint">Los viejillos cumbiancheros ganaron esta vez...</p>
+                <p class="final-score" id="gameover-score">0 pts</p>
+                <button class="btn" id="btn-retry">REINTENTAR</button>
+            </div>
+
+            <!-- WIN -->
+            <div class="screen hidden" id="screen-win">
+                <img class="diablito-img" src="img/menu-icono.webp" alt="Diablito" style="width:60px;"
+                    onerror="this.style.display='none'">
+                <h2 class="title-main" style="color:var(--gold);">¡SE ARMÓ LA CUMBIA!</h2>
+                <p class="hint">Los Hijos de Tencha sobrevivieron los 5 escenarios. ¡Grande la banda!</p>
+                <p class="final-score" id="win-score">0 pts</p>
+                <button class="btn" id="btn-play-again">JUGAR OTRA VEZ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            "use strict";
+
+            /* ============================================================
+               0. UTILIDADES
+            ============================================================ */
+            function mulberry32(seed) {
+                return function () {
+                    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+                    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+                    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+                    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+                };
+            }
+            function dist(ax, ay, bx, by) { return Math.hypot(ax - bx, ay - by); }
+            function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+            /* ============================================================
+               1. DATOS: PERSONAJES Y NIVELES
+            ============================================================ */
+            const CHARACTERS = [
+                {
+                    id: 'tencho', name: 'Tencho Morales', instrument: 'Batería', bodyColor: '#c9563d', hatColor: '#1c2b4a', accessory: 'beanie',
+                    power: { name: 'Redoble Sísmico', desc: 'Aturde a los enemigos cercanos por 2s', cooldown: 9000, duration: 2000, type: 'stun', radius: 230 }
+                },
+                {
+                    id: 'tavo', name: 'Tavo Ramirez', instrument: 'Bajo', bodyColor: '#3c6e71', hatColor: '#e9e2d0', accessory: 'fedora',
+                    power: { name: 'Groove Bajo', desc: 'Dash veloz e invulnerable', cooldown: 6000, duration: 420, type: 'dash', speedMult: 5.5 }
+                },
+                {
+                    id: 'mike', name: 'Mike Aguilar', instrument: 'Voz', bodyColor: '#2e7d32', hatColor: '#c62828', accessory: 'bucket',
+                    power: { name: 'Grito Cumbianchero', desc: 'Ralentiza a todos los enemigos', cooldown: 10000, duration: 3000, type: 'slow', factor: 0.35 }
+                },
+                {
+                    id: 'chepe', name: 'Chepe Castro', instrument: 'Acordeón', bodyColor: '#6d4c41', hatColor: '#111111', accessory: 'bowler',
+                    power: { name: 'Fuelle Mágico', desc: 'Empuja a los enemigos cercanos', cooldown: 8000, duration: 1, type: 'push', radius: 210, force: 280 }
+                },
+                {
+                    id: 'billleye', name: 'Billleye', instrument: 'Percusión menor', bodyColor: '#8e24aa', hatColor: null, accessory: 'shades',
+                    power: { name: 'Oído de Cumbia', desc: 'Revela ítems y duplica puntos', cooldown: 11000, duration: 5000, type: 'reveal' }
+                },
+            ];
+
+            const LEVELS = [
+                {
+                    name: 'El Patio', bg: ['#3a2145', '#241130'], required: 3, itemCount: 5,
+                    enemies: [{ type: 'patrol', axis: 'x', speed: 85 }, { type: 'patrol', axis: 'y', speed: 80 }]
+                },
+                {
+                    name: 'La Plaza del Pueblo', bg: ['#452a4f', '#28132f'], required: 4, itemCount: 6,
+                    enemies: [{ type: 'patrol', axis: 'x', speed: 105 }, { type: 'patrol', axis: 'y', speed: 100 }, { type: 'bounce', speed: 120 }]
+                },
+                {
+                    name: 'La Calle Central', bg: ['#4f2f4d', '#2b1330'], required: 5, itemCount: 7,
+                    enemies: [{ type: 'patrol', axis: 'x', speed: 125 }, { type: 'patrol', axis: 'y', speed: 120 }, { type: 'bounce', speed: 140 }, { type: 'chase', speed: 70 }]
+                },
+                {
+                    name: 'Backstage del Festival', bg: ['#5a2f45', '#2f1330'], required: 6, itemCount: 8,
+                    enemies: [{ type: 'patrol', axis: 'x', speed: 145 }, { type: 'patrol', axis: 'y', speed: 135 }, { type: 'bounce', speed: 150 }, { type: 'bounce', speed: 155 }, { type: 'chase', speed: 85 }, { type: 'chase', speed: 82 }]
+                },
+                {
+                    name: 'La Tarima Final', bg: ['#6b1f3a', '#33101f'], required: 6, itemCount: 8, boss: true,
+                    enemies: [{ type: 'patrol', axis: 'x', speed: 150 }, { type: 'bounce', speed: 165 }, { type: 'bounce', speed: 170 }, { type: 'boss', speed: 95 }]
+                },
+            ];
+
+            const CANVAS_W = 900, CANVAS_H = 560;
+            const PLAYER_R = 18, ITEM_R = 11;
+            const MARGIN = 40;
+
+            /* ============================================================
+               2. ESTADO DEL JUEGO
+            ============================================================ */
+            const state = {
+                screen: 'menu',      // menu | select | playing | lifelost | levelcomplete | gameover | win
+                lives: 5,
+                score: 0,
+                levelIndex: 0,
+                selectedChar: null,
+                keys: {},
+                player: null,
+                enemies: [],
+                items: [],
+                powerCooldownUntil: 0,
+                powerActiveUntil: 0,
+                lastTime: 0,
+                dashDir: { x: 0, y: 0 },
+            };
+
+            /* ============================================================
+               3. DOM REFERENCES
+            ============================================================ */
+            const canvas = document.getElementById('game-canvas');
+            const ctx = canvas.getContext('2d');
+
+            const screens = {
+                menu: document.getElementById('screen-menu'),
+                select: document.getElementById('screen-select'),
+                lifelost: document.getElementById('screen-lifelost'),
+                levelcomplete: document.getElementById('screen-levelcomplete'),
+                gameover: document.getElementById('screen-gameover'),
+                win: document.getElementById('screen-win'),
+            };
+            const hud = document.getElementById('hud');
+            const heartsEl = document.getElementById('hearts');
+            const levelLabelEl = document.getElementById('level-label');
+            const scoreBoxEl = document.getElementById('score-box');
+            const itemsBoxEl = document.getElementById('items-box');
+            const powerBarWrap = document.getElementById('power-bar-wrap');
+            const powerBarFill = document.getElementById('power-bar-fill');
+            const powerLabelEl = document.getElementById('power-label');
+            const touchControls = document.getElementById('touch-controls');
+
+            function showScreen(name) {
+                Object.values(screens).forEach(s => s.classList.add('hidden'));
+                state.screen = name;
+                if (screens[name]) screens[name].classList.remove('hidden');
+                // el HUD solo se muestra mientras se está jugando
+                hud.classList.toggle('hidden', name !== 'playing');
+                powerBarWrap.classList.toggle('hidden', name !== 'playing');
+                powerLabelEl.style.display = name === 'playing' ? 'block' : 'none';
+                touchControls.classList.toggle('active', name === 'playing');
+            }
+
+            /* ============================================================
+               4. BUNTING (papel picado) decorativo
+            ============================================================ */
+            (function buildBunting() {
+                const wrap = document.getElementById('bunting');
+                for (let i = 0; i < 22; i++) {
+                    const f = document.createElement('div');
+                    f.className = 'flag';
+                    wrap.appendChild(f);
+                }
+            })();
+
+            /* ============================================================
+               5. DIBUJO DE PERSONAJES (mini preview en selección)
+            ============================================================ */
+            function drawCharacterSprite(g, cx, cy, scale, ch, opts) {
+                opts = opts || {};
+                g.save();
+                g.translate(cx, cy);
+                g.scale(scale, scale);
+
+                // sombra
+                g.beginPath();
+                g.ellipse(0, 22, 16, 5, 0, 0, Math.PI * 2);
+                g.fillStyle = 'rgba(0,0,0,0.35)';
+                g.fill();
+
+                // cuerpo
+                g.beginPath();
+                g.arc(0, 0, 16, 0, Math.PI * 2);
+                g.fillStyle = ch.bodyColor;
+                g.fill();
+                g.lineWidth = 2;
+                g.strokeStyle = 'rgba(0,0,0,0.25)';
+                g.stroke();
+
+                // gafas de sol (todos las llevan, como en la foto)
+                g.fillStyle = 'rgba(20,20,25,0.9)';
+                g.fillRect(-9, -3, 7, 4);
+                g.fillRect(2, -3, 7, 4);
+                g.fillRect(-2, -2, 4, 2);
+
+                // accesorio de cabeza
+                g.save();
+                g.translate(0, -13);
+                switch (ch.accessory) {
+                    case 'beanie':
+                        g.beginPath();
+                        g.moveTo(-13, 4); g.quadraticCurveTo(0, -20, 13, 4); g.closePath();
+                        g.fillStyle = ch.hatColor; g.fill();
+                        break;
+                    case 'fedora':
+                        g.fillStyle = ch.hatColor;
+                        g.beginPath(); g.ellipse(0, 4, 15, 4, 0, 0, Math.PI * 2); g.fill();
+                        g.beginPath(); g.roundRect ? g.roundRect(-8, -8, 16, 10, 3) : g.rect(-8, -8, 16, 10); g.fill();
+                        break;
+                    case 'bucket':
+                        g.fillStyle = ch.hatColor;
+                        g.beginPath(); g.arc(0, -2, 12, Math.PI, 0); g.fill();
+                        g.fillRect(-13, -2, 26, 5);
+                        break;
+                    case 'bowler':
+                        g.fillStyle = ch.hatColor;
+                        g.beginPath(); g.arc(0, -4, 11, Math.PI, 0); g.fill();
+                        g.fillRect(-13, -4, 26, 4);
+                        break;
+                    case 'shades':
+                        // sin sombrero, pelo simple
+                        g.fillStyle = '#2b2b2b';
+                        g.beginPath(); g.arc(0, -2, 13, Math.PI * 0.9, Math.PI * 2.1); g.fill();
+                        break;
+                }
+                g.restore();
+
+                g.restore();
+            }
+
+            function renderSelectGrid() {
+                const grid = document.getElementById('char-grid');
+                grid.innerHTML = '';
+                CHARACTERS.forEach((ch) => {
+                    const card = document.createElement('div');
+                    card.className = 'char-card';
+                    card.dataset.id = ch.id;
+
+                    const cvs = document.createElement('canvas');
+                    cvs.width = 64; cvs.height = 64;
+                    const g = cvs.getContext('2d');
+                    drawCharacterSprite(g, 32, 30, 1.35, ch);
+
+                    const nm = document.createElement('p'); nm.className = 'char-name'; nm.textContent = ch.name;
+                    const inst = document.createElement('p'); inst.className = 'char-instrument'; inst.textContent = ch.instrument;
+                    const pw = document.createElement('p'); pw.className = 'char-power'; pw.textContent = '★ ' + ch.power.name;
+
+                    card.appendChild(cvs); card.appendChild(nm); card.appendChild(inst); card.appendChild(pw);
+                    card.addEventListener('click', () => selectCharacter(ch));
+                    grid.appendChild(card);
+                });
+            }
+
+            function selectCharacter(ch) {
+                state.selectedChar = ch;
+                document.querySelectorAll('.char-card').forEach(c => {
+                    c.classList.toggle('selected', c.dataset.id === ch.id);
+                });
+                document.getElementById('power-detail').textContent =
+                    ch.name + ' — ' + ch.instrument + ' · Poder: ' + ch.power.name + ': ' + ch.power.desc;
+                document.getElementById('btn-start').disabled = false;
+            }
+
+            /* ============================================================
+               6. GENERACIÓN DE NIVEL (posiciones deterministas por semilla)
+            ============================================================ */
+            function buildLevel(levelIndex) {
+                const lvl = LEVELS[levelIndex];
+                const rng = mulberry32(1000 + levelIndex * 77);
+
+                const playAreaX0 = MARGIN, playAreaX1 = CANVAS_W - MARGIN;
+                const playAreaY0 = MARGIN + 30, playAreaY1 = CANVAS_H - MARGIN - 20;
+
+                // jugador arranca abajo-centro
+                state.player = {
+                    x: CANVAS_W / 2, y: playAreaY1 - 20,
+                    r: PLAYER_R, invulnUntil: 0,
+                };
+
+                // items
+                state.items = [];
+                for (let i = 0; i < lvl.itemCount; i++) {
+                    let x, y, tries = 0;
+                    do {
+                        x = playAreaX0 + 30 + rng() * (playAreaX1 - playAreaX0 - 60);
+                        y = playAreaY0 + 20 + rng() * (playAreaY1 - playAreaY0 - 100);
+                        tries++;
+                    } while (dist(x, y, state.player.x, state.player.y) < 90 && tries < 20);
+                    state.items.push({ x, y, r: ITEM_R, collected: false, id: i, hidden: lvl.boss || i % 3 === 2 ? rng() < 0.35 : false });
+                }
+
+                // enemigos
+                state.enemies = [];
+                lvl.enemies.forEach((spec, idx) => {
+                    const ex = playAreaX0 + 40 + rng() * (playAreaX1 - playAreaX0 - 80);
+                    const ey = playAreaY0 + 30 + rng() * (playAreaY1 - playAreaY0 - 100);
+                    const e = {
+                        type: spec.type,
+                        x: ex, y: ey,
+                        baseSpeed: spec.speed,
+                        r: spec.type === 'boss' ? 26 : 16,
+                        stunUntil: 0,
+                        dir: rng() * Math.PI * 2,
+                    };
+                    if (spec.type === 'patrol') {
+                        e.axis = spec.axis;
+                        e.rangeMin = spec.axis === 'x' ? playAreaX0 + 30 : playAreaY0 + 20;
+                        e.rangeMax = spec.axis === 'x' ? playAreaX1 - 30 : playAreaY1 - 20;
+                        e.sign = 1;
+                    }
+                    if (spec.type === 'bounce' || spec.type === 'boss') {
+                        e.vx = Math.cos(e.dir) * spec.speed;
+                        e.vy = Math.sin(e.dir) * spec.speed;
+                    }
+                    state.enemies.push(e);
+                });
+
+                state.collectedCount = 0;
+                state.exit = { x: CANVAS_W / 2, y: playAreaY0 - 6, r: 22, unlocked: false };
+                state.playArea = { x0: playAreaX0, x1: playAreaX1, y0: playAreaY0, y1: playAreaY1 };
+                state.powerCooldownUntil = 0;
+                state.powerActiveUntil = 0;
+            }
+
+            /* ============================================================
+               7. LÓGICA DE JUEGO (update)
+            ============================================================ */
+            function startRun() {
+                state.lives = 5;
+                state.score = 0;
+                state.levelIndex = 0;
+                buildLevel(0);
+                goToCharacterSelectForLevel();
+            }
+
+            function goToCharacterSelectForLevel() {
+                renderSelectGrid();
+                state.selectedChar = null;
+                document.getElementById('btn-start').disabled = true;
+                document.getElementById('power-detail').textContent = 'Selecciona a un integrante de la banda.';
+                document.getElementById('select-title').textContent =
+                    'ELIGE TU PERSONAJE — ' + LEVELS[state.levelIndex].name;
+                showScreen('select');
+            }
+
+            function beginPlaying() {
+                showScreen('playing');
+                state.lastTime = performance.now();
+                requestAnimationFrame(loop);
+            }
+
+            function loseLife() {
+                state.lives -= 1;
+                if (state.lives <= 0) {
+                    document.getElementById('gameover-score').textContent = state.score + ' pts';
+                    showScreen('gameover');
+                    return;
+                }
+                showScreen('lifelost');
+            }
+
+            function onLifeLostContinue() {
+                buildLevel(state.levelIndex); // reinicia el intento del mismo escenario
+                goToCharacterSelectForLevel();
+            }
+
+            function onLevelClear() {
+                const lvl = LEVELS[state.levelIndex];
+                const bonus = 200 * (state.levelIndex + 1);
+                state.score += bonus;
+                document.getElementById('levelcomplete-text').textContent =
+                    '¡' + lvl.name + ' superado! +' + bonus + ' pts de bono.';
+                showScreen('levelcomplete');
+            }
+
+            function onNextLevel() {
+                state.levelIndex += 1;
+                if (state.levelIndex >= LEVELS.length) {
+                    document.getElementById('win-score').textContent = state.score + ' pts';
+                    showScreen('win');
+                    return;
+                }
+                buildLevel(state.levelIndex);
+                goToCharacterSelectForLevel();
+            }
+
+            /* ---- Poderes ---- */
+            function activatePower() {
+                const now = performance.now();
+                if (now < state.powerCooldownUntil) return;
+                const power = state.selectedChar.power;
+                state.powerCooldownUntil = now + power.cooldown;
+                state.powerActiveUntil = now + power.duration;
+
+                if (power.type === 'stun') {
+                    state.enemies.forEach(e => {
+                        if (dist(e.x, e.y, state.player.x, state.player.y) < power.radius) {
+                            e.stunUntil = now + power.duration;
+                        }
+                    });
+                } else if (power.type === 'push') {
+                    state.enemies.forEach(e => {
+                        const d = dist(e.x, e.y, state.player.x, state.player.y);
+                        if (d < power.radius && d > 0.01) {
+                            const nx = (e.x - state.player.x) / d, ny = (e.y - state.player.y) / d;
+                            e.x += nx * power.force * 0.5;
+                            e.y += ny * power.force * 0.5;
+                            e.stunUntil = now + 600;
+                        }
+                    });
+                } else if (power.type === 'dash') {
+                    let dx = 0, dy = 0;
+                    if (state.keys['ArrowUp'] || state.keys['w']) dy -= 1;
+                    if (state.keys['ArrowDown'] || state.keys['s']) dy += 1;
+                    if (state.keys['ArrowLeft'] || state.keys['a']) dx -= 1;
+                    if (state.keys['ArrowRight'] || state.keys['d']) dx += 1;
+                    if (dx === 0 && dy === 0) { dy = -1; }
+                    const len = Math.hypot(dx, dy) || 1;
+                    state.dashDir = { x: dx / len, y: dy / len };
+                    state.player.invulnUntil = now + power.duration + 100;
+                } else if (power.type === 'slow') {
+                    // se evalúa en tiempo real via powerActiveUntil
+                } else if (power.type === 'reveal') {
+                    state.items.forEach(it => it.hidden = false);
+                }
+            }
+
+            function isSlowActive() {
+                return state.selectedChar && state.selectedChar.power.type === 'slow' && performance.now() < state.powerActiveUntil;
+            }
+            function isDashActive() {
+                return state.selectedChar && state.selectedChar.power.type === 'dash' && performance.now() < state.powerActiveUntil;
+            }
+            function isRevealActive() {
+                return state.selectedChar && state.selectedChar.power.type === 'reveal' && performance.now() < state.powerActiveUntil;
+            }
+
+            /* ---- Update loop ---- */
+            function update(dt) {
+                const now = performance.now();
+                const p = state.player;
+                const pa = state.playArea;
+
+                // movimiento jugador
+                let dx = 0, dy = 0;
+                if (state.keys['ArrowUp'] || state.keys['w']) dy -= 1;
+                if (state.keys['ArrowDown'] || state.keys['s']) dy += 1;
+                if (state.keys['ArrowLeft'] || state.keys['a']) dx -= 1;
+                if (state.keys['ArrowRight'] || state.keys['d']) dx += 1;
+
+                let speed = 210;
+                if (isDashActive()) {
+                    speed = 210 * state.selectedChar.power.speedMult;
+                    dx = state.dashDir.x; dy = state.dashDir.y;
+                } else {
+                    const len = Math.hypot(dx, dy);
+                    if (len > 0) { dx /= len; dy /= len; }
+                }
+
+                p.x = clamp(p.x + dx * speed * dt, pa.x0 + p.r, pa.x1 - p.r);
+                p.y = clamp(p.y + dy * speed * dt, pa.y0 + p.r, pa.y1 - p.r);
+
+                // enemigos
+                const slowFactor = isSlowActive() ? state.selectedChar.power.factor : 1;
+                state.enemies.forEach(e => {
+                    if (now < e.stunUntil) return;
+                    const sp = e.baseSpeed * slowFactor;
+                    if (e.type === 'patrol') {
+                        if (e.axis === 'x') {
+                            e.x += sp * e.sign * dt;
+                            if (e.x < e.rangeMin || e.x > e.rangeMax) e.sign *= -1;
+                        } else {
+                            e.y += sp * e.sign * dt;
+                            if (e.y < e.rangeMin || e.y > e.rangeMax) e.sign *= -1;
+                        }
+                    } else if (e.type === 'bounce' || e.type === 'boss') {
+                        e.x += (e.vx / e.baseSpeed) * sp * dt;
+                        e.y += (e.vy / e.baseSpeed) * sp * dt;
+                        if (e.x < pa.x0 + e.r || e.x > pa.x1 - e.r) e.vx *= -1;
+                        if (e.y < pa.y0 + e.r || e.y > pa.y1 - e.r) e.vy *= -1;
+                        e.x = clamp(e.x, pa.x0 + e.r, pa.x1 - e.r);
+                        e.y = clamp(e.y, pa.y0 + e.r, pa.y1 - e.r);
+                    } else if (e.type === 'chase') {
+                        const ddx = p.x - e.x, ddy = p.y - e.y;
+                        const dd = Math.hypot(ddx, ddy) || 1;
+                        e.x += (ddx / dd) * sp * dt;
+                        e.y += (ddy / dd) * sp * dt;
+                    }
+                });
+
+                // colisión items
+                const pointMult = isRevealActive() ? 2 : 1;
+                state.items.forEach(it => {
+                    if (it.collected) return;
+                    if (dist(p.x, p.y, it.x, it.y) < p.r + it.r) {
+                        it.collected = true;
+                        state.collectedCount++;
+                        state.score += 50 * pointMult;
+                    }
+                });
+
+                const lvl = LEVELS[state.levelIndex];
+                state.exit.unlocked = state.collectedCount >= lvl.required;
+
+                // colisión salida
+                if (state.exit.unlocked && dist(p.x, p.y, state.exit.x, state.exit.y) < p.r + state.exit.r) {
+                    onLevelClear();
+                    return;
+                }
+
+                // colisión enemigos
+                if (now > p.invulnUntil) {
+                    for (const e of state.enemies) {
+                        if (now < e.stunUntil) continue;
+                        if (dist(p.x, p.y, e.x, e.y) < p.r + e.r - 4) {
+                            loseLife();
+                            return;
+                        }
+                    }
+                }
+            }
+
+            /* ============================================================
+               8. RENDER
+            ============================================================ */
+            function drawBackground() {
+                const lvl = LEVELS[state.levelIndex];
+                const g = ctx.createLinearGradient(0, 0, 0, CANVAS_H);
+                g.addColorStop(0, lvl.bg[0]);
+                g.addColorStop(1, lvl.bg[1]);
+                ctx.fillStyle = g;
+                ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+                // suelo tipo pista de baile: rejilla suave
+                ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+                ctx.lineWidth = 1;
+                for (let x = 0; x <= CANVAS_W; x += 40) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, CANVAS_H); ctx.stroke();
+                }
+                for (let y = 0; y <= CANVAS_H; y += 40) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(CANVAS_W, y); ctx.stroke();
+                }
+
+                // borde de área jugable
+                const pa = state.playArea;
+                ctx.strokeStyle = 'rgba(247,179,43,0.5)';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(pa.x0, pa.y0, pa.x1 - pa.x0, pa.y1 - pa.y0);
+            }
+
+            function drawExit() {
+                const ex = state.exit;
+                ctx.save();
+                ctx.translate(ex.x, ex.y);
+                const pulse = 1 + Math.sin(performance.now() / 180) * 0.08;
+                ctx.scale(pulse, pulse);
+                ctx.beginPath();
+                ctx.arc(0, 0, ex.r, 0, Math.PI * 2);
+                ctx.fillStyle = ex.unlocked ? 'rgba(15,173,160,0.85)' : 'rgba(120,120,120,0.4)';
+                ctx.fill();
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = ex.unlocked ? '#F7B32B' : 'rgba(255,255,255,0.3)';
+                ctx.stroke();
+                ctx.fillStyle = '#fff3e0';
+                ctx.font = '18px sans-serif';
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(ex.unlocked ? '🚪' : '🔒', 0, 2);
+                ctx.restore();
+            }
+
+            function drawItems() {
+                state.items.forEach(it => {
+                    if (it.collected) return;
+                    if (it.hidden && !isRevealActive()) return;
+                    ctx.save();
+                    ctx.translate(it.x, it.y);
+                    const bob = Math.sin(performance.now() / 220 + it.id) * 3;
+                    ctx.translate(0, bob);
+                    ctx.beginPath();
+                    ctx.arc(0, 0, it.r, 0, Math.PI * 2);
+                    ctx.fillStyle = '#F7B32B';
+                    ctx.shadowColor = '#F7B32B';
+                    ctx.shadowBlur = 10;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.fillStyle = '#3a2145';
+                    ctx.font = 'bold 13px sans-serif';
+                    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                    ctx.fillText('♪', 0, 1);
+                    ctx.restore();
+                });
+            }
+
+            function drawEnemies() {
+                const now = performance.now();
+                state.enemies.forEach(e => {
+                    const stunned = now < e.stunUntil;
+                    ctx.save();
+                    ctx.translate(e.x, e.y);
+                    ctx.beginPath();
+                    ctx.arc(0, 0, e.r, 0, Math.PI * 2);
+                    let color = '#e07a3f';
+                    if (e.type === 'bounce') color = '#0FADA0';
+                    if (e.type === 'chase') color = '#9C4DCC';
+                    if (e.type === 'boss') color = '#E63946';
+                    ctx.fillStyle = stunned ? 'rgba(180,180,180,0.6)' : color;
+                    ctx.fill();
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+                    ctx.stroke();
+                    // ojitos traviesos
+                    ctx.fillStyle = '#1B0F2E';
+                    ctx.beginPath(); ctx.arc(-e.r * 0.3, -2, 2.4, 0, Math.PI * 2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(e.r * 0.3, -2, 2.4, 0, Math.PI * 2); ctx.fill();
+                    if (stunned) {
+                        ctx.fillStyle = '#fff';
+                        ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
+                        ctx.fillText('💫', 0, -e.r - 8);
+                    }
+                    if (e.type === 'boss') {
+                        ctx.fillStyle = '#111';
+                        ctx.beginPath(); ctx.arc(0, -e.r - 2, e.r * 0.6, Math.PI, 0); ctx.fill();
+                    }
+                    ctx.restore();
+                });
+            }
+
+            function drawPlayer() {
+                const p = state.player;
+                const invuln = performance.now() < p.invulnUntil;
+                ctx.save();
+                if (invuln && Math.floor(performance.now() / 80) % 2 === 0) {
+                    ctx.globalAlpha = 0.45;
+                }
+                drawCharacterSprite(ctx, p.x, p.y, 1.15, state.selectedChar);
+                ctx.restore();
+            }
+
+            function renderPlaying() {
+                ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+                drawBackground();
+                drawExit();
+                drawItems();
+                drawEnemies();
+                drawPlayer();
+            }
+
+            function updateHUD() {
+                heartsEl.innerHTML = '';
+                for (let i = 0; i < 5; i++) {
+                    const s = document.createElement('span');
+                    s.textContent = '♥';
+                    if (i >= state.lives) s.classList.add('lost');
+                    heartsEl.appendChild(s);
+                }
+                levelLabelEl.textContent = LEVELS[state.levelIndex].name;
+                scoreBoxEl.textContent = state.score + ' pts';
+                itemsBoxEl.textContent = 'Ítems: ' + state.collectedCount + '/' + LEVELS[state.levelIndex].required;
+
+                const now = performance.now();
+                const cdRemain = Math.max(0, state.powerCooldownUntil - now);
+                const cdTotal = state.selectedChar.power.cooldown;
+                const ready = cdRemain <= 0;
+                const pct = ready ? 100 : 100 - (cdRemain / cdTotal * 100);
+                powerBarFill.style.width = pct + '%';
+                powerLabelEl.textContent = ready
+                    ? (state.selectedChar.power.name + ' — LISTO (Espacio)')
+                    : (state.selectedChar.power.name + ' — ' + Math.ceil(cdRemain / 1000) + 's');
+            }
+
+            /* ============================================================
+               9. LOOP PRINCIPAL
+            ============================================================ */
+            function loop(ts) {
+                if (state.screen !== 'playing') return;
+                const dt = Math.min(0.05, (ts - state.lastTime) / 1000);
+                state.lastTime = ts;
+                update(dt);
+                if (state.screen !== 'playing') return; // pudo cambiar tras update (perdió vida / completó nivel)
+                renderPlaying();
+                updateHUD();
+                requestAnimationFrame(loop);
+            }
+
+            /* ============================================================
+               10. INPUT
+            ============================================================ */
+            window.addEventListener('keydown', (e) => {
+                state.keys[e.key] = true;
+                if (e.key === ' ') {
+                    e.preventDefault();
+                    if (state.screen === 'playing') activatePower();
+                }
+            });
+            window.addEventListener('keyup', (e) => { state.keys[e.key] = false; });
+
+            function bindTouchHold(id, key) {
+                const el = document.getElementById(id);
+                const set = (v) => (e) => { e.preventDefault(); state.keys[key] = v; };
+                el.addEventListener('touchstart', set(true), { passive: false });
+                el.addEventListener('touchend', set(false), { passive: false });
+                el.addEventListener('touchcancel', set(false), { passive: false });
+            }
+            bindTouchHold('btn-up', 'ArrowUp');
+            bindTouchHold('btn-down', 'ArrowDown');
+            bindTouchHold('btn-left', 'ArrowLeft');
+            bindTouchHold('btn-right', 'ArrowRight');
+            document.getElementById('btn-power').addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                if (state.screen === 'playing') activatePower();
+            }, { passive: false });
+
+            /* ============================================================
+               11. BOTONES DE PANTALLA
+            ============================================================ */
+            document.getElementById('btn-play').addEventListener('click', startRun);
+            document.getElementById('btn-start').addEventListener('click', () => {
+                if (!state.selectedChar) return;
+                beginPlaying();
+            });
+            document.getElementById('btn-continue').addEventListener('click', onLifeLostContinue);
+            document.getElementById('btn-next-level').addEventListener('click', onNextLevel);
+            document.getElementById('btn-retry').addEventListener('click', startRun);
+            document.getElementById('btn-play-again').addEventListener('click', startRun);
+
+            /* estado inicial */
+            showScreen('menu');
+
+        })();
+    </script>
+</body>
+
+</html>
