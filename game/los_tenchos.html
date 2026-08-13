@@ -950,6 +950,7 @@
                 powerActiveUntil: 0,
                 speechText: '',
                 speechUntil: 0,
+                powerBurstAt: -99999,
                 paused: false,
                 lastTime: 0,
                 dashDir: { x: 0, y: 0 },
@@ -1225,6 +1226,7 @@
             function beginPlaying() {
                 Audio1.startMusic();
                 showScreen('playing');
+                if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
                 state.lastTime = performance.now();
                 requestAnimationFrame(loop);
             }
@@ -1274,12 +1276,13 @@
             function activatePower() {
                 const now = performance.now();
                 if (now < state.powerCooldownUntil) return;
-                Audio1.powerFX(power.type);
                 const power = state.selectedChar.power;
+                Audio1.powerFX(power.type);
                 state.powerCooldownUntil = now + power.cooldown;
                 state.powerActiveUntil = now + power.duration;
                 state.speechText = power.line || '¡A LA CUMBIA!';
                 state.speechUntil = now + Math.min(power.duration, 1900);
+                state.powerBurstAt = now;
 
                 if (power.type === 'stun') {
                     state.enemies.forEach(e => {
@@ -1801,6 +1804,44 @@
                 ctx.restore();
             }
 
+            /* Estallido breve (~500ms) justo en el instante en que se activa el poder */
+            function drawPowerBurst() {
+                const now = performance.now();
+                const t = now - state.powerBurstAt;
+                if (t < 0 || t > 500) return;
+                const progress = t / 500;
+                const p = state.player;
+                const color = state.selectedChar.bodyColor;
+                const r = 12 + progress * 68;
+                const alpha = 1 - progress;
+
+                ctx.save();
+                // anillo expansivo
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+                ctx.lineWidth = 4 * (1 - progress) + 1;
+                ctx.strokeStyle = hexToRgba(color, alpha * 0.9);
+                ctx.stroke();
+                // destello dorado extra
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, r * 0.5, 0, Math.PI * 2);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = hexToRgba('#F2B705', alpha * 0.7);
+                ctx.stroke();
+                // chispas alrededor
+                const spokes = 8;
+                for (let i = 0; i < spokes; i++) {
+                    const ang = (i / spokes) * Math.PI * 2;
+                    const px = p.x + Math.cos(ang) * r;
+                    const py = p.y + Math.sin(ang) * r;
+                    ctx.beginPath();
+                    ctx.arc(px, py, 3 * (1 - progress) + 1, 0, Math.PI * 2);
+                    ctx.fillStyle = hexToRgba(color, alpha);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+
             function drawSpeechBubble() {
                 const now = performance.now();
                 if (now >= state.speechUntil) return;
@@ -1853,6 +1894,7 @@
                 drawItems();
                 drawEnemies();
                 drawPowerAura();
+                drawPowerBurst();
                 drawPlayer();
                 drawSpeechBubble();
             }
