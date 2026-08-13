@@ -498,6 +498,37 @@
             padding: 4px 8px;
             cursor: pointer;
         }
+
+        #pause-toggle {
+            position: absolute;
+            top: 8px;
+            right: 52px;
+            z-index: 8;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: var(--cream);
+            border-radius: 8px;
+            font-size: 15px;
+            padding: 4px 10px;
+            cursor: pointer;
+        }
+
+        .pause-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            background: rgba(10, 4, 6, 0.72);
+            backdrop-filter: blur(1.5px);
+        }
+
+        .pause-overlay.hidden {
+            display: none;
+        }
     </style>
 </head>
 
@@ -509,6 +540,14 @@
         <div class="game-frame" id="game-frame">
             <canvas id="game-canvas" width="900" height="560"></canvas>
             <button id="sound-toggle">🔊</button>
+            <button id="pause-toggle">⏸</button>
+
+            <!-- PAUSA -->
+            <div class="pause-overlay hidden" id="pause-overlay">
+                <p class="level-intro-title" style="color:var(--gold);">⏸ PAUSA</p>
+                <button class="btn" id="btn-resume">▶ REANUDAR</button>
+                <button class="btn secondary" id="btn-pause-menu">🏠 MENÚ PRINCIPAL</button>
+            </div>
 
             <!-- HUD -->
             <div id="hud" class="hidden">
@@ -539,11 +578,12 @@
 
             <!-- MENU -->
             <div class="screen" id="screen-menu">
-                <img class="logo-img" src="/img/logo.webp" alt="Los Hijos de Tencha"
+                <img class="logo-img" src="Personajes/logo.webp" alt="Los Hijos de Tencha"
                     onerror="this.style.display='none'">
                 <h1 class="title-main">LOS HIJOS DE TENCHA</h1>
                 <p class="subtitle">Aventura Cumbianchera</p>
-                <img class="diablito-img" src="img/menu-icono.webp" alt="Diablito" onerror="this.style.display='none'">
+                <img class="diablito-img" src="Personajes/diablito.webp" alt="Diablito"
+                    onerror="this.style.display='none'">
                 <button class="btn" id="btn-play">▶ JUGAR</button>
                 <button class="btn secondary" id="btn-howto">❓ CÓMO SE JUEGA</button>
                 <p class="footer-note">5 vidas · 5 escenarios · sube el volumen 🎺</p>
@@ -577,7 +617,8 @@
 
             <!-- OBJETIVO DEL NIVEL -->
             <div class="screen hidden" id="screen-levelintro">
-                <img src="/img/logo.webp" alt="" style="width:120px; opacity:0.9;" onerror="this.style.display='none'">
+                <img src="Personajes/logo.webp" alt="" style="width:120px; opacity:0.9;"
+                    onerror="this.style.display='none'">
                 <p class="level-intro-title" id="levelintro-title">Escenario</p>
                 <div class="level-intro-box">
                     <p id="levelintro-goal">Objetivo</p>
@@ -603,7 +644,7 @@
 
             <!-- GAME OVER -->
             <div class="screen hidden" id="screen-gameover">
-                <img class="diablito-img" src="img/menu-icono.webp" alt="Diablito"
+                <img class="diablito-img" src="Personajes/diablito.webp" alt="Diablito"
                     style="width:56px; animation:none; opacity:0.8;" onerror="this.style.display='none'">
                 <p class="msg-big">SE ACABÓ<br>LA FIESTA</p>
                 <p class="hint">Los viejillos cumbiancheros ganaron esta vez...</p>
@@ -613,7 +654,7 @@
 
             <!-- WIN -->
             <div class="screen hidden" id="screen-win">
-                <img class="diablito-img" src="img/menu-icono.webp" alt="Diablito" style="width:60px;"
+                <img class="diablito-img" src="Personajes/diablito.webp" alt="Diablito" style="width:60px;"
                     onerror="this.style.display='none'">
                 <h2 class="title-main" style="color:var(--gold);">¡SE ARMÓ LA CUMBIA!</h2>
                 <p class="hint">Los Hijos de Tencha sobrevivieron los 5 escenarios. ¡Grande la banda!</p>
@@ -755,26 +796,43 @@
             ============================================================ */
             const CHARACTERS = [
                 {
-                    id: 'tencho', name: 'Tencho Morales', instrument: 'Batería', bodyColor: '#c9563d', hatColor: '#1c2b4a', accessory: 'beanie',
-                    power: { name: 'Redoble Sísmico', desc: 'Aturde a los enemigos cercanos por 2s', cooldown: 9000, duration: 2000, type: 'stun', radius: 230 }
+                    id: 'tencho', name: 'Tencho Morales', instrument: 'Batería', bodyColor: '#c9563d', hatColor: '#1c2b4a', accessory: 'beanie', spriteFile: 'tencho.png',
+                    power: { name: 'Redoble Sísmico', desc: 'Aturde a los enemigos cercanos por 2s', line: '¡SIENTAN EL REDOBLE!', cooldown: 9000, duration: 2000, type: 'stun', radius: 230 }
                 },
                 {
-                    id: 'tavo', name: 'Tavo Ramirez', instrument: 'Bajo', bodyColor: '#3c6e71', hatColor: '#e9e2d0', accessory: 'fedora',
-                    power: { name: 'Groove Bajo', desc: 'Dash veloz e invulnerable', cooldown: 6000, duration: 420, type: 'dash', speedMult: 5.5 }
+                    id: 'tavo', name: 'Tavo Ramirez', instrument: 'Bajo', bodyColor: '#3c6e71', hatColor: '#e9e2d0', accessory: 'fedora', spriteFile: 'Tavo.png',
+                    power: { name: 'Groove Bajo', desc: 'Dash veloz e invulnerable', line: '¡AGÁRRENSE QUE AHÍ VOY!', cooldown: 6000, duration: 420, type: 'dash', speedMult: 5.5 }
                 },
                 {
-                    id: 'mike', name: 'Mike Aguilar', instrument: 'Voz', bodyColor: '#2e7d32', hatColor: '#c62828', accessory: 'bucket',
-                    power: { name: 'Grito Cumbianchero', desc: 'Ralentiza a todos los enemigos', cooldown: 10000, duration: 3000, type: 'slow', factor: 0.35 }
+                    id: 'mike', name: 'Mike Aguilar', instrument: 'Voz', bodyColor: '#2e7d32', hatColor: '#c62828', accessory: 'bucket', spriteFile: 'mike.png',
+                    power: { name: 'Grito Cumbianchero', desc: 'Ralentiza a todos los enemigos', line: '¡BAILEN DESPACITO, CUMBIANCHEROS!', cooldown: 10000, duration: 3000, type: 'slow', factor: 0.35 }
                 },
                 {
-                    id: 'chepe', name: 'Chepe Castro', instrument: 'Acordeón', bodyColor: '#6d4c41', hatColor: '#111111', accessory: 'bowler',
-                    power: { name: 'Fuelle Mágico', desc: 'Empuja a los enemigos cercanos', cooldown: 8000, duration: 1, type: 'push', radius: 210, force: 280 }
+                    id: 'chepe', name: 'Chepe Castro', instrument: 'Acordeón', bodyColor: '#6d4c41', hatColor: '#111111', accessory: 'bowler', spriteFile: 'chepe.png',
+                    power: { name: 'Fuelle Mágico', desc: 'Empuja a los enemigos cercanos', line: '¡FUELLE MÁGICO, A UN LADO!', cooldown: 8000, duration: 550, type: 'push', radius: 210, force: 280 }
                 },
                 {
-                    id: 'billleye', name: 'Billleye', instrument: 'Percusión menor', bodyColor: '#8e24aa', hatColor: null, accessory: 'shades',
-                    power: { name: 'Oído de Cumbia', desc: 'Revela ítems y duplica puntos', cooldown: 11000, duration: 5000, type: 'reveal' }
+                    id: 'billleye', name: 'Billleye', instrument: 'Percusión menor', bodyColor: '#8e24aa', hatColor: null, accessory: 'shades', spriteFile: 'Belleye.png',
+                    power: { name: 'Oído de Cumbia', desc: 'Revela ítems y duplica puntos', line: '¡ESCUCHEN ESTO, LOCOS!', cooldown: 11000, duration: 5000, type: 'reveal' }
                 },
             ];
+
+            /* Precarga de sprites reales de cada integrante + el diablito (enemigo) */
+            const SPRITE_BASE = 'Personajes/';
+            const CHAR_IMAGES = {};
+            CHARACTERS.forEach(ch => {
+                const im = new Image();
+                const rec = { img: im, ready: false, failed: false };
+                im.onload = () => { rec.ready = true; };
+                im.onerror = () => { rec.failed = true; };
+                im.src = SPRITE_BASE + ch.spriteFile;
+                CHAR_IMAGES[ch.id] = rec;
+            });
+            const DIABLO_IMG = new Image();
+            const DIABLO_STATE = { ready: false, failed: false };
+            DIABLO_IMG.onload = () => { DIABLO_STATE.ready = true; };
+            DIABLO_IMG.onerror = () => { DIABLO_STATE.failed = true; };
+            DIABLO_IMG.src = SPRITE_BASE + 'diablito.webp';
 
             const LEVELS = [
                 {
@@ -818,6 +876,9 @@
                 items: [],
                 powerCooldownUntil: 0,
                 powerActiveUntil: 0,
+                speechText: '',
+                speechUntil: 0,
+                paused: false,
                 lastTime: 0,
                 dashDir: { x: 0, y: 0 },
             };
@@ -847,6 +908,7 @@
             const powerBarFill = document.getElementById('power-bar-fill');
             const powerLabelEl = document.getElementById('power-label');
             const touchControls = document.getElementById('touch-controls');
+            const pauseOverlay = document.getElementById('pause-overlay');
 
             function showScreen(name) {
                 Object.values(screens).forEach(s => s.classList.add('hidden'));
@@ -857,6 +919,10 @@
                 powerBarWrap.classList.toggle('hidden', name !== 'playing');
                 powerLabelEl.style.display = name === 'playing' ? 'block' : 'none';
                 touchControls.classList.toggle('active', name === 'playing');
+                if (name !== 'playing') {
+                    state.paused = false;
+                    pauseOverlay.classList.add('hidden');
+                }
             }
 
             /* ============================================================
@@ -872,19 +938,36 @@
             })();
 
             /* ============================================================
-               5. DIBUJO DE PERSONAJES (mini preview en selección)
+               5. DIBUJO DE PERSONAJES — usa el sprite pixel-art real de
+               cada integrante; si la imagen no cargó, cae en un dibujo
+               procedural de respaldo para que el juego nunca se rompa.
             ============================================================ */
             function drawCharacterSprite(g, cx, cy, scale, ch, opts) {
                 opts = opts || {};
+                // sombra (siempre, sea sprite real o fallback)
+                g.save();
+                g.beginPath();
+                g.ellipse(cx, cy + 24 * scale, 15 * scale, 5 * scale, 0, 0, Math.PI * 2);
+                g.fillStyle = 'rgba(0,0,0,0.35)';
+                g.fill();
+                g.restore();
+
+                const rec = CHAR_IMAGES[ch.id];
+                if (rec && rec.ready) {
+                    const size = 40 * scale * 1.15;
+                    g.save();
+                    g.imageSmoothingEnabled = false; // conserva el look pixel-art
+                    g.drawImage(rec.img, cx - size / 2, cy - size / 2 - 3 * scale, size, size);
+                    g.restore();
+                } else {
+                    drawCharacterSpriteFallback(g, cx, cy, scale, ch);
+                }
+            }
+
+            function drawCharacterSpriteFallback(g, cx, cy, scale, ch) {
                 g.save();
                 g.translate(cx, cy);
                 g.scale(scale, scale);
-
-                // sombra
-                g.beginPath();
-                g.ellipse(0, 22, 16, 5, 0, 0, Math.PI * 2);
-                g.fillStyle = 'rgba(0,0,0,0.35)';
-                g.fill();
 
                 // cuerpo
                 g.beginPath();
@@ -1122,6 +1205,8 @@
                 const power = state.selectedChar.power;
                 state.powerCooldownUntil = now + power.cooldown;
                 state.powerActiveUntil = now + power.duration;
+                state.speechText = power.line || '¡A LA CUMBIA!';
+                state.speechUntil = now + Math.min(power.duration, 1900);
 
                 if (power.type === 'stun') {
                     state.enemies.forEach(e => {
@@ -1337,36 +1422,135 @@
                     const stunned = now < e.stunUntil;
                     ctx.save();
                     ctx.translate(e.x, e.y);
+
+                    // halo de color para distinguir el tipo de enemigo a simple vista
+                    let glow = '#e07a3f';
+                    if (e.type === 'bounce') glow = '#0FADA0';
+                    if (e.type === 'chase') glow = '#9C4DCC';
+                    if (e.type === 'boss') glow = '#FF4B4B';
                     ctx.beginPath();
-                    ctx.arc(0, 0, e.r, 0, Math.PI * 2);
-                    let color = '#e07a3f';
-                    if (e.type === 'bounce') color = '#0FADA0';
-                    if (e.type === 'chase') color = '#9C4DCC';
-                    if (e.type === 'boss') color = '#E63946';
-                    ctx.fillStyle = stunned ? 'rgba(180,180,180,0.6)' : color;
+                    ctx.arc(0, 0, e.r * 1.1, 0, Math.PI * 2);
+                    ctx.fillStyle = stunned ? 'rgba(180,180,180,0.3)' : glow;
+                    ctx.globalAlpha = 0.32;
                     ctx.fill();
-                    ctx.lineWidth = 2;
-                    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-                    ctx.stroke();
-                    // ojitos traviesos
-                    ctx.fillStyle = '#1B0F2E';
-                    ctx.beginPath(); ctx.arc(-e.r * 0.3, -2, 2.4, 0, Math.PI * 2); ctx.fill();
-                    ctx.beginPath(); ctx.arc(e.r * 0.3, -2, 2.4, 0, Math.PI * 2); ctx.fill();
+                    ctx.globalAlpha = 1;
+
+                    if (DIABLO_STATE.ready) {
+                        const size = e.r * 2.2;
+                        ctx.imageSmoothingEnabled = true;
+                        ctx.globalAlpha = stunned ? 0.55 : 1;
+                        ctx.drawImage(DIABLO_IMG, -size / 2, -size / 2, size, size);
+                        ctx.globalAlpha = 1;
+                    } else {
+                        // respaldo si la imagen no cargó
+                        ctx.beginPath();
+                        ctx.arc(0, 0, e.r, 0, Math.PI * 2);
+                        ctx.fillStyle = stunned ? 'rgba(180,180,180,0.6)' : glow;
+                        ctx.fill();
+                        ctx.lineWidth = 2;
+                        ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+                        ctx.stroke();
+                        ctx.fillStyle = '#1B0F2E';
+                        ctx.beginPath(); ctx.arc(-e.r * 0.3, -2, 2.4, 0, Math.PI * 2); ctx.fill();
+                        ctx.beginPath(); ctx.arc(e.r * 0.3, -2, 2.4, 0, Math.PI * 2); ctx.fill();
+                    }
+
                     if (stunned) {
                         ctx.fillStyle = '#fff';
                         ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
-                        ctx.fillText('💫', 0, -e.r - 8);
+                        ctx.fillText('💫', 0, -e.r - 10);
                     }
                     if (e.type === 'boss') {
-                        ctx.fillStyle = '#111';
-                        ctx.beginPath(); ctx.arc(0, -e.r - 2, e.r * 0.6, Math.PI, 0); ctx.fill();
+                        ctx.fillStyle = 'rgba(255,75,75,0.9)';
+                        ctx.font = 'bold 9px sans-serif'; ctx.textAlign = 'center';
+                        ctx.fillText('JEFE', 0, e.r + 16);
                     }
                     ctx.restore();
                 });
             }
 
+            /* ============================================================
+               6B. AURA Y DIÁLOGO AL USAR EL PODER
+            ============================================================ */
+            function hexToRgba(hex, alpha) {
+                const h = hex.replace('#', '');
+                const r = parseInt(h.substring(0, 2), 16);
+                const g = parseInt(h.substring(2, 4), 16);
+                const b = parseInt(h.substring(4, 6), 16);
+                return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+            }
+
+            function roundRectPath(g, x, y, w, h, r) {
+                g.beginPath();
+                g.moveTo(x + r, y);
+                g.arcTo(x + w, y, x + w, y + h, r);
+                g.arcTo(x + w, y + h, x, y + h, r);
+                g.arcTo(x, y + h, x, y, r);
+                g.arcTo(x, y, x + w, y, r);
+                g.closePath();
+            }
+
+            function drawPowerAura() {
+                const now = performance.now();
+                if (now >= state.powerActiveUntil) return;
+                const p = state.player;
+                const pulse = 1 + Math.sin(now / 140) * 0.18;
+                const r = 32 * pulse;
+                const color = state.selectedChar.bodyColor;
+                const grad = ctx.createRadialGradient(p.x, p.y, 4, p.x, p.y, r);
+                grad.addColorStop(0, hexToRgba(color, 0));
+                grad.addColorStop(0.65, hexToRgba(color, 0.4));
+                grad.addColorStop(1, hexToRgba(color, 0));
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+                ctx.fillStyle = grad;
+                ctx.fill();
+                // anillo brillante
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, r * 0.75, 0, Math.PI * 2);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = hexToRgba(color, 0.55);
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            function drawSpeechBubble() {
+                const now = performance.now();
+                if (now >= state.speechUntil) return;
+                const p = state.player;
+                const text = state.speechText || '';
+                if (!text) return;
+                ctx.save();
+                ctx.font = "bold 12px 'Poppins', sans-serif";
+                const w = Math.min(240, ctx.measureText(text).width + 20);
+                const h = 26;
+                const bx = clamp(p.x - w / 2, state.playArea.x0, state.playArea.x1 - w);
+                const by = p.y - 52;
+                roundRectPath(ctx, bx, by, w, h, 8);
+                ctx.fillStyle = 'rgba(255,243,224,0.96)';
+                ctx.fill();
+                ctx.lineWidth = 1.5;
+                ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+                ctx.stroke();
+                // colita del globo
+                ctx.beginPath();
+                ctx.moveTo(clamp(p.x - 6, bx + 6, bx + w - 6), by + h);
+                ctx.lineTo(clamp(p.x + 6, bx + 6, bx + w - 6), by + h);
+                ctx.lineTo(p.x, by + h + 9);
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(255,243,224,0.96)';
+                ctx.fill();
+                // texto
+                ctx.fillStyle = '#1A0D10';
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(text, bx + w / 2, by + h / 2, w - 14);
+                ctx.restore();
+            }
+
             function drawPlayer() {
                 const p = state.player;
+
                 const invuln = performance.now() < p.invulnUntil;
                 ctx.save();
                 if (invuln && Math.floor(performance.now() / 80) % 2 === 0) {
@@ -1382,7 +1566,9 @@
                 drawExit();
                 drawItems();
                 drawEnemies();
+                drawPowerAura();
                 drawPlayer();
+                drawSpeechBubble();
             }
 
             function updateHUD() {
@@ -1415,11 +1601,25 @@
                 if (state.screen !== 'playing') return;
                 const dt = Math.min(0.05, (ts - state.lastTime) / 1000);
                 state.lastTime = ts;
-                update(dt);
-                if (state.screen !== 'playing') return; // pudo cambiar tras update (perdió vida / completó nivel)
+                if (!state.paused) {
+                    update(dt);
+                    if (state.screen !== 'playing') return; // pudo cambiar tras update (perdió vida / completó nivel)
+                }
                 renderPlaying();
                 updateHUD();
                 requestAnimationFrame(loop);
+            }
+
+            function togglePause() {
+                if (state.screen !== 'playing') return;
+                state.paused = !state.paused;
+                pauseOverlay.classList.toggle('hidden', !state.paused);
+                if (state.paused) {
+                    Audio1.stopMusic();
+                } else {
+                    state.lastTime = performance.now(); // evita un salto grande de dt al reanudar
+                    if (Audio1.isEnabled()) Audio1.startMusic();
+                }
             }
 
             /* ============================================================
@@ -1429,7 +1629,10 @@
                 state.keys[e.key] = true;
                 if (e.key === ' ') {
                     e.preventDefault();
-                    if (state.screen === 'playing') activatePower();
+                    if (state.screen === 'playing' && !state.paused) activatePower();
+                }
+                if (e.key === 'Escape' || e.key === 'p' || e.key === 'P') {
+                    if (state.screen === 'playing') togglePause();
                 }
             });
             window.addEventListener('keyup', (e) => { state.keys[e.key] = false; });
@@ -1447,7 +1650,7 @@
             bindTouchHold('btn-right', 'ArrowRight');
             document.getElementById('btn-power').addEventListener('touchstart', (e) => {
                 e.preventDefault();
-                if (state.screen === 'playing') activatePower();
+                if (state.screen === 'playing' && !state.paused) activatePower();
             }, { passive: false });
 
             /* ============================================================
@@ -1497,7 +1700,23 @@
                 const next = !Audio1.isEnabled();
                 Audio1.setEnabled(next);
                 soundToggleBtn.textContent = next ? '🔊' : '🔇';
-                if (next && state.screen === 'playing') Audio1.startMusic();
+                if (next && state.screen === 'playing' && !state.paused) Audio1.startMusic();
+            });
+
+            document.getElementById('pause-toggle').addEventListener('click', () => {
+                Audio1.unlock();
+                togglePause();
+            });
+            document.getElementById('btn-resume').addEventListener('click', () => {
+                Audio1.click();
+                togglePause();
+            });
+            document.getElementById('btn-pause-menu').addEventListener('click', () => {
+                Audio1.click();
+                Audio1.stopMusic();
+                state.paused = false;
+                pauseOverlay.classList.add('hidden');
+                showScreen('menu');
             });
 
             /* estado inicial */
