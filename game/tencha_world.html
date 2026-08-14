@@ -1286,9 +1286,9 @@
                     <button class="right" id="btn-right">▶</button>
                 </div>
                 <div id="pc-controls-label">
+                    <span><span class="key">← →</span><span class="key-label">Mover</span></span>
                     <span><span class="key">A</span><span class="key-label">Salto</span></span>
                     <span><span class="key">S</span><span class="key-label">Poder</span></span>
-                    <span><span class="key">← →</span><span class="key-label">Mover</span></span>
                 </div>
             </div>
 
@@ -1334,13 +1334,13 @@
                             class="note-icon">♪</span>
                         de cada nivel y llega a la bandera final.</p>
                     <p><strong>🕹️ Controles PC:</strong></p>
-                    <p style="padding-left:12px;">• <kbd>←</kbd> <kbd>→</kbd> o <kbd>A</kbd> <kbd>D</kbd> para moverte
-                    </p>
+                    <p style="padding-left:12px;">• <kbd>←</kbd> <kbd>→</kbd> para moverte</p>
                     <p style="padding-left:12px;">• <kbd>A</kbd> para saltar</p>
                     <p style="padding-left:12px;">• <kbd>S</kbd> para usar tu poder especial</p>
+                    <p style="padding-left:12px;">• <kbd>P</kbd> para pausar</p>
                     <p><strong>🕹️ Controles Móvil:</strong></p>
                     <p style="padding-left:12px;">• Flechas <strong>◀ ▶</strong> para moverte (derecha)</p>
-                    <p style="padding-left:12px;">• Botón <strong>SALTO</strong> para saltar (izquierda abajo)</p>
+                    <p style="padding-left:12px;">• Botón <strong>SALTO</strong> para saltar (izquierda)</p>
                     <p style="padding-left:12px;">• Botón <strong>PODER</strong> para usar habilidad (izquierda)</p>
                     <p><strong>⭐ Poder especial:</strong> cada personaje tiene una habilidad única que te ayuda a
                         superar obstáculos.</p>
@@ -1844,7 +1844,6 @@
                     }
                     g.restore();
                 } else {
-                    // Fallback
                     g.save();
                     g.beginPath();
                     g.arc(cx, cy, 16 * scale, 0, Math.PI * 2);
@@ -2061,7 +2060,6 @@
                 state.cameraX = 0;
                 state.flagReached = false;
 
-                // Posicionar jugador
                 state.player.x = 60;
                 state.player.y = SUELO_Y - JUGADOR_ALTO;
                 state.player.vx = 0;
@@ -2069,7 +2067,6 @@
                 state.player.onGround = false;
                 state.player.facing = 1;
 
-                // Resetear poder
                 state.powerCooldownUntil = 0;
                 state.powerActiveUntil = 0;
                 state.invulnUntil = 0;
@@ -2233,10 +2230,10 @@
                 const now = performance.now();
                 const p = state.player;
 
-                // --- Movimiento horizontal ---
+                // --- Movimiento horizontal SOLO con flechas ---
                 let moveX = 0;
-                if (state.keys['ArrowLeft'] || state.keys['a']) moveX = -1;
-                if (state.keys['ArrowRight'] || state.keys['d']) moveX = 1;
+                if (state.keys['ArrowLeft']) moveX = -1;
+                if (state.keys['ArrowRight']) moveX = 1;
 
                 let speed = 240;
                 if (isDashActive()) {
@@ -2246,11 +2243,12 @@
                 p.vx = moveX * speed;
                 if (moveX !== 0) p.facing = moveX;
 
-                // --- Salto con tecla A ---
-                if ((state.keys['a'] || state.keys['ArrowUp']) && p.onGround) {
+                // --- Salto con tecla A (SOLO A, no flecha arriba) ---
+                if (state.keys['a'] && p.onGround) {
                     p.vy = FUERZA_SALTO;
                     p.onGround = false;
                     Audio1.click();
+                    state.keys['a'] = false; // Evita saltos múltiples
                 }
 
                 // --- Poder con tecla S ---
@@ -2335,11 +2333,9 @@
                         e.vx *= -1;
                     }
 
-                    // Colisión con el jugador
                     if (p.x + p.w > e.x + 8 && p.x < e.x + e.w - 8 &&
                         p.y + p.h > e.y + 8 && p.y < e.y + e.h - 8) {
                         if (p.vy > 0 && p.y + p.h - e.y < 20) {
-                            // Aplastar enemigo
                             e.alive = false;
                             e.deathTimer = now;
                             p.vy = -6;
@@ -2358,14 +2354,12 @@
                     const f = state.flag;
                     if (p.x + p.w > f.x && p.x < f.x + f.w &&
                         p.y + p.h > f.y && p.y < f.y + f.h) {
-                        // Verificar si todas las monedas fueron recolectadas
                         const allCollected = state.coinsItems.every(c => c.collected);
                         if (allCollected) {
                             state.flagReached = true;
                             onLevelClear();
                             return;
                         } else {
-                            // Mostrar mensaje de que faltan monedas
                             const faltan = state.coinsItems.filter(c => !c.collected).length;
                             state.speechText = '🎵 Faltan ' + faltan + ' nota(s)!';
                             state.speechUntil = now + 1500;
@@ -2385,7 +2379,6 @@
                     p.animTimer = 0;
                 }
 
-                // --- Actualizar HUD ---
                 updateHUD();
             }
 
@@ -2782,9 +2775,6 @@
                 el.addEventListener('touchstart', set(true), { passive: false });
                 el.addEventListener('touchend', set(false), { passive: false });
                 el.addEventListener('touchcancel', set(false), { passive: false });
-                el.addEventListener('mousedown', set(true));
-                el.addEventListener('mouseup', set(false));
-                el.addEventListener('mouseleave', set(false));
             }
 
             setupMobileButton('btn-left-mobile', 'ArrowLeft');
@@ -2796,20 +2786,13 @@
                 jumpBtnTouch.addEventListener('touchstart', function (e) {
                     e.preventDefault();
                     if (state.screen === 'playing' && !state.paused) {
-                        saltar();
+                        if (state.player.onGround) {
+                            state.player.vy = FUERZA_SALTO;
+                            state.player.onGround = false;
+                            Audio1.click();
+                        }
                     }
                 }, { passive: false });
-                jumpBtnTouch.addEventListener('touchend', function (e) {
-                    e.preventDefault();
-                }, { passive: false });
-                jumpBtnTouch.addEventListener('touchcancel', function (e) {
-                    e.preventDefault();
-                }, { passive: false });
-                jumpBtnTouch.addEventListener('mousedown', function (e) {
-                    if (state.screen === 'playing' && !state.paused) {
-                        saltar();
-                    }
-                });
             }
 
             // Botón PODER móvil
@@ -2821,23 +2804,23 @@
                         activatePower();
                     }
                 }, { passive: false });
-                powerBtnTouch.addEventListener('click', function () {
-                    if (state.screen === 'playing' && !state.paused) {
-                        activatePower();
-                    }
-                });
             }
 
             // Teclado
             window.addEventListener('keydown', (e) => {
                 const key = e.key.toLowerCase();
                 state.keys[key] = true;
+                state.keys[e.key] = true;
 
                 // Salto con A
                 if (key === 'a') {
                     e.preventDefault();
                     if (state.screen === 'playing' && !state.paused) {
-                        saltar();
+                        if (state.player.onGround) {
+                            state.player.vy = FUERZA_SALTO;
+                            state.player.onGround = false;
+                            Audio1.click();
+                        }
                     }
                 }
 
@@ -2863,6 +2846,7 @@
             window.addEventListener('keyup', (e) => {
                 const key = e.key.toLowerCase();
                 state.keys[key] = false;
+                state.keys[e.key] = false;
                 if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
                     state.keys[e.key] = false;
                 }
@@ -2963,7 +2947,7 @@
             });
 
             console.log('🎮 Super Mario Cumbianchero — Los Hijos de Tencha');
-            console.log('🕹️ Controles PC: ← → mover, A saltar, S poder');
+            console.log('🕹️ Controles PC: ← → mover, A saltar, S poder, P pausa');
             console.log('🕹️ Controles Móvil: flechas ◀ ▶, botón SALTO, botón PODER');
             console.log('🎵 Recolecta todas las notas y llega a la bandera!');
 
