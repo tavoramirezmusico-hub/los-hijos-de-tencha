@@ -801,85 +801,6 @@
             display: none;
         }
 
-        /* ===== EFECTOS VISUALES ===== */
-        .efecto-partículas {
-            position: absolute;
-            pointer-events: none;
-            z-index: 11;
-        }
-
-        .particula {
-            position: absolute;
-            border-radius: 50%;
-            animation: particulaAnim 0.8s ease-out forwards;
-        }
-
-        @keyframes particulaAnim {
-            0% {
-                opacity: 1;
-                transform: translate(0, 0) scale(1);
-            }
-
-            100% {
-                opacity: 0;
-                transform: translate(var(--tx), var(--ty)) scale(0);
-            }
-        }
-
-        .efecto-saltar {
-            position: absolute;
-            pointer-events: none;
-            z-index: 11;
-            color: var(--gold);
-            font-family: 'Bungee', cursive;
-            font-size: 24px;
-            text-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
-            animation: saltarTexto 1s ease-out forwards;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        @keyframes saltarTexto {
-            0% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(0.5);
-            }
-
-            100% {
-                opacity: 0;
-                transform: translate(-50%, -150%) scale(1.5);
-            }
-        }
-
-        .efecto-poder {
-            position: absolute;
-            pointer-events: none;
-            z-index: 11;
-            border-radius: 50%;
-            border: 3px solid var(--gold);
-            animation: poderAnim 0.8s ease-out forwards;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        @keyframes poderAnim {
-            0% {
-                opacity: 1;
-                width: 10px;
-                height: 10px;
-                border-width: 3px;
-            }
-
-            100% {
-                opacity: 0;
-                width: 200px;
-                height: 200px;
-                border-width: 1px;
-            }
-        }
-
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .dpad-mobile {
@@ -1869,8 +1790,12 @@
                 gameOver: false,
                 victory: false,
                 invulnUntil: 0,
-                // Efectos
-                efectos: [],
+                particles: [],
+                floatingTexts: [],
+                shakeMag: 0,
+                shakeUntil: 0,
+                wasOnGround: false,
+                hitFlashUntil: 0,
             };
 
             // ============================================================
@@ -2151,154 +2076,16 @@
                 state.powerCooldownUntil = 0;
                 state.powerActiveUntil = 0;
                 state.invulnUntil = 0;
-                state.efectos = [];
+                state.particles = [];
+                state.floatingTexts = [];
+                state.shakeMag = 0;
+                state.shakeUntil = 0;
+                state.hitFlashUntil = 0;
+                state.wasOnGround = false;
             }
 
             // ============================================================
-            // 7. EFECTOS VISUALES
-            // ============================================================
-            function crearEfectoSalto(x, y) {
-                state.efectos.push({
-                    type: 'salto',
-                    x: x,
-                    y: y,
-                    vida: 1.0,
-                    maxVida: 1.0,
-                });
-            }
-
-            function crearEfectoPoder(x, y) {
-                state.efectos.push({
-                    type: 'poder',
-                    x: x,
-                    y: y,
-                    vida: 1.0,
-                    maxVida: 1.0,
-                });
-                // Partículas de poder
-                for (let i = 0; i < 20; i++) {
-                    const ang = Math.random() * Math.PI * 2;
-                    const vel = 100 + Math.random() * 150;
-                    state.efectos.push({
-                        type: 'particula_poder',
-                        x: x,
-                        y: y,
-                        vx: Math.cos(ang) * vel,
-                        vy: Math.sin(ang) * vel - 50,
-                        vida: 1.0,
-                        maxVida: 1.0,
-                        color: ['#F2B705', '#FFD700', '#FF6B6B', '#0FADA0', '#FF9FF3'][Math.floor(Math.random() *
-                            5)],
-                        tam: 3 + Math.random() * 5,
-                    });
-                }
-            }
-
-            function crearEfectoMoneda(x, y) {
-                for (let i = 0; i < 8; i++) {
-                    const ang = Math.random() * Math.PI * 2;
-                    const vel = 60 + Math.random() * 100;
-                    state.efectos.push({
-                        type: 'particula_moneda',
-                        x: x,
-                        y: y,
-                        vx: Math.cos(ang) * vel,
-                        vy: Math.sin(ang) * vel - 80,
-                        vida: 1.0,
-                        maxVida: 1.0,
-                        color: '#F2B705',
-                        tam: 2 + Math.random() * 4,
-                    });
-                }
-            }
-
-            function crearEfectoEnemigo(x, y) {
-                for (let i = 0; i < 12; i++) {
-                    const ang = Math.random() * Math.PI * 2;
-                    const vel = 80 + Math.random() * 120;
-                    state.efectos.push({
-                        type: 'particula_enemigo',
-                        x: x,
-                        y: y,
-                        vx: Math.cos(ang) * vel,
-                        vy: Math.sin(ang) * vel - 60,
-                        vida: 1.0,
-                        maxVida: 1.0,
-                        color: ['#FF4B4B', '#FF6B6B', '#FF9F43', '#FF4757'][Math.floor(Math.random() * 4)],
-                        tam: 3 + Math.random() * 5,
-                    });
-                }
-            }
-
-            function actualizarEfectos(dt) {
-                for (let i = state.efectos.length - 1; i >= 0; i--) {
-                    const e = state.efectos[i];
-                    e.vida -= dt * 0.8;
-
-                    if (e.type === 'particula_poder' || e.type === 'particula_moneda' || e.type ===
-                        'particula_enemigo') {
-                        e.x += e.vx * dt;
-                        e.y += e.vy * dt;
-                        e.vy += 200 * dt;
-                    }
-
-                    if (e.vida <= 0) {
-                        state.efectos.splice(i, 1);
-                    }
-                }
-            }
-
-            function dibujarEfectos() {
-                const now = performance.now();
-                for (const e of state.efectos) {
-                    const alpha = Math.max(0, e.vida / e.maxVida);
-
-                    if (e.type === 'salto') {
-                        // Texto "¡SALTO!" animado
-                        const scale = 0.5 + (1 - e.vida) * 1.5;
-                        ctx.save();
-                        ctx.globalAlpha = alpha;
-                        ctx.font = "bold 28px 'Bungee', cursive";
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.shadowColor = 'rgba(255,204,0,0.5)';
-                        ctx.shadowBlur = 20;
-                        ctx.fillStyle = '#F2B705';
-                        const y = e.y - 20 - (1 - e.vida) * 60;
-                        ctx.translate(e.x, y);
-                        ctx.scale(scale, scale);
-                        ctx.fillText('¡SALTO!', 0, 0);
-                        ctx.restore();
-                    } else if (e.type === 'poder') {
-                        // Anillo expansivo
-                        const size = 10 + (1 - e.vida) * 180;
-                        ctx.save();
-                        ctx.globalAlpha = alpha * 0.6;
-                        ctx.beginPath();
-                        ctx.arc(e.x, e.y, size, 0, Math.PI * 2);
-                        ctx.strokeStyle = '#F2B705';
-                        ctx.lineWidth = 3 * (1 - e.vida) + 1;
-                        ctx.shadowColor = 'rgba(255,204,0,0.5)';
-                        ctx.shadowBlur = 30;
-                        ctx.stroke();
-                        ctx.restore();
-                    } else if (e.type === 'particula_poder' || e.type === 'particula_moneda' || e.type ===
-                        'particula_enemigo') {
-                        ctx.save();
-                        ctx.globalAlpha = alpha;
-                        ctx.shadowColor = e.color;
-                        ctx.shadowBlur = 10;
-                        ctx.fillStyle = e.color;
-                        ctx.beginPath();
-                        ctx.arc(e.x, e.y, e.tam * (0.3 + 0.7 * e.vida), 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.restore();
-                    }
-                }
-            }
-
-            // ============================================================
-            // 8. LÓGICA DE JUEGO
+            // 7. LÓGICA DE JUEGO
             // ============================================================
             function startRun() {
                 state.lives = 5;
@@ -2353,9 +2140,137 @@
                     state.player.vy = FUERZA_SALTO;
                     state.player.onGround = false;
                     Audio1.click();
-                    // Efecto visual de salto
-                    const p = state.player;
-                    crearEfectoSalto(p.x + p.w / 2, p.y + p.h);
+                    spawnDust(state.player.x + state.player.w / 2, state.player.y + state.player.h, 8);
+                }
+            }
+
+            // ============================================================
+            // 7B. EFECTOS VISUALES (partículas, shake, textos flotantes)
+            // ============================================================
+            function spawnParticle(p) {
+                state.particles.push(Object.assign({
+                    life: 1,
+                    maxLife: 1,
+                    size: 4,
+                    color: '#fff',
+                    gravity: 0,
+                    fade: true,
+                }, p));
+            }
+
+            function spawnDust(x, y, count) {
+                for (let i = 0; i < count; i++) {
+                    const angle = Math.PI + Math.random() * Math.PI;
+                    const speed = 40 + Math.random() * 70;
+                    spawnParticle({
+                        x, y,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed * 0.6,
+                        size: 2 + Math.random() * 3,
+                        color: 'rgba(255,255,255,0.7)',
+                        life: 0.35 + Math.random() * 0.25,
+                        maxLife: 0.6,
+                        gravity: 20,
+                    });
+                }
+            }
+
+            function spawnSparkles(x, y, color, count) {
+                for (let i = 0; i < count; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = 60 + Math.random() * 120;
+                    spawnParticle({
+                        x, y,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        size: 2 + Math.random() * 3,
+                        color,
+                        life: 0.4 + Math.random() * 0.35,
+                        maxLife: 0.75,
+                        gravity: 80,
+                    });
+                }
+            }
+
+            function spawnConfetti(x, y, count) {
+                const colors = ['#F2B705', '#C4302B', '#0FADA0', '#FFF3E0', '#5c1414'];
+                for (let i = 0; i < count; i++) {
+                    const angle = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 0.9;
+                    const speed = 140 + Math.random() * 180;
+                    spawnParticle({
+                        x, y,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        size: 3 + Math.random() * 3,
+                        color: colors[i % colors.length],
+                        life: 0.8 + Math.random() * 0.6,
+                        maxLife: 1.4,
+                        gravity: 220,
+                        rotate: true,
+                    });
+                }
+            }
+
+            function spawnFloatingText(x, y, text, color) {
+                state.floatingTexts.push({
+                    x, y, text, color: color || '#F2B705',
+                    life: 0.9, maxLife: 0.9,
+                });
+            }
+
+            function triggerShake(mag, durationMs) {
+                state.shakeMag = Math.max(state.shakeMag, mag);
+                state.shakeUntil = performance.now() + durationMs;
+            }
+
+            function updateEffects(dt) {
+                for (let i = state.particles.length - 1; i >= 0; i--) {
+                    const pt = state.particles[i];
+                    pt.vy += (pt.gravity || 0) * dt;
+                    pt.x += pt.vx * dt;
+                    pt.y += pt.vy * dt;
+                    pt.life -= dt;
+                    if (pt.life <= 0) state.particles.splice(i, 1);
+                }
+                for (let i = state.floatingTexts.length - 1; i >= 0; i--) {
+                    const ft = state.floatingTexts[i];
+                    ft.y -= 28 * dt;
+                    ft.life -= dt;
+                    if (ft.life <= 0) state.floatingTexts.splice(i, 1);
+                }
+                if (state.shakeMag > 0 && performance.now() > state.shakeUntil) {
+                    state.shakeMag = Math.max(0, state.shakeMag - dt * 60);
+                }
+            }
+
+            function drawEffects() {
+                for (const pt of state.particles) {
+                    const x = pt.x - state.cameraX;
+                    const alpha = pt.fade === false ? 1 : Math.max(0, pt.life / pt.maxLife);
+                    ctx.save();
+                    ctx.globalAlpha = alpha;
+                    ctx.fillStyle = pt.color;
+                    if (pt.rotate) {
+                        ctx.translate(x, pt.y);
+                        ctx.rotate((pt.life * 10) % (Math.PI * 2));
+                        ctx.fillRect(-pt.size / 2, -pt.size / 2, pt.size, pt.size);
+                    } else {
+                        ctx.beginPath();
+                        ctx.arc(x, pt.y, pt.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    ctx.restore();
+                }
+                for (const ft of state.floatingTexts) {
+                    const x = ft.x - state.cameraX;
+                    const alpha = Math.max(0, ft.life / ft.maxLife);
+                    ctx.save();
+                    ctx.globalAlpha = alpha;
+                    ctx.font = "bold 14px 'Bungee', cursive";
+                    ctx.fillStyle = ft.color;
+                    ctx.textAlign = 'center';
+                    ctx.fillText(ft.text, x, ft.y);
+                    ctx.restore();
                 }
             }
 
@@ -2369,17 +2284,13 @@
                 state.speechText = power.line || '¡A LA CUMBIA!';
                 state.speechUntil = now + Math.min(power.duration, 1900);
                 state.powerBurstAt = now;
-
-                // Efecto visual de poder
-                const p = state.player;
-                crearEfectoPoder(p.x + p.w / 2, p.y + p.h / 2);
+                spawnSparkles(state.player.x + state.player.w / 2, state.player.y + state.player.h / 2,
+                    state.selectedChar.bodyColor || '#F2B705', 16);
 
                 if (power.type === 'stun') {
                     state.enemies.forEach(e => {
                         if (Math.abs(e.x - state.player.x) < power.radius) {
                             e.stunUntil = now + power.duration;
-                            // Partículas de aturdimiento
-                            crearEfectoEnemigo(e.x + e.w / 2, e.y + e.h / 2);
                         }
                     });
                 } else if (power.type === 'push') {
@@ -2388,7 +2299,6 @@
                         if (Math.abs(dx) < power.radius) {
                             e.x += (dx > 0 ? 1 : -1) * power.force * 0.3;
                             e.stunUntil = now + 600;
-                            crearEfectoEnemigo(e.x + e.w / 2, e.y + e.h / 2);
                         }
                     });
                 } else if (power.type === 'dash') {
@@ -2422,23 +2332,6 @@
                 Audio1.hit();
                 Audio1.stopMusic();
                 state.lives -= 1;
-                // Efecto de pérdida de vida
-                const p = state.player;
-                for (let i = 0; i < 15; i++) {
-                    const ang = Math.random() * Math.PI * 2;
-                    const vel = 80 + Math.random() * 150;
-                    state.efectos.push({
-                        type: 'particula_enemigo',
-                        x: p.x + p.w / 2,
-                        y: p.y + p.h / 2,
-                        vx: Math.cos(ang) * vel,
-                        vy: Math.sin(ang) * vel - 50,
-                        vida: 1.0,
-                        maxVida: 1.0,
-                        color: '#FF4B4B',
-                        tam: 3 + Math.random() * 5,
-                    });
-                }
                 if (state.lives <= 0) {
                     Audio1.gameOver();
                     document.getElementById('gameover-score').textContent = '🪙 ' + state.score;
@@ -2460,23 +2353,6 @@
                 state.score += bonus;
                 document.getElementById('levelcomplete-text').textContent =
                     '¡' + getNivelNombre(state.levelIndex) + ' superado! +' + bonus + ' pts de bono.';
-                // Efecto de nivel completado
-                for (let i = 0; i < 30; i++) {
-                    const ang = Math.random() * Math.PI * 2;
-                    const vel = 80 + Math.random() * 200;
-                    state.efectos.push({
-                        type: 'particula_poder',
-                        x: CANVAS_W / 2 + (Math.random() - 0.5) * 400,
-                        y: CANVAS_H / 2 + (Math.random() - 0.5) * 200,
-                        vx: Math.cos(ang) * vel,
-                        vy: Math.sin(ang) * vel - 100,
-                        vida: 1.0,
-                        maxVida: 1.0,
-                        color: ['#F2B705', '#FFD700', '#0FADA0', '#FF6B6B', '#9C6ADE'][Math.floor(Math.random() *
-                            5)],
-                        tam: 3 + Math.random() * 6,
-                    });
-                }
                 showScreen('levelcomplete');
             }
 
@@ -2493,7 +2369,7 @@
             }
 
             // ============================================================
-            // 9. UPDATE
+            // 8. UPDATE
             // ============================================================
             function update(dt) {
                 const now = performance.now();
@@ -2512,10 +2388,12 @@
                 p.vx = moveX * speed;
                 if (moveX !== 0) p.facing = moveX;
 
-                // --- Salto con tecla A ---
+                // --- Salto con tecla A (SOLO A, no flecha arriba) ---
                 if (state.keys['a'] && p.onGround) {
-                    saltar();
-                    state.keys['a'] = false;
+                    p.vy = FUERZA_SALTO;
+                    p.onGround = false;
+                    Audio1.click();
+                    state.keys['a'] = false; // Evita saltos múltiples
                 }
 
                 // --- Poder con tecla S ---
@@ -2571,6 +2449,12 @@
                     return;
                 }
 
+                // --- Efecto de aterrizaje ---
+                if (p.onGround && !state.wasOnGround) {
+                    spawnDust(p.x + p.w / 2, p.y + p.h, 6);
+                }
+                state.wasOnGround = p.onGround;
+
                 // --- Cámara ---
                 state.cameraX = Math.max(0, Math.min(p.x - CANVAS_W * 0.3, state.levelWidth - CANVAS_W));
 
@@ -2585,7 +2469,8 @@
                         state.coins++;
                         state.score += 50 * pointMult;
                         Audio1.collect();
-                        crearEfectoMoneda(coin.x + coin.w / 2, coin.y + coin.h / 2);
+                        spawnSparkles(coin.x + coin.w / 2, coin.y + coin.h / 2, '#F2B705', 10);
+                        spawnFloatingText(coin.x + coin.w / 2, coin.y, '+' + (50 * pointMult), '#F2B705');
                     }
                 }
 
@@ -2609,10 +2494,15 @@
                             p.vy = -6;
                             state.score += 100;
                             Audio1.collect();
-                            crearEfectoEnemigo(e.x + e.w / 2, e.y + e.h / 2);
+                            spawnSparkles(e.x + e.w / 2, e.y + e.h / 2, '#C4302B', 12);
+                            spawnFloatingText(e.x + e.w / 2, e.y, '+100', '#FF9E5C');
+                            triggerShake(4, 120);
                         } else if (now > (state.invulnUntil || 0)) {
                             state.invulnUntil = now + 1500;
                             loseLife();
+                            spawnSparkles(p.x + p.w / 2, p.y + p.h / 2, '#FF4B4B', 14);
+                            triggerShake(10, 260);
+                            state.hitFlashUntil = now + 260;
                             return;
                         }
                     }
@@ -2626,6 +2516,7 @@
                         const allCollected = state.coinsItems.every(c => c.collected);
                         if (allCollected) {
                             state.flagReached = true;
+                            spawnConfetti(f.x + f.w / 2, f.y, 40);
                             onLevelClear();
                             return;
                         } else {
@@ -2648,14 +2539,12 @@
                     p.animTimer = 0;
                 }
 
-                // --- Actualizar efectos ---
-                actualizarEfectos(dt);
-
+                updateEffects(dt);
                 updateHUD();
             }
 
             // ============================================================
-            // 10. DIBUJO
+            // 9. DIBUJO
             // ============================================================
             function drawBackground() {
                 const grad = ctx.createLinearGradient(0, 0, 0, CANVAS_H);
@@ -2981,14 +2870,27 @@
 
             function render() {
                 ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+                ctx.save();
+                if (state.shakeMag > 0.1) {
+                    const sx = (Math.random() - 0.5) * state.shakeMag;
+                    const sy = (Math.random() - 0.5) * state.shakeMag;
+                    ctx.translate(sx, sy);
+                }
                 drawBackground();
                 drawPlatforms();
                 drawCoins();
                 drawEnemies();
                 drawFlag();
                 drawPlayer();
+                drawEffects();
                 drawSpeechBubble();
-                dibujarEfectos();
+                ctx.restore();
+
+                if (performance.now() < state.hitFlashUntil) {
+                    const t = (state.hitFlashUntil - performance.now()) / 260;
+                    ctx.fillStyle = 'rgba(255,40,40,' + (0.35 * t) + ')';
+                    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+                }
             }
 
             function updateHUD() {
@@ -3005,7 +2907,7 @@
             }
 
             // ============================================================
-            // 11. LOOP PRINCIPAL
+            // 10. LOOP PRINCIPAL
             // ============================================================
             function loop(ts) {
                 if (state.screen !== 'playing') return;
@@ -3034,20 +2936,49 @@
             }
 
             // ============================================================
-            // 12. INPUT - CONTROLES
+            // 11. INPUT - CONTROLES
             // ============================================================
 
-            // Botones móviles
+            // Helper universal: responde a pointer (touch/mouse/lápiz), con
+            // fallback a touch/mouse por separado para navegadores viejos.
+            // Esto es lo que faltaba en el botón de SALTO: antes solo
+            // escuchaba 'touchstart', así que un click de mouse (o algunos
+            // navegadores/dispositivos híbridos) nunca lo activaban.
+            function addPressListener(el, onDown, onUp) {
+                if (!el) return;
+                let active = false;
+                const down = (e) => {
+                    e.preventDefault();
+                    if (active) return;
+                    active = true;
+                    onDown(e);
+                };
+                const up = (e) => {
+                    if (!active) return;
+                    active = false;
+                    if (onUp) onUp(e);
+                };
+                if (window.PointerEvent) {
+                    el.addEventListener('pointerdown', down);
+                    el.addEventListener('pointerup', up);
+                    el.addEventListener('pointercancel', up);
+                    el.addEventListener('pointerleave', up);
+                } else {
+                    el.addEventListener('touchstart', down, { passive: false });
+                    el.addEventListener('touchend', up, { passive: false });
+                    el.addEventListener('touchcancel', up, { passive: false });
+                    el.addEventListener('mousedown', down);
+                    el.addEventListener('mouseup', up);
+                    el.addEventListener('mouseleave', up);
+                }
+                // Evita que además dispare un click fantasma tras el toque
+                el.addEventListener('click', (e) => e.preventDefault());
+            }
+
+            // Botones móviles (mover)
             function setupMobileButton(id, key) {
                 const el = document.getElementById(id);
-                if (!el) return;
-                const set = (v) => (e) => {
-                    e.preventDefault();
-                    state.keys[key] = v;
-                };
-                el.addEventListener('touchstart', set(true), { passive: false });
-                el.addEventListener('touchend', set(false), { passive: false });
-                el.addEventListener('touchcancel', set(false), { passive: false });
+                addPressListener(el, () => { state.keys[key] = true; }, () => { state.keys[key] = false; });
             }
 
             setupMobileButton('btn-left-mobile', 'ArrowLeft');
@@ -3055,53 +2986,57 @@
 
             // Botón SALTO móvil
             const jumpBtnTouch = document.getElementById('jump-btn-touch');
-            if (jumpBtnTouch) {
-                jumpBtnTouch.addEventListener('touchstart', function (e) {
-                    e.preventDefault();
-                    if (state.screen === 'playing' && !state.paused) {
-                        saltar();
-                    }
-                }, { passive: false });
-            }
+            addPressListener(jumpBtnTouch, () => {
+                if (state.screen === 'playing' && !state.paused) {
+                    saltar();
+                }
+            });
 
             // Botón PODER móvil
             const powerBtnTouch = document.getElementById('power-btn-touch');
-            if (powerBtnTouch) {
-                powerBtnTouch.addEventListener('touchstart', function (e) {
-                    e.preventDefault();
-                    if (state.screen === 'playing' && !state.paused) {
-                        activatePower();
-                    }
-                }, { passive: false });
-            }
+            addPressListener(powerBtnTouch, () => {
+                if (state.screen === 'playing' && !state.paused) {
+                    activatePower();
+                }
+            });
 
             // Teclado
             window.addEventListener('keydown', (e) => {
                 const key = e.key.toLowerCase();
+                state.keys[key] = true;
+                state.keys[e.key] = true;
 
-                // Solo permitir una tecla a la vez para evitar conflictos
+                // Salto con A
                 if (key === 'a') {
                     e.preventDefault();
                     if (state.screen === 'playing' && !state.paused) {
                         saltar();
                     }
-                } else if (key === 's') {
+                }
+
+                // Poder con S
+                if (key === 's') {
                     e.preventDefault();
                     if (state.screen === 'playing' && !state.paused) {
                         activatePower();
                     }
-                } else if (key === 'p') {
+                }
+
+                // Pausa con P
+                if (key === 'p') {
                     if (state.screen === 'playing') togglePause();
-                } else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                }
+
+                // Flechas para mover
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
                     state.keys[e.key] = true;
                 }
             });
 
             window.addEventListener('keyup', (e) => {
                 const key = e.key.toLowerCase();
-                if (key === 'a' || key === 's') {
-                    // No hacemos nada, las teclas se procesan en el keydown
-                }
+                state.keys[key] = false;
+                state.keys[e.key] = false;
                 if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
                     state.keys[e.key] = false;
                 }
@@ -3110,24 +3045,14 @@
             // D-pad desktop (izquierda/derecha)
             function setupDesktopButton(id, key) {
                 const el = document.getElementById(id);
-                if (!el) return;
-                const set = (v) => (e) => {
-                    e.preventDefault();
-                    state.keys[key] = v;
-                };
-                el.addEventListener('mousedown', set(true));
-                el.addEventListener('mouseup', set(false));
-                el.addEventListener('mouseleave', set(false));
-                el.addEventListener('touchstart', set(true), { passive: false });
-                el.addEventListener('touchend', set(false), { passive: false });
-                el.addEventListener('touchcancel', set(false), { passive: false });
+                addPressListener(el, () => { state.keys[key] = true; }, () => { state.keys[key] = false; });
             }
 
             setupDesktopButton('btn-left', 'ArrowLeft');
             setupDesktopButton('btn-right', 'ArrowRight');
 
             // ============================================================
-            // 13. BOTONES DE PANTALLA
+            // 12. BOTONES DE PANTALLA
             // ============================================================
             document.getElementById('btn-play').addEventListener('click', () => {
                 Audio1.unlock();
@@ -3205,7 +3130,6 @@
             console.log('🕹️ Controles PC: ← → mover, A saltar, S poder, P pausa');
             console.log('🕹️ Controles Móvil: flechas ◀ ▶, botón SALTO, botón PODER');
             console.log('🎵 Recolecta todas las notas y llega a la bandera!');
-            console.log('✨ Efectos visuales: salto, poder, monedas y enemigos!');
 
         })();
     </script>
