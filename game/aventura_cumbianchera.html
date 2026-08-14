@@ -22,6 +22,8 @@
 
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         html,
@@ -33,11 +35,88 @@
             font-family: 'Poppins', sans-serif;
             overscroll-behavior: none;
             -webkit-tap-highlight-color: transparent;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
         }
 
         .display {
             font-family: 'Bungee', cursive;
             letter-spacing: 0.5px;
+        }
+
+        /* ===== PANTALLA DE ROTACIÓN (MÓVILES) ===== */
+        #rotate-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: #000000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 30px;
+            gap: 20px;
+        }
+
+        #rotate-overlay.active {
+            display: flex;
+        }
+
+        #rotate-overlay .rotate-icon {
+            font-size: 80px;
+            animation: rotar 2s ease-in-out infinite;
+        }
+
+        @keyframes rotar {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            50% {
+                transform: rotate(90deg);
+            }
+
+            100% {
+                transform: rotate(0deg);
+            }
+        }
+
+        #rotate-overlay h2 {
+            color: #ffcc00;
+            font-size: clamp(22px, 5vw, 36px);
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+
+        #rotate-overlay p {
+            color: #aaa;
+            font-size: clamp(14px, 2.5vw, 20px);
+            max-width: 400px;
+            line-height: 1.6;
+        }
+
+        #rotate-overlay .btn-fullscreen {
+            margin-top: 10px;
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            padding: 14px 40px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: .3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #rotate-overlay .btn-fullscreen:hover {
+            background: #fff;
+            transform: scale(1.05);
         }
 
         #game-root {
@@ -46,6 +125,10 @@
             max-width: 920px;
             margin: 0 auto;
             padding: 12px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         /* ---------- Papel picado bunting ---------- */
@@ -56,6 +139,7 @@
             height: 26px;
             margin-bottom: -6px;
             overflow: hidden;
+            flex-shrink: 0;
         }
 
         .bunting .flag {
@@ -92,12 +176,28 @@
             border-radius: 18px;
             overflow: hidden;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            flex-shrink: 0;
+            aspect-ratio: 900 / 560;
+            width: 100%;
+            max-height: calc(100vh - 60px);
+        }
+
+        .game-frame.fullscreen {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            aspect-ratio: auto;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+            z-index: 99998;
         }
 
         canvas {
             display: block;
             width: 100%;
-            height: auto;
+            height: 100%;
             background: var(--night-2);
             touch-action: none;
         }
@@ -529,10 +629,356 @@
         .pause-overlay.hidden {
             display: none;
         }
+
+        @media (max-width: 768px) {
+            #game-root {
+                padding: 6px;
+            }
+
+            .game-frame {
+                border-radius: 12px;
+                border-width: 2px;
+            }
+
+            .btn {
+                font-size: 13px;
+                padding: 10px 22px;
+            }
+
+            .char-grid {
+                gap: 6px;
+            }
+
+            .char-card {
+                padding: 6px 4px 8px;
+            }
+
+            .char-card canvas {
+                width: 48px;
+                height: 48px;
+            }
+
+            .char-name {
+                font-size: 10px;
+            }
+
+            .char-instrument {
+                font-size: 8px;
+            }
+
+            .char-power {
+                font-size: 7px;
+            }
+
+            #hud {
+                padding: 6px 8px;
+                font-size: 11px;
+            }
+
+            #hearts span {
+                font-size: 13px;
+            }
+
+            .dpad {
+                width: 90px;
+                height: 90px;
+                left: 8px;
+                bottom: 8px;
+            }
+
+            .dpad button {
+                width: 30px;
+                height: 30px;
+                font-size: 12px;
+            }
+
+            .dpad .up {
+                top: 0;
+                left: 30px;
+            }
+
+            .dpad .down {
+                bottom: 0;
+                left: 30px;
+            }
+
+            .dpad .left {
+                top: 30px;
+                left: 0;
+            }
+
+            .dpad .right {
+                top: 30px;
+                right: 0;
+            }
+
+            .power-btn-touch {
+                right: 12px;
+                bottom: 14px;
+                width: 54px;
+                height: 54px;
+                font-size: 8px;
+            }
+
+            .bunting {
+                height: 18px;
+            }
+
+            .bunting .flag {
+                width: 20px;
+                height: 15px;
+            }
+
+            #power-bar-wrap {
+                width: 100px;
+                height: 10px;
+                bottom: 6px;
+            }
+
+            #power-label {
+                font-size: 8px;
+                bottom: 18px;
+            }
+
+            #sound-toggle,
+            #pause-toggle {
+                top: 50px;
+                font-size: 12px;
+                padding: 3px 6px;
+            }
+
+            #pause-toggle {
+                right: 40px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #game-root {
+                padding: 4px;
+            }
+
+            .game-frame {
+                border-radius: 10px;
+                border-width: 2px;
+            }
+
+            .btn {
+                font-size: 11px;
+                padding: 8px 16px;
+            }
+
+            .char-grid {
+                gap: 4px;
+            }
+
+            .char-card {
+                padding: 4px 3px 6px;
+            }
+
+            .char-card canvas {
+                width: 38px;
+                height: 38px;
+            }
+
+            .char-name {
+                font-size: 8px;
+            }
+
+            .char-instrument {
+                font-size: 7px;
+            }
+
+            .char-power {
+                font-size: 6px;
+            }
+
+            #hud {
+                padding: 4px 6px;
+                font-size: 9px;
+            }
+
+            #hearts span {
+                font-size: 10px;
+            }
+
+            .hud-box {
+                padding: 3px 6px;
+            }
+
+            .dpad {
+                width: 72px;
+                height: 72px;
+                left: 5px;
+                bottom: 5px;
+            }
+
+            .dpad button {
+                width: 24px;
+                height: 24px;
+                font-size: 10px;
+            }
+
+            .dpad .up {
+                top: 0;
+                left: 24px;
+            }
+
+            .dpad .down {
+                bottom: 0;
+                left: 24px;
+            }
+
+            .dpad .left {
+                top: 24px;
+                left: 0;
+            }
+
+            .dpad .right {
+                top: 24px;
+                right: 0;
+            }
+
+            .power-btn-touch {
+                right: 8px;
+                bottom: 10px;
+                width: 44px;
+                height: 44px;
+                font-size: 7px;
+            }
+
+            .bunting {
+                height: 12px;
+            }
+
+            .bunting .flag {
+                width: 14px;
+                height: 10px;
+            }
+
+            #power-bar-wrap {
+                width: 80px;
+                height: 8px;
+                bottom: 4px;
+            }
+
+            #power-label {
+                font-size: 7px;
+                bottom: 14px;
+            }
+
+            #sound-toggle,
+            #pause-toggle {
+                top: 40px;
+                font-size: 10px;
+                padding: 2px 5px;
+            }
+
+            #pause-toggle {
+                right: 32px;
+            }
+
+            .logo-img {
+                max-width: 140px;
+            }
+
+            .diablito-img {
+                width: 50px;
+            }
+
+            .title-main {
+                font-size: clamp(16px, 4vw, 22px);
+            }
+
+            .screen {
+                padding: 12px;
+                gap: 8px;
+            }
+
+            .howto-box {
+                font-size: 10px;
+                padding: 10px 12px;
+            }
+
+            .level-intro-box {
+                padding: 10px 14px;
+            }
+
+            .level-intro-box p {
+                font-size: 11px;
+            }
+
+            .level-intro-title {
+                font-size: 14px;
+            }
+
+            .power-detail {
+                font-size: 10px;
+                min-height: 30px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .dpad {
+                width: 60px;
+                height: 60px;
+                left: 3px;
+                bottom: 3px;
+            }
+
+            .dpad button {
+                width: 20px;
+                height: 20px;
+                font-size: 8px;
+                border-radius: 6px;
+            }
+
+            .dpad .up {
+                top: 0;
+                left: 20px;
+            }
+
+            .dpad .down {
+                bottom: 0;
+                left: 20px;
+            }
+
+            .dpad .left {
+                top: 20px;
+                left: 0;
+            }
+
+            .dpad .right {
+                top: 20px;
+                right: 0;
+            }
+
+            .power-btn-touch {
+                right: 5px;
+                bottom: 6px;
+                width: 36px;
+                height: 36px;
+                font-size: 6px;
+            }
+
+            .char-card canvas {
+                width: 32px;
+                height: 32px;
+            }
+        }
     </style>
 </head>
 
 <body>
+
+    <!-- ===== PANTALLA DE ROTACIÓN (MÓVILES) ===== -->
+    <div id="rotate-overlay">
+        <div class="rotate-icon">📱</div>
+        <h2>Gira tu dispositivo</h2>
+        <p>Para jugar "Aventura Cumbianchera" necesitas poner tu teléfono o tablet en <strong>horizontal</strong>.</p>
+        <button class="btn-fullscreen" id="btnFullscreen">⛶ Pantalla completa</button>
+        <p style="font-size: 12px; color: #666; margin-top: 10px;">Al hacer clic, el juego se abrirá en pantalla
+            completa y sonará la música</p>
+    </div>
 
     <div id="game-root">
         <div class="bunting" id="bunting"></div>
@@ -664,28 +1110,72 @@
         </div>
     </div>
 
+    <!-- ============================================================ -->
+    <!-- SCRIPTS                                                      -->
+    <!-- ============================================================ -->
+
     <script>
         (function () {
             "use strict";
 
-            /* ============================================================
-               0. UTILIDADES
-            ============================================================ */
-            function mulberry32(seed) {
-                return function () {
-                    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
-                    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-                    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-                    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-                };
-            }
-            function dist(ax, ay, bx, by) { return Math.hypot(ax - bx, ay - by); }
-            function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+            // ============================================================
+            // 0. FULLSCREEN Y ROTACIÓN
+            // ============================================================
 
-            /* ============================================================
-               1B. AUDIO — todo sintetizado con Web Audio API (sin archivos
-               externos), así que no hay que subir ni licenciar ningún .mp3.
-            ============================================================ */
+            const rotateOverlay = document.getElementById('rotate-overlay');
+            const btnFullscreen = document.getElementById('btnFullscreen');
+            const gameFrame = document.getElementById('game-frame');
+
+            function isMobile() {
+                return /Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(navigator.userAgent);
+            }
+
+            function isLandscape() {
+                return window.innerWidth > window.innerHeight;
+            }
+
+            function checkOrientation() {
+                if (isMobile()) {
+                    if (isLandscape()) {
+                        rotateOverlay.classList.remove('active');
+                    } else {
+                        rotateOverlay.classList.add('active');
+                    }
+                } else {
+                    rotateOverlay.classList.remove('active');
+                }
+            }
+
+            checkOrientation();
+            window.addEventListener('resize', checkOrientation);
+            window.addEventListener('orientationchange', function () {
+                setTimeout(checkOrientation, 300);
+            });
+
+            btnFullscreen.addEventListener('click', function () {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    document.documentElement.webkitRequestFullscreen();
+                } else if (document.documentElement.msRequestFullscreen) {
+                    document.documentElement.msRequestFullscreen();
+                }
+                setTimeout(function () {
+                    if (isLandscape()) {
+                        rotateOverlay.classList.remove('active');
+                    }
+                    // Desbloquear audio
+                    Audio1.unlock();
+                }, 500);
+            });
+
+            if (isLandscape() && isMobile()) {
+                rotateOverlay.classList.remove('active');
+            }
+
+            // ============================================================
+            // 1. AUDIO — todo sintetizado con Web Audio API
+            // ============================================================
             const Audio1 = (function () {
                 let ctxA = null;
                 let master = null;
@@ -697,7 +1187,7 @@
                     if (!ctxA) {
                         const AC = window.AudioContext || window.webkitAudioContext;
                         ctxA = new AC();
-                        const comp = ctxA.createDynamicsCompressor(); // evita distorsión cuando suenan varias cosas a la vez
+                        const comp = ctxA.createDynamicsCompressor();
                         master = ctxA.createGain();
                         master.gain.value = 0.9;
                         master.connect(comp);
@@ -707,10 +1197,12 @@
                     return ctxA;
                 }
 
-                // Desbloquea el audio ante CUALQUIER primer gesto del usuario,
-                // por si el navegador bloqueó el autoplay antes de tocar "JUGAR".
-                ['pointerdown', 'touchstart', 'keydown'].forEach(evt => {
-                    window.addEventListener(evt, () => { try { ensureCtx(); } catch (e) { } }, { once: true, passive: true });
+                function unlock() {
+                    try { ensureCtx(); } catch (e) { }
+                }
+
+                ['pointerdown', 'touchstart', 'keydown', 'click'].forEach(evt => {
+                    window.addEventListener(evt, unlock, { once: true, passive: true });
                 });
 
                 function tone(freq, dur, opts) {
@@ -728,7 +1220,8 @@
                     gain.gain.setValueAtTime(0.0001, c.currentTime);
                     gain.gain.exponentialRampToValueAtTime(vol, c.currentTime + 0.015);
                     gain.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + dur);
-                    osc.connect(gain); gain.connect(master);
+                    osc.connect(gain);
+                    gain.connect(master);
                     osc.start(c.currentTime);
                     osc.stop(c.currentTime + dur + 0.02);
                 }
@@ -753,7 +1246,8 @@
                     }
                     const gain = c.createGain();
                     gain.gain.value = vol || 0.12;
-                    node.connect(gain); gain.connect(master);
+                    node.connect(gain);
+                    gain.connect(master);
                     src.start();
                 }
 
@@ -767,12 +1261,14 @@
                     osc.frequency.exponentialRampToValueAtTime(45, c.currentTime + 0.18);
                     gain.gain.setValueAtTime(0.5, c.currentTime);
                     gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.22);
-                    osc.connect(gain); gain.connect(master);
-                    osc.start(); osc.stop(c.currentTime + 0.24);
+                    osc.connect(gain);
+                    gain.connect(master);
+                    osc.start();
+                    osc.stop(c.currentTime + 0.24);
                 }
 
                 return {
-                    unlock() { ensureCtx(); },
+                    unlock: unlock,
                     setEnabled(v) {
                         enabled = v;
                         if (!v) this.stopMusic();
@@ -781,28 +1277,28 @@
 
                     click() { tone(420, 0.06, { type: 'triangle', vol: 0.12 }); },
                     collect() { tone(660, 0.09, { type: 'square', slideTo: 880, vol: 0.16 }); },
-
-                    // efecto genérico de respaldo
                     power() { tone(220, 0.18, { type: 'sawtooth', slideTo: 440, vol: 0.16 }); },
 
-                    // efectos únicos por tipo de poder
                     powerFX(type) {
-                        if (type === 'stun') { // Tencho: redoble de batería
+                        if (type === 'stun') {
                             kick();
                             setTimeout(kick, 90);
                             noiseBurst(0.18, 0.14, 2200);
-                        } else if (type === 'dash') { // Tavo: groove de bajo veloz
+                        } else if (type === 'dash') {
                             noiseBurst(0.08, 0.1, 4000);
                             tone(180, 0.18, { type: 'sawtooth', slideTo: 820, vol: 0.15 });
-                        } else if (type === 'slow') { // Mike: grito que hipnotiza
+                        } else if (type === 'slow') {
                             tone(520, 0.35, { type: 'sawtooth', slideTo: 180, vol: 0.16 });
                             setTimeout(() => tone(660, 0.3, { type: 'sawtooth', slideTo: 220, vol: 0.11 }), 80);
-                        } else if (type === 'push') { // Chepe: fuelle de acordeón
+                        } else if (type === 'push') {
                             tone(330, 0.24, { type: 'square', vol: 0.13 });
                             setTimeout(() => tone(415, 0.24, { type: 'square', vol: 0.11 }), 40);
                             noiseBurst(0.12, 0.08);
-                        } else if (type === 'reveal') { // Billleye: campanitas
-                            [880, 1046, 1318].forEach((f, i) => setTimeout(() => tone(f, 0.14, { type: 'triangle', vol: 0.12 }), i * 70));
+                        } else if (type === 'reveal') {
+                            [880, 1046, 1318].forEach((f, i) => setTimeout(() => tone(f, 0.14, {
+                                type: 'triangle',
+                                vol: 0.12
+                            }), i * 70));
                         } else {
                             this.power();
                         }
@@ -829,16 +1325,15 @@
                     },
                     doorUnlock() { tone(300, 0.12, { type: 'triangle', slideTo: 700, vol: 0.14 }); },
 
-                    // ---- "banda" de fondo: kick + güiro + bajo + acordeón sintetizados ----
                     startMusic() {
                         this.stopMusic();
                         if (!enabled) return;
                         ensureCtx();
-                        const STEP_MS = 165; // ~ velocidad de cumbia alegre
+                        const STEP_MS = 165;
                         const kickSteps = [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0];
                         const guiroSteps = [0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1];
                         const bassNotes = [130.81, 0, 0, 0, 164.81, 0, 0, 0, 146.83, 0, 0, 0, 196.00, 0, 0, 0];
-                        const scale = [523.25, 587.33, 659.25, 783.99, 880.00]; // pentatónica, sabor acordeón
+                        const scale = [523.25, 587.33, 659.25, 783.99, 880.00];
                         const melodySteps = [0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 4, 0];
                         musicStep = 0;
                         musicTimer = setInterval(() => {
@@ -847,43 +1342,87 @@
                             if (kickSteps[i]) kick();
                             if (guiroSteps[i]) noiseBurst(0.05, 0.06, 3400);
                             if (bassNotes[i]) tone(bassNotes[i], 0.22, { type: 'triangle', vol: 0.09 });
-                            if (melodySteps[i]) tone(scale[melodySteps[i]], 0.16, { type: 'square', vol: 0.06 });
+                            if (melodySteps[i]) tone(scale[melodySteps[i]], 0.16, {
+                                type: 'square',
+                                vol: 0.06
+                            });
                             musicStep++;
                         }, STEP_MS);
                     },
                     stopMusic() {
-                        if (musicTimer) { clearInterval(musicTimer); musicTimer = null; }
+                        if (musicTimer) {
+                            clearInterval(musicTimer);
+                            musicTimer = null;
+                        }
                     }
                 };
             })();
 
-            /* ============================================================
-               1. DATOS: PERSONAJES Y NIVELES
-            ============================================================ */
-            const CHARACTERS = [
-                {
-                    id: 'tencho', name: 'Tencho Morales', instrument: 'Batería', bodyColor: '#c9563d', hatColor: '#1c2b4a', accessory: 'beanie', spriteFile: 'tencho.png',
-                    power: { name: 'Redoble Sísmico', desc: 'Aturde a los enemigos cercanos por 2s', line: '¡SIENTAN EL REDOBLE!', cooldown: 9000, duration: 2000, type: 'stun', radius: 230 }
-                },
-                {
-                    id: 'tavo', name: 'Tavo Ramirez', instrument: 'Bajo', bodyColor: '#3c6e71', hatColor: '#e9e2d0', accessory: 'fedora', spriteFile: 'Tavo.png',
-                    power: { name: 'Groove Bajo', desc: 'Dash veloz e invulnerable', line: '¡AGÁRRENSE QUE AHÍ VOY!', cooldown: 6000, duration: 420, type: 'dash', speedMult: 5.5 }
-                },
-                {
-                    id: 'mike', name: 'Mike Aguilar', instrument: 'Voz', bodyColor: '#2e7d32', hatColor: '#c62828', accessory: 'bucket', spriteFile: 'mike.png',
-                    power: { name: 'Grito Cumbianchero', desc: 'Ralentiza a todos los enemigos', line: '¡BAILEN DESPACITO, CUMBIANCHEROS!', cooldown: 10000, duration: 3000, type: 'slow', factor: 0.35 }
-                },
-                {
-                    id: 'chepe', name: 'Chepe Castro', instrument: 'Acordeón', bodyColor: '#6d4c41', hatColor: '#111111', accessory: 'bowler', spriteFile: 'chepe.png',
-                    power: { name: 'Fuelle Mágico', desc: 'Empuja a los enemigos cercanos', line: '¡FUELLE MÁGICO, A UN LADO!', cooldown: 8000, duration: 550, type: 'push', radius: 210, force: 280 }
-                },
-                {
-                    id: 'billleye', name: 'Billleye', instrument: 'Percusión menor', bodyColor: '#8e24aa', hatColor: null, accessory: 'shades', spriteFile: 'Belleye.png',
-                    power: { name: 'Oído de Cumbia', desc: 'Revela ítems y duplica puntos', line: '¡ESCUCHEN ESTO, LOCOS!', cooldown: 11000, duration: 5000, type: 'reveal' }
-                },
-            ];
+            // ============================================================
+            // 2. DATOS: PERSONAJES Y NIVELES
+            // ============================================================
+            const CHARACTERS = [{
+                id: 'tencho',
+                name: 'Tencho Morales',
+                instrument: 'Batería',
+                bodyColor: '#c9563d',
+                hatColor: '#1c2b4a',
+                accessory: 'beanie',
+                spriteFile: 'tencho.png',
+                power: {
+                    name: 'Redoble Sísmico', desc: 'Aturde a los enemigos cercanos por 2s', line: '¡SIENTAN EL REDOBLE!',
+                    cooldown: 9000, duration: 2000, type: 'stun', radius: 230
+                }
+            }, {
+                id: 'tavo',
+                name: 'Tavo Ramirez',
+                instrument: 'Bajo',
+                bodyColor: '#3c6e71',
+                hatColor: '#e9e2d0',
+                accessory: 'fedora',
+                spriteFile: 'Tavo.png',
+                power: {
+                    name: 'Groove Bajo', desc: 'Dash veloz e invulnerable', line: '¡AGÁRRENSE QUE AHÍ VOY!',
+                    cooldown: 6000, duration: 420, type: 'dash', speedMult: 5.5
+                }
+            }, {
+                id: 'mike',
+                name: 'Mike Aguilar',
+                instrument: 'Voz',
+                bodyColor: '#2e7d32',
+                hatColor: '#c62828',
+                accessory: 'bucket',
+                spriteFile: 'mike.png',
+                power: {
+                    name: 'Grito Cumbianchero', desc: 'Ralentiza a todos los enemigos', line: '¡BAILEN DESPACITO, CUMBIANCHEROS!',
+                    cooldown: 10000, duration: 3000, type: 'slow', factor: 0.35
+                }
+            }, {
+                id: 'chepe',
+                name: 'Chepe Castro',
+                instrument: 'Acordeón',
+                bodyColor: '#6d4c41',
+                hatColor: '#111111',
+                accessory: 'bowler',
+                spriteFile: 'chepe.png',
+                power: {
+                    name: 'Fuelle Mágico', desc: 'Empuja a los enemigos cercanos', line: '¡FUELLE MÁGICO, A UN LADO!',
+                    cooldown: 8000, duration: 550, type: 'push', radius: 210, force: 280
+                }
+            }, {
+                id: 'billleye',
+                name: 'Billleye',
+                instrument: 'Percusión menor',
+                bodyColor: '#8e24aa',
+                hatColor: null,
+                accessory: 'shades',
+                spriteFile: 'Belleye.png',
+                power: {
+                    name: 'Oído de Cumbia', desc: 'Revela ítems y duplica puntos', line: '¡ESCUCHEN ESTO, LOCOS!',
+                    cooldown: 11000, duration: 5000, type: 'reveal'
+                }
+            },];
 
-            /* Precarga de sprites reales de cada integrante + el diablito (enemigo) */
             const SPRITE_BASE = 'Personajes/';
             const CHAR_IMAGES = {};
             CHARACTERS.forEach(ch => {
@@ -906,38 +1445,64 @@
             LOGO_IMG.onerror = () => { LOGO_STATE.failed = true; };
             LOGO_IMG.src = SPRITE_BASE + 'logo.webp';
 
-            const LEVELS = [
-                {
-                    name: 'El Patio', bg: ['#3a2145', '#241130'], required: 3, itemCount: 5,
-                    enemies: [{ type: 'patrol', axis: 'x', speed: 85 }, { type: 'patrol', axis: 'y', speed: 80 }]
-                },
-                {
-                    name: 'La Plaza del Pueblo', bg: ['#452a4f', '#28132f'], required: 4, itemCount: 6,
-                    enemies: [{ type: 'patrol', axis: 'x', speed: 105 }, { type: 'patrol', axis: 'y', speed: 100 }, { type: 'bounce', speed: 120 }]
-                },
-                {
-                    name: 'La Calle Central', bg: ['#4f2f4d', '#2b1330'], required: 5, itemCount: 7,
-                    enemies: [{ type: 'patrol', axis: 'x', speed: 125 }, { type: 'patrol', axis: 'y', speed: 120 }, { type: 'bounce', speed: 140 }, { type: 'chase', speed: 70 }]
-                },
-                {
-                    name: 'Backstage del Festival', bg: ['#5a2f45', '#2f1330'], required: 6, itemCount: 8,
-                    enemies: [{ type: 'patrol', axis: 'x', speed: 145 }, { type: 'patrol', axis: 'y', speed: 135 }, { type: 'bounce', speed: 150 }, { type: 'bounce', speed: 155 }, { type: 'chase', speed: 85 }, { type: 'chase', speed: 82 }]
-                },
-                {
-                    name: 'La Tarima Final', bg: ['#6b1f3a', '#33101f'], required: 6, itemCount: 8, boss: true,
-                    enemies: [{ type: 'patrol', axis: 'x', speed: 150 }, { type: 'bounce', speed: 165 }, { type: 'bounce', speed: 170 }, { type: 'boss', speed: 95 }]
-                },
-            ];
+            const LEVELS = [{
+                name: 'El Patio',
+                bg: ['#3a2145', '#241130'],
+                required: 3,
+                itemCount: 5,
+                enemies: [{ type: 'patrol', axis: 'x', speed: 85 }, {
+                    type: 'patrol', axis: 'y',
+                    speed: 80
+                }]
+            }, {
+                name: 'La Plaza del Pueblo',
+                bg: ['#452a4f', '#28132f'],
+                required: 4,
+                itemCount: 6,
+                enemies: [{ type: 'patrol', axis: 'x', speed: 105 }, {
+                    type: 'patrol', axis: 'y',
+                    speed: 100
+                }, { type: 'bounce', speed: 120 }]
+            }, {
+                name: 'La Calle Central',
+                bg: ['#4f2f4d', '#2b1330'],
+                required: 5,
+                itemCount: 7,
+                enemies: [{ type: 'patrol', axis: 'x', speed: 125 }, {
+                    type: 'patrol', axis: 'y',
+                    speed: 120
+                }, { type: 'bounce', speed: 140 }, { type: 'chase', speed: 70 }]
+            }, {
+                name: 'Backstage del Festival',
+                bg: ['#5a2f45', '#2f1330'],
+                required: 6,
+                itemCount: 8,
+                enemies: [{ type: 'patrol', axis: 'x', speed: 145 }, {
+                    type: 'patrol', axis: 'y',
+                    speed: 135
+                }, { type: 'bounce', speed: 150 }, { type: 'bounce', speed: 155 },
+                { type: 'chase', speed: 85 }, { type: 'chase', speed: 82 }]
+            }, {
+                name: 'La Tarima Final',
+                bg: ['#6b1f3a', '#33101f'],
+                required: 6,
+                itemCount: 8,
+                boss: true,
+                enemies: [{ type: 'patrol', axis: 'x', speed: 150 }, { type: 'bounce', speed: 165 },
+                { type: 'bounce', speed: 170 }, { type: 'boss', speed: 95 }]
+            },];
 
-            const CANVAS_W = 900, CANVAS_H = 560;
-            const PLAYER_R = 18, ITEM_R = 11;
+            const CANVAS_W = 900,
+                CANVAS_H = 560;
+            const PLAYER_R = 18,
+                ITEM_R = 11;
             const MARGIN = 40;
 
-            /* ============================================================
-               2. ESTADO DEL JUEGO
-            ============================================================ */
+            // ============================================================
+            // 3. ESTADO DEL JUEGO
+            // ============================================================
             const state = {
-                screen: 'menu',      // menu | select | playing | lifelost | levelcomplete | gameover | win
+                screen: 'menu',
                 lives: 5,
                 score: 0,
                 levelIndex: 0,
@@ -956,9 +1521,9 @@
                 dashDir: { x: 0, y: 0 },
             };
 
-            /* ============================================================
-               3. DOM REFERENCES
-            ============================================================ */
+            // ============================================================
+            // 4. DOM REFERENCES
+            // ============================================================
             const canvas = document.getElementById('game-canvas');
             const ctx = canvas.getContext('2d');
 
@@ -987,7 +1552,6 @@
                 Object.values(screens).forEach(s => s.classList.add('hidden'));
                 state.screen = name;
                 if (screens[name]) screens[name].classList.remove('hidden');
-                // el HUD solo se muestra mientras se está jugando
                 hud.classList.toggle('hidden', name !== 'playing');
                 powerBarWrap.classList.toggle('hidden', name !== 'playing');
                 powerLabelEl.style.display = name === 'playing' ? 'block' : 'none';
@@ -998,9 +1562,9 @@
                 }
             }
 
-            /* ============================================================
-               4. BUNTING (papel picado) decorativo
-            ============================================================ */
+            // ============================================================
+            // 5. BUNTING
+            // ============================================================
             (function buildBunting() {
                 const wrap = document.getElementById('bunting');
                 for (let i = 0; i < 22; i++) {
@@ -1010,14 +1574,11 @@
                 }
             })();
 
-            /* ============================================================
-               5. DIBUJO DE PERSONAJES — usa el sprite pixel-art real de
-               cada integrante; si la imagen no cargó, cae en un dibujo
-               procedural de respaldo para que el juego nunca se rompa.
-            ============================================================ */
+            // ============================================================
+            // 6. DIBUJO DE PERSONAJES
+            // ============================================================
             function drawCharacterSprite(g, cx, cy, scale, ch, opts) {
                 opts = opts || {};
-                // sombra (siempre, sea sprite real o fallback)
                 g.save();
                 g.beginPath();
                 g.ellipse(cx, cy + 24 * scale, 15 * scale, 5 * scale, 0, 0, Math.PI * 2);
@@ -1029,7 +1590,7 @@
                 if (rec && rec.ready) {
                     const size = 40 * scale * 1.15;
                     g.save();
-                    g.imageSmoothingEnabled = false; // conserva el look pixel-art
+                    g.imageSmoothingEnabled = false;
                     g.drawImage(rec.img, cx - size / 2, cy - size / 2 - 3 * scale, size, size);
                     g.restore();
                 } else {
@@ -1042,7 +1603,6 @@
                 g.translate(cx, cy);
                 g.scale(scale, scale);
 
-                // cuerpo
                 g.beginPath();
                 g.arc(0, 0, 16, 0, Math.PI * 2);
                 g.fillStyle = ch.bodyColor;
@@ -1051,44 +1611,54 @@
                 g.strokeStyle = 'rgba(0,0,0,0.25)';
                 g.stroke();
 
-                // gafas de sol (todos las llevan, como en la foto)
                 g.fillStyle = 'rgba(20,20,25,0.9)';
                 g.fillRect(-9, -3, 7, 4);
                 g.fillRect(2, -3, 7, 4);
                 g.fillRect(-2, -2, 4, 2);
 
-                // accesorio de cabeza
                 g.save();
                 g.translate(0, -13);
                 switch (ch.accessory) {
                     case 'beanie':
                         g.beginPath();
-                        g.moveTo(-13, 4); g.quadraticCurveTo(0, -20, 13, 4); g.closePath();
-                        g.fillStyle = ch.hatColor; g.fill();
+                        g.moveTo(-13, 4);
+                        g.quadraticCurveTo(0, -20, 13, 4);
+                        g.closePath();
+                        g.fillStyle = ch.hatColor;
+                        g.fill();
                         break;
                     case 'fedora':
                         g.fillStyle = ch.hatColor;
-                        g.beginPath(); g.ellipse(0, 4, 15, 4, 0, 0, Math.PI * 2); g.fill();
-                        g.beginPath(); g.roundRect ? g.roundRect(-8, -8, 16, 10, 3) : g.rect(-8, -8, 16, 10); g.fill();
+                        g.beginPath();
+                        g.ellipse(0, 4, 15, 4, 0, 0, Math.PI * 2);
+                        g.fill();
+                        g.beginPath();
+                        if (g.roundRect) g.roundRect(-8, -8, 16, 10, 3);
+                        else g.rect(-8, -8, 16, 10);
+                        g.fill();
                         break;
                     case 'bucket':
                         g.fillStyle = ch.hatColor;
-                        g.beginPath(); g.arc(0, -2, 12, Math.PI, 0); g.fill();
+                        g.beginPath();
+                        g.arc(0, -2, 12, Math.PI, 0);
+                        g.fill();
                         g.fillRect(-13, -2, 26, 5);
                         break;
                     case 'bowler':
                         g.fillStyle = ch.hatColor;
-                        g.beginPath(); g.arc(0, -4, 11, Math.PI, 0); g.fill();
+                        g.beginPath();
+                        g.arc(0, -4, 11, Math.PI, 0);
+                        g.fill();
                         g.fillRect(-13, -4, 26, 4);
                         break;
                     case 'shades':
-                        // sin sombrero, pelo simple
                         g.fillStyle = '#2b2b2b';
-                        g.beginPath(); g.arc(0, -2, 13, Math.PI * 0.9, Math.PI * 2.1); g.fill();
+                        g.beginPath();
+                        g.arc(0, -2, 13, Math.PI * 0.9, Math.PI * 2.1);
+                        g.fill();
                         break;
                 }
                 g.restore();
-
                 g.restore();
             }
 
@@ -1101,15 +1671,25 @@
                     card.dataset.id = ch.id;
 
                     const cvs = document.createElement('canvas');
-                    cvs.width = 64; cvs.height = 64;
+                    cvs.width = 64;
+                    cvs.height = 64;
                     const g = cvs.getContext('2d');
                     drawCharacterSprite(g, 32, 30, 1.35, ch);
 
-                    const nm = document.createElement('p'); nm.className = 'char-name'; nm.textContent = ch.name;
-                    const inst = document.createElement('p'); inst.className = 'char-instrument'; inst.textContent = ch.instrument;
-                    const pw = document.createElement('p'); pw.className = 'char-power'; pw.textContent = '★ ' + ch.power.name;
+                    const nm = document.createElement('p');
+                    nm.className = 'char-name';
+                    nm.textContent = ch.name;
+                    const inst = document.createElement('p');
+                    inst.className = 'char-instrument';
+                    inst.textContent = ch.instrument;
+                    const pw = document.createElement('p');
+                    pw.className = 'char-power';
+                    pw.textContent = '★ ' + ch.power.name;
 
-                    card.appendChild(cvs); card.appendChild(nm); card.appendChild(inst); card.appendChild(pw);
+                    card.appendChild(cvs);
+                    card.appendChild(nm);
+                    card.appendChild(inst);
+                    card.appendChild(pw);
                     card.addEventListener('click', () => selectCharacter(ch));
                     grid.appendChild(card);
                 });
@@ -1125,23 +1705,25 @@
                 document.getElementById('btn-start').disabled = false;
             }
 
-            /* ============================================================
-               6. GENERACIÓN DE NIVEL (posiciones deterministas por semilla)
-            ============================================================ */
+            // ============================================================
+            // 7. GENERACIÓN DE NIVEL
+            // ============================================================
             function buildLevel(levelIndex) {
                 const lvl = LEVELS[levelIndex];
                 const rng = mulberry32(1000 + levelIndex * 77);
 
-                const playAreaX0 = MARGIN, playAreaX1 = CANVAS_W - MARGIN;
-                const playAreaY0 = MARGIN + 30, playAreaY1 = CANVAS_H - MARGIN - 20;
+                const playAreaX0 = MARGIN,
+                    playAreaX1 = CANVAS_W - MARGIN;
+                const playAreaY0 = MARGIN + 30,
+                    playAreaY1 = CANVAS_H - MARGIN - 20;
 
-                // jugador arranca abajo-centro
                 state.player = {
-                    x: CANVAS_W / 2, y: playAreaY1 - 20,
-                    r: PLAYER_R, invulnUntil: 0,
+                    x: CANVAS_W / 2,
+                    y: playAreaY1 - 20,
+                    r: PLAYER_R,
+                    invulnUntil: 0,
                 };
 
-                // items
                 state.items = [];
                 for (let i = 0; i < lvl.itemCount; i++) {
                     let x, y, tries = 0;
@@ -1150,17 +1732,20 @@
                         y = playAreaY0 + 20 + rng() * (playAreaY1 - playAreaY0 - 100);
                         tries++;
                     } while (dist(x, y, state.player.x, state.player.y) < 90 && tries < 20);
-                    state.items.push({ x, y, r: ITEM_R, collected: false, id: i, hidden: lvl.boss || i % 3 === 2 ? rng() < 0.35 : false });
+                    state.items.push({
+                        x, y, r: ITEM_R, collected: false, id: i, hidden: lvl.boss || i % 3 === 2 ?
+                            rng() < 0.35 : false
+                    });
                 }
 
-                // enemigos
                 state.enemies = [];
                 lvl.enemies.forEach((spec, idx) => {
                     const ex = playAreaX0 + 40 + rng() * (playAreaX1 - playAreaX0 - 80);
                     const ey = playAreaY0 + 30 + rng() * (playAreaY1 - playAreaY0 - 100);
                     const e = {
                         type: spec.type,
-                        x: ex, y: ey,
+                        x: ex,
+                        y: ey,
                         baseSpeed: spec.speed,
                         r: spec.type === 'boss' ? 26 : 16,
                         stunUntil: 0,
@@ -1187,9 +1772,23 @@
                 state.powerActiveUntil = 0;
             }
 
-            /* ============================================================
-               7. LÓGICA DE JUEGO (update)
-            ============================================================ */
+            function mulberry32(seed) {
+                return function () {
+                    seed |= 0;
+                    seed = (seed + 0x6D2B79F5) | 0;
+                    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+                    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+                    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+                };
+            }
+
+            function dist(ax, ay, bx, by) { return Math.hypot(ax - bx, ay - by); }
+
+            function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+            // ============================================================
+            // 8. LÓGICA DE JUEGO
+            // ============================================================
             function startRun() {
                 state.lives = 5;
                 state.score = 0;
@@ -1215,11 +1814,12 @@
                 document.getElementById('levelintro-goal').textContent =
                     '🎯 Recolecta ' + lvl.required + ' de ' + lvl.itemCount + ' notas ♪ para abrir la puerta de salida (arriba en el centro).';
                 document.getElementById('levelintro-danger').textContent =
-                    lvl.boss
-                        ? '⚠️ Cuidado: en este escenario hay un jefe que te persigue sin parar.'
-                        : '⚠️ Evita a los viejillos cumbiancheros que patrullan y rebotan por la pista.';
+                    lvl.boss ?
+                        '⚠️ Cuidado: en este escenario hay un jefe que te persigue sin parar.' :
+                        '⚠️ Evita a los viejillos cumbiancheros que patrullan y rebotan por la pista.';
                 document.getElementById('levelintro-power').textContent =
-                    '⭐ Tu poder: ' + state.selectedChar.power.name + ' — ' + state.selectedChar.power.desc + ' (tecla Espacio).';
+                    '⭐ Tu poder: ' + state.selectedChar.power.name + ' — ' + state.selectedChar.power.desc +
+                    ' (tecla Espacio).';
                 showScreen('levelintro');
             }
 
@@ -1245,7 +1845,7 @@
             }
 
             function onLifeLostContinue() {
-                buildLevel(state.levelIndex); // reinicia el intento del mismo escenario
+                buildLevel(state.levelIndex);
                 goToCharacterSelectForLevel();
             }
 
@@ -1272,7 +1872,6 @@
                 goToCharacterSelectForLevel();
             }
 
-            /* ---- Poderes ---- */
             function activatePower() {
                 const now = performance.now();
                 if (now < state.powerCooldownUntil) return;
@@ -1294,14 +1893,16 @@
                     state.enemies.forEach(e => {
                         const d = dist(e.x, e.y, state.player.x, state.player.y);
                         if (d < power.radius && d > 0.01) {
-                            const nx = (e.x - state.player.x) / d, ny = (e.y - state.player.y) / d;
+                            const nx = (e.x - state.player.x) / d,
+                                ny = (e.y - state.player.y) / d;
                             e.x += nx * power.force * 0.5;
                             e.y += ny * power.force * 0.5;
                             e.stunUntil = now + 600;
                         }
                     });
                 } else if (power.type === 'dash') {
-                    let dx = 0, dy = 0;
+                    let dx = 0,
+                        dy = 0;
                     if (state.keys['ArrowUp'] || state.keys['w']) dy -= 1;
                     if (state.keys['ArrowDown'] || state.keys['s']) dy += 1;
                     if (state.keys['ArrowLeft'] || state.keys['a']) dx -= 1;
@@ -1318,24 +1919,31 @@
             }
 
             function isSlowActive() {
-                return state.selectedChar && state.selectedChar.power.type === 'slow' && performance.now() < state.powerActiveUntil;
-            }
-            function isDashActive() {
-                return state.selectedChar && state.selectedChar.power.type === 'dash' && performance.now() < state.powerActiveUntil;
-            }
-            function isRevealActive() {
-                return state.selectedChar && state.selectedChar.power.type === 'reveal' && performance.now() < state.powerActiveUntil;
+                return state.selectedChar && state.selectedChar.power.type === 'slow' && performance.now() < state
+                    .powerActiveUntil;
             }
 
-            /* ---- Update loop ---- */
+            function isDashActive() {
+                return state.selectedChar && state.selectedChar.power.type === 'dash' && performance.now() < state
+                    .powerActiveUntil;
+            }
+
+            function isRevealActive() {
+                return state.selectedChar && state.selectedChar.power.type === 'reveal' && performance.now() < state
+                    .powerActiveUntil;
+            }
+
+            // ============================================================
+            // 9. UPDATE LOOP
+            // ============================================================
             function update(dt) {
                 const now = performance.now();
                 const p = state.player;
                 const pa = state.playArea;
                 updateConfetti(dt);
 
-                // movimiento jugador
-                let dx = 0, dy = 0;
+                let dx = 0,
+                    dy = 0;
                 if (state.keys['ArrowUp'] || state.keys['w']) dy -= 1;
                 if (state.keys['ArrowDown'] || state.keys['s']) dy += 1;
                 if (state.keys['ArrowLeft'] || state.keys['a']) dx -= 1;
@@ -1344,16 +1952,19 @@
                 let speed = 210;
                 if (isDashActive()) {
                     speed = 210 * state.selectedChar.power.speedMult;
-                    dx = state.dashDir.x; dy = state.dashDir.y;
+                    dx = state.dashDir.x;
+                    dy = state.dashDir.y;
                 } else {
                     const len = Math.hypot(dx, dy);
-                    if (len > 0) { dx /= len; dy /= len; }
+                    if (len > 0) {
+                        dx /= len;
+                        dy /= len;
+                    }
                 }
 
                 p.x = clamp(p.x + dx * speed * dt, pa.x0 + p.r, pa.x1 - p.r);
                 p.y = clamp(p.y + dy * speed * dt, pa.y0 + p.r, pa.y1 - p.r);
 
-                // enemigos
                 const slowFactor = isSlowActive() ? state.selectedChar.power.factor : 1;
                 state.enemies.forEach(e => {
                     if (now < e.stunUntil) return;
@@ -1374,14 +1985,14 @@
                         e.x = clamp(e.x, pa.x0 + e.r, pa.x1 - e.r);
                         e.y = clamp(e.y, pa.y0 + e.r, pa.y1 - e.r);
                     } else if (e.type === 'chase') {
-                        const ddx = p.x - e.x, ddy = p.y - e.y;
+                        const ddx = p.x - e.x,
+                            ddy = p.y - e.y;
                         const dd = Math.hypot(ddx, ddy) || 1;
                         e.x += (ddx / dd) * sp * dt;
                         e.y += (ddy / dd) * sp * dt;
                     }
                 });
 
-                // colisión items
                 const pointMult = isRevealActive() ? 2 : 1;
                 state.items.forEach(it => {
                     if (it.collected) return;
@@ -1398,13 +2009,11 @@
                 state.exit.unlocked = state.collectedCount >= lvl.required;
                 if (state.exit.unlocked && !wasUnlocked) Audio1.doorUnlock();
 
-                // colisión salida
                 if (state.exit.unlocked && dist(p.x, p.y, state.exit.x, state.exit.y) < p.r + state.exit.r) {
                     onLevelClear();
                     return;
                 }
 
-                // colisión enemigos
                 if (now > p.invulnUntil) {
                     for (const e of state.enemies) {
                         if (now < e.stunUntil) continue;
@@ -1416,176 +2025,15 @@
                 }
             }
 
-            /* ============================================================
-               8. RENDER
-            ============================================================ */
-            /* ============================================================
-               6C. AMBIENTACIÓN — decoración propia de cada escenario para
-               que el fondo deje de verse plano.
-            ============================================================ */
-            function drawPottedPlant(x, y, scale) {
-                ctx.save();
-                ctx.translate(x, y);
-                ctx.scale(scale, scale);
-                ctx.fillStyle = '#7a4a2b';
-                ctx.beginPath();
-                ctx.moveTo(-14, 0); ctx.lineTo(14, 0); ctx.lineTo(10, 22); ctx.lineTo(-10, 22); ctx.closePath();
-                ctx.fill();
-                ctx.fillStyle = 'rgba(70,150,95,0.9)';
-                for (let i = 0; i < 5; i++) {
-                    const ang = -Math.PI / 2 + (i - 2) * 0.36;
-                    ctx.save();
-                    ctx.rotate(ang);
-                    ctx.beginPath();
-                    ctx.ellipse(0, -20, 6, 16, 0, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.restore();
-                }
-                ctx.restore();
-            }
-
-            function drawLampPost(x, y, scale, litColor) {
-                ctx.save();
-                ctx.translate(x, y);
-                ctx.scale(scale, scale);
-                ctx.strokeStyle = 'rgba(15,10,10,0.65)';
-                ctx.lineWidth = 4;
-                ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -72); ctx.stroke();
-                const glow = ctx.createRadialGradient(0, -80, 2, 0, -80, 28);
-                glow.addColorStop(0, hexToRgba(litColor, 0.85));
-                glow.addColorStop(1, hexToRgba(litColor, 0));
-                ctx.fillStyle = glow;
-                ctx.beginPath(); ctx.arc(0, -80, 28, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = 'rgba(15,10,10,0.8)';
-                ctx.beginPath(); ctx.arc(0, -80, 7, 0, Math.PI * 2); ctx.fill();
-                ctx.restore();
-            }
-
-            function drawMarketStall(x, y, scale, color) {
-                ctx.save();
-                ctx.translate(x, y);
-                ctx.scale(scale, scale);
-                ctx.strokeStyle = 'rgba(15,10,10,0.5)'; ctx.lineWidth = 3;
-                ctx.beginPath(); ctx.moveTo(-22, 0); ctx.lineTo(-22, -32); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(22, 0); ctx.lineTo(22, -32); ctx.stroke();
-                const stripeW = 9;
-                for (let i = -22; i < 22; i += stripeW) {
-                    ctx.fillStyle = (Math.round((i + 22) / stripeW) % 2 === 0) ? color : 'rgba(255,243,224,0.9)';
-                    ctx.beginPath();
-                    ctx.moveTo(i, -32); ctx.lineTo(i + stripeW, -32); ctx.lineTo(i + stripeW / 2, -18); ctx.closePath();
-                    ctx.fill();
-                }
-                ctx.restore();
-            }
-
-            function drawAmpStack(x, y, scale) {
-                ctx.save();
-                ctx.translate(x, y);
-                ctx.scale(scale, scale);
-                for (let i = 0; i < 2; i++) {
-                    const by = -22 * (i + 1);
-                    ctx.fillStyle = '#1c1414';
-                    ctx.fillRect(-20, by, 40, 20);
-                    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-                    ctx.strokeRect(-20, by, 40, 20);
-                    ctx.fillStyle = 'rgba(90,90,90,0.7)';
-                    for (let gx = -13; gx <= 13; gx += 8) {
-                        ctx.beginPath(); ctx.arc(gx, by + 10, 3, 0, Math.PI * 2); ctx.fill();
-                    }
-                }
-                ctx.restore();
-            }
-
-            function drawSpotlightCone(originX, dir, color) {
-                ctx.save();
-                const grad = ctx.createLinearGradient(originX, 0, originX + dir * 180, 300);
-                grad.addColorStop(0, hexToRgba(color, 0.3));
-                grad.addColorStop(1, hexToRgba(color, 0));
-                ctx.beginPath();
-                ctx.moveTo(originX, 0);
-                ctx.lineTo(originX + dir * 80, 0);
-                ctx.lineTo(originX + dir * 240, 300);
-                ctx.lineTo(originX + dir * 50, 300);
-                ctx.closePath();
-                ctx.fillStyle = grad;
-                ctx.fill();
-                ctx.restore();
-            }
-
-            function drawStringLights(colorA, colorB) {
-                const pa = state.playArea;
-                const y = pa.y0 - 16;
-                const count = 14;
-                const now = performance.now();
-                ctx.save();
-                ctx.strokeStyle = 'rgba(255,255,255,0.12)';
-                ctx.lineWidth = 1.5;
-                ctx.beginPath();
-                for (let i = 0; i <= count; i++) {
-                    const x = pa.x0 + (pa.x1 - pa.x0) * (i / count);
-                    const sag = Math.sin((i / count) * Math.PI) * 10;
-                    if (i === 0) ctx.moveTo(x, y + sag); else ctx.lineTo(x, y + sag);
-                }
-                ctx.stroke();
-                for (let i = 0; i <= count; i++) {
-                    const x = pa.x0 + (pa.x1 - pa.x0) * (i / count);
-                    const sag = Math.sin((i / count) * Math.PI) * 10;
-                    const tw = 0.5 + 0.5 * Math.sin(now / 260 + i * 1.3);
-                    ctx.beginPath();
-                    ctx.fillStyle = i % 2 === 0 ? hexToRgba(colorA, tw) : hexToRgba(colorB, tw);
-                    ctx.shadowColor = i % 2 === 0 ? colorA : colorB;
-                    ctx.shadowBlur = 8;
-                    ctx.arc(x, y + sag + 4, 3.2, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-                ctx.shadowBlur = 0;
-                ctx.restore();
-            }
-
-            function drawAmbience() {
-                const pa = state.playArea;
-                const idx = state.levelIndex;
-                if (idx === 0) {
-                    drawPottedPlant(pa.x0 + 26, pa.y1 - 4, 1);
-                    drawPottedPlant(pa.x1 - 26, pa.y1 - 4, 1);
-                    drawStringLights('#F2B705', '#C4302B');
-                } else if (idx === 1) {
-                    drawMarketStall(pa.x0 + 46, pa.y0 + 34, 0.9, '#C4302B');
-                    drawMarketStall(pa.x1 - 46, pa.y0 + 34, 0.9, '#0FADA0');
-                    drawLampPost(pa.x0 + 18, pa.y1 - 2, 0.85, '#F2B705');
-                    drawLampPost(pa.x1 - 18, pa.y1 - 2, 0.85, '#F2B705');
-                } else if (idx === 2) {
-                    drawLampPost(pa.x0 + 16, (pa.y0 + pa.y1) / 2, 0.95, '#0FADA0');
-                    drawLampPost(pa.x1 - 16, (pa.y0 + pa.y1) / 2, 0.95, '#0FADA0');
-                    ctx.save();
-                    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-                    ctx.lineWidth = 3;
-                    ctx.setLineDash([14, 12]);
-                    ctx.beginPath(); ctx.moveTo(CANVAS_W / 2, pa.y0 + 10); ctx.lineTo(CANVAS_W / 2, pa.y1 - 10); ctx.stroke();
-                    ctx.setLineDash([]);
-                    ctx.restore();
-                } else if (idx === 3) {
-                    drawAmpStack(pa.x0 + 34, pa.y1 - 4, 0.9);
-                    drawAmpStack(pa.x1 - 34, pa.y1 - 4, 0.9);
-                    drawStringLights('#0FADA0', '#F2B705');
-                } else if (idx === 4) {
-                    drawSpotlightCone(pa.x0 + 10, 1, '#F2B705');
-                    drawSpotlightCone(pa.x1 - 10, -1, '#FF4B4B');
-                    drawStringLights('#F2B705', '#FF4B4B');
-                }
-            }
-
-            function drawLogoBanner() {
-                if (!LOGO_STATE.ready) return;
-                const w = 72;
-                const h = w * (LOGO_IMG.height / LOGO_IMG.width);
-                // zona libre entre el panel de corazones (izquierda) y la puerta de SALIDA (centro)
-                const x = state.playArea.x0 + 140;
-                const y = 12;
-                ctx.save();
-                ctx.globalAlpha = 0.85;
-                ctx.drawImage(LOGO_IMG, x, y, w, h);
-                ctx.restore();
+            // ============================================================
+            // 10. AMBIENTACIÓN Y DIBUJO
+            // ============================================================
+            function hexToRgba(hex, alpha) {
+                const h = hex.replace('#', '');
+                const r = parseInt(h.substring(0, 2), 16);
+                const g = parseInt(h.substring(2, 4), 16);
+                const b = parseInt(h.substring(4, 6), 16);
+                return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
             }
 
             function buildConfetti(count) {
@@ -1612,7 +2060,10 @@
                     c.y += c.speed * dt;
                     c.x += Math.sin(now / 500 + c.phase) * c.sway * 20 * dt;
                     c.rot += dt * 1.5;
-                    if (c.y > CANVAS_H + 10) { c.y = -10; c.x = Math.random() * CANVAS_W; }
+                    if (c.y > CANVAS_H + 10) {
+                        c.y = -10;
+                        c.x = Math.random() * CANVAS_W;
+                    }
                 });
             }
 
@@ -1638,25 +2089,129 @@
                 ctx.fillStyle = g;
                 ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
 
-                // suelo tipo pista de baile: rejilla suave
                 ctx.strokeStyle = 'rgba(255,255,255,0.05)';
                 ctx.lineWidth = 1;
                 for (let x = 0; x <= CANVAS_W; x += 40) {
-                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, CANVAS_H); ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, CANVAS_H);
+                    ctx.stroke();
                 }
                 for (let y = 0; y <= CANVAS_H; y += 40) {
-                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(CANVAS_W, y); ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(CANVAS_W, y);
+                    ctx.stroke();
                 }
 
                 drawConfetti();
                 drawAmbience();
-                drawLogoBanner();
 
-                // borde de área jugable
                 const pa = state.playArea;
                 ctx.strokeStyle = 'rgba(247,179,43,0.5)';
                 ctx.lineWidth = 3;
                 ctx.strokeRect(pa.x0, pa.y0, pa.x1 - pa.x0, pa.y1 - pa.y0);
+            }
+
+            function drawAmbience() {
+                const pa = state.playArea;
+                const idx = state.levelIndex;
+                // Decoración ligera para cada escenario
+                if (idx === 0) {
+                    drawPottedPlant(pa.x0 + 26, pa.y1 - 4, 1);
+                    drawPottedPlant(pa.x1 - 26, pa.y1 - 4, 1);
+                    drawStringLights('#F2B705', '#C4302B');
+                } else if (idx === 1) {
+                    drawLampPost(pa.x0 + 18, pa.y1 - 2, 0.85, '#F2B705');
+                    drawLampPost(pa.x1 - 18, pa.y1 - 2, 0.85, '#F2B705');
+                } else if (idx === 2) {
+                    drawLampPost(pa.x0 + 16, (pa.y0 + pa.y1) / 2, 0.95, '#0FADA0');
+                    drawLampPost(pa.x1 - 16, (pa.y0 + pa.y1) / 2, 0.95, '#0FADA0');
+                } else if (idx === 3) {
+                    drawStringLights('#0FADA0', '#F2B705');
+                } else if (idx === 4) {
+                    drawStringLights('#F2B705', '#FF4B4B');
+                }
+            }
+
+            function drawPottedPlant(x, y, scale) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.scale(scale, scale);
+                ctx.fillStyle = '#7a4a2b';
+                ctx.beginPath();
+                ctx.moveTo(-14, 0);
+                ctx.lineTo(14, 0);
+                ctx.lineTo(10, 22);
+                ctx.lineTo(-10, 22);
+                ctx.closePath();
+                ctx.fill();
+                ctx.fillStyle = 'rgba(70,150,95,0.9)';
+                for (let i = 0; i < 5; i++) {
+                    const ang = -Math.PI / 2 + (i - 2) * 0.36;
+                    ctx.save();
+                    ctx.rotate(ang);
+                    ctx.beginPath();
+                    ctx.ellipse(0, -20, 6, 16, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+                ctx.restore();
+            }
+
+            function drawLampPost(x, y, scale, litColor) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.scale(scale, scale);
+                ctx.strokeStyle = 'rgba(15,10,10,0.65)';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(0, -72);
+                ctx.stroke();
+                const glow = ctx.createRadialGradient(0, -80, 2, 0, -80, 28);
+                glow.addColorStop(0, hexToRgba(litColor, 0.85));
+                glow.addColorStop(1, hexToRgba(litColor, 0));
+                ctx.fillStyle = glow;
+                ctx.beginPath();
+                ctx.arc(0, -80, 28, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'rgba(15,10,10,0.8)';
+                ctx.beginPath();
+                ctx.arc(0, -80, 7, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            function drawStringLights(colorA, colorB) {
+                const pa = state.playArea;
+                const y = pa.y0 - 16;
+                const count = 14;
+                const now = performance.now();
+                ctx.save();
+                ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                for (let i = 0; i <= count; i++) {
+                    const x = pa.x0 + (pa.x1 - pa.x0) * (i / count);
+                    const sag = Math.sin((i / count) * Math.PI) * 10;
+                    if (i === 0) ctx.moveTo(x, y + sag);
+                    else ctx.lineTo(x, y + sag);
+                }
+                ctx.stroke();
+                for (let i = 0; i <= count; i++) {
+                    const x = pa.x0 + (pa.x1 - pa.x0) * (i / count);
+                    const sag = Math.sin((i / count) * Math.PI) * 10;
+                    const tw = 0.5 + 0.5 * Math.sin(now / 260 + i * 1.3);
+                    ctx.beginPath();
+                    ctx.fillStyle = i % 2 === 0 ? hexToRgba(colorA, tw) : hexToRgba(colorB, tw);
+                    ctx.shadowColor = i % 2 === 0 ? colorA : colorB;
+                    ctx.shadowBlur = 8;
+                    ctx.arc(x, y + sag + 4, 3.2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.shadowBlur = 0;
+                ctx.restore();
             }
 
             function drawExit() {
@@ -1680,7 +2235,8 @@
                 ctx.stroke();
                 ctx.fillStyle = '#fff3e0';
                 ctx.font = '18px sans-serif';
-                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
                 ctx.fillText(ex.unlocked ? '🚪' : '🔒', 0, 2);
                 ctx.restore();
             }
@@ -1702,7 +2258,8 @@
                     ctx.shadowBlur = 0;
                     ctx.fillStyle = '#3a2145';
                     ctx.font = 'bold 13px sans-serif';
-                    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
                     ctx.fillText('♪', 0, 1);
                     ctx.restore();
                 });
@@ -1715,7 +2272,6 @@
                     ctx.save();
                     ctx.translate(e.x, e.y);
 
-                    // halo de color para distinguir el tipo de enemigo a simple vista
                     let glow = '#e07a3f';
                     if (e.type === 'bounce') glow = '#0FADA0';
                     if (e.type === 'chase') glow = '#9C4DCC';
@@ -1734,7 +2290,6 @@
                         ctx.drawImage(DIABLO_IMG, -size / 2, -size / 2, size, size);
                         ctx.globalAlpha = 1;
                     } else {
-                        // respaldo si la imagen no cargó
                         ctx.beginPath();
                         ctx.arc(0, 0, e.r, 0, Math.PI * 2);
                         ctx.fillStyle = stunned ? 'rgba(180,180,180,0.6)' : glow;
@@ -1743,43 +2298,28 @@
                         ctx.strokeStyle = 'rgba(0,0,0,0.3)';
                         ctx.stroke();
                         ctx.fillStyle = '#1B0F2E';
-                        ctx.beginPath(); ctx.arc(-e.r * 0.3, -2, 2.4, 0, Math.PI * 2); ctx.fill();
-                        ctx.beginPath(); ctx.arc(e.r * 0.3, -2, 2.4, 0, Math.PI * 2); ctx.fill();
+                        ctx.beginPath();
+                        ctx.arc(-e.r * 0.3, -2, 2.4, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.beginPath();
+                        ctx.arc(e.r * 0.3, -2, 2.4, 0, Math.PI * 2);
+                        ctx.fill();
                     }
 
                     if (stunned) {
                         ctx.fillStyle = '#fff';
-                        ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
+                        ctx.font = '11px sans-serif';
+                        ctx.textAlign = 'center';
                         ctx.fillText('💫', 0, -e.r - 10);
                     }
                     if (e.type === 'boss') {
                         ctx.fillStyle = 'rgba(255,75,75,0.9)';
-                        ctx.font = 'bold 9px sans-serif'; ctx.textAlign = 'center';
+                        ctx.font = 'bold 9px sans-serif';
+                        ctx.textAlign = 'center';
                         ctx.fillText('JEFE', 0, e.r + 16);
                     }
                     ctx.restore();
                 });
-            }
-
-            /* ============================================================
-               6B. AURA Y DIÁLOGO AL USAR EL PODER
-            ============================================================ */
-            function hexToRgba(hex, alpha) {
-                const h = hex.replace('#', '');
-                const r = parseInt(h.substring(0, 2), 16);
-                const g = parseInt(h.substring(2, 4), 16);
-                const b = parseInt(h.substring(4, 6), 16);
-                return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
-            }
-
-            function roundRectPath(g, x, y, w, h, r) {
-                g.beginPath();
-                g.moveTo(x + r, y);
-                g.arcTo(x + w, y, x + w, y + h, r);
-                g.arcTo(x + w, y + h, x, y + h, r);
-                g.arcTo(x, y + h, x, y, r);
-                g.arcTo(x, y, x + w, y, r);
-                g.closePath();
             }
 
             function drawPowerAura() {
@@ -1798,7 +2338,6 @@
                 ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
                 ctx.fillStyle = grad;
                 ctx.fill();
-                // anillo brillante
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, r * 0.75, 0, Math.PI * 2);
                 ctx.lineWidth = 2;
@@ -1807,7 +2346,6 @@
                 ctx.restore();
             }
 
-            /* Estallido breve (~500ms) justo en el instante en que se activa el poder */
             function drawPowerBurst() {
                 const now = performance.now();
                 const t = now - state.powerBurstAt;
@@ -1819,19 +2357,16 @@
                 const alpha = 1 - progress;
 
                 ctx.save();
-                // anillo expansivo
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
                 ctx.lineWidth = 4 * (1 - progress) + 1;
                 ctx.strokeStyle = hexToRgba(color, alpha * 0.9);
                 ctx.stroke();
-                // destello dorado extra
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, r * 0.5, 0, Math.PI * 2);
                 ctx.lineWidth = 2;
                 ctx.strokeStyle = hexToRgba('#F2B705', alpha * 0.7);
                 ctx.stroke();
-                // chispas alrededor
                 const spokes = 8;
                 for (let i = 0; i < spokes; i++) {
                     const ang = (i / spokes) * Math.PI * 2;
@@ -1863,7 +2398,6 @@
                 ctx.lineWidth = 1.5;
                 ctx.strokeStyle = 'rgba(0,0,0,0.25)';
                 ctx.stroke();
-                // colita del globo
                 ctx.beginPath();
                 ctx.moveTo(clamp(p.x - 6, bx + 6, bx + w - 6), by + h);
                 ctx.lineTo(clamp(p.x + 6, bx + 6, bx + w - 6), by + h);
@@ -1871,16 +2405,25 @@
                 ctx.closePath();
                 ctx.fillStyle = 'rgba(255,243,224,0.96)';
                 ctx.fill();
-                // texto
                 ctx.fillStyle = '#1A0D10';
-                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
                 ctx.fillText(text, bx + w / 2, by + h / 2, w - 14);
                 ctx.restore();
             }
 
+            function roundRectPath(g, x, y, w, h, r) {
+                g.beginPath();
+                g.moveTo(x + r, y);
+                g.arcTo(x + w, y, x + w, y + h, r);
+                g.arcTo(x + w, y + h, x, y + h, r);
+                g.arcTo(x, y + h, x, y, r);
+                g.arcTo(x, y, x + w, y, r);
+                g.closePath();
+            }
+
             function drawPlayer() {
                 const p = state.player;
-
                 const invuln = performance.now() < p.invulnUntil;
                 ctx.save();
                 if (invuln && Math.floor(performance.now() / 80) % 2 === 0) {
@@ -1920,21 +2463,21 @@
                 const ready = cdRemain <= 0;
                 const pct = ready ? 100 : 100 - (cdRemain / cdTotal * 100);
                 powerBarFill.style.width = pct + '%';
-                powerLabelEl.textContent = ready
-                    ? (state.selectedChar.power.name + ' — LISTO (Espacio)')
-                    : (state.selectedChar.power.name + ' — ' + Math.ceil(cdRemain / 1000) + 's');
+                powerLabelEl.textContent = ready ?
+                    (state.selectedChar.power.name + ' — LISTO (Espacio)') :
+                    (state.selectedChar.power.name + ' — ' + Math.ceil(cdRemain / 1000) + 's');
             }
 
-            /* ============================================================
-               9. LOOP PRINCIPAL
-            ============================================================ */
+            // ============================================================
+            // 11. LOOP PRINCIPAL
+            // ============================================================
             function loop(ts) {
                 if (state.screen !== 'playing') return;
                 const dt = Math.min(0.05, (ts - state.lastTime) / 1000);
                 state.lastTime = ts;
                 if (!state.paused) {
                     update(dt);
-                    if (state.screen !== 'playing') return; // pudo cambiar tras update (perdió vida / completó nivel)
+                    if (state.screen !== 'playing') return;
                 }
                 renderPlaying();
                 updateHUD();
@@ -1948,14 +2491,14 @@
                 if (state.paused) {
                     Audio1.stopMusic();
                 } else {
-                    state.lastTime = performance.now(); // evita un salto grande de dt al reanudar
+                    state.lastTime = performance.now();
                     if (Audio1.isEnabled()) Audio1.startMusic();
                 }
             }
 
-            /* ============================================================
-               10. INPUT
-            ============================================================ */
+            // ============================================================
+            // 12. INPUT
+            // ============================================================
             window.addEventListener('keydown', (e) => {
                 state.keys[e.key] = true;
                 if (e.key === ' ') {
@@ -1970,7 +2513,10 @@
 
             function bindTouchHold(id, key) {
                 const el = document.getElementById(id);
-                const set = (v) => (e) => { e.preventDefault(); state.keys[key] = v; };
+                const set = (v) => (e) => {
+                    e.preventDefault();
+                    state.keys[key] = v;
+                };
                 el.addEventListener('touchstart', set(true), { passive: false });
                 el.addEventListener('touchend', set(false), { passive: false });
                 el.addEventListener('touchcancel', set(false), { passive: false });
@@ -1984,15 +2530,17 @@
                 if (state.screen === 'playing' && !state.paused) activatePower();
             }, { passive: false });
 
-            /* ============================================================
-               11. BOTONES DE PANTALLA
-            ============================================================ */
+            // ============================================================
+            // 13. BOTONES DE PANTALLA
+            // ============================================================
             document.getElementById('btn-play').addEventListener('click', () => {
-                Audio1.unlock(); Audio1.click();
+                Audio1.unlock();
+                Audio1.click();
                 startRun();
             });
             document.getElementById('btn-howto').addEventListener('click', () => {
-                Audio1.unlock(); Audio1.click();
+                Audio1.unlock();
+                Audio1.click();
                 showScreen('instructions');
             });
             document.getElementById('btn-howto-back').addEventListener('click', () => {
@@ -2050,8 +2598,17 @@
                 showScreen('menu');
             });
 
-            /* estado inicial */
+            // estado inicial
             showScreen('menu');
+
+            // Desbloquear audio tras cualquier interacción con el overlay de rotación
+            document.querySelectorAll('#rotate-overlay *').forEach(el => {
+                el.addEventListener('click', Audio1.unlock);
+                el.addEventListener('touchstart', Audio1.unlock);
+            });
+
+            console.log('🔥 Aventura Cumbianchera — Los Hijos de Tencha');
+            console.log('🎮 Modo pantalla completa y rotación obligatoria para móviles');
 
         })();
     </script>
