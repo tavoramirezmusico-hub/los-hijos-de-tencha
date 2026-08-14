@@ -439,13 +439,57 @@
             display: flex;
         }
 
-        /* D-Pad móvil - derecha abajo */
+        /* Botón SALTO - izquierda (arriba del poder) */
+        #jump-btn-touch {
+            position: absolute;
+            left: 16px;
+            bottom: 78px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, var(--teal), #0a7c73);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            color: var(--cream);
+            font-family: 'Bungee', cursive;
+            font-size: 10px;
+            pointer-events: auto;
+            touch-action: manipulation;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            line-height: 1.2;
+            text-align: center;
+            box-shadow: 0 4px 25px rgba(15, 173, 160, 0.25), inset 0 -3px 10px rgba(0, 0, 0, 0.2);
+            z-index: 7;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #jump-btn-touch:active {
+            transform: scale(0.92);
+            box-shadow: 0 2px 10px rgba(15, 173, 160, 0.15);
+        }
+
+        #jump-btn-touch .jump-icon {
+            font-size: 18px;
+            display: block;
+            margin-bottom: 1px;
+        }
+
+        #jump-btn-touch.show {
+            display: flex;
+        }
+
+        /* D-Pad móvil - derecha abajo (SOLO IZQUIERDA Y DERECHA) */
         .dpad-mobile {
             position: absolute;
             right: 16px;
             bottom: 16px;
             width: 130px;
-            height: 130px;
+            height: 80px;
             pointer-events: auto;
             display: none;
             z-index: 7;
@@ -457,13 +501,13 @@
 
         .dpad-mobile button {
             position: absolute;
-            width: 42px;
-            height: 42px;
+            width: 56px;
+            height: 56px;
             background: rgba(255, 255, 255, 0.12);
             border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
+            border-radius: 14px;
             color: var(--cream);
-            font-size: 18px;
+            font-size: 22px;
             touch-action: manipulation;
             cursor: pointer;
             display: flex;
@@ -482,61 +526,14 @@
             transform: scale(0.90);
         }
 
-        .dpad-mobile .up {
-            top: 0;
-            left: 44px;
-        }
-
-        .dpad-mobile .down {
-            bottom: 0;
-            left: 44px;
-        }
-
         .dpad-mobile .left {
-            top: 44px;
             left: 0;
+            top: 12px;
         }
 
         .dpad-mobile .right {
-            top: 44px;
             right: 0;
-        }
-
-        /* Botón SALTO - centro abajo */
-        #jump-btn-touch {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            bottom: 16px;
-            width: 70px;
-            height: 56px;
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            color: var(--cream);
-            font-family: 'Bungee', cursive;
-            font-size: 14px;
-            pointer-events: auto;
-            touch-action: manipulation;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 7;
-            backdrop-filter: blur(4px);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            user-select: none;
-            -webkit-user-select: none;
-            letter-spacing: 1px;
-        }
-
-        #jump-btn-touch:active {
-            background: rgba(255, 204, 0, 0.2);
-            border-color: var(--gold);
-            transform: translateX(-50%) scale(0.95);
-        }
-
-        #jump-btn-touch.show {
-            display: flex;
+            top: 12px;
         }
 
         /* D-Pad Desktop */
@@ -553,19 +550,19 @@
             left: 16px;
             bottom: 16px;
             width: 130px;
-            height: 130px;
+            height: 80px;
             pointer-events: auto;
         }
 
         .dpad-desktop button {
             position: absolute;
-            width: 42px;
-            height: 42px;
+            width: 56px;
+            height: 56px;
             background: rgba(255, 255, 255, 0.12);
             border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
+            border-radius: 14px;
             color: var(--cream);
-            font-size: 18px;
+            font-size: 22px;
             touch-action: manipulation;
             cursor: pointer;
             display: flex;
@@ -584,57 +581,48 @@
             transform: scale(0.90);
         }
 
-        .dpad-desktop .up {
-            top: 0;
-            left: 44px;
-        }
-
-        .dpad-desktop .down {
-            bottom: 0;
-            left: 44px;
-        }
-
         .dpad-desktop .left {
-            top: 44px;
             left: 0;
+            top: 12px;
         }
 
         .dpad-desktop .right {
-            top: 44px;
             right: 0;
+            top: 12px;
         }
 
-        #jump-btn-desktop {
+        /* Botones de texto para PC (A y S) */
+        #pc-controls-label {
             position: absolute;
+            bottom: 16px;
             left: 50%;
             transform: translateX(-50%);
-            bottom: 16px;
-            width: 80px;
-            height: 52px;
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            color: var(--cream);
-            font-family: 'Bungee', cursive;
-            font-size: 16px;
-            pointer-events: auto;
-            touch-action: manipulation;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             z-index: 7;
+            display: none;
+            gap: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 6px 16px;
+            border-radius: 12px;
             backdrop-filter: blur(4px);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            user-select: none;
-            -webkit-user-select: none;
-            letter-spacing: 1px;
-            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            pointer-events: none;
         }
 
-        #jump-btn-desktop:active {
-            background: rgba(255, 204, 0, 0.2);
-            border-color: var(--gold);
-            transform: translateX(-50%) scale(0.95);
+        #pc-controls-label .key {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            padding: 2px 10px;
+            font-family: 'Bungee', cursive;
+            font-size: 13px;
+            color: var(--gold);
+        }
+
+        #pc-controls-label .key-label {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 11px;
+            margin-left: 4px;
         }
 
         @media (hover: none) and (pointer: coarse) {
@@ -658,7 +646,7 @@
                 display: flex;
             }
 
-            #jump-btn-desktop {
+            #pc-controls-label {
                 display: none !important;
             }
         }
@@ -684,7 +672,7 @@
                 display: none !important;
             }
 
-            #jump-btn-desktop {
+            #pc-controls-label {
                 display: flex !important;
             }
         }
@@ -731,6 +719,16 @@
 
         .howto-box p {
             margin: 6px 0;
+        }
+
+        .howto-box kbd {
+            background: rgba(255, 204, 0, 0.15);
+            color: var(--gold);
+            padding: 1px 8px;
+            border-radius: 4px;
+            font-family: 'Bungee', cursive;
+            font-size: 12px;
+            border: 1px solid rgba(255, 204, 0, 0.2);
         }
 
         .note-icon {
@@ -807,35 +805,26 @@
         @media (max-width: 768px) {
             .dpad-mobile {
                 width: 110px;
-                height: 110px;
+                height: 68px;
                 right: 10px;
                 bottom: 10px;
             }
 
             .dpad-mobile button {
-                width: 36px;
-                height: 36px;
-                font-size: 15px;
-            }
-
-            .dpad-mobile .up {
-                top: 0;
-                left: 37px;
-            }
-
-            .dpad-mobile .down {
-                bottom: 0;
-                left: 37px;
+                width: 48px;
+                height: 48px;
+                font-size: 18px;
+                border-radius: 12px;
             }
 
             .dpad-mobile .left {
-                top: 37px;
                 left: 0;
+                top: 10px;
             }
 
             .dpad-mobile .right {
-                top: 37px;
                 right: 0;
+                top: 10px;
             }
 
             #power-btn-touch {
@@ -851,48 +840,36 @@
             }
 
             #jump-btn-touch {
-                width: 60px;
-                height: 48px;
-                font-size: 12px;
-                bottom: 10px;
+                width: 50px;
+                height: 50px;
+                font-size: 9px;
+                left: 10px;
+                bottom: 66px;
             }
 
-            #jump-btn-desktop {
-                width: 70px;
-                height: 46px;
-                font-size: 14px;
-                bottom: 10px;
+            #jump-btn-touch .jump-icon {
+                font-size: 16px;
             }
 
             .dpad-desktop {
                 width: 110px;
-                height: 110px;
+                height: 68px;
             }
 
             .dpad-desktop button {
-                width: 36px;
-                height: 36px;
-                font-size: 15px;
-            }
-
-            .dpad-desktop .up {
-                top: 0;
-                left: 37px;
-            }
-
-            .dpad-desktop .down {
-                bottom: 0;
-                left: 37px;
+                width: 48px;
+                height: 48px;
+                font-size: 18px;
             }
 
             .dpad-desktop .left {
-                top: 37px;
                 left: 0;
+                top: 10px;
             }
 
             .dpad-desktop .right {
-                top: 37px;
                 right: 0;
+                top: 10px;
             }
 
             #sound-toggle,
@@ -974,42 +951,43 @@
                 font-size: 10px;
                 min-height: 28px;
             }
+
+            #pc-controls-label {
+                font-size: 10px;
+                padding: 4px 12px;
+                gap: 12px;
+            }
+
+            #pc-controls-label .key {
+                font-size: 11px;
+                padding: 1px 8px;
+            }
         }
 
         @media (max-width: 480px) {
             .dpad-mobile {
                 width: 90px;
-                height: 90px;
+                height: 56px;
                 right: 6px;
                 bottom: 6px;
             }
 
             .dpad-mobile button {
-                width: 30px;
-                height: 30px;
-                font-size: 12px;
-                border-radius: 8px;
+                width: 40px;
+                height: 40px;
+                font-size: 15px;
+                border-radius: 10px;
                 border-width: 1.5px;
             }
 
-            .dpad-mobile .up {
-                top: 0;
-                left: 30px;
-            }
-
-            .dpad-mobile .down {
-                bottom: 0;
-                left: 30px;
-            }
-
             .dpad-mobile .left {
-                top: 30px;
                 left: 0;
+                top: 8px;
             }
 
             .dpad-mobile .right {
-                top: 30px;
                 right: 0;
+                top: 8px;
             }
 
             #power-btn-touch {
@@ -1025,48 +1003,36 @@
             }
 
             #jump-btn-touch {
-                width: 50px;
-                height: 40px;
-                font-size: 10px;
-                bottom: 6px;
+                width: 42px;
+                height: 42px;
+                font-size: 8px;
+                left: 6px;
+                bottom: 54px;
             }
 
-            #jump-btn-desktop {
-                width: 60px;
-                height: 40px;
-                font-size: 12px;
-                bottom: 6px;
+            #jump-btn-touch .jump-icon {
+                font-size: 14px;
             }
 
             .dpad-desktop {
                 width: 90px;
-                height: 90px;
+                height: 56px;
             }
 
             .dpad-desktop button {
-                width: 30px;
-                height: 30px;
-                font-size: 12px;
-            }
-
-            .dpad-desktop .up {
-                top: 0;
-                left: 30px;
-            }
-
-            .dpad-desktop .down {
-                bottom: 0;
-                left: 30px;
+                width: 40px;
+                height: 40px;
+                font-size: 15px;
             }
 
             .dpad-desktop .left {
-                top: 30px;
                 left: 0;
+                top: 8px;
             }
 
             .dpad-desktop .right {
-                top: 30px;
                 right: 0;
+                top: 8px;
             }
 
             #sound-toggle,
@@ -1148,41 +1114,46 @@
                 font-size: 9px;
                 min-height: 24px;
             }
+
+            #pc-controls-label {
+                font-size: 9px;
+                padding: 3px 10px;
+                gap: 8px;
+            }
+
+            #pc-controls-label .key {
+                font-size: 10px;
+                padding: 1px 6px;
+            }
+
+            #pc-controls-label .key-label {
+                font-size: 9px;
+            }
         }
 
         @media (max-width: 380px) {
             .dpad-mobile {
                 width: 74px;
-                height: 74px;
+                height: 46px;
                 right: 4px;
                 bottom: 4px;
             }
 
             .dpad-mobile button {
-                width: 24px;
-                height: 24px;
-                font-size: 10px;
-                border-radius: 6px;
-            }
-
-            .dpad-mobile .up {
-                top: 0;
-                left: 25px;
-            }
-
-            .dpad-mobile .down {
-                bottom: 0;
-                left: 25px;
+                width: 34px;
+                height: 34px;
+                font-size: 13px;
+                border-radius: 8px;
             }
 
             .dpad-mobile .left {
-                top: 25px;
                 left: 0;
+                top: 6px;
             }
 
             .dpad-mobile .right {
-                top: 25px;
                 right: 0;
+                top: 6px;
             }
 
             #power-btn-touch {
@@ -1198,48 +1169,36 @@
             }
 
             #jump-btn-touch {
-                width: 42px;
-                height: 34px;
-                font-size: 9px;
-                bottom: 4px;
+                width: 36px;
+                height: 36px;
+                font-size: 7px;
+                left: 4px;
+                bottom: 46px;
             }
 
-            #jump-btn-desktop {
-                width: 50px;
-                height: 34px;
-                font-size: 10px;
-                bottom: 4px;
+            #jump-btn-touch .jump-icon {
+                font-size: 12px;
             }
 
             .dpad-desktop {
                 width: 74px;
-                height: 74px;
+                height: 46px;
             }
 
             .dpad-desktop button {
-                width: 24px;
-                height: 24px;
-                font-size: 10px;
-            }
-
-            .dpad-desktop .up {
-                top: 0;
-                left: 25px;
-            }
-
-            .dpad-desktop .down {
-                bottom: 0;
-                left: 25px;
+                width: 34px;
+                height: 34px;
+                font-size: 13px;
             }
 
             .dpad-desktop .left {
-                top: 25px;
                 left: 0;
+                top: 6px;
             }
 
             .dpad-desktop .right {
-                top: 25px;
                 right: 0;
+                top: 6px;
             }
 
             #sound-toggle,
@@ -1266,6 +1225,21 @@
                 width: 28px;
                 height: 28px;
             }
+
+            #pc-controls-label {
+                font-size: 8px;
+                padding: 2px 8px;
+                gap: 6px;
+            }
+
+            #pc-controls-label .key {
+                font-size: 9px;
+                padding: 1px 5px;
+            }
+
+            #pc-controls-label .key-label {
+                font-size: 8px;
+            }
         }
     </style>
 </head>
@@ -1291,28 +1265,31 @@
 
             <!-- CONTROLES TÁCTILES - MÓVIL -->
             <div id="touch-controls-mobile" class="active">
+                <button id="jump-btn-touch" class="show">
+                    <span class="jump-icon">⬆</span>
+                    SALTO
+                </button>
                 <button id="power-btn-touch" class="show">
                     <span class="power-icon">⚡</span>
                     PODER
                 </button>
                 <div class="dpad-mobile show">
-                    <button class="up" id="btn-up-mobile">▲</button>
-                    <button class="down" id="btn-down-mobile">▼</button>
                     <button class="left" id="btn-left-mobile">◀</button>
                     <button class="right" id="btn-right-mobile">▶</button>
                 </div>
-                <button id="jump-btn-touch" class="show">⬆ SALTO</button>
             </div>
 
             <!-- CONTROLES - DESKTOP -->
             <div id="touch-controls-desktop" class="active">
                 <div class="dpad-desktop">
-                    <button class="up" id="btn-up">▲</button>
-                    <button class="down" id="btn-down">▼</button>
                     <button class="left" id="btn-left">◀</button>
                     <button class="right" id="btn-right">▶</button>
                 </div>
-                <button id="jump-btn-desktop">⬆ SALTO</button>
+                <div id="pc-controls-label">
+                    <span><span class="key">A</span><span class="key-label">Salto</span></span>
+                    <span><span class="key">S</span><span class="key-label">Poder</span></span>
+                    <span><span class="key">← →</span><span class="key-label">Mover</span></span>
+                </div>
             </div>
 
             <!-- PAUSA -->
@@ -1346,7 +1323,7 @@
                     onerror="this.style.display='none'">
                 <button class="btn" id="btn-play">▶ JUGAR</button>
                 <button class="btn secondary" id="btn-howto">❓ CÓMO SE JUEGA</button>
-                <p class="footer-note">5 vidas · 5 niveles · recolecta notas musicales 🎵</p>
+                <p class="footer-note">5 vidas · 4 niveles · recolecta notas musicales 🎵</p>
             </div>
 
             <!-- INSTRUCCIONES -->
@@ -1356,10 +1333,17 @@
                     <p><strong>🎯 Objetivo:</strong> recolecta todas las notas musicales <span
                             class="note-icon">♪</span>
                         de cada nivel y llega a la bandera final.</p>
-                    <p><strong>🕹️ Controles:</strong> usa las flechas para moverte, <strong>SALTO</strong> para saltar,
-                        y <strong>PODER</strong> para usar tu habilidad especial.</p>
-                    <p><strong>⭐ Poder especial:</strong> cada personaje tiene un poder único que te ayuda a superar
-                        obstáculos.</p>
+                    <p><strong>🕹️ Controles PC:</strong></p>
+                    <p style="padding-left:12px;">• <kbd>←</kbd> <kbd>→</kbd> o <kbd>A</kbd> <kbd>D</kbd> para moverte
+                    </p>
+                    <p style="padding-left:12px;">• <kbd>A</kbd> para saltar</p>
+                    <p style="padding-left:12px;">• <kbd>S</kbd> para usar tu poder especial</p>
+                    <p><strong>🕹️ Controles Móvil:</strong></p>
+                    <p style="padding-left:12px;">• Flechas <strong>◀ ▶</strong> para moverte (derecha)</p>
+                    <p style="padding-left:12px;">• Botón <strong>SALTO</strong> para saltar (izquierda abajo)</p>
+                    <p style="padding-left:12px;">• Botón <strong>PODER</strong> para usar habilidad (izquierda)</p>
+                    <p><strong>⭐ Poder especial:</strong> cada personaje tiene una habilidad única que te ayuda a
+                        superar obstáculos.</p>
                     <p><strong>⚠️ Cuidado:</strong> evita tocar a los enemigos. Si te tocan, pierdes una vida.</p>
                     <p><strong>❤️ Vidas:</strong> empiezas con 5 vidas. Si pierdes todas, se acaba la partida.</p>
                 </div>
@@ -1760,8 +1744,8 @@
             // ============================================================
             const CANVAS_W = 900,
                 CANVAS_H = 560;
-            const GRAVEDAD = 0.65;
-            const FUERZA_SALTO = -11.5;
+            const GRAVEDAD = 0.7;
+            const FUERZA_SALTO = -12.5;
             const SUELO_Y = CANVAS_H - 60;
             const JUGADOR_ANCHO = 36;
             const JUGADOR_ALTO = 44;
@@ -1805,6 +1789,7 @@
                 levelWidth: 0,
                 gameOver: false,
                 victory: false,
+                invulnUntil: 0,
             };
 
             // ============================================================
@@ -2067,6 +2052,7 @@
                     startY: e.y,
                     alive: true,
                     deathTimer: 0,
+                    stunUntil: 0,
                 }));
                 state.coinsItems = nivel.monedas.map(c => ({ ...c, collected: false }));
                 state.flag = { ...nivel.flag, reached: false };
@@ -2086,6 +2072,7 @@
                 // Resetear poder
                 state.powerCooldownUntil = 0;
                 state.powerActiveUntil = 0;
+                state.invulnUntil = 0;
             }
 
             // ============================================================
@@ -2174,9 +2161,7 @@
                     });
                 } else if (power.type === 'dash') {
                     state.player.vx = state.player.facing * 15;
-                    state.player.invulnUntil = now + power.duration + 100;
-                } else if (power.type === 'slow') {
-                    // Se aplica en update
+                    state.invulnUntil = now + power.duration + 100;
                 } else if (power.type === 'reveal') {
                     // Duplica puntos por 5s
                 }
@@ -2261,11 +2246,17 @@
                 p.vx = moveX * speed;
                 if (moveX !== 0) p.facing = moveX;
 
-                // --- Salto ---
-                if ((state.keys['ArrowUp'] || state.keys['w'] || state.keys[' ']) && p.onGround) {
+                // --- Salto con tecla A ---
+                if ((state.keys['a'] || state.keys['ArrowUp']) && p.onGround) {
                     p.vy = FUERZA_SALTO;
                     p.onGround = false;
                     Audio1.click();
+                }
+
+                // --- Poder con tecla S ---
+                if (state.keys['s']) {
+                    activatePower();
+                    state.keys['s'] = false;
                 }
 
                 // --- Gravedad ---
@@ -2282,15 +2273,12 @@
                 // --- Colisión con plataformas ---
                 p.onGround = false;
                 for (const plat of state.platforms) {
-                    // Colisión horizontal
                     if (p.x + p.w > plat.x && p.x < plat.x + plat.w &&
                         p.y + p.h > plat.y && p.y < plat.y + plat.h) {
-                        // Determinar lado de colisión
                         const overlapX = Math.min(p.x + p.w - plat.x, plat.x + plat.w - p.x);
                         const overlapY = Math.min(p.y + p.h - plat.y, plat.y + plat.h - p.y);
 
                         if (overlapX < overlapY) {
-                            // Colisión lateral
                             if (p.x + p.w / 2 < plat.x + plat.w / 2) {
                                 p.x = plat.x - p.w;
                             } else {
@@ -2298,7 +2286,6 @@
                             }
                             p.vx = 0;
                         } else {
-                            // Colisión vertical
                             if (p.vy > 0) {
                                 p.y = plat.y - p.h;
                                 p.vy = 0;
@@ -2342,15 +2329,13 @@
                     if (!e.alive) continue;
                     if (now < e.stunUntil) continue;
 
-                    // Movimiento
                     e.x += e.vx * slowFactor * 60 * dt;
 
-                    // Rebote en bordes
                     if (e.x < 10 || e.x + e.w > state.levelWidth - 10) {
                         e.vx *= -1;
                     }
 
-                    // Colisión con el jugador (desde arriba = aplastar)
+                    // Colisión con el jugador
                     if (p.x + p.w > e.x + 8 && p.x < e.x + e.w - 8 &&
                         p.y + p.h > e.y + 8 && p.y < e.y + e.h - 8) {
                         if (p.vy > 0 && p.y + p.h - e.y < 20) {
@@ -2360,9 +2345,8 @@
                             p.vy = -6;
                             state.score += 100;
                             Audio1.collect();
-                        } else if (now > (p.invulnUntil || 0)) {
-                            // Daño al jugador
-                            p.invulnUntil = now + 1500;
+                        } else if (now > (state.invulnUntil || 0)) {
+                            state.invulnUntil = now + 1500;
                             loseLife();
                             return;
                         }
@@ -2374,9 +2358,18 @@
                     const f = state.flag;
                     if (p.x + p.w > f.x && p.x < f.x + f.w &&
                         p.y + p.h > f.y && p.y < f.y + f.h) {
-                        state.flagReached = true;
-                        onLevelClear();
-                        return;
+                        // Verificar si todas las monedas fueron recolectadas
+                        const allCollected = state.coinsItems.every(c => c.collected);
+                        if (allCollected) {
+                            state.flagReached = true;
+                            onLevelClear();
+                            return;
+                        } else {
+                            // Mostrar mensaje de que faltan monedas
+                            const faltan = state.coinsItems.filter(c => !c.collected).length;
+                            state.speechText = '🎵 Faltan ' + faltan + ' nota(s)!';
+                            state.speechUntil = now + 1500;
+                        }
                     }
                 }
 
@@ -2400,7 +2393,6 @@
             // 9. DIBUJO
             // ============================================================
             function drawBackground() {
-                // Cielo
                 const grad = ctx.createLinearGradient(0, 0, 0, CANVAS_H);
                 grad.addColorStop(0, '#4a90d9');
                 grad.addColorStop(0.5, '#87CEEB');
@@ -2408,7 +2400,6 @@
                 ctx.fillStyle = grad;
                 ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
 
-                // Nubes
                 ctx.fillStyle = 'rgba(255,255,255,0.3)';
                 const nubes = [
                     { x: 50 - state.cameraX * 0.2, y: 40, w: 80, h: 30 },
@@ -2431,7 +2422,6 @@
                     ctx.fill();
                 }
 
-                // Montañas de fondo
                 ctx.fillStyle = 'rgba(100,140,80,0.15)';
                 const montanas = [
                     { x: -50 - state.cameraX * 0.1, y: SUELO_Y, w: 200, h: 120 },
@@ -2453,11 +2443,9 @@
                     const x = p.x - state.cameraX;
                     if (x + p.w < -20 || x > CANVAS_W + 20) continue;
 
-                    // Sombra
                     ctx.fillStyle = 'rgba(0,0,0,0.15)';
                     ctx.fillRect(x + 2, p.y + 4, p.w, p.h);
 
-                    // Cuerpo
                     const grad = ctx.createLinearGradient(0, p.y, 0, p.y + p.h);
                     grad.addColorStop(0, '#8B7355');
                     grad.addColorStop(0.5, '#6B5340');
@@ -2465,11 +2453,9 @@
                     ctx.fillStyle = grad;
                     ctx.fillRect(x, p.y, p.w, p.h);
 
-                    // Borde superior
                     ctx.fillStyle = 'rgba(200,180,150,0.4)';
                     ctx.fillRect(x, p.y, p.w, 3);
 
-                    // Detalle de ladrillos
                     ctx.strokeStyle = 'rgba(0,0,0,0.1)';
                     ctx.lineWidth = 1;
                     for (let i = 0; i < p.w; i += 20) {
@@ -2496,7 +2482,6 @@
 
                     const bob = Math.sin(now / 300 + coin.x) * 4;
 
-                    // Brillo
                     ctx.shadowColor = '#F2B705';
                     ctx.shadowBlur = 15;
 
@@ -2505,7 +2490,6 @@
                     const scaleX = Math.abs(Math.cos(now / 400 + coin.x * 0.5));
                     ctx.scale(Math.max(0.3, scaleX), 1);
 
-                    // Cuerpo de la moneda
                     const grad = ctx.createRadialGradient(-3, -3, 2, 0, 0, coin.w / 2);
                     grad.addColorStop(0, '#FFD700');
                     grad.addColorStop(0.7, '#F2B705');
@@ -2515,14 +2499,12 @@
                     ctx.arc(0, 0, coin.w / 2, 0, Math.PI * 2);
                     ctx.fill();
 
-                    // Brillo central
                     ctx.shadowBlur = 0;
                     ctx.fillStyle = 'rgba(255,255,255,0.3)';
                     ctx.beginPath();
                     ctx.arc(-3, -3, 3, 0, Math.PI * 2);
                     ctx.fill();
 
-                    // Símbolo ♪
                     ctx.fillStyle = '#8B6914';
                     ctx.font = 'bold 10px sans-serif';
                     ctx.textAlign = 'center';
@@ -2543,13 +2525,11 @@
 
                     const stunned = now < (e.stunUntil || 0);
 
-                    // Sombra
                     ctx.fillStyle = 'rgba(0,0,0,0.2)';
                     ctx.beginPath();
                     ctx.ellipse(x + e.w / 2, e.y + e.h + 2, e.w / 2, 4, 0, 0, Math.PI * 2);
                     ctx.fill();
 
-                    // Cuerpo del enemigo (diablito)
                     ctx.save();
                     ctx.translate(x + e.w / 2, e.y + e.h / 2);
 
@@ -2563,7 +2543,6 @@
                         const size = e.h * 1.3;
                         ctx.drawImage(DIABLO_IMG, -size / 2, -size / 2, size, size);
                     } else {
-                        // Fallback
                         ctx.fillStyle = stunned ? '#888' : '#C4302B';
                         ctx.beginPath();
                         ctx.arc(0, 0, e.w / 2, 0, Math.PI * 2);
@@ -2604,12 +2583,11 @@
                 if (x + f.w < -20 || x > CANVAS_W + 20) return;
 
                 const reached = state.flagReached;
+                const allCollected = state.coinsItems.every(c => c.collected);
 
-                // Poste
                 ctx.fillStyle = '#666';
                 ctx.fillRect(x + f.w / 2 - 3, f.y, 6, f.h);
 
-                // Bandera
                 const flagX = x + f.w;
                 const flagY = f.y + 10;
                 ctx.beginPath();
@@ -2622,9 +2600,12 @@
                 if (reached) {
                     grad.addColorStop(0, '#0FADA0');
                     grad.addColorStop(1, '#0a7c73');
-                } else {
+                } else if (allCollected) {
                     grad.addColorStop(0, '#F2B705');
                     grad.addColorStop(1, '#b3860a');
+                } else {
+                    grad.addColorStop(0, '#888');
+                    grad.addColorStop(1, '#666');
                 }
                 ctx.fillStyle = grad;
                 ctx.fill();
@@ -2633,14 +2614,22 @@
                 ctx.lineWidth = 1;
                 ctx.stroke();
 
-                // Estrella en la bandera
-                ctx.fillStyle = reached ? '#fff' : '#C4302B';
+                ctx.fillStyle = reached ? '#fff' : (allCollected ? '#C4302B' : '#555');
                 ctx.font = '16px sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText(reached ? '★' : '🎵', flagX + 25, flagY + 16);
+                ctx.fillText(reached ? '★' : (allCollected ? '🎵' : '🔒'), flagX + 25, flagY + 16);
 
-                // Brillo si está alcanzada
+                if (allCollected && !reached) {
+                    ctx.shadowColor = '#F2B705';
+                    ctx.shadowBlur = 20;
+                    ctx.fillStyle = 'rgba(242,183,5,0.1)';
+                    ctx.beginPath();
+                    ctx.arc(x + f.w / 2, f.y, 50, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+
                 if (reached) {
                     ctx.shadowColor = '#0FADA0';
                     ctx.shadowBlur = 30;
@@ -2655,15 +2644,13 @@
             function drawPlayer() {
                 const p = state.player;
                 const x = p.x - state.cameraX;
-                const invuln = performance.now() < (p.invulnUntil || 0);
+                const invuln = performance.now() < (state.invulnUntil || 0);
 
                 if (invuln && Math.floor(performance.now() / 80) % 2 === 0) return;
 
                 ctx.save();
                 ctx.translate(x + p.w / 2, p.y + p.h / 2);
 
-                // Sombra
-                ctx.shadowBlur = 0;
                 ctx.fillStyle = 'rgba(0,0,0,0.2)';
                 ctx.beginPath();
                 ctx.ellipse(0, p.h / 2 + 4, p.w / 2, 4, 0, 0, Math.PI * 2);
@@ -2673,7 +2660,6 @@
                     drawCharacterSprite(ctx, 0, 0, 1.15, state.selectedChar, { flip: p.facing < 0 });
                 }
 
-                // Aura de poder
                 if (isPowerActive()) {
                     ctx.shadowColor = state.selectedChar.bodyColor;
                     ctx.shadowBlur = 30;
@@ -2704,16 +2690,15 @@
                 const bx = Math.max(10, Math.min(x + p.w / 2 - w / 2, CANVAS_W - w - 10));
                 const by = p.y - 40;
 
-                // Fondo del globo
                 ctx.beginPath();
-                ctx.roundRect ? ctx.roundRect(bx, by, w, h, 8) : ctx.rect(bx, by, w, h);
+                if (ctx.roundRect) ctx.roundRect(bx, by, w, h, 8);
+                else ctx.rect(bx, by, w, h);
                 ctx.fillStyle = 'rgba(255,243,224,0.95)';
                 ctx.fill();
                 ctx.lineWidth = 1.5;
                 ctx.strokeStyle = 'rgba(0,0,0,0.15)';
                 ctx.stroke();
 
-                // Colita
                 ctx.beginPath();
                 ctx.moveTo(Math.max(bx + 6, Math.min(x + p.w / 2 - 6, bx + w - 6)), by + h);
                 ctx.lineTo(Math.max(bx + 6, Math.min(x + p.w / 2 + 6, bx + w - 6)), by + h);
@@ -2722,16 +2707,11 @@
                 ctx.fillStyle = 'rgba(255,243,224,0.95)';
                 ctx.fill();
 
-                // Texto
                 ctx.fillStyle = '#1A0D10';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(text, bx + w / 2, by + h / 2, w - 14);
                 ctx.restore();
-            }
-
-            function drawHUD() {
-                // El HUD se actualiza en updateHUD()
             }
 
             function render() {
@@ -2807,25 +2787,29 @@
                 el.addEventListener('mouseleave', set(false));
             }
 
-            setupMobileButton('btn-up-mobile', 'ArrowUp');
-            setupMobileButton('btn-down-mobile', 'ArrowDown');
             setupMobileButton('btn-left-mobile', 'ArrowLeft');
             setupMobileButton('btn-right-mobile', 'ArrowRight');
 
             // Botón SALTO móvil
             const jumpBtnTouch = document.getElementById('jump-btn-touch');
             if (jumpBtnTouch) {
-                const setJump = (v) => (e) => {
+                jumpBtnTouch.addEventListener('touchstart', function (e) {
                     e.preventDefault();
-                    if (v && state.screen === 'playing' && !state.paused) {
+                    if (state.screen === 'playing' && !state.paused) {
                         saltar();
                     }
-                };
-                jumpBtnTouch.addEventListener('touchstart', setJump(true), { passive: false });
-                jumpBtnTouch.addEventListener('touchend', setJump(false), { passive: false });
-                jumpBtnTouch.addEventListener('touchcancel', setJump(false), { passive: false });
-                jumpBtnTouch.addEventListener('mousedown', setJump(true));
-                jumpBtnTouch.addEventListener('mouseup', setJump(false));
+                }, { passive: false });
+                jumpBtnTouch.addEventListener('touchend', function (e) {
+                    e.preventDefault();
+                }, { passive: false });
+                jumpBtnTouch.addEventListener('touchcancel', function (e) {
+                    e.preventDefault();
+                }, { passive: false });
+                jumpBtnTouch.addEventListener('mousedown', function (e) {
+                    if (state.screen === 'playing' && !state.paused) {
+                        saltar();
+                    }
+                });
             }
 
             // Botón PODER móvil
@@ -2846,39 +2830,45 @@
 
             // Teclado
             window.addEventListener('keydown', (e) => {
-                state.keys[e.key] = true;
-                if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'w') {
+                const key = e.key.toLowerCase();
+                state.keys[key] = true;
+
+                // Salto con A
+                if (key === 'a') {
                     e.preventDefault();
                     if (state.screen === 'playing' && !state.paused) {
                         saltar();
                     }
                 }
-                if (e.key === 'p' || e.key === 'P') {
+
+                // Poder con S
+                if (key === 's') {
+                    e.preventDefault();
+                    if (state.screen === 'playing' && !state.paused) {
+                        activatePower();
+                    }
+                }
+
+                // Pausa con P
+                if (key === 'p') {
                     if (state.screen === 'playing') togglePause();
                 }
+
+                // Flechas para mover
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                    state.keys[e.key] = true;
+                }
             });
+
             window.addEventListener('keyup', (e) => {
-                state.keys[e.key] = false;
+                const key = e.key.toLowerCase();
+                state.keys[key] = false;
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                    state.keys[e.key] = false;
+                }
             });
 
-            // Botón SALTO desktop
-            const jumpBtnDesktop = document.getElementById('jump-btn-desktop');
-            if (jumpBtnDesktop) {
-                const setJumpDesktop = (v) => (e) => {
-                    e.preventDefault();
-                    if (v && state.screen === 'playing' && !state.paused) {
-                        saltar();
-                    }
-                };
-                jumpBtnDesktop.addEventListener('mousedown', setJumpDesktop(true));
-                jumpBtnDesktop.addEventListener('mouseup', setJumpDesktop(false));
-                jumpBtnDesktop.addEventListener('mouseleave', setJumpDesktop(false));
-                jumpBtnDesktop.addEventListener('touchstart', setJumpDesktop(true), { passive: false });
-                jumpBtnDesktop.addEventListener('touchend', setJumpDesktop(false), { passive: false });
-                jumpBtnDesktop.addEventListener('touchcancel', setJumpDesktop(false), { passive: false });
-            }
-
-            // D-pad desktop
+            // D-pad desktop (izquierda/derecha)
             function setupDesktopButton(id, key) {
                 const el = document.getElementById(id);
                 if (!el) return;
@@ -2894,8 +2884,6 @@
                 el.addEventListener('touchcancel', set(false), { passive: false });
             }
 
-            setupDesktopButton('btn-up', 'ArrowUp');
-            setupDesktopButton('btn-down', 'ArrowDown');
             setupDesktopButton('btn-left', 'ArrowLeft');
             setupDesktopButton('btn-right', 'ArrowRight');
 
@@ -2975,7 +2963,8 @@
             });
 
             console.log('🎮 Super Mario Cumbianchero — Los Hijos de Tencha');
-            console.log('🕹️ Controles: flechas para moverte, SALTO para saltar, PODER para habilidad especial');
+            console.log('🕹️ Controles PC: ← → mover, A saltar, S poder');
+            console.log('🕹️ Controles Móvil: flechas ◀ ▶, botón SALTO, botón PODER');
             console.log('🎵 Recolecta todas las notas y llega a la bandera!');
 
         })();
