@@ -1796,6 +1796,8 @@
                 shakeUntil: 0,
                 wasOnGround: false,
                 hitFlashUntil: 0,
+                jumpBufferedUntil: 0,
+                coyoteUntil: 0,
             };
 
             // ============================================================
@@ -2082,6 +2084,8 @@
                 state.shakeUntil = 0;
                 state.hitFlashUntil = 0;
                 state.wasOnGround = false;
+                state.jumpBufferedUntil = 0;
+                state.coyoteUntil = 0;
             }
 
             // ============================================================
@@ -2135,13 +2139,12 @@
                 requestAnimationFrame(loop);
             }
 
-            function saltar() {
-                if (state.player.onGround) {
-                    state.player.vy = FUERZA_SALTO;
-                    state.player.onGround = false;
-                    Audio1.click();
-                    spawnDust(state.player.x + state.player.w / 2, state.player.y + state.player.h, 8);
-                }
+            function requestJump() {
+                // "Jump buffer": guarda la intención de saltar un ratito,
+                // así si el toque llega un frame antes/después de tocar
+                // el suelo, el salto igual se ejecuta (evita el bug de
+                // "toco el botón y no pasa nada").
+                state.jumpBufferedUntil = performance.now() + 180;
             }
 
             // ============================================================
@@ -2388,15 +2391,18 @@
                 p.vx = moveX * speed;
                 if (moveX !== 0) p.facing = moveX;
 
-                // --- Salto con tecla A (SOLO A, no flecha arriba) ---
-                if (state.keys['a'] && p.onGround) {
+                // --- Salto con tecla/botón A (con jump buffer + coyote time) ---
+                const canCoyoteJump = p.onGround || now < state.coyoteUntil;
+                if (now < state.jumpBufferedUntil && canCoyoteJump) {
                     p.vy = FUERZA_SALTO;
                     p.onGround = false;
+                    state.jumpBufferedUntil = 0;
+                    state.coyoteUntil = 0;
                     Audio1.click();
-                    state.keys['a'] = false; // Evita saltos múltiples
+                    spawnDust(p.x + p.w / 2, p.y + p.h, 8);
                 }
 
-                // --- Poder con tecla S ---
+                // --- Poder con tecla/botón S ---
                 if (state.keys['s']) {
                     activatePower();
                     state.keys['s'] = false;
@@ -2449,9 +2455,13 @@
                     return;
                 }
 
-                // --- Efecto de aterrizaje ---
+                // --- Efecto de aterrizaje + coyote time ---
                 if (p.onGround && !state.wasOnGround) {
                     spawnDust(p.x + p.w / 2, p.y + p.h, 6);
+                } else if (!p.onGround && state.wasOnGround) {
+                    // Acaba de dejar el suelo (ej. caminó fuera de una
+                    // plataforma): da un margen breve para saltar igual.
+                    state.coyoteUntil = now + 120;
                 }
                 state.wasOnGround = p.onGround;
 
@@ -2939,16 +2949,21 @@
             // 11. INPUT - CONTROLES
             // ============================================================
 
-            // Helper universal: responde a pointer (touch/mouse/lápiz), con
-            // fallback a touch/mouse por separado para navegadores viejos.
-            // Esto es lo que faltaba en el botón de SALTO: antes solo
-            // escuchaba 'touchstart', así que un click de mouse (o algunos
-            // navegadores/dispositivos híbridos) nunca lo activaban.
+            // Helper universal: responde a TODOS los tipos de evento de
+            // pulsación posibles (pointer, touch, mouse y click) a la vez,
+            // con una bandera "active" + una ventana de tiempo para evitar
+            // que una misma pulsación dispare la acción dos veces.
+            // Esto es justamente lo que fallaba antes: el botón de SALTO
+            // solo escuchaba 'touchstart', así que en cualquier entorno que
+            // no generara ese evento exacto (mouse, ciertos navegadores o
+            // vistas embebidas) el botón se quedaba mudo.
             function addPressListener(el, onDown, onUp) {
                 if (!el) return;
                 let active = false;
+                let lastDownAt = 0;
                 const down = (e) => {
-                    e.preventDefault();
+                    if (e.cancelable) e.preventDefault();
+                    lastDownAt = performance.now();
                     if (active) return;
                     active = true;
                     onDown(e);
@@ -2958,21 +2973,26 @@
                     active = false;
                     if (onUp) onUp(e);
                 };
-                if (window.PointerEvent) {
-                    el.addEventListener('pointerdown', down);
-                    el.addEventListener('pointerup', up);
-                    el.addEventListener('pointercancel', up);
-                    el.addEventListener('pointerleave', up);
-                } else {
-                    el.addEventListener('touchstart', down, { passive: false });
-                    el.addEventListener('touchend', up, { passive: false });
-                    el.addEventListener('touchcancel', up, { passive: false });
-                    el.addEventListener('mousedown', down);
-                    el.addEventListener('mouseup', up);
-                    el.addEventListener('mouseleave', up);
-                }
-                // Evita que además dispare un click fantasma tras el toque
-                el.addEventListener('click', (e) => e.preventDefault());
+                el.addEventListener('pointerdown', down);
+                el.addEventListener('pointerup', up);
+                el.addEventListener('pointercancel', up);
+                el.addEventListener('pointerleave', up);
+                el.addEventListener('touchstart', down, { passive: false });
+                el.addEventListener('touchend', up, { passive: false });
+                el.addEventListener('touchcancel', up, { passive: false });
+                el.addEventListener('mousedown', down);
+                el.addEventListener('mouseup', up);
+                el.addEventListener('mouseleave', up);
+                // Red de seguridad: si ninguno de los eventos anteriores
+                // llegó a disparar (algunos entornos solo emiten 'click'),
+                // usamos el click como pulsación completa.
+                el.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (performance.now() - lastDownAt > 350) {
+                        onDown(e);
+                        up(e);
+                    }
+                });
             }
 
             // Botones móviles (mover)
@@ -2988,7 +3008,7 @@
             const jumpBtnTouch = document.getElementById('jump-btn-touch');
             addPressListener(jumpBtnTouch, () => {
                 if (state.screen === 'playing' && !state.paused) {
-                    saltar();
+                    requestJump();
                 }
             });
 
@@ -3010,7 +3030,7 @@
                 if (key === 'a') {
                     e.preventDefault();
                     if (state.screen === 'playing' && !state.paused) {
-                        saltar();
+                        requestJump();
                     }
                 }
 
