@@ -1538,6 +1538,262 @@
             font-weight: 600;
             margin-left: 10px;
         }
+
+        /* =====================================
+           MODAL PARA SELECCIONAR JUEGOS
+           ===================================== */
+        .modal-juegos {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(12px);
+            justify-content: center;
+            align-items: center;
+            z-index: 999999;
+            padding: 20px;
+            animation: modalJuegosFadeIn 0.35s ease;
+        }
+
+        .modal-juegos.active {
+            display: flex;
+        }
+
+        @keyframes modalJuegosFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.92) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-juegos-contenido {
+            background: linear-gradient(145deg, #1a1a1a, #111);
+            border-radius: 32px;
+            padding: 50px 45px 40px;
+            max-width: 580px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid rgba(255, 204, 0, 0.12);
+            box-shadow: 0 40px 90px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 204, 0, 0.06);
+            position: relative;
+        }
+
+        .modal-juegos-cerrar {
+            position: absolute;
+            top: 14px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #555;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: .3s;
+            font-family: 'Poppins', sans-serif;
+            line-height: 1;
+            padding: 4px 10px;
+            border-radius: 50%;
+        }
+
+        .modal-juegos-cerrar:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+            transform: rotate(90deg);
+        }
+
+        .modal-juegos-contenido h2 {
+            color: #fff;
+            font-size: 1.9rem;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        .modal-juegos-contenido .sub {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 28px;
+            display: block;
+        }
+
+        .modal-juegos-contenido .sub i {
+            color: #ffcc00;
+        }
+
+        .modal-juegos-opciones {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 4px;
+        }
+
+        .modal-juegos-btn {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 18px 24px;
+            background: #1e1e1e;
+            border-radius: 18px;
+            text-decoration: none;
+            transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            border: 2px solid transparent;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-juegos-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 204, 0, 0.03), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .modal-juegos-btn:hover::before {
+            opacity: 1;
+        }
+
+        .modal-juegos-btn:hover {
+            background: #262626;
+            border-color: #ffcc00;
+            transform: translateX(8px) scale(1.02);
+            box-shadow: 0 8px 35px rgba(255, 204, 0, 0.08);
+        }
+
+        .modal-juegos-btn:active {
+            transform: scale(0.97);
+        }
+
+        .modal-juegos-icono {
+            font-size: 2.6rem;
+            flex-shrink: 0;
+            width: 55px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 204, 0, 0.06);
+            border-radius: 14px;
+            transition: .3s;
+        }
+
+        .modal-juegos-btn:hover .modal-juegos-icono {
+            background: rgba(255, 204, 0, 0.12);
+            transform: scale(1.05);
+        }
+
+        .modal-juegos-info {
+            flex: 1;
+        }
+
+        .modal-juegos-nombre {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #fff;
+            display: block;
+            line-height: 1.3;
+        }
+
+        .modal-juegos-desc {
+            font-size: 0.75rem;
+            color: #777;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .modal-juegos-flecha {
+            color: #444;
+            font-size: 1.2rem;
+            transition: .3s;
+            flex-shrink: 0;
+        }
+
+        .modal-juegos-btn:hover .modal-juegos-flecha {
+            color: #ffcc00;
+            transform: translateX(4px);
+        }
+
+        .modal-juegos-badge {
+            display: inline-block;
+            background: rgba(255, 204, 0, 0.12);
+            color: #ffcc00;
+            font-size: 0.55rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 12px;
+            margin-left: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-juegos-footer {
+            margin-top: 24px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            color: #555;
+            font-size: 0.75rem;
+        }
+
+        .modal-juegos-footer i {
+            color: #ffcc00;
+        }
+
+        @media (max-width: 520px) {
+            .modal-juegos-contenido {
+                padding: 30px 20px 28px;
+                border-radius: 24px;
+                max-width: 100%;
+            }
+
+            .modal-juegos-btn {
+                padding: 14px 16px;
+                gap: 14px;
+            }
+
+            .modal-juegos-icono {
+                font-size: 2rem;
+                width: 44px;
+                height: 44px;
+            }
+
+            .modal-juegos-nombre {
+                font-size: 0.95rem;
+            }
+
+            .modal-juegos-contenido h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .modal-juegos-btn {
+                flex-wrap: wrap;
+                justify-content: center;
+                text-align: center;
+                gap: 8px;
+            }
+
+            .modal-juegos-icono {
+                width: 40px;
+                height: 40px;
+                font-size: 1.6rem;
+            }
+
+            .modal-juegos-info {
+                flex: 1 1 100%;
+            }
+        }
     </style>
 
 </head>
@@ -2067,9 +2323,9 @@
         <p>Música, energía y sabor costarricense para compartir con todos.</p>
         <small>© 2026 Los Hijos de Tencha. Todos los derechos reservados.</small>
 
-        <!-- 🎮 BOTÓN DIABLITO - Posición donde pusiste la X -->
+        <!-- 🎮 BOTÓN DIABLITO - MODAL DE SELECCIÓN DE JUEGOS -->
         <div style="margin-top: 12px; display: flex; justify-content: center; align-items: center; gap: 6px;">
-            <a href="game/tencha_game.html" target="_blank" style="display: inline-flex; align-items: center; gap: 6px;
+            <button onclick="abrirModalJuegos()" style="display: inline-flex; align-items: center; gap: 6px;
                       padding: 5px 14px;
                       background: #111;
                       color: #ffcc00;
@@ -2080,7 +2336,8 @@
                       font-family: 'Poppins', sans-serif;
                       border: 2px solid #ffcc00;
                       box-shadow: 0 0 15px rgba(255,204,0,0.06);
-                      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);"
+                      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+                      cursor: pointer;"
                 onmouseover="this.style.transform='translateY(-3px) scale(1.06)'; this.style.boxShadow='0 0 30px rgba(255,204,0,0.2)'; this.style.borderColor='#fff';"
                 onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 0 15px rgba(255,204,0,0.06)'; this.style.borderColor='#ffcc00';">
 
@@ -2089,10 +2346,8 @@
                     style="width: 20px; height: 20px; object-fit: contain; display: block; margin: 0; flex-shrink: 0;">
 
                 <span style="font-size: 0.55rem; color: #666; letter-spacing: 1.5px;">▸</span>
-                <span
-                    style="font-size: 0.65rem; font-weight: 800; background: linear-gradient(90deg, #ffcc00, #ff8800); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></span>
                 <span style="font-size: 0.7rem;">🎮</span>
-            </a>
+            </button>
         </div>
 
         <p class="credito-web">
@@ -2122,6 +2377,41 @@
     <!-- Pantalla de transición -->
     <div id="transicion">
         <img src="img/transicion.gif" alt="Transición">
+    </div>
+
+    <!-- ============================================= -->
+    <!-- MODAL PARA SELECCIONAR JUEGO                  -->
+    <!-- ============================================= -->
+    <div id="modalJuegos" class="modal-juegos">
+        <div class="modal-juegos-contenido">
+            <button class="modal-juegos-cerrar" onclick="cerrarModalJuegos()">&times;</button>
+            <h2>🎮 Elige tu juego</h2>
+            <span class="sub"><i class="fa-solid fa-gamepad"></i> ¿Con cuál diablito quieres jugar hoy?</span>
+            <div class="modal-juegos-opciones">
+                <a href="game/aventura_cumbianchera.html" target="_blank" class="modal-juegos-btn"
+                    onclick="gtag('event','jugar_aventura_cumbianchera'); cerrarModalJuegos();">
+                    <span class="modal-juegos-icono">🏔️</span>
+                    <span class="modal-juegos-info">
+                        <span class="modal-juegos-nombre">Aventura Cumbianchera <span
+                                class="modal-juegos-badge">Nuevo</span></span>
+                        <span class="modal-juegos-desc">Explora el mundo mágico de la cumbia</span>
+                    </span>
+                    <span class="modal-juegos-flecha"><i class="fa-solid fa-chevron-right"></i></span>
+                </a>
+                <a href="game/el_diablito_cumbianchero.html" target="_blank" class="modal-juegos-btn"
+                    onclick="gtag('event','jugar_diablito_cumbianchero'); cerrarModalJuegos();">
+                    <span class="modal-juegos-icono">😈</span>
+                    <span class="modal-juegos-info">
+                        <span class="modal-juegos-nombre">El Diablito Cumbianchero</span>
+                        <span class="modal-juegos-desc">El clásico juego del diablito</span>
+                    </span>
+                    <span class="modal-juegos-flecha"><i class="fa-solid fa-chevron-right"></i></span>
+                </a>
+            </div>
+            <div class="modal-juegos-footer">
+                <i class="fa-regular fa-window-restore"></i> Los juegos se abren en una nueva pestaña
+            </div>
+        </div>
     </div>
 
     <!-- ============================================= -->
@@ -3250,6 +3540,49 @@
         window.actualizarTotalPago = actualizarTotalPago;
 
         console.log('✅ Formulario de registro actualizado cargado correctamente');
+    </script>
+
+    <!-- ============================================= -->
+    <!-- SCRIPT PARA MODAL DE JUEGOS                   -->
+    <!-- ============================================= -->
+    <script>
+        // ============================================================
+        // MODAL DE SELECCIÓN DE JUEGOS
+        // ============================================================
+
+        function abrirModalJuegos() {
+            const modal = document.getElementById('modalJuegos');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarModalJuegos() {
+            const modal = document.getElementById('modalJuegos');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Cerrar modal al hacer clic fuera del contenido
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('modalJuegos');
+            if (modal) {
+                modal.addEventListener('click', function (e) {
+                    if (e.target === this) {
+                        cerrarModalJuegos();
+                    }
+                });
+                // Cerrar con tecla ESC
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape' && modal.classList.contains('active')) {
+                        cerrarModalJuegos();
+                    }
+                });
+            }
+        });
+
+        // Exponer funciones globalmente
+        window.abrirModalJuegos = abrirModalJuegos;
+        window.cerrarModalJuegos = cerrarModalJuegos;
     </script>
 
 </body>
