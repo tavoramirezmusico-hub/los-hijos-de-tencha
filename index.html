@@ -1637,7 +1637,7 @@
             display: flex;
             align-items: center;
             gap: 20px;
-            padding: 18px 24px;
+            padding: 16px 22px;
             background: #1e1e1e;
             border-radius: 18px;
             text-decoration: none;
@@ -1666,8 +1666,7 @@
 
         .modal-juegos-btn:hover {
             background: #262626;
-            border-color: #ffcc00;
-            transform: translateX(8px) scale(1.02);
+            transform: translateX(6px) scale(1.02);
             box-shadow: 0 8px 35px rgba(255, 204, 0, 0.08);
         }
 
@@ -1675,21 +1674,64 @@
             transform: scale(0.97);
         }
 
+        /* Aura para cada juego */
+        .modal-juegos-btn.aventura {
+            border-color: rgba(33, 150, 243, 0.3);
+        }
+
+        .modal-juegos-btn.aventura:hover {
+            border-color: rgba(33, 150, 243, 0.8);
+            box-shadow: 0 0 40px rgba(33, 150, 243, 0.15), 0 8px 35px rgba(255, 204, 0, 0.08);
+        }
+
+        .modal-juegos-btn.diablito {
+            border-color: rgba(76, 175, 80, 0.3);
+        }
+
+        .modal-juegos-btn.diablito:hover {
+            border-color: rgba(76, 175, 80, 0.8);
+            box-shadow: 0 0 40px rgba(76, 175, 80, 0.15), 0 8px 35px rgba(255, 204, 0, 0.08);
+        }
+
         .modal-juegos-icono {
-            font-size: 2.6rem;
             flex-shrink: 0;
-            width: 55px;
-            height: 55px;
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255, 204, 0, 0.06);
-            border-radius: 14px;
+            overflow: hidden;
             transition: .3s;
         }
 
-        .modal-juegos-btn:hover .modal-juegos-icono {
-            background: rgba(255, 204, 0, 0.12);
+        .modal-juegos-icono img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            padding: 6px;
+        }
+
+        .modal-juegos-btn.aventura .modal-juegos-icono {
+            background: rgba(33, 150, 243, 0.12);
+            box-shadow: 0 0 20px rgba(33, 150, 243, 0.2), inset 0 0 30px rgba(33, 150, 243, 0.05);
+        }
+
+        .modal-juegos-btn.diablito .modal-juegos-icono {
+            background: rgba(76, 175, 80, 0.12);
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.2), inset 0 0 30px rgba(76, 175, 80, 0.05);
+        }
+
+        .modal-juegos-btn.aventura:hover .modal-juegos-icono {
+            background: rgba(33, 150, 243, 0.2);
+            box-shadow: 0 0 40px rgba(33, 150, 243, 0.3), inset 0 0 40px rgba(33, 150, 243, 0.08);
+            transform: scale(1.05);
+        }
+
+        .modal-juegos-btn.diablito:hover .modal-juegos-icono {
+            background: rgba(76, 175, 80, 0.2);
+            box-shadow: 0 0 40px rgba(76, 175, 80, 0.3), inset 0 0 40px rgba(76, 175, 80, 0.08);
             transform: scale(1.05);
         }
 
@@ -1699,7 +1741,7 @@
 
         .modal-juegos-nombre {
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: #fff;
             display: block;
             line-height: 1.3;
@@ -1728,11 +1770,11 @@
             display: inline-block;
             background: rgba(255, 204, 0, 0.12);
             color: #ffcc00;
-            font-size: 0.55rem;
+            font-size: 0.5rem;
             font-weight: 700;
             padding: 2px 10px;
             border-radius: 12px;
-            margin-left: 8px;
+            margin-left: 6px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -1749,30 +1791,41 @@
             color: #ffcc00;
         }
 
+        /* Badge de color en el borde para cada juego */
+        .modal-juegos-btn.aventura .modal-juegos-badge {
+            background: rgba(33, 150, 243, 0.15);
+            color: #42a5f5;
+        }
+
+        .modal-juegos-btn.diablito .modal-juegos-badge {
+            background: rgba(76, 175, 80, 0.15);
+            color: #66bb6a;
+        }
+
         @media (max-width: 520px) {
             .modal-juegos-contenido {
-                padding: 30px 20px 28px;
+                padding: 30px 18px 28px;
                 border-radius: 24px;
                 max-width: 100%;
             }
 
             .modal-juegos-btn {
-                padding: 14px 16px;
+                padding: 12px 14px;
                 gap: 14px;
             }
 
             .modal-juegos-icono {
-                font-size: 2rem;
-                width: 44px;
-                height: 44px;
+                width: 48px;
+                height: 48px;
+                border-radius: 12px;
             }
 
             .modal-juegos-nombre {
-                font-size: 0.95rem;
+                font-size: 0.9rem;
             }
 
             .modal-juegos-contenido h2 {
-                font-size: 1.5rem;
+                font-size: 1.4rem;
             }
         }
 
@@ -1785,9 +1838,8 @@
             }
 
             .modal-juegos-icono {
-                width: 40px;
-                height: 40px;
-                font-size: 1.6rem;
+                width: 44px;
+                height: 44px;
             }
 
             .modal-juegos-info {
@@ -2388,9 +2440,11 @@
             <h2>🎮 Elige tu juego</h2>
             <span class="sub"><i class="fa-solid fa-gamepad"></i> ¿Con cuál diablito quieres jugar hoy?</span>
             <div class="modal-juegos-opciones">
-                <a href="game/aventura_cumbianchera.html" target="_blank" class="modal-juegos-btn"
+                <a href="game/aventura_cumbianchera.html" target="_blank" class="modal-juegos-btn aventura"
                     onclick="gtag('event','jugar_aventura_cumbianchera'); cerrarModalJuegos();">
-                    <span class="modal-juegos-icono">🏔️</span>
+                    <span class="modal-juegos-icono">
+                        <img src="game/personajes/diablito.webp" alt="Diablito Azul" loading="lazy">
+                    </span>
                     <span class="modal-juegos-info">
                         <span class="modal-juegos-nombre">Aventura Cumbianchera <span
                                 class="modal-juegos-badge">Nuevo</span></span>
@@ -2398,9 +2452,11 @@
                     </span>
                     <span class="modal-juegos-flecha"><i class="fa-solid fa-chevron-right"></i></span>
                 </a>
-                <a href="game/el_diablito_cumbianchero.html" target="_blank" class="modal-juegos-btn"
+                <a href="game/el_diablito_cumbianchero.html" target="_blank" class="modal-juegos-btn diablito"
                     onclick="gtag('event','jugar_diablito_cumbianchero'); cerrarModalJuegos();">
-                    <span class="modal-juegos-icono">😈</span>
+                    <span class="modal-juegos-icono">
+                        <img src="game/personajes/diablito.webp" alt="Diablito Verde" loading="lazy">
+                    </span>
                     <span class="modal-juegos-info">
                         <span class="modal-juegos-nombre">El Diablito Cumbianchero</span>
                         <span class="modal-juegos-desc">El clásico juego del diablito</span>
