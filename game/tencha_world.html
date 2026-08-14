@@ -2416,8 +2416,14 @@
                 }
 
                 // --- Movimiento ---
+                // OJO: p.vy está en unidades "px por frame a 60fps" (igual
+                // que la gravedad, que ya se acumula con *60*dt), por eso
+                // acá también hay que multiplicar por 60. Antes faltaba
+                // ese factor y el salto se movía ~60 veces menos de lo
+                // debido (por eso sonaba/pareceía saltar pero no se
+                // despegaba del piso).
                 p.x += p.vx * dt;
-                p.y += p.vy * dt;
+                p.y += p.vy * 60 * dt;
 
                 // --- Colisión con plataformas ---
                 p.onGround = false;
@@ -2501,7 +2507,7 @@
                         if (p.vy > 0 && p.y + p.h - e.y < 20) {
                             e.alive = false;
                             e.deathTimer = now;
-                            p.vy = -6;
+                            p.vy = -8;
                             state.score += 100;
                             Audio1.collect();
                             spawnSparkles(e.x + e.w / 2, e.y + e.h / 2, '#C4302B', 12);
