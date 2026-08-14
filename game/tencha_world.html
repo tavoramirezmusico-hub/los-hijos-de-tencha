@@ -1,0 +1,2985 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Los Hijos de Tencha — Super Mario Cumbianchero</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Poppins:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --night: #1A0D10;
+            --night-2: #2E1015;
+            --tangerine: #C4302B;
+            --teal: #0FADA0;
+            --gold: #F2B705;
+            --cream: #FFF3E0;
+            --danger: #FF4B4B;
+            --purple-deep: #5c1414;
+            --sky-top: #4a90d9;
+            --sky-bottom: #87CEEB;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--night);
+            color: var(--cream);
+            font-family: 'Poppins', sans-serif;
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+        }
+
+        .display {
+            font-family: 'Bungee', cursive;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== PANTALLA DE ROTACIÓN (MÓVILES) ===== */
+        #rotate-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: #000000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 30px;
+            gap: 20px;
+        }
+
+        #rotate-overlay.active {
+            display: flex;
+        }
+
+        #rotate-overlay .rotate-icon {
+            font-size: 80px;
+            animation: rotar 2s ease-in-out infinite;
+        }
+
+        @keyframes rotar {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            50% {
+                transform: rotate(90deg);
+            }
+
+            100% {
+                transform: rotate(0deg);
+            }
+        }
+
+        #rotate-overlay h2 {
+            color: #ffcc00;
+            font-size: clamp(22px, 5vw, 36px);
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+
+        #rotate-overlay p {
+            color: #aaa;
+            font-size: clamp(14px, 2.5vw, 20px);
+            max-width: 400px;
+            line-height: 1.6;
+        }
+
+        #rotate-overlay .btn-fullscreen {
+            margin-top: 10px;
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            padding: 14px 40px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: .3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #rotate-overlay .btn-fullscreen:hover {
+            background: #fff;
+            transform: scale(1.05);
+        }
+
+        #game-root {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+        }
+
+        .game-frame {
+            position: relative;
+            background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
+            border: 3px solid var(--tangerine);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            flex-shrink: 0;
+            width: 100%;
+            max-width: 900px;
+            aspect-ratio: 900 / 560;
+            max-height: calc(100vh - 60px);
+        }
+
+        .game-frame.fullscreen {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            aspect-ratio: auto;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+            z-index: 99998;
+            max-height: 100vh;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: var(--night-2);
+            touch-action: none;
+        }
+
+        /* ===== SCREENS ===== */
+        .screen {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 16px;
+            background: radial-gradient(circle at 50% 20%, rgba(242, 96, 12, 0.25), rgba(27, 15, 46, 0.96) 70%);
+            gap: 10px;
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        .screen.hidden {
+            display: none;
+        }
+
+        .logo-img {
+            max-width: 160px;
+            width: 40%;
+            filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.5));
+        }
+
+        .title-main {
+            font-size: clamp(24px, 5vw, 38px);
+            color: var(--gold);
+            text-shadow: 3px 3px 0 var(--purple-deep);
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .title-main .sub {
+            font-size: clamp(14px, 2.5vw, 20px);
+            color: var(--cream);
+            text-shadow: none;
+            display: block;
+            opacity: 0.85;
+        }
+
+        .diablito-img {
+            width: 60px;
+            animation: bounce 1.4s ease-in-out infinite;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(-4deg);
+            }
+
+            50% {
+                transform: translateY(-12px) rotate(4deg);
+            }
+        }
+
+        .btn {
+            font-family: 'Bungee', cursive;
+            font-size: clamp(13px, 2.2vw, 16px);
+            padding: 12px 26px;
+            border-radius: 40px;
+            border: none;
+            background: linear-gradient(180deg, var(--gold), #b3860a);
+            color: var(--night);
+            cursor: pointer;
+            box-shadow: 0 5px 0 #7a5c05, 0 10px 20px rgba(0, 0, 0, 0.4);
+            transition: transform .08s ease;
+            touch-action: manipulation;
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #7a5c05;
+        }
+
+        .btn.secondary {
+            background: linear-gradient(180deg, var(--teal), #0a7c73);
+            box-shadow: 0 5px 0 #075450, 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* ===== CHARACTER SELECT ===== */
+        .char-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            width: 100%;
+            max-width: 650px;
+        }
+
+        @media (max-width: 640px) {
+            .char-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .char-card {
+            background: rgba(255, 255, 255, 0.06);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 6px 4px 8px;
+            cursor: pointer;
+            transition: all .15s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .char-card:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .char-card.selected {
+            border-color: var(--gold);
+            background: rgba(247, 179, 43, 0.18);
+            box-shadow: 0 0 0 2px var(--gold), 0 8px 18px rgba(0, 0, 0, 0.4);
+        }
+
+        .char-card canvas {
+            width: 48px;
+            height: 48px;
+        }
+
+        .char-name {
+            font-weight: 700;
+            font-size: 10px;
+            margin: 0;
+        }
+
+        .char-instrument {
+            font-size: 8px;
+            opacity: 0.75;
+            margin: 0;
+        }
+
+        .char-power {
+            font-size: 7.5px;
+            color: var(--teal);
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .power-detail {
+            min-height: 32px;
+            font-size: 11px;
+            color: var(--gold);
+            max-width: 480px;
+            padding: 0 8px;
+        }
+
+        /* ===== HUD ===== */
+        #hud {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 6px 10px;
+            pointer-events: none;
+            font-size: 11px;
+            z-index: 5;
+        }
+
+        #hud.hidden {
+            display: none;
+        }
+
+        .hud-box {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 4px 10px;
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        #hearts span {
+            font-size: 13px;
+            margin-right: 1px;
+        }
+
+        #hearts span.lost {
+            opacity: 0.25;
+        }
+
+        #level-label {
+            font-family: 'Bungee', cursive;
+            font-size: 9px;
+            color: var(--gold);
+        }
+
+        #score-box {
+            text-align: right;
+            font-weight: 700;
+            font-size: 10px;
+        }
+
+        #coins-box {
+            text-align: right;
+            font-size: 9px;
+            opacity: 0.85;
+        }
+
+        /* ===== CONTROLES TÁCTILES ===== */
+        #touch-controls-mobile {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 6;
+            display: none;
+        }
+
+        #touch-controls-mobile.active {
+            display: block;
+        }
+
+        /* Botón PODER - izquierda abajo */
+        #power-btn-touch {
+            position: absolute;
+            left: 16px;
+            bottom: 16px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, var(--gold), #b3860a);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            color: var(--night);
+            font-family: 'Bungee', cursive;
+            font-size: 8px;
+            pointer-events: auto;
+            touch-action: manipulation;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            line-height: 1.2;
+            text-align: center;
+            box-shadow: 0 4px 25px rgba(255, 204, 0, 0.25), inset 0 -3px 10px rgba(0, 0, 0, 0.2);
+            z-index: 7;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #power-btn-touch:active {
+            transform: scale(0.92);
+            box-shadow: 0 2px 10px rgba(255, 204, 0, 0.15);
+        }
+
+        #power-btn-touch .power-icon {
+            font-size: 16px;
+            display: block;
+            margin-bottom: 1px;
+        }
+
+        #power-btn-touch.show {
+            display: flex;
+        }
+
+        /* D-Pad móvil - derecha abajo */
+        .dpad-mobile {
+            position: absolute;
+            right: 16px;
+            bottom: 16px;
+            width: 130px;
+            height: 130px;
+            pointer-events: auto;
+            display: none;
+            z-index: 7;
+        }
+
+        .dpad-mobile.show {
+            display: block;
+        }
+
+        .dpad-mobile button {
+            position: absolute;
+            width: 42px;
+            height: 42px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: var(--cream);
+            font-size: 18px;
+            touch-action: manipulation;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.08s ease;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .dpad-mobile button:active {
+            background: rgba(255, 204, 0, 0.25);
+            border-color: var(--gold);
+            transform: scale(0.90);
+        }
+
+        .dpad-mobile .up {
+            top: 0;
+            left: 44px;
+        }
+
+        .dpad-mobile .down {
+            bottom: 0;
+            left: 44px;
+        }
+
+        .dpad-mobile .left {
+            top: 44px;
+            left: 0;
+        }
+
+        .dpad-mobile .right {
+            top: 44px;
+            right: 0;
+        }
+
+        /* Botón SALTO - centro abajo */
+        #jump-btn-touch {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 16px;
+            width: 70px;
+            height: 56px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: var(--cream);
+            font-family: 'Bungee', cursive;
+            font-size: 14px;
+            pointer-events: auto;
+            touch-action: manipulation;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 7;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            user-select: none;
+            -webkit-user-select: none;
+            letter-spacing: 1px;
+        }
+
+        #jump-btn-touch:active {
+            background: rgba(255, 204, 0, 0.2);
+            border-color: var(--gold);
+            transform: translateX(-50%) scale(0.95);
+        }
+
+        #jump-btn-touch.show {
+            display: flex;
+        }
+
+        /* D-Pad Desktop */
+        #touch-controls-desktop {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            display: none;
+            z-index: 6;
+        }
+
+        .dpad-desktop {
+            position: absolute;
+            left: 16px;
+            bottom: 16px;
+            width: 130px;
+            height: 130px;
+            pointer-events: auto;
+        }
+
+        .dpad-desktop button {
+            position: absolute;
+            width: 42px;
+            height: 42px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: var(--cream);
+            font-size: 18px;
+            touch-action: manipulation;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.08s ease;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .dpad-desktop button:active {
+            background: rgba(255, 204, 0, 0.25);
+            border-color: var(--gold);
+            transform: scale(0.90);
+        }
+
+        .dpad-desktop .up {
+            top: 0;
+            left: 44px;
+        }
+
+        .dpad-desktop .down {
+            bottom: 0;
+            left: 44px;
+        }
+
+        .dpad-desktop .left {
+            top: 44px;
+            left: 0;
+        }
+
+        .dpad-desktop .right {
+            top: 44px;
+            right: 0;
+        }
+
+        #jump-btn-desktop {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 16px;
+            width: 80px;
+            height: 52px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: var(--cream);
+            font-family: 'Bungee', cursive;
+            font-size: 16px;
+            pointer-events: auto;
+            touch-action: manipulation;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 7;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            user-select: none;
+            -webkit-user-select: none;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+
+        #jump-btn-desktop:active {
+            background: rgba(255, 204, 0, 0.2);
+            border-color: var(--gold);
+            transform: translateX(-50%) scale(0.95);
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            #touch-controls-mobile.active {
+                display: block;
+            }
+
+            #touch-controls-desktop.active {
+                display: none !important;
+            }
+
+            .dpad-mobile.show {
+                display: block;
+            }
+
+            #power-btn-touch.show {
+                display: flex;
+            }
+
+            #jump-btn-touch.show {
+                display: flex;
+            }
+
+            #jump-btn-desktop {
+                display: none !important;
+            }
+        }
+
+        @media (hover: hover) {
+            #touch-controls-mobile.active {
+                display: none !important;
+            }
+
+            #touch-controls-desktop.active {
+                display: block !important;
+            }
+
+            .dpad-mobile.show {
+                display: none !important;
+            }
+
+            #power-btn-touch.show {
+                display: none !important;
+            }
+
+            #jump-btn-touch.show {
+                display: none !important;
+            }
+
+            #jump-btn-desktop {
+                display: flex !important;
+            }
+        }
+
+        /* ===== OTROS ESTILOS ===== */
+        .msg-big {
+            font-family: 'Bungee', cursive;
+            font-size: clamp(18px, 5vw, 30px);
+            color: var(--danger);
+            text-shadow: 3px 3px 0 #4a0d14;
+            line-height: 1.3;
+        }
+
+        .final-score {
+            font-family: 'Bungee', cursive;
+            font-size: clamp(24px, 6vw, 42px);
+            color: var(--gold);
+        }
+
+        .footer-note {
+            font-size: 9px;
+            opacity: 0.5;
+            margin-top: 8px;
+        }
+
+        .hint {
+            font-size: 11px;
+            opacity: 0.7;
+            max-width: 440px;
+        }
+
+        .howto-box {
+            text-align: left;
+            max-width: 500px;
+            font-size: 11px;
+            line-height: 1.5;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            padding: 10px 14px;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        .howto-box p {
+            margin: 6px 0;
+        }
+
+        .note-icon {
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .level-intro-box {
+            background: rgba(255, 255, 255, 0.06);
+            border: 2px solid var(--teal);
+            border-radius: 12px;
+            padding: 12px 16px;
+            max-width: 440px;
+        }
+
+        .level-intro-box p {
+            margin: 4px 0;
+            font-size: 11px;
+        }
+
+        .level-intro-title {
+            font-family: 'Bungee', cursive;
+            color: var(--gold);
+            font-size: 16px;
+            margin: 0 0 4px;
+        }
+
+        #sound-toggle {
+            position: absolute;
+            top: 60px;
+            right: 6px;
+            z-index: 8;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: var(--cream);
+            border-radius: 6px;
+            font-size: 12px;
+            padding: 3px 6px;
+            cursor: pointer;
+        }
+
+        #pause-toggle {
+            position: absolute;
+            top: 60px;
+            right: 42px;
+            z-index: 8;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: var(--cream);
+            border-radius: 6px;
+            font-size: 12px;
+            padding: 3px 8px;
+            cursor: pointer;
+        }
+
+        .pause-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: rgba(10, 4, 6, 0.72);
+            backdrop-filter: blur(1.5px);
+        }
+
+        .pause-overlay.hidden {
+            display: none;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .dpad-mobile {
+                width: 110px;
+                height: 110px;
+                right: 10px;
+                bottom: 10px;
+            }
+
+            .dpad-mobile button {
+                width: 36px;
+                height: 36px;
+                font-size: 15px;
+            }
+
+            .dpad-mobile .up {
+                top: 0;
+                left: 37px;
+            }
+
+            .dpad-mobile .down {
+                bottom: 0;
+                left: 37px;
+            }
+
+            .dpad-mobile .left {
+                top: 37px;
+                left: 0;
+            }
+
+            .dpad-mobile .right {
+                top: 37px;
+                right: 0;
+            }
+
+            #power-btn-touch {
+                width: 50px;
+                height: 50px;
+                font-size: 7px;
+                left: 10px;
+                bottom: 10px;
+            }
+
+            #power-btn-touch .power-icon {
+                font-size: 14px;
+            }
+
+            #jump-btn-touch {
+                width: 60px;
+                height: 48px;
+                font-size: 12px;
+                bottom: 10px;
+            }
+
+            #jump-btn-desktop {
+                width: 70px;
+                height: 46px;
+                font-size: 14px;
+                bottom: 10px;
+            }
+
+            .dpad-desktop {
+                width: 110px;
+                height: 110px;
+            }
+
+            .dpad-desktop button {
+                width: 36px;
+                height: 36px;
+                font-size: 15px;
+            }
+
+            .dpad-desktop .up {
+                top: 0;
+                left: 37px;
+            }
+
+            .dpad-desktop .down {
+                bottom: 0;
+                left: 37px;
+            }
+
+            .dpad-desktop .left {
+                top: 37px;
+                left: 0;
+            }
+
+            .dpad-desktop .right {
+                top: 37px;
+                right: 0;
+            }
+
+            #sound-toggle,
+            #pause-toggle {
+                top: 44px;
+                font-size: 10px;
+                padding: 2px 5px;
+            }
+
+            #pause-toggle {
+                right: 34px;
+            }
+
+            .screen {
+                padding: 12px;
+                gap: 6px;
+            }
+
+            .title-main {
+                font-size: clamp(18px, 3.5vw, 26px);
+            }
+
+            .title-main .sub {
+                font-size: clamp(11px, 2vw, 16px);
+            }
+
+            .howto-box {
+                font-size: 10px;
+                padding: 8px 12px;
+                max-height: 40vh;
+            }
+
+            .level-intro-box {
+                padding: 8px 12px;
+            }
+
+            .level-intro-box p {
+                font-size: 10px;
+            }
+
+            .level-intro-title {
+                font-size: 14px;
+            }
+
+            .msg-big {
+                font-size: clamp(16px, 4vw, 24px);
+            }
+
+            .final-score {
+                font-size: clamp(20px, 5vw, 32px);
+            }
+
+            .footer-note {
+                font-size: 8px;
+            }
+
+            .hint {
+                font-size: 10px;
+            }
+
+            .char-card canvas {
+                width: 40px;
+                height: 40px;
+            }
+
+            .char-name {
+                font-size: 9px;
+            }
+
+            .char-instrument {
+                font-size: 7px;
+            }
+
+            .char-power {
+                font-size: 6.5px;
+            }
+
+            .power-detail {
+                font-size: 10px;
+                min-height: 28px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dpad-mobile {
+                width: 90px;
+                height: 90px;
+                right: 6px;
+                bottom: 6px;
+            }
+
+            .dpad-mobile button {
+                width: 30px;
+                height: 30px;
+                font-size: 12px;
+                border-radius: 8px;
+                border-width: 1.5px;
+            }
+
+            .dpad-mobile .up {
+                top: 0;
+                left: 30px;
+            }
+
+            .dpad-mobile .down {
+                bottom: 0;
+                left: 30px;
+            }
+
+            .dpad-mobile .left {
+                top: 30px;
+                left: 0;
+            }
+
+            .dpad-mobile .right {
+                top: 30px;
+                right: 0;
+            }
+
+            #power-btn-touch {
+                width: 42px;
+                height: 42px;
+                font-size: 6px;
+                left: 6px;
+                bottom: 6px;
+            }
+
+            #power-btn-touch .power-icon {
+                font-size: 12px;
+            }
+
+            #jump-btn-touch {
+                width: 50px;
+                height: 40px;
+                font-size: 10px;
+                bottom: 6px;
+            }
+
+            #jump-btn-desktop {
+                width: 60px;
+                height: 40px;
+                font-size: 12px;
+                bottom: 6px;
+            }
+
+            .dpad-desktop {
+                width: 90px;
+                height: 90px;
+            }
+
+            .dpad-desktop button {
+                width: 30px;
+                height: 30px;
+                font-size: 12px;
+            }
+
+            .dpad-desktop .up {
+                top: 0;
+                left: 30px;
+            }
+
+            .dpad-desktop .down {
+                bottom: 0;
+                left: 30px;
+            }
+
+            .dpad-desktop .left {
+                top: 30px;
+                left: 0;
+            }
+
+            .dpad-desktop .right {
+                top: 30px;
+                right: 0;
+            }
+
+            #sound-toggle,
+            #pause-toggle {
+                top: 36px;
+                font-size: 9px;
+                padding: 2px 4px;
+            }
+
+            #pause-toggle {
+                right: 28px;
+            }
+
+            .screen {
+                padding: 8px;
+                gap: 4px;
+            }
+
+            .title-main {
+                font-size: clamp(16px, 3vw, 20px);
+            }
+
+            .title-main .sub {
+                font-size: clamp(10px, 1.6vw, 13px);
+            }
+
+            .howto-box {
+                font-size: 9px;
+                padding: 6px 10px;
+                max-height: 35vh;
+            }
+
+            .level-intro-box p {
+                font-size: 9px;
+            }
+
+            .level-intro-title {
+                font-size: 12px;
+            }
+
+            .msg-big {
+                font-size: clamp(14px, 3.5vw, 20px);
+            }
+
+            .final-score {
+                font-size: clamp(18px, 4.5vw, 28px);
+            }
+
+            .footer-note {
+                font-size: 7px;
+            }
+
+            .hint {
+                font-size: 9px;
+            }
+
+            .char-grid {
+                gap: 3px;
+            }
+
+            .char-card canvas {
+                width: 34px;
+                height: 34px;
+            }
+
+            .char-name {
+                font-size: 8px;
+            }
+
+            .char-instrument {
+                font-size: 6px;
+            }
+
+            .char-power {
+                font-size: 5.5px;
+            }
+
+            .power-detail {
+                font-size: 9px;
+                min-height: 24px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .dpad-mobile {
+                width: 74px;
+                height: 74px;
+                right: 4px;
+                bottom: 4px;
+            }
+
+            .dpad-mobile button {
+                width: 24px;
+                height: 24px;
+                font-size: 10px;
+                border-radius: 6px;
+            }
+
+            .dpad-mobile .up {
+                top: 0;
+                left: 25px;
+            }
+
+            .dpad-mobile .down {
+                bottom: 0;
+                left: 25px;
+            }
+
+            .dpad-mobile .left {
+                top: 25px;
+                left: 0;
+            }
+
+            .dpad-mobile .right {
+                top: 25px;
+                right: 0;
+            }
+
+            #power-btn-touch {
+                width: 36px;
+                height: 36px;
+                font-size: 5px;
+                left: 4px;
+                bottom: 4px;
+            }
+
+            #power-btn-touch .power-icon {
+                font-size: 10px;
+            }
+
+            #jump-btn-touch {
+                width: 42px;
+                height: 34px;
+                font-size: 9px;
+                bottom: 4px;
+            }
+
+            #jump-btn-desktop {
+                width: 50px;
+                height: 34px;
+                font-size: 10px;
+                bottom: 4px;
+            }
+
+            .dpad-desktop {
+                width: 74px;
+                height: 74px;
+            }
+
+            .dpad-desktop button {
+                width: 24px;
+                height: 24px;
+                font-size: 10px;
+            }
+
+            .dpad-desktop .up {
+                top: 0;
+                left: 25px;
+            }
+
+            .dpad-desktop .down {
+                bottom: 0;
+                left: 25px;
+            }
+
+            .dpad-desktop .left {
+                top: 25px;
+                left: 0;
+            }
+
+            .dpad-desktop .right {
+                top: 25px;
+                right: 0;
+            }
+
+            #sound-toggle,
+            #pause-toggle {
+                top: 30px;
+                font-size: 8px;
+                padding: 1px 3px;
+            }
+
+            #pause-toggle {
+                right: 22px;
+            }
+
+            .title-main {
+                font-size: clamp(14px, 2.5vw, 17px);
+            }
+
+            .screen {
+                padding: 6px;
+                gap: 3px;
+            }
+
+            .char-card canvas {
+                width: 28px;
+                height: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== PANTALLA DE ROTACIÓN ===== -->
+    <div id="rotate-overlay">
+        <div class="rotate-icon">📱</div>
+        <h2>Gira tu dispositivo</h2>
+        <p>Para jugar "Super Mario Cumbianchero" necesitas poner tu teléfono o tablet en <strong>horizontal</strong>.
+        </p>
+        <button class="btn-fullscreen" id="btnFullscreen">⛶ Pantalla completa</button>
+        <p style="font-size: 12px; color: #666; margin-top: 10px;">Al hacer clic, el juego se abrirá en pantalla
+            completa y sonará la música</p>
+    </div>
+
+    <div id="game-root">
+        <div class="game-frame" id="game-frame">
+            <canvas id="game-canvas" width="900" height="560"></canvas>
+            <button id="sound-toggle">🔊</button>
+            <button id="pause-toggle">⏸</button>
+
+            <!-- CONTROLES TÁCTILES - MÓVIL -->
+            <div id="touch-controls-mobile" class="active">
+                <button id="power-btn-touch" class="show">
+                    <span class="power-icon">⚡</span>
+                    PODER
+                </button>
+                <div class="dpad-mobile show">
+                    <button class="up" id="btn-up-mobile">▲</button>
+                    <button class="down" id="btn-down-mobile">▼</button>
+                    <button class="left" id="btn-left-mobile">◀</button>
+                    <button class="right" id="btn-right-mobile">▶</button>
+                </div>
+                <button id="jump-btn-touch" class="show">⬆ SALTO</button>
+            </div>
+
+            <!-- CONTROLES - DESKTOP -->
+            <div id="touch-controls-desktop" class="active">
+                <div class="dpad-desktop">
+                    <button class="up" id="btn-up">▲</button>
+                    <button class="down" id="btn-down">▼</button>
+                    <button class="left" id="btn-left">◀</button>
+                    <button class="right" id="btn-right">▶</button>
+                </div>
+                <button id="jump-btn-desktop">⬆ SALTO</button>
+            </div>
+
+            <!-- PAUSA -->
+            <div class="pause-overlay hidden" id="pause-overlay">
+                <p class="level-intro-title" style="color:var(--gold);">⏸ PAUSA</p>
+                <button class="btn" id="btn-resume">▶ REANUDAR</button>
+                <button class="btn secondary" id="btn-pause-menu">🏠 MENÚ PRINCIPAL</button>
+            </div>
+
+            <!-- HUD -->
+            <div id="hud" class="hidden">
+                <div>
+                    <div class="hud-box" id="hearts"></div>
+                    <div class="hud-box" id="level-label" style="margin-top:4px;">Nivel 1</div>
+                </div>
+                <div>
+                    <div class="hud-box" id="score-box">🪙 0</div>
+                    <div class="hud-box" id="coins-box" style="margin-top:4px;">🎵 0</div>
+                </div>
+            </div>
+
+            <!-- MENU -->
+            <div class="screen" id="screen-menu">
+                <img class="logo-img" src="Personajes/logo.webp" alt="Los Hijos de Tencha"
+                    onerror="this.style.display='none'">
+                <h1 class="title-main">
+                    SUPER MARIO
+                    <span class="sub">Cumbianchero</span>
+                </h1>
+                <img class="diablito-img" src="Personajes/diablito.webp" alt="Diablito"
+                    onerror="this.style.display='none'">
+                <button class="btn" id="btn-play">▶ JUGAR</button>
+                <button class="btn secondary" id="btn-howto">❓ CÓMO SE JUEGA</button>
+                <p class="footer-note">5 vidas · 5 niveles · recolecta notas musicales 🎵</p>
+            </div>
+
+            <!-- INSTRUCCIONES -->
+            <div class="screen hidden" id="screen-instructions">
+                <h2 class="title-main" style="font-size:20px;">CÓMO SE JUEGA</h2>
+                <div class="howto-box">
+                    <p><strong>🎯 Objetivo:</strong> recolecta todas las notas musicales <span
+                            class="note-icon">♪</span>
+                        de cada nivel y llega a la bandera final.</p>
+                    <p><strong>🕹️ Controles:</strong> usa las flechas para moverte, <strong>SALTO</strong> para saltar,
+                        y <strong>PODER</strong> para usar tu habilidad especial.</p>
+                    <p><strong>⭐ Poder especial:</strong> cada personaje tiene un poder único que te ayuda a superar
+                        obstáculos.</p>
+                    <p><strong>⚠️ Cuidado:</strong> evita tocar a los enemigos. Si te tocan, pierdes una vida.</p>
+                    <p><strong>❤️ Vidas:</strong> empiezas con 5 vidas. Si pierdes todas, se acaba la partida.</p>
+                </div>
+                <button class="btn secondary" id="btn-howto-back">◀ VOLVER</button>
+            </div>
+
+            <!-- CHARACTER SELECT -->
+            <div class="screen hidden" id="screen-select">
+                <h2 class="title-main" style="font-size:20px;" id="select-title">ELIGE TU PERSONAJE</h2>
+                <div class="char-grid" id="char-grid"></div>
+                <p class="power-detail" id="power-detail">Selecciona a un integrante de la banda.</p>
+                <button class="btn" id="btn-start" disabled>COMENZAR AVENTURA</button>
+            </div>
+
+            <!-- LEVEL INTRO -->
+            <div class="screen hidden" id="screen-levelintro">
+                <img src="Personajes/logo.webp" alt="" style="width:120px; opacity:0.9;"
+                    onerror="this.style.display='none'">
+                <p class="level-intro-title" id="levelintro-title">Nivel 1</p>
+                <div class="level-intro-box">
+                    <p id="levelintro-goal">🎯 Recolecta las notas musicales</p>
+                    <p id="levelintro-danger">⚠️ Evita a los enemigos</p>
+                    <p id="levelintro-power">⭐ Usa tu poder especial</p>
+                </div>
+                <button class="btn" id="btn-levelintro-start">¡A LA PISTA! ▶</button>
+            </div>
+
+            <!-- LIFE LOST -->
+            <div class="screen hidden" id="screen-lifelost">
+                <p class="msg-big">¡PERDISTE UNA VIDA!</p>
+                <p class="hint">Inténtalo de nuevo. Elige tu personaje para continuar.</p>
+                <button class="btn secondary" id="btn-continue">ELEGIR PERSONAJE</button>
+            </div>
+
+            <!-- LEVEL COMPLETE -->
+            <div class="screen hidden" id="screen-levelcomplete">
+                <h2 class="title-main" style="font-size:22px; color:var(--teal);">¡NIVEL SUPERADO!</h2>
+                <p class="hint" id="levelcomplete-text"></p>
+                <button class="btn" id="btn-next-level">SIGUIENTE NIVEL ▶</button>
+            </div>
+
+            <!-- GAME OVER -->
+            <div class="screen hidden" id="screen-gameover">
+                <img class="diablito-img" src="Personajes/diablito.webp" alt="Diablito"
+                    style="width:56px; animation:none; opacity:0.8;" onerror="this.style.display='none'">
+                <p class="msg-big">SE ACABÓ<br>LA FIESTA</p>
+                <p class="hint">¡Los enemigos ganaron esta vez!</p>
+                <p class="final-score" id="gameover-score">🪙 0</p>
+                <button class="btn" id="btn-retry">REINTENTAR</button>
+            </div>
+
+            <!-- WIN -->
+            <div class="screen hidden" id="screen-win">
+                <img class="diablito-img" src="Personajes/diablito.webp" alt="Diablito" style="width:60px;"
+                    onerror="this.style.display='none'">
+                <h2 class="title-main" style="color:var(--gold);">¡HAS GANADO!</h2>
+                <p class="hint">¡Completaste todos los niveles! ¡Eres el rey de la cumbia!</p>
+                <p class="final-score" id="win-score">🪙 0</p>
+                <button class="btn" id="btn-play-again">JUGAR OTRA VEZ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCRIPTS                                                      -->
+    <!-- ============================================================ -->
+
+    <script>
+        (function () {
+            "use strict";
+
+            // ============================================================
+            // 0. FULLSCREEN Y ROTACIÓN
+            // ============================================================
+
+            const rotateOverlay = document.getElementById('rotate-overlay');
+            const btnFullscreen = document.getElementById('btnFullscreen');
+            const gameFrame = document.getElementById('game-frame');
+
+            function isMobile() {
+                return /Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(navigator.userAgent);
+            }
+
+            function isLandscape() {
+                return window.innerWidth > window.innerHeight;
+            }
+
+            function checkOrientation() {
+                if (isMobile()) {
+                    if (isLandscape()) {
+                        rotateOverlay.classList.remove('active');
+                    } else {
+                        rotateOverlay.classList.add('active');
+                    }
+                } else {
+                    rotateOverlay.classList.remove('active');
+                }
+            }
+
+            checkOrientation();
+            window.addEventListener('resize', checkOrientation);
+            window.addEventListener('orientationchange', function () {
+                setTimeout(checkOrientation, 300);
+            });
+
+            btnFullscreen.addEventListener('click', function () {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    document.documentElement.webkitRequestFullscreen();
+                } else if (document.documentElement.msRequestFullscreen) {
+                    document.documentElement.msRequestFullscreen();
+                }
+                setTimeout(function () {
+                    if (isLandscape()) {
+                        rotateOverlay.classList.remove('active');
+                    }
+                    Audio1.unlock();
+                }, 500);
+            });
+
+            if (isLandscape() && isMobile()) {
+                rotateOverlay.classList.remove('active');
+            }
+
+            // ============================================================
+            // 1. AUDIO
+            // ============================================================
+            const Audio1 = (function () {
+                let ctxA = null;
+                let master = null;
+                let enabled = true;
+                let musicTimer = null;
+                let musicStep = 0;
+
+                function ensureCtx() {
+                    if (!ctxA) {
+                        const AC = window.AudioContext || window.webkitAudioContext;
+                        ctxA = new AC();
+                        const comp = ctxA.createDynamicsCompressor();
+                        master = ctxA.createGain();
+                        master.gain.value = 0.9;
+                        master.connect(comp);
+                        comp.connect(ctxA.destination);
+                    }
+                    if (ctxA.state === 'suspended') ctxA.resume();
+                    return ctxA;
+                }
+
+                function unlock() {
+                    try { ensureCtx(); } catch (e) { }
+                }
+
+                ['pointerdown', 'touchstart', 'keydown', 'click'].forEach(evt => {
+                    window.addEventListener(evt, unlock, { once: true, passive: true });
+                });
+
+                function tone(freq, dur, opts) {
+                    if (!enabled) return;
+                    opts = opts || {};
+                    const c = ensureCtx();
+                    const osc = c.createOscillator();
+                    const gain = c.createGain();
+                    osc.type = opts.type || 'square';
+                    osc.frequency.setValueAtTime(freq, c.currentTime);
+                    if (opts.slideTo) {
+                        osc.frequency.exponentialRampToValueAtTime(Math.max(20, opts.slideTo), c.currentTime + dur);
+                    }
+                    const vol = opts.vol || 0.16;
+                    gain.gain.setValueAtTime(0.0001, c.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(vol, c.currentTime + 0.015);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + dur);
+                    osc.connect(gain);
+                    gain.connect(master);
+                    osc.start(c.currentTime);
+                    osc.stop(c.currentTime + dur + 0.02);
+                }
+
+                function noiseBurst(dur, vol, freqCenter) {
+                    if (!enabled) return;
+                    const c = ensureCtx();
+                    const bufferSize = Math.max(1, Math.floor(c.sampleRate * dur));
+                    const buffer = c.createBuffer(1, bufferSize, c.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+                    const src = c.createBufferSource();
+                    src.buffer = buffer;
+                    let node = src;
+                    if (freqCenter) {
+                        const filt = c.createBiquadFilter();
+                        filt.type = 'bandpass';
+                        filt.frequency.value = freqCenter;
+                        filt.Q.value = 1.1;
+                        src.connect(filt);
+                        node = filt;
+                    }
+                    const gain = c.createGain();
+                    gain.gain.value = vol || 0.12;
+                    node.connect(gain);
+                    gain.connect(master);
+                    src.start();
+                }
+
+                function kick() {
+                    if (!enabled) return;
+                    const c = ensureCtx();
+                    const osc = c.createOscillator();
+                    const gain = c.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(150, c.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(45, c.currentTime + 0.18);
+                    gain.gain.setValueAtTime(0.5, c.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.22);
+                    osc.connect(gain);
+                    gain.connect(master);
+                    osc.start();
+                    osc.stop(c.currentTime + 0.24);
+                }
+
+                return {
+                    unlock: unlock,
+                    setEnabled(v) {
+                        enabled = v;
+                        if (!v) this.stopMusic();
+                    },
+                    isEnabled() { return enabled; },
+
+                    click() { tone(420, 0.06, { type: 'triangle', vol: 0.12 }); },
+                    collect() { tone(660, 0.09, { type: 'square', slideTo: 880, vol: 0.16 }); },
+                    power() { tone(220, 0.18, { type: 'sawtooth', slideTo: 440, vol: 0.16 }); },
+
+                    powerFX(type) {
+                        if (type === 'stun') {
+                            kick();
+                            setTimeout(kick, 90);
+                            noiseBurst(0.18, 0.14, 2200);
+                        } else if (type === 'dash') {
+                            noiseBurst(0.08, 0.1, 4000);
+                            tone(180, 0.18, { type: 'sawtooth', slideTo: 820, vol: 0.15 });
+                        } else if (type === 'slow') {
+                            tone(520, 0.35, { type: 'sawtooth', slideTo: 180, vol: 0.16 });
+                            setTimeout(() => tone(660, 0.3, { type: 'sawtooth', slideTo: 220, vol: 0.11 }), 80);
+                        } else if (type === 'push') {
+                            tone(330, 0.24, { type: 'square', vol: 0.13 });
+                            setTimeout(() => tone(415, 0.24, { type: 'square', vol: 0.11 }), 40);
+                            noiseBurst(0.12, 0.08);
+                        } else if (type === 'reveal') {
+                            [880, 1046, 1318].forEach((f, i) => setTimeout(() => tone(f, 0.14, {
+                                type: 'triangle',
+                                vol: 0.12
+                            }), i * 70));
+                        } else {
+                            this.power();
+                        }
+                    },
+
+                    hit() {
+                        tone(180, 0.28, { type: 'sawtooth', slideTo: 60, vol: 0.18 });
+                        noiseBurst(0.15, 0.14);
+                    },
+                    levelClear() {
+                        [523, 659, 784, 1046].forEach((f, i) => {
+                            setTimeout(() => tone(f, 0.16, { type: 'triangle', vol: 0.15 }), i * 95);
+                        });
+                    },
+                    gameOver() {
+                        [392, 330, 262, 196].forEach((f, i) => {
+                            setTimeout(() => tone(f, 0.3, { type: 'sawtooth', vol: 0.14 }), i * 160);
+                        });
+                    },
+                    win() {
+                        [523, 659, 784, 1046, 1318].forEach((f, i) => {
+                            setTimeout(() => tone(f, 0.22, { type: 'square', vol: 0.13 }), i * 110);
+                        });
+                    },
+                    startMusic() {
+                        this.stopMusic();
+                        if (!enabled) return;
+                        ensureCtx();
+                        const STEP_MS = 165;
+                        const kickSteps = [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0];
+                        const guiroSteps = [0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1];
+                        const bassNotes = [130.81, 0, 0, 0, 164.81, 0, 0, 0, 146.83, 0, 0, 0, 196.00, 0, 0, 0];
+                        const scale = [523.25, 587.33, 659.25, 783.99, 880.00];
+                        const melodySteps = [0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 4, 0];
+                        musicStep = 0;
+                        musicTimer = setInterval(() => {
+                            if (!enabled) return;
+                            const i = musicStep % 16;
+                            if (kickSteps[i]) kick();
+                            if (guiroSteps[i]) noiseBurst(0.05, 0.06, 3400);
+                            if (bassNotes[i]) tone(bassNotes[i], 0.22, { type: 'triangle', vol: 0.09 });
+                            if (melodySteps[i]) tone(scale[melodySteps[i]], 0.16, {
+                                type: 'square',
+                                vol: 0.06
+                            });
+                            musicStep++;
+                        }, STEP_MS);
+                    },
+                    stopMusic() {
+                        if (musicTimer) {
+                            clearInterval(musicTimer);
+                            musicTimer = null;
+                        }
+                    }
+                };
+            })();
+
+            // ============================================================
+            // 2. DATOS - PERSONAJES
+            // ============================================================
+            const CHARACTERS = [{
+                id: 'tencho',
+                name: 'Tencho Morales',
+                instrument: 'Batería',
+                bodyColor: '#c9563d',
+                hatColor: '#1c2b4a',
+                accessory: 'beanie',
+                spriteFile: 'tencho.png',
+                power: {
+                    name: 'Redoble Sísmico', desc: 'Aturde enemigos cercanos', line: '¡SIENTAN EL REDOBLE!',
+                    cooldown: 8000, duration: 2000, type: 'stun', radius: 200
+                }
+            }, {
+                id: 'tavo',
+                name: 'Tavo Ramirez',
+                instrument: 'Bajo',
+                bodyColor: '#3c6e71',
+                hatColor: '#e9e2d0',
+                accessory: 'fedora',
+                spriteFile: 'Tavo.png',
+                power: {
+                    name: 'Groove Bajo', desc: 'Dash veloz e invulnerable', line: '¡AGÁRRENSE QUE AHÍ VOY!',
+                    cooldown: 6000, duration: 420, type: 'dash', speedMult: 5.5
+                }
+            }, {
+                id: 'mike',
+                name: 'Mike Aguilar',
+                instrument: 'Voz',
+                bodyColor: '#2e7d32',
+                hatColor: '#c62828',
+                accessory: 'bucket',
+                spriteFile: 'mike.png',
+                power: {
+                    name: 'Grito Cumbianchero', desc: 'Ralentiza enemigos', line: '¡BAILEN DESPACITO!',
+                    cooldown: 9000, duration: 3000, type: 'slow', factor: 0.35
+                }
+            }, {
+                id: 'chepe',
+                name: 'Chepe Castro',
+                instrument: 'Acordeón',
+                bodyColor: '#6d4c41',
+                hatColor: '#111111',
+                accessory: 'bowler',
+                spriteFile: 'chepe.png',
+                power: {
+                    name: 'Fuelle Mágico', desc: 'Empuja enemigos', line: '¡FUELLE MÁGICO!',
+                    cooldown: 7000, duration: 550, type: 'push', radius: 180, force: 250
+                }
+            }, {
+                id: 'billleye',
+                name: 'Billleye',
+                instrument: 'Percusión',
+                bodyColor: '#8e24aa',
+                hatColor: null,
+                accessory: 'shades',
+                spriteFile: 'Belleye.png',
+                power: {
+                    name: 'Oído de Cumbia', desc: 'Duplica puntos', line: '¡ESCUCHEN ESTO!',
+                    cooldown: 10000, duration: 5000, type: 'reveal'
+                }
+            },];
+
+            const SPRITE_BASE = 'Personajes/';
+            const CHAR_IMAGES = {};
+            CHARACTERS.forEach(ch => {
+                const im = new Image();
+                const rec = { img: im, ready: false, failed: false };
+                im.onload = () => { rec.ready = true; };
+                im.onerror = () => { rec.failed = true; };
+                im.src = SPRITE_BASE + ch.spriteFile;
+                CHAR_IMAGES[ch.id] = rec;
+            });
+            const DIABLO_IMG = new Image();
+            const DIABLO_STATE = { ready: false, failed: false };
+            DIABLO_IMG.onload = () => { DIABLO_STATE.ready = true; };
+            DIABLO_IMG.onerror = () => { DIABLO_STATE.failed = true; };
+            DIABLO_IMG.src = SPRITE_BASE + 'diablito.webp';
+
+            const LOGO_IMG = new Image();
+            const LOGO_STATE = { ready: false, failed: false };
+            LOGO_IMG.onload = () => { LOGO_STATE.ready = true; };
+            LOGO_IMG.onerror = () => { LOGO_STATE.failed = true; };
+            LOGO_IMG.src = SPRITE_BASE + 'logo.webp';
+
+            // ============================================================
+            // 3. ESTADO DEL JUEGO
+            // ============================================================
+            const CANVAS_W = 900,
+                CANVAS_H = 560;
+            const GRAVEDAD = 0.65;
+            const FUERZA_SALTO = -11.5;
+            const SUELO_Y = CANVAS_H - 60;
+            const JUGADOR_ANCHO = 36;
+            const JUGADOR_ALTO = 44;
+
+            const state = {
+                screen: 'menu',
+                lives: 5,
+                score: 0,
+                coins: 0,
+                levelIndex: 0,
+                selectedChar: null,
+                keys: {},
+                player: {
+                    x: 60,
+                    y: SUELO_Y - JUGADOR_ALTO,
+                    w: JUGADOR_ANCHO,
+                    h: JUGADOR_ALTO,
+                    vx: 0,
+                    vy: 0,
+                    onGround: false,
+                    facing: 1,
+                    animFrame: 0,
+                    animTimer: 0,
+                },
+                enemies: [],
+                platforms: [],
+                coinsItems: [],
+                flag: null,
+                flagReached: false,
+                powerCooldownUntil: 0,
+                powerActiveUntil: 0,
+                speechText: '',
+                speechUntil: 0,
+                powerBurstAt: -99999,
+                paused: false,
+                lastTime: 0,
+                dashDir: { x: 0, y: 0 },
+                collectCount: 0,
+                totalCoins: 0,
+                cameraX: 0,
+                levelWidth: 0,
+                gameOver: false,
+                victory: false,
+            };
+
+            // ============================================================
+            // 4. DOM REFERENCES
+            // ============================================================
+            const canvas = document.getElementById('game-canvas');
+            const ctx = canvas.getContext('2d');
+
+            const screens = {
+                menu: document.getElementById('screen-menu'),
+                instructions: document.getElementById('screen-instructions'),
+                select: document.getElementById('screen-select'),
+                levelintro: document.getElementById('screen-levelintro'),
+                lifelost: document.getElementById('screen-lifelost'),
+                levelcomplete: document.getElementById('screen-levelcomplete'),
+                gameover: document.getElementById('screen-gameover'),
+                win: document.getElementById('screen-win'),
+            };
+            const hud = document.getElementById('hud');
+            const heartsEl = document.getElementById('hearts');
+            const levelLabelEl = document.getElementById('level-label');
+            const scoreBoxEl = document.getElementById('score-box');
+            const coinsBoxEl = document.getElementById('coins-box');
+            const pauseOverlay = document.getElementById('pause-overlay');
+
+            function showScreen(name) {
+                Object.values(screens).forEach(s => s.classList.add('hidden'));
+                state.screen = name;
+                if (screens[name]) screens[name].classList.remove('hidden');
+                hud.classList.toggle('hidden', name !== 'playing');
+                if (name !== 'playing') {
+                    state.paused = false;
+                    pauseOverlay.classList.add('hidden');
+                }
+            }
+
+            // ============================================================
+            // 5. DIBUJO DE PERSONAJES
+            // ============================================================
+            function drawCharacterSprite(g, cx, cy, scale, ch, opts) {
+                opts = opts || {};
+                const rec = CHAR_IMAGES[ch.id];
+                if (rec && rec.ready) {
+                    const size = 40 * scale * 1.15;
+                    g.save();
+                    g.imageSmoothingEnabled = false;
+                    if (opts.flip) {
+                        g.scale(-1, 1);
+                        g.drawImage(rec.img, -(cx + size / 2), cy - size / 2 - 3 * scale, size, size);
+                    } else {
+                        g.drawImage(rec.img, cx - size / 2, cy - size / 2 - 3 * scale, size, size);
+                    }
+                    g.restore();
+                } else {
+                    // Fallback
+                    g.save();
+                    g.beginPath();
+                    g.arc(cx, cy, 16 * scale, 0, Math.PI * 2);
+                    g.fillStyle = ch.bodyColor;
+                    g.fill();
+                    g.fillStyle = 'rgba(20,20,25,0.9)';
+                    g.fillRect(cx - 9 * scale, cy - 3 * scale, 7 * scale, 4 * scale);
+                    g.fillRect(cx + 2 * scale, cy - 3 * scale, 7 * scale, 4 * scale);
+                    g.restore();
+                }
+            }
+
+            function renderSelectGrid() {
+                const grid = document.getElementById('char-grid');
+                grid.innerHTML = '';
+                CHARACTERS.forEach((ch) => {
+                    const card = document.createElement('div');
+                    card.className = 'char-card';
+                    card.dataset.id = ch.id;
+
+                    const cvs = document.createElement('canvas');
+                    cvs.width = 64;
+                    cvs.height = 64;
+                    const g = cvs.getContext('2d');
+                    drawCharacterSprite(g, 32, 30, 1.35, ch);
+
+                    const nm = document.createElement('p');
+                    nm.className = 'char-name';
+                    nm.textContent = ch.name;
+                    const inst = document.createElement('p');
+                    inst.className = 'char-instrument';
+                    inst.textContent = ch.instrument;
+                    const pw = document.createElement('p');
+                    pw.className = 'char-power';
+                    pw.textContent = '★ ' + ch.power.name;
+
+                    card.appendChild(cvs);
+                    card.appendChild(nm);
+                    card.appendChild(inst);
+                    card.appendChild(pw);
+                    card.addEventListener('click', () => selectCharacter(ch));
+                    grid.appendChild(card);
+                });
+            }
+
+            function selectCharacter(ch) {
+                state.selectedChar = ch;
+                document.querySelectorAll('.char-card').forEach(c => {
+                    c.classList.toggle('selected', c.dataset.id === ch.id);
+                });
+                document.getElementById('power-detail').textContent =
+                    ch.name + ' — ' + ch.instrument + ' · Poder: ' + ch.power.name + ': ' + ch.power.desc;
+                document.getElementById('btn-start').disabled = false;
+            }
+
+            // ============================================================
+            // 6. GENERACIÓN DE NIVEL (tipo Mario)
+            // ============================================================
+            function generarNivel(index) {
+                const niveles = [{
+                    nombre: 'El Patio de la Cumbia',
+                    plataformas: [
+                        { x: 0, y: SUELO_Y, w: 500, h: 30 },
+                        { x: 550, y: SUELO_Y, w: 350, h: 30 },
+                        { x: 200, y: 480, w: 120, h: 15 },
+                        { x: 400, y: 430, w: 100, h: 15 },
+                        { x: 700, y: 450, w: 120, h: 15 },
+                        { x: 900, y: 400, w: 130, h: 15 },
+                        { x: 1100, y: SUELO_Y, w: 400, h: 30 },
+                    ],
+                    enemigos: [
+                        { x: 350, y: SUELO_Y - 30, w: 30, h: 30, vx: -1.5 },
+                        { x: 650, y: SUELO_Y - 30, w: 30, h: 30, vx: 1.8 },
+                        { x: 1000, y: SUELO_Y - 30, w: 30, h: 30, vx: -1.2 },
+                    ],
+                    monedas: [
+                        { x: 220, y: 440, w: 16, h: 16 },
+                        { x: 250, y: 440, w: 16, h: 16 },
+                        { x: 420, y: 390, w: 16, h: 16 },
+                        { x: 450, y: 390, w: 16, h: 16 },
+                        { x: 720, y: 410, w: 16, h: 16 },
+                        { x: 750, y: 410, w: 16, h: 16 },
+                        { x: 920, y: 360, w: 16, h: 16 },
+                        { x: 950, y: 360, w: 16, h: 16 },
+                        { x: 980, y: 360, w: 16, h: 16 },
+                    ],
+                    flag: { x: 1450, y: SUELO_Y - 120, w: 30, h: 120 },
+                    levelWidth: 1500,
+                }, {
+                    nombre: 'La Plaza Cumbianchera',
+                    plataformas: [
+                        { x: 0, y: SUELO_Y, w: 300, h: 30 },
+                        { x: 350, y: SUELO_Y, w: 150, h: 30 },
+                        { x: 550, y: SUELO_Y, w: 100, h: 30 },
+                        { x: 700, y: SUELO_Y, w: 100, h: 30 },
+                        { x: 850, y: SUELO_Y, w: 650, h: 30 },
+                        { x: 150, y: 480, w: 100, h: 15 },
+                        { x: 400, y: 450, w: 100, h: 15 },
+                        { x: 600, y: 420, w: 100, h: 15 },
+                        { x: 1000, y: 480, w: 120, h: 15 },
+                        { x: 1200, y: 440, w: 120, h: 15 },
+                    ],
+                    enemigos: [
+                        { x: 200, y: SUELO_Y - 30, w: 30, h: 30, vx: -1.8 },
+                        { x: 500, y: SUELO_Y - 30, w: 30, h: 30, vx: 2.0 },
+                        { x: 750, y: SUELO_Y - 30, w: 30, h: 30, vx: -1.5 },
+                        { x: 1100, y: SUELO_Y - 30, w: 30, h: 30, vx: 1.6 },
+                    ],
+                    monedas: [
+                        { x: 170, y: 440, w: 16, h: 16 },
+                        { x: 420, y: 410, w: 16, h: 16 },
+                        { x: 450, y: 410, w: 16, h: 16 },
+                        { x: 620, y: 380, w: 16, h: 16 },
+                        { x: 1020, y: 440, w: 16, h: 16 },
+                        { x: 1050, y: 440, w: 16, h: 16 },
+                        { x: 1220, y: 400, w: 16, h: 16 },
+                        { x: 1250, y: 400, w: 16, h: 16 },
+                    ],
+                    flag: { x: 1480, y: SUELO_Y - 120, w: 30, h: 120 },
+                    levelWidth: 1530,
+                }, {
+                    nombre: 'Backstage del Festival',
+                    plataformas: [
+                        { x: 0, y: SUELO_Y, w: 200, h: 30 },
+                        { x: 250, y: SUELO_Y, w: 100, h: 30 },
+                        { x: 400, y: SUELO_Y, w: 120, h: 30 },
+                        { x: 570, y: SUELO_Y, w: 80, h: 30 },
+                        { x: 700, y: SUELO_Y, w: 80, h: 30 },
+                        { x: 830, y: SUELO_Y, w: 80, h: 30 },
+                        { x: 960, y: SUELO_Y, w: 540, h: 30 },
+                        { x: 120, y: 480, w: 100, h: 15 },
+                        { x: 320, y: 450, w: 80, h: 15 },
+                        { x: 500, y: 420, w: 80, h: 15 },
+                        { x: 650, y: 390, w: 80, h: 15 },
+                        { x: 800, y: 360, w: 80, h: 15 },
+                        { x: 1000, y: 470, w: 120, h: 15 },
+                        { x: 1200, y: 430, w: 120, h: 15 },
+                    ],
+                    enemigos: [
+                        { x: 150, y: SUELO_Y - 30, w: 30, h: 30, vx: -1.5 },
+                        { x: 350, y: SUELO_Y - 30, w: 30, h: 30, vx: 1.8 },
+                        { x: 550, y: SUELO_Y - 30, w: 30, h: 30, vx: -2.0 },
+                        { x: 780, y: SUELO_Y - 30, w: 30, h: 30, vx: 1.5 },
+                        { x: 1050, y: SUELO_Y - 30, w: 30, h: 30, vx: -1.7 },
+                    ],
+                    monedas: [
+                        { x: 140, y: 440, w: 16, h: 16 },
+                        { x: 340, y: 410, w: 16, h: 16 },
+                        { x: 520, y: 380, w: 16, h: 16 },
+                        { x: 670, y: 350, w: 16, h: 16 },
+                        { x: 820, y: 320, w: 16, h: 16 },
+                        { x: 1020, y: 430, w: 16, h: 16 },
+                        { x: 1050, y: 430, w: 16, h: 16 },
+                        { x: 1220, y: 390, w: 16, h: 16 },
+                        { x: 1250, y: 390, w: 16, h: 16 },
+                    ],
+                    flag: { x: 1480, y: SUELO_Y - 120, w: 30, h: 120 },
+                    levelWidth: 1530,
+                }, {
+                    nombre: 'La Tarima Final',
+                    plataformas: [
+                        { x: 0, y: SUELO_Y, w: 300, h: 30 },
+                        { x: 350, y: SUELO_Y, w: 100, h: 30 },
+                        { x: 500, y: SUELO_Y, w: 80, h: 30 },
+                        { x: 630, y: SUELO_Y, w: 80, h: 30 },
+                        { x: 760, y: SUELO_Y, w: 80, h: 30 },
+                        { x: 890, y: SUELO_Y, w: 80, h: 30 },
+                        { x: 1020, y: SUELO_Y, w: 480, h: 30 },
+                        { x: 100, y: 480, w: 80, h: 15 },
+                        { x: 250, y: 450, w: 80, h: 15 },
+                        { x: 400, y: 420, w: 80, h: 15 },
+                        { x: 550, y: 390, w: 80, h: 15 },
+                        { x: 700, y: 360, w: 80, h: 15 },
+                        { x: 850, y: 330, w: 80, h: 15 },
+                        { x: 1000, y: 300, w: 80, h: 15 },
+                    ],
+                    enemigos: [
+                        { x: 200, y: SUELO_Y - 30, w: 30, h: 30, vx: -2.0 },
+                        { x: 450, y: SUELO_Y - 30, w: 30, h: 30, vx: 2.2 },
+                        { x: 650, y: SUELO_Y - 30, w: 30, h: 30, vx: -1.8 },
+                        { x: 850, y: SUELO_Y - 30, w: 30, h: 30, vx: 2.0 },
+                        { x: 1050, y: SUELO_Y - 30, w: 30, h: 30, vx: -1.5 },
+                        { x: 1150, y: SUELO_Y - 30, w: 30, h: 30, vx: 1.8 },
+                    ],
+                    monedas: [
+                        { x: 120, y: 440, w: 16, h: 16 },
+                        { x: 270, y: 410, w: 16, h: 16 },
+                        { x: 420, y: 380, w: 16, h: 16 },
+                        { x: 570, y: 350, w: 16, h: 16 },
+                        { x: 720, y: 320, w: 16, h: 16 },
+                        { x: 870, y: 290, w: 16, h: 16 },
+                        { x: 1020, y: 260, w: 16, h: 16 },
+                        { x: 1050, y: 260, w: 16, h: 16 },
+                    ],
+                    flag: { x: 1480, y: SUELO_Y - 120, w: 30, h: 120 },
+                    levelWidth: 1530,
+                },];
+
+                const nivel = niveles[index % niveles.length];
+                state.levelWidth = nivel.levelWidth;
+                state.platforms = nivel.plataformas.map(p => ({ ...p }));
+                state.enemies = nivel.enemigos.map(e => ({
+                    ...e,
+                    startX: e.x,
+                    startY: e.y,
+                    alive: true,
+                    deathTimer: 0,
+                }));
+                state.coinsItems = nivel.monedas.map(c => ({ ...c, collected: false }));
+                state.flag = { ...nivel.flag, reached: false };
+                state.totalCoins = state.coinsItems.length;
+                state.collectCount = 0;
+                state.cameraX = 0;
+                state.flagReached = false;
+
+                // Posicionar jugador
+                state.player.x = 60;
+                state.player.y = SUELO_Y - JUGADOR_ALTO;
+                state.player.vx = 0;
+                state.player.vy = 0;
+                state.player.onGround = false;
+                state.player.facing = 1;
+
+                // Resetear poder
+                state.powerCooldownUntil = 0;
+                state.powerActiveUntil = 0;
+            }
+
+            // ============================================================
+            // 7. LÓGICA DE JUEGO
+            // ============================================================
+            function startRun() {
+                state.lives = 5;
+                state.score = 0;
+                state.coins = 0;
+                state.levelIndex = 0;
+                state.gameOver = false;
+                state.victory = false;
+                generarNivel(0);
+                goToCharacterSelect();
+            }
+
+            function goToCharacterSelect() {
+                renderSelectGrid();
+                state.selectedChar = null;
+                document.getElementById('btn-start').disabled = true;
+                document.getElementById('power-detail').textContent = 'Selecciona a un integrante de la banda.';
+                document.getElementById('select-title').textContent =
+                    'ELIGE TU PERSONAJE — ' + getNivelNombre(state.levelIndex);
+                showScreen('select');
+            }
+
+            function getNivelNombre(index) {
+                const nombres = ['El Patio de la Cumbia', 'La Plaza Cumbianchera', 'Backstage del Festival',
+                    'La Tarima Final'
+                ];
+                return nombres[index % nombres.length] || 'Nivel ' + (index + 1);
+            }
+
+            function showLevelIntro() {
+                const nombre = getNivelNombre(state.levelIndex);
+                document.getElementById('levelintro-title').textContent = 'Nivel ' + (state.levelIndex + 1) + ' — ' +
+                    nombre;
+                document.getElementById('levelintro-goal').textContent =
+                    '🎯 Recolecta ' + state.totalCoins + ' notas musicales ♪';
+                document.getElementById('levelintro-danger').textContent =
+                    '⚠️ Evita a los enemigos o perderás una vida';
+                document.getElementById('levelintro-power').textContent =
+                    '⭐ Tu poder: ' + state.selectedChar.power.name + ' — ' + state.selectedChar.power.desc;
+                showScreen('levelintro');
+            }
+
+            function beginPlaying() {
+                Audio1.startMusic();
+                showScreen('playing');
+                state.lastTime = performance.now();
+                requestAnimationFrame(loop);
+            }
+
+            function saltar() {
+                if (state.player.onGround) {
+                    state.player.vy = FUERZA_SALTO;
+                    state.player.onGround = false;
+                    Audio1.click();
+                }
+            }
+
+            function activatePower() {
+                const now = performance.now();
+                if (now < state.powerCooldownUntil || !state.selectedChar) return;
+                const power = state.selectedChar.power;
+                Audio1.powerFX(power.type);
+                state.powerCooldownUntil = now + power.cooldown;
+                state.powerActiveUntil = now + power.duration;
+                state.speechText = power.line || '¡A LA CUMBIA!';
+                state.speechUntil = now + Math.min(power.duration, 1900);
+                state.powerBurstAt = now;
+
+                if (power.type === 'stun') {
+                    state.enemies.forEach(e => {
+                        if (Math.abs(e.x - state.player.x) < power.radius) {
+                            e.stunUntil = now + power.duration;
+                        }
+                    });
+                } else if (power.type === 'push') {
+                    state.enemies.forEach(e => {
+                        const dx = e.x - state.player.x;
+                        if (Math.abs(dx) < power.radius) {
+                            e.x += (dx > 0 ? 1 : -1) * power.force * 0.3;
+                            e.stunUntil = now + 600;
+                        }
+                    });
+                } else if (power.type === 'dash') {
+                    state.player.vx = state.player.facing * 15;
+                    state.player.invulnUntil = now + power.duration + 100;
+                } else if (power.type === 'slow') {
+                    // Se aplica en update
+                } else if (power.type === 'reveal') {
+                    // Duplica puntos por 5s
+                }
+            }
+
+            function isPowerActive() {
+                return state.selectedChar && performance.now() < state.powerActiveUntil;
+            }
+
+            function isSlowActive() {
+                return state.selectedChar && state.selectedChar.power.type === 'slow' && performance.now() < state
+                    .powerActiveUntil;
+            }
+
+            function isDashActive() {
+                return state.selectedChar && state.selectedChar.power.type === 'dash' && performance.now() < state
+                    .powerActiveUntil;
+            }
+
+            function isRevealActive() {
+                return state.selectedChar && state.selectedChar.power.type === 'reveal' && performance.now() < state
+                    .powerActiveUntil;
+            }
+
+            function loseLife() {
+                Audio1.hit();
+                Audio1.stopMusic();
+                state.lives -= 1;
+                if (state.lives <= 0) {
+                    Audio1.gameOver();
+                    document.getElementById('gameover-score').textContent = '🪙 ' + state.score;
+                    showScreen('gameover');
+                    return;
+                }
+                showScreen('lifelost');
+            }
+
+            function onLifeLostContinue() {
+                generarNivel(state.levelIndex);
+                goToCharacterSelect();
+            }
+
+            function onLevelClear() {
+                Audio1.stopMusic();
+                Audio1.levelClear();
+                const bonus = 200 * (state.levelIndex + 1);
+                state.score += bonus;
+                document.getElementById('levelcomplete-text').textContent =
+                    '¡' + getNivelNombre(state.levelIndex) + ' superado! +' + bonus + ' pts de bono.';
+                showScreen('levelcomplete');
+            }
+
+            function onNextLevel() {
+                state.levelIndex += 1;
+                if (state.levelIndex >= 4) {
+                    Audio1.win();
+                    document.getElementById('win-score').textContent = '🪙 ' + state.score + ' | 🎵 ' + state.coins;
+                    showScreen('win');
+                    return;
+                }
+                generarNivel(state.levelIndex);
+                goToCharacterSelect();
+            }
+
+            // ============================================================
+            // 8. UPDATE
+            // ============================================================
+            function update(dt) {
+                const now = performance.now();
+                const p = state.player;
+
+                // --- Movimiento horizontal ---
+                let moveX = 0;
+                if (state.keys['ArrowLeft'] || state.keys['a']) moveX = -1;
+                if (state.keys['ArrowRight'] || state.keys['d']) moveX = 1;
+
+                let speed = 240;
+                if (isDashActive()) {
+                    speed = 240 * state.selectedChar.power.speedMult;
+                }
+
+                p.vx = moveX * speed;
+                if (moveX !== 0) p.facing = moveX;
+
+                // --- Salto ---
+                if ((state.keys['ArrowUp'] || state.keys['w'] || state.keys[' ']) && p.onGround) {
+                    p.vy = FUERZA_SALTO;
+                    p.onGround = false;
+                    Audio1.click();
+                }
+
+                // --- Gravedad ---
+                if (!isDashActive()) {
+                    p.vy += GRAVEDAD * 60 * dt;
+                } else {
+                    p.vy *= 0.95;
+                }
+
+                // --- Movimiento ---
+                p.x += p.vx * dt;
+                p.y += p.vy * dt;
+
+                // --- Colisión con plataformas ---
+                p.onGround = false;
+                for (const plat of state.platforms) {
+                    // Colisión horizontal
+                    if (p.x + p.w > plat.x && p.x < plat.x + plat.w &&
+                        p.y + p.h > plat.y && p.y < plat.y + plat.h) {
+                        // Determinar lado de colisión
+                        const overlapX = Math.min(p.x + p.w - plat.x, plat.x + plat.w - p.x);
+                        const overlapY = Math.min(p.y + p.h - plat.y, plat.y + plat.h - p.y);
+
+                        if (overlapX < overlapY) {
+                            // Colisión lateral
+                            if (p.x + p.w / 2 < plat.x + plat.w / 2) {
+                                p.x = plat.x - p.w;
+                            } else {
+                                p.x = plat.x + plat.w;
+                            }
+                            p.vx = 0;
+                        } else {
+                            // Colisión vertical
+                            if (p.vy > 0) {
+                                p.y = plat.y - p.h;
+                                p.vy = 0;
+                                p.onGround = true;
+                            } else if (p.vy < 0) {
+                                p.y = plat.y + plat.h;
+                                p.vy = 0;
+                            }
+                        }
+                    }
+                }
+
+                // --- Límites ---
+                if (p.x < 0) p.x = 0;
+                if (p.x + p.w > state.levelWidth) p.x = state.levelWidth - p.w;
+                if (p.y > SUELO_Y + 100) {
+                    loseLife();
+                    return;
+                }
+
+                // --- Cámara ---
+                state.cameraX = Math.max(0, Math.min(p.x - CANVAS_W * 0.3, state.levelWidth - CANVAS_W));
+
+                // --- Monedas ---
+                const pointMult = isRevealActive() ? 2 : 1;
+                for (const coin of state.coinsItems) {
+                    if (coin.collected) continue;
+                    if (p.x + p.w > coin.x && p.x < coin.x + coin.w &&
+                        p.y + p.h > coin.y && p.y < coin.y + coin.h) {
+                        coin.collected = true;
+                        state.collectCount++;
+                        state.coins++;
+                        state.score += 50 * pointMult;
+                        Audio1.collect();
+                    }
+                }
+
+                // --- Enemigos ---
+                const slowFactor = isSlowActive() ? state.selectedChar.power.factor : 1;
+                for (const e of state.enemies) {
+                    if (!e.alive) continue;
+                    if (now < e.stunUntil) continue;
+
+                    // Movimiento
+                    e.x += e.vx * slowFactor * 60 * dt;
+
+                    // Rebote en bordes
+                    if (e.x < 10 || e.x + e.w > state.levelWidth - 10) {
+                        e.vx *= -1;
+                    }
+
+                    // Colisión con el jugador (desde arriba = aplastar)
+                    if (p.x + p.w > e.x + 8 && p.x < e.x + e.w - 8 &&
+                        p.y + p.h > e.y + 8 && p.y < e.y + e.h - 8) {
+                        if (p.vy > 0 && p.y + p.h - e.y < 20) {
+                            // Aplastar enemigo
+                            e.alive = false;
+                            e.deathTimer = now;
+                            p.vy = -6;
+                            state.score += 100;
+                            Audio1.collect();
+                        } else if (now > (p.invulnUntil || 0)) {
+                            // Daño al jugador
+                            p.invulnUntil = now + 1500;
+                            loseLife();
+                            return;
+                        }
+                    }
+                }
+
+                // --- Bandera ---
+                if (state.flag && !state.flagReached) {
+                    const f = state.flag;
+                    if (p.x + p.w > f.x && p.x < f.x + f.w &&
+                        p.y + p.h > f.y && p.y < f.y + f.h) {
+                        state.flagReached = true;
+                        onLevelClear();
+                        return;
+                    }
+                }
+
+                // --- Animación ---
+                p.animTimer += dt;
+                if (Math.abs(p.vx) > 10) {
+                    if (p.animTimer > 0.12) {
+                        p.animTimer = 0;
+                        p.animFrame = (p.animFrame + 1) % 4;
+                    }
+                } else {
+                    p.animFrame = 0;
+                    p.animTimer = 0;
+                }
+
+                // --- Actualizar HUD ---
+                updateHUD();
+            }
+
+            // ============================================================
+            // 9. DIBUJO
+            // ============================================================
+            function drawBackground() {
+                // Cielo
+                const grad = ctx.createLinearGradient(0, 0, 0, CANVAS_H);
+                grad.addColorStop(0, '#4a90d9');
+                grad.addColorStop(0.5, '#87CEEB');
+                grad.addColorStop(1, '#b8d4e3');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+                // Nubes
+                ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                const nubes = [
+                    { x: 50 - state.cameraX * 0.2, y: 40, w: 80, h: 30 },
+                    { x: 200 - state.cameraX * 0.2, y: 70, w: 100, h: 35 },
+                    { x: 450 - state.cameraX * 0.2, y: 30, w: 70, h: 25 },
+                    { x: 700 - state.cameraX * 0.2, y: 60, w: 90, h: 32 },
+                    { x: 1000 - state.cameraX * 0.2, y: 45, w: 110, h: 38 },
+                    { x: 1300 - state.cameraX * 0.2, y: 55, w: 85, h: 30 },
+                ];
+                for (const n of nubes) {
+                    if (n.x + n.w < -20 || n.x > CANVAS_W + 20) continue;
+                    ctx.beginPath();
+                    ctx.ellipse(n.x, n.y, n.w / 2, n.h / 2, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.ellipse(n.x - n.w * 0.25, n.y + 5, n.w * 0.35, n.h * 0.5, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.ellipse(n.x + n.w * 0.25, n.y + 5, n.w * 0.35, n.h * 0.5, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Montañas de fondo
+                ctx.fillStyle = 'rgba(100,140,80,0.15)';
+                const montanas = [
+                    { x: -50 - state.cameraX * 0.1, y: SUELO_Y, w: 200, h: 120 },
+                    { x: 250 - state.cameraX * 0.1, y: SUELO_Y, w: 300, h: 160 },
+                    { x: 700 - state.cameraX * 0.1, y: SUELO_Y, w: 250, h: 140 },
+                    { x: 1100 - state.cameraX * 0.1, y: SUELO_Y, w: 350, h: 180 },
+                ];
+                for (const m of montanas) {
+                    if (m.x + m.w < -20 || m.x > CANVAS_W + 20) continue;
+                    ctx.beginPath();
+                    ctx.moveTo(m.x, m.y);
+                    ctx.quadraticCurveTo(m.x + m.w / 2, m.y - m.h, m.x + m.w, m.y);
+                    ctx.fill();
+                }
+            }
+
+            function drawPlatforms() {
+                for (const p of state.platforms) {
+                    const x = p.x - state.cameraX;
+                    if (x + p.w < -20 || x > CANVAS_W + 20) continue;
+
+                    // Sombra
+                    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+                    ctx.fillRect(x + 2, p.y + 4, p.w, p.h);
+
+                    // Cuerpo
+                    const grad = ctx.createLinearGradient(0, p.y, 0, p.y + p.h);
+                    grad.addColorStop(0, '#8B7355');
+                    grad.addColorStop(0.5, '#6B5340');
+                    grad.addColorStop(1, '#4A3A2A');
+                    ctx.fillStyle = grad;
+                    ctx.fillRect(x, p.y, p.w, p.h);
+
+                    // Borde superior
+                    ctx.fillStyle = 'rgba(200,180,150,0.4)';
+                    ctx.fillRect(x, p.y, p.w, 3);
+
+                    // Detalle de ladrillos
+                    ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+                    ctx.lineWidth = 1;
+                    for (let i = 0; i < p.w; i += 20) {
+                        ctx.beginPath();
+                        ctx.moveTo(x + i, p.y);
+                        ctx.lineTo(x + i, p.y + p.h);
+                        ctx.stroke();
+                    }
+                    for (let i = 0; i < p.h; i += 10) {
+                        ctx.beginPath();
+                        ctx.moveTo(x, p.y + i);
+                        ctx.lineTo(x + p.w, p.y + i);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            function drawCoins() {
+                const now = performance.now();
+                for (const coin of state.coinsItems) {
+                    if (coin.collected) continue;
+                    const x = coin.x - state.cameraX;
+                    if (x + coin.w < -20 || x > CANVAS_W + 20) continue;
+
+                    const bob = Math.sin(now / 300 + coin.x) * 4;
+
+                    // Brillo
+                    ctx.shadowColor = '#F2B705';
+                    ctx.shadowBlur = 15;
+
+                    ctx.save();
+                    ctx.translate(x + coin.w / 2, coin.y + coin.h / 2 + bob);
+                    const scaleX = Math.abs(Math.cos(now / 400 + coin.x * 0.5));
+                    ctx.scale(Math.max(0.3, scaleX), 1);
+
+                    // Cuerpo de la moneda
+                    const grad = ctx.createRadialGradient(-3, -3, 2, 0, 0, coin.w / 2);
+                    grad.addColorStop(0, '#FFD700');
+                    grad.addColorStop(0.7, '#F2B705');
+                    grad.addColorStop(1, '#B8860B');
+                    ctx.fillStyle = grad;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, coin.w / 2, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Brillo central
+                    ctx.shadowBlur = 0;
+                    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                    ctx.beginPath();
+                    ctx.arc(-3, -3, 3, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Símbolo ♪
+                    ctx.fillStyle = '#8B6914';
+                    ctx.font = 'bold 10px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('♪', 0, 1);
+
+                    ctx.restore();
+                    ctx.shadowBlur = 0;
+                }
+            }
+
+            function drawEnemies() {
+                const now = performance.now();
+                for (const e of state.enemies) {
+                    if (!e.alive) continue;
+                    const x = e.x - state.cameraX;
+                    if (x + e.w < -20 || x > CANVAS_W + 20) continue;
+
+                    const stunned = now < (e.stunUntil || 0);
+
+                    // Sombra
+                    ctx.fillStyle = 'rgba(0,0,0,0.2)';
+                    ctx.beginPath();
+                    ctx.ellipse(x + e.w / 2, e.y + e.h + 2, e.w / 2, 4, 0, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Cuerpo del enemigo (diablito)
+                    ctx.save();
+                    ctx.translate(x + e.w / 2, e.y + e.h / 2);
+
+                    if (stunned) {
+                        ctx.globalAlpha = 0.5;
+                        ctx.shadowColor = '#ffcc00';
+                        ctx.shadowBlur = 20;
+                    }
+
+                    if (DIABLO_STATE.ready) {
+                        const size = e.h * 1.3;
+                        ctx.drawImage(DIABLO_IMG, -size / 2, -size / 2, size, size);
+                    } else {
+                        // Fallback
+                        ctx.fillStyle = stunned ? '#888' : '#C4302B';
+                        ctx.beginPath();
+                        ctx.arc(0, 0, e.w / 2, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.fillStyle = '#fff';
+                        ctx.beginPath();
+                        ctx.arc(-5, -4, 4, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.beginPath();
+                        ctx.arc(5, -4, 4, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.fillStyle = '#000';
+                        ctx.beginPath();
+                        ctx.arc(-5, -3, 2, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.beginPath();
+                        ctx.arc(5, -3, 2, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+
+                    ctx.shadowBlur = 0;
+                    ctx.globalAlpha = 1;
+                    ctx.restore();
+
+                    if (stunned) {
+                        ctx.fillStyle = '#ffcc00';
+                        ctx.font = '14px sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('💫', x + e.w / 2, e.y - 10);
+                    }
+                }
+            }
+
+            function drawFlag() {
+                if (!state.flag) return;
+                const f = state.flag;
+                const x = f.x - state.cameraX;
+                if (x + f.w < -20 || x > CANVAS_W + 20) return;
+
+                const reached = state.flagReached;
+
+                // Poste
+                ctx.fillStyle = '#666';
+                ctx.fillRect(x + f.w / 2 - 3, f.y, 6, f.h);
+
+                // Bandera
+                const flagX = x + f.w;
+                const flagY = f.y + 10;
+                ctx.beginPath();
+                ctx.moveTo(flagX, flagY);
+                ctx.lineTo(flagX + 50, flagY + 15);
+                ctx.lineTo(flagX, flagY + 30);
+                ctx.closePath();
+
+                const grad = ctx.createLinearGradient(flagX, flagY, flagX + 50, flagY + 30);
+                if (reached) {
+                    grad.addColorStop(0, '#0FADA0');
+                    grad.addColorStop(1, '#0a7c73');
+                } else {
+                    grad.addColorStop(0, '#F2B705');
+                    grad.addColorStop(1, '#b3860a');
+                }
+                ctx.fillStyle = grad;
+                ctx.fill();
+
+                ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Estrella en la bandera
+                ctx.fillStyle = reached ? '#fff' : '#C4302B';
+                ctx.font = '16px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(reached ? '★' : '🎵', flagX + 25, flagY + 16);
+
+                // Brillo si está alcanzada
+                if (reached) {
+                    ctx.shadowColor = '#0FADA0';
+                    ctx.shadowBlur = 30;
+                    ctx.fillStyle = 'rgba(15,173,160,0.1)';
+                    ctx.beginPath();
+                    ctx.arc(x + f.w / 2, f.y, 60, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+            }
+
+            function drawPlayer() {
+                const p = state.player;
+                const x = p.x - state.cameraX;
+                const invuln = performance.now() < (p.invulnUntil || 0);
+
+                if (invuln && Math.floor(performance.now() / 80) % 2 === 0) return;
+
+                ctx.save();
+                ctx.translate(x + p.w / 2, p.y + p.h / 2);
+
+                // Sombra
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = 'rgba(0,0,0,0.2)';
+                ctx.beginPath();
+                ctx.ellipse(0, p.h / 2 + 4, p.w / 2, 4, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                if (state.selectedChar) {
+                    drawCharacterSprite(ctx, 0, 0, 1.15, state.selectedChar, { flip: p.facing < 0 });
+                }
+
+                // Aura de poder
+                if (isPowerActive()) {
+                    ctx.shadowColor = state.selectedChar.bodyColor;
+                    ctx.shadowBlur = 30;
+                    ctx.strokeStyle = state.selectedChar.bodyColor;
+                    ctx.globalAlpha = 0.3 + Math.sin(performance.now() / 200) * 0.2;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, p.w / 2 + 10, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.globalAlpha = 1;
+                    ctx.shadowBlur = 0;
+                }
+
+                ctx.restore();
+            }
+
+            function drawSpeechBubble() {
+                const now = performance.now();
+                if (now >= state.speechUntil || !state.speechText) return;
+                const p = state.player;
+                const x = p.x - state.cameraX;
+
+                ctx.save();
+                ctx.font = "bold 12px 'Poppins', sans-serif";
+                const text = state.speechText;
+                const w = Math.min(200, ctx.measureText(text).width + 20);
+                const h = 26;
+                const bx = Math.max(10, Math.min(x + p.w / 2 - w / 2, CANVAS_W - w - 10));
+                const by = p.y - 40;
+
+                // Fondo del globo
+                ctx.beginPath();
+                ctx.roundRect ? ctx.roundRect(bx, by, w, h, 8) : ctx.rect(bx, by, w, h);
+                ctx.fillStyle = 'rgba(255,243,224,0.95)';
+                ctx.fill();
+                ctx.lineWidth = 1.5;
+                ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+                ctx.stroke();
+
+                // Colita
+                ctx.beginPath();
+                ctx.moveTo(Math.max(bx + 6, Math.min(x + p.w / 2 - 6, bx + w - 6)), by + h);
+                ctx.lineTo(Math.max(bx + 6, Math.min(x + p.w / 2 + 6, bx + w - 6)), by + h);
+                ctx.lineTo(x + p.w / 2, by + h + 8);
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(255,243,224,0.95)';
+                ctx.fill();
+
+                // Texto
+                ctx.fillStyle = '#1A0D10';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(text, bx + w / 2, by + h / 2, w - 14);
+                ctx.restore();
+            }
+
+            function drawHUD() {
+                // El HUD se actualiza en updateHUD()
+            }
+
+            function render() {
+                ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+                drawBackground();
+                drawPlatforms();
+                drawCoins();
+                drawEnemies();
+                drawFlag();
+                drawPlayer();
+                drawSpeechBubble();
+            }
+
+            function updateHUD() {
+                heartsEl.innerHTML = '';
+                for (let i = 0; i < 5; i++) {
+                    const s = document.createElement('span');
+                    s.textContent = '♥';
+                    if (i >= state.lives) s.classList.add('lost');
+                    heartsEl.appendChild(s);
+                }
+                levelLabelEl.textContent = (state.levelIndex + 1) + ' - ' + getNivelNombre(state.levelIndex);
+                scoreBoxEl.textContent = '🪙 ' + state.score;
+                coinsBoxEl.textContent = '🎵 ' + state.collectCount + '/' + state.totalCoins;
+            }
+
+            // ============================================================
+            // 10. LOOP PRINCIPAL
+            // ============================================================
+            function loop(ts) {
+                if (state.screen !== 'playing') return;
+                const dt = Math.min(0.05, (ts - state.lastTime) / 1000);
+                state.lastTime = ts;
+
+                if (!state.paused) {
+                    update(dt);
+                    if (state.screen !== 'playing') return;
+                }
+
+                render();
+                requestAnimationFrame(loop);
+            }
+
+            function togglePause() {
+                if (state.screen !== 'playing') return;
+                state.paused = !state.paused;
+                pauseOverlay.classList.toggle('hidden', !state.paused);
+                if (state.paused) {
+                    Audio1.stopMusic();
+                } else {
+                    state.lastTime = performance.now();
+                    if (Audio1.isEnabled()) Audio1.startMusic();
+                }
+            }
+
+            // ============================================================
+            // 11. INPUT - CONTROLES
+            // ============================================================
+
+            // Botones móviles
+            function setupMobileButton(id, key) {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const set = (v) => (e) => {
+                    e.preventDefault();
+                    state.keys[key] = v;
+                };
+                el.addEventListener('touchstart', set(true), { passive: false });
+                el.addEventListener('touchend', set(false), { passive: false });
+                el.addEventListener('touchcancel', set(false), { passive: false });
+                el.addEventListener('mousedown', set(true));
+                el.addEventListener('mouseup', set(false));
+                el.addEventListener('mouseleave', set(false));
+            }
+
+            setupMobileButton('btn-up-mobile', 'ArrowUp');
+            setupMobileButton('btn-down-mobile', 'ArrowDown');
+            setupMobileButton('btn-left-mobile', 'ArrowLeft');
+            setupMobileButton('btn-right-mobile', 'ArrowRight');
+
+            // Botón SALTO móvil
+            const jumpBtnTouch = document.getElementById('jump-btn-touch');
+            if (jumpBtnTouch) {
+                const setJump = (v) => (e) => {
+                    e.preventDefault();
+                    if (v && state.screen === 'playing' && !state.paused) {
+                        saltar();
+                    }
+                };
+                jumpBtnTouch.addEventListener('touchstart', setJump(true), { passive: false });
+                jumpBtnTouch.addEventListener('touchend', setJump(false), { passive: false });
+                jumpBtnTouch.addEventListener('touchcancel', setJump(false), { passive: false });
+                jumpBtnTouch.addEventListener('mousedown', setJump(true));
+                jumpBtnTouch.addEventListener('mouseup', setJump(false));
+            }
+
+            // Botón PODER móvil
+            const powerBtnTouch = document.getElementById('power-btn-touch');
+            if (powerBtnTouch) {
+                powerBtnTouch.addEventListener('touchstart', function (e) {
+                    e.preventDefault();
+                    if (state.screen === 'playing' && !state.paused) {
+                        activatePower();
+                    }
+                }, { passive: false });
+                powerBtnTouch.addEventListener('click', function () {
+                    if (state.screen === 'playing' && !state.paused) {
+                        activatePower();
+                    }
+                });
+            }
+
+            // Teclado
+            window.addEventListener('keydown', (e) => {
+                state.keys[e.key] = true;
+                if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'w') {
+                    e.preventDefault();
+                    if (state.screen === 'playing' && !state.paused) {
+                        saltar();
+                    }
+                }
+                if (e.key === 'p' || e.key === 'P') {
+                    if (state.screen === 'playing') togglePause();
+                }
+            });
+            window.addEventListener('keyup', (e) => {
+                state.keys[e.key] = false;
+            });
+
+            // Botón SALTO desktop
+            const jumpBtnDesktop = document.getElementById('jump-btn-desktop');
+            if (jumpBtnDesktop) {
+                const setJumpDesktop = (v) => (e) => {
+                    e.preventDefault();
+                    if (v && state.screen === 'playing' && !state.paused) {
+                        saltar();
+                    }
+                };
+                jumpBtnDesktop.addEventListener('mousedown', setJumpDesktop(true));
+                jumpBtnDesktop.addEventListener('mouseup', setJumpDesktop(false));
+                jumpBtnDesktop.addEventListener('mouseleave', setJumpDesktop(false));
+                jumpBtnDesktop.addEventListener('touchstart', setJumpDesktop(true), { passive: false });
+                jumpBtnDesktop.addEventListener('touchend', setJumpDesktop(false), { passive: false });
+                jumpBtnDesktop.addEventListener('touchcancel', setJumpDesktop(false), { passive: false });
+            }
+
+            // D-pad desktop
+            function setupDesktopButton(id, key) {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const set = (v) => (e) => {
+                    e.preventDefault();
+                    state.keys[key] = v;
+                };
+                el.addEventListener('mousedown', set(true));
+                el.addEventListener('mouseup', set(false));
+                el.addEventListener('mouseleave', set(false));
+                el.addEventListener('touchstart', set(true), { passive: false });
+                el.addEventListener('touchend', set(false), { passive: false });
+                el.addEventListener('touchcancel', set(false), { passive: false });
+            }
+
+            setupDesktopButton('btn-up', 'ArrowUp');
+            setupDesktopButton('btn-down', 'ArrowDown');
+            setupDesktopButton('btn-left', 'ArrowLeft');
+            setupDesktopButton('btn-right', 'ArrowRight');
+
+            // ============================================================
+            // 12. BOTONES DE PANTALLA
+            // ============================================================
+            document.getElementById('btn-play').addEventListener('click', () => {
+                Audio1.unlock();
+                Audio1.click();
+                startRun();
+            });
+            document.getElementById('btn-howto').addEventListener('click', () => {
+                Audio1.unlock();
+                Audio1.click();
+                showScreen('instructions');
+            });
+            document.getElementById('btn-howto-back').addEventListener('click', () => {
+                Audio1.click();
+                showScreen('menu');
+            });
+            document.getElementById('btn-start').addEventListener('click', () => {
+                if (!state.selectedChar) return;
+                Audio1.click();
+                showLevelIntro();
+            });
+            document.getElementById('btn-levelintro-start').addEventListener('click', () => {
+                Audio1.click();
+                beginPlaying();
+            });
+            document.getElementById('btn-continue').addEventListener('click', () => {
+                Audio1.click();
+                onLifeLostContinue();
+            });
+            document.getElementById('btn-next-level').addEventListener('click', () => {
+                Audio1.click();
+                onNextLevel();
+            });
+            document.getElementById('btn-retry').addEventListener('click', () => {
+                Audio1.click();
+                startRun();
+            });
+            document.getElementById('btn-play-again').addEventListener('click', () => {
+                Audio1.click();
+                startRun();
+            });
+
+            const soundToggleBtn = document.getElementById('sound-toggle');
+            soundToggleBtn.addEventListener('click', () => {
+                Audio1.unlock();
+                const next = !Audio1.isEnabled();
+                Audio1.setEnabled(next);
+                soundToggleBtn.textContent = next ? '🔊' : '🔇';
+                if (next && state.screen === 'playing' && !state.paused) Audio1.startMusic();
+            });
+
+            document.getElementById('pause-toggle').addEventListener('click', () => {
+                Audio1.unlock();
+                togglePause();
+            });
+            document.getElementById('btn-resume').addEventListener('click', () => {
+                Audio1.click();
+                togglePause();
+            });
+            document.getElementById('btn-pause-menu').addEventListener('click', () => {
+                Audio1.click();
+                Audio1.stopMusic();
+                state.paused = false;
+                pauseOverlay.classList.add('hidden');
+                showScreen('menu');
+            });
+
+            showScreen('menu');
+
+            document.querySelectorAll('#rotate-overlay *').forEach(el => {
+                el.addEventListener('click', Audio1.unlock);
+                el.addEventListener('touchstart', Audio1.unlock);
+            });
+
+            console.log('🎮 Super Mario Cumbianchero — Los Hijos de Tencha');
+            console.log('🕹️ Controles: flechas para moverte, SALTO para saltar, PODER para habilidad especial');
+            console.log('🎵 Recolecta todas las notas y llega a la bandera!');
+
+        })();
+    </script>
+</body>
+
+</html>
