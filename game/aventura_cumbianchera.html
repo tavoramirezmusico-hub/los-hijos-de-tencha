@@ -122,13 +122,12 @@
         #game-root {
             position: relative;
             width: 100%;
-            max-width: 920px;
-            margin: 0 auto;
-            padding: 12px;
             height: 100vh;
             display: flex;
             flex-direction: column;
+            align-items: center;
             justify-content: center;
+            padding: 8px;
         }
 
         /* ---------- Papel picado bunting ---------- */
@@ -136,15 +135,16 @@
             display: flex;
             justify-content: center;
             gap: 2px;
-            height: 26px;
-            margin-bottom: -6px;
+            height: 20px;
+            margin-bottom: -4px;
             overflow: hidden;
             flex-shrink: 0;
+            width: 100%;
         }
 
         .bunting .flag {
-            width: 30px;
-            height: 22px;
+            width: 24px;
+            height: 16px;
             clip-path: polygon(0 0, 100% 0, 50% 100%);
             flex-shrink: 0;
         }
@@ -173,12 +173,13 @@
             position: relative;
             background: linear-gradient(180deg, var(--night-2), var(--night));
             border: 3px solid var(--tangerine);
-            border-radius: 18px;
+            border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
             flex-shrink: 0;
-            aspect-ratio: 900 / 560;
             width: 100%;
+            max-width: 900px;
+            aspect-ratio: 900 / 560;
             max-height: calc(100vh - 60px);
         }
 
@@ -192,6 +193,7 @@
             border: none;
             box-shadow: none;
             z-index: 99998;
+            max-height: 100vh;
         }
 
         canvas {
@@ -211,9 +213,10 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 20px;
+            padding: 16px;
             background: radial-gradient(circle at 50% 20%, rgba(242, 96, 12, 0.25), rgba(27, 15, 46, 0.96) 70%);
-            gap: 14px;
+            gap: 10px;
+            overflow-y: auto;
         }
 
         .screen.hidden {
@@ -221,27 +224,28 @@
         }
 
         .logo-img {
-            max-width: 220px;
-            width: 55%;
+            max-width: 160px;
+            width: 40%;
             filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.5));
         }
 
         .title-main {
-            font-size: clamp(22px, 5vw, 36px);
+            font-size: clamp(20px, 4.5vw, 34px);
             color: var(--gold);
             text-shadow: 3px 3px 0 var(--purple-deep);
             margin: 0;
+            line-height: 1.2;
         }
 
         .subtitle {
-            font-size: clamp(13px, 2.6vw, 16px);
+            font-size: clamp(12px, 2.4vw, 15px);
             color: var(--cream);
             opacity: 0.85;
-            margin: -8px 0 4px;
+            margin: -4px 0 2px;
         }
 
         .diablito-img {
-            width: 74px;
+            width: 60px;
             animation: bounce 1.4s ease-in-out infinite;
             filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
         }
@@ -254,21 +258,22 @@
             }
 
             50% {
-                transform: translateY(-14px) rotate(4deg);
+                transform: translateY(-12px) rotate(4deg);
             }
         }
 
         .btn {
             font-family: 'Bungee', cursive;
-            font-size: 15px;
-            padding: 14px 30px;
+            font-size: clamp(13px, 2.2vw, 16px);
+            padding: 12px 26px;
             border-radius: 40px;
             border: none;
             background: linear-gradient(180deg, var(--gold), #b3860a);
             color: var(--night);
             cursor: pointer;
-            box-shadow: 0 6px 0 #7a5c05, 0 10px 20px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 5px 0 #7a5c05, 0 10px 20px rgba(0, 0, 0, 0.4);
             transition: transform .08s ease;
+            touch-action: manipulation;
         }
 
         .btn:active {
@@ -278,7 +283,7 @@
 
         .btn.secondary {
             background: linear-gradient(180deg, var(--teal), #0a7c73);
-            box-shadow: 0 6px 0 #075450, 0 10px 20px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 5px 0 #075450, 0 10px 20px rgba(0, 0, 0, 0.4);
         }
 
         .btn.secondary:active {
@@ -296,9 +301,9 @@
         .char-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
+            gap: 6px;
             width: 100%;
-            max-width: 720px;
+            max-width: 650px;
         }
 
         @media (max-width: 640px) {
@@ -310,14 +315,14 @@
         .char-card {
             background: rgba(255, 255, 255, 0.06);
             border: 2px solid rgba(255, 255, 255, 0.15);
-            border-radius: 14px;
-            padding: 10px 6px 12px;
+            border-radius: 12px;
+            padding: 6px 4px 8px;
             cursor: pointer;
             transition: all .15s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
 
         .char-card:hover {
@@ -331,34 +336,35 @@
         }
 
         .char-card canvas {
-            width: 64px;
-            height: 64px;
+            width: 48px;
+            height: 48px;
         }
 
         .char-name {
             font-weight: 700;
-            font-size: 12.5px;
+            font-size: 10px;
             margin: 0;
         }
 
         .char-instrument {
-            font-size: 10.5px;
+            font-size: 8px;
             opacity: 0.75;
             margin: 0;
         }
 
         .char-power {
-            font-size: 9.5px;
+            font-size: 7.5px;
             color: var(--teal);
             margin: 0;
             line-height: 1.3;
         }
 
         .power-detail {
-            min-height: 40px;
-            font-size: 13px;
+            min-height: 32px;
+            font-size: 11px;
             color: var(--gold);
-            max-width: 500px;
+            max-width: 480px;
+            padding: 0 8px;
         }
 
         /* ---------- HUD ---------- */
@@ -370,9 +376,9 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            padding: 10px 12px;
+            padding: 6px 10px;
             pointer-events: none;
-            font-size: 13px;
+            font-size: 11px;
             z-index: 5;
         }
 
@@ -382,13 +388,13 @@
 
         .hud-box {
             background: rgba(0, 0, 0, 0.4);
-            border-radius: 10px;
-            padding: 6px 10px;
+            border-radius: 8px;
+            padding: 4px 8px;
             backdrop-filter: blur(2px);
         }
 
         #hearts span {
-            font-size: 16px;
+            font-size: 13px;
             margin-right: 1px;
         }
 
@@ -398,30 +404,31 @@
 
         #level-label {
             font-family: 'Bungee', cursive;
-            font-size: 11px;
+            font-size: 9px;
             color: var(--gold);
         }
 
         #score-box {
             text-align: right;
             font-weight: 700;
+            font-size: 10px;
         }
 
         #items-box {
             text-align: right;
-            font-size: 11.5px;
+            font-size: 9px;
             opacity: 0.85;
         }
 
         #power-bar-wrap {
             position: absolute;
-            bottom: 10px;
+            bottom: 6px;
             left: 50%;
             transform: translateX(-50%);
-            width: 140px;
-            height: 14px;
+            width: 120px;
+            height: 10px;
             background: rgba(0, 0, 0, 0.5);
-            border-radius: 8px;
+            border-radius: 6px;
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.25);
             z-index: 5;
@@ -439,10 +446,10 @@
 
         #power-label {
             position: absolute;
-            bottom: 26px;
+            bottom: 18px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 10px;
+            font-size: 8px;
             opacity: 0.85;
             white-space: nowrap;
         }
@@ -464,62 +471,64 @@
 
         .dpad {
             position: absolute;
-            left: 14px;
-            bottom: 14px;
-            width: 120px;
-            height: 120px;
+            left: 8px;
+            bottom: 8px;
+            width: 100px;
+            height: 100px;
             pointer-events: auto;
         }
 
         .dpad button {
             position: absolute;
-            width: 40px;
-            height: 40px;
+            width: 34px;
+            height: 34px;
             background: rgba(255, 255, 255, 0.18);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
+            border-radius: 8px;
             color: var(--cream);
-            font-size: 16px;
+            font-size: 14px;
+            touch-action: manipulation;
         }
 
         .dpad .up {
             top: 0;
-            left: 40px;
+            left: 33px;
         }
 
         .dpad .down {
             bottom: 0;
-            left: 40px;
+            left: 33px;
         }
 
         .dpad .left {
-            top: 40px;
+            top: 33px;
             left: 0;
         }
 
         .dpad .right {
-            top: 40px;
+            top: 33px;
             right: 0;
         }
 
         .power-btn-touch {
             position: absolute;
-            right: 20px;
-            bottom: 24px;
-            width: 68px;
-            height: 68px;
+            right: 12px;
+            bottom: 16px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
             background: radial-gradient(circle, var(--gold), var(--tangerine));
             border: 2px solid rgba(255, 255, 255, 0.4);
             color: var(--night);
             font-family: 'Bungee', cursive;
-            font-size: 10px;
+            font-size: 8px;
             pointer-events: auto;
+            touch-action: manipulation;
         }
 
         .msg-big {
             font-family: 'Bungee', cursive;
-            font-size: clamp(20px, 5.5vw, 32px);
+            font-size: clamp(18px, 5vw, 30px);
             color: var(--danger);
             text-shadow: 3px 3px 0 #4a0d14;
             line-height: 1.3;
@@ -527,37 +536,37 @@
 
         .final-score {
             font-family: 'Bungee', cursive;
-            font-size: clamp(28px, 7vw, 46px);
+            font-size: clamp(24px, 6vw, 42px);
             color: var(--gold);
         }
 
         .footer-note {
-            font-size: 10.5px;
+            font-size: 9px;
             opacity: 0.5;
-            margin-top: 14px;
+            margin-top: 8px;
         }
 
         .hint {
-            font-size: 12px;
+            font-size: 11px;
             opacity: 0.7;
-            max-width: 480px;
+            max-width: 440px;
         }
 
         .howto-box {
             text-align: left;
-            max-width: 560px;
-            font-size: 12.5px;
-            line-height: 1.55;
+            max-width: 500px;
+            font-size: 11px;
+            line-height: 1.5;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 12px;
-            padding: 14px 18px;
-            max-height: 60vh;
+            border-radius: 10px;
+            padding: 10px 14px;
+            max-height: 50vh;
             overflow-y: auto;
         }
 
         .howto-box p {
-            margin: 8px 0;
+            margin: 6px 0;
         }
 
         .note-icon {
@@ -568,48 +577,48 @@
         .level-intro-box {
             background: rgba(255, 255, 255, 0.06);
             border: 2px solid var(--teal);
-            border-radius: 14px;
-            padding: 16px 22px;
-            max-width: 500px;
+            border-radius: 12px;
+            padding: 12px 16px;
+            max-width: 440px;
         }
 
         .level-intro-box p {
-            margin: 6px 0;
-            font-size: 13px;
+            margin: 4px 0;
+            font-size: 11px;
         }
 
         .level-intro-title {
             font-family: 'Bungee', cursive;
             color: var(--gold);
-            font-size: 18px;
+            font-size: 16px;
             margin: 0 0 4px;
         }
 
         #sound-toggle {
             position: absolute;
-            top: 74px;
-            right: 8px;
+            top: 60px;
+            right: 6px;
             z-index: 8;
             background: rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.25);
             color: var(--cream);
-            border-radius: 8px;
-            font-size: 15px;
-            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            padding: 3px 6px;
             cursor: pointer;
         }
 
         #pause-toggle {
             position: absolute;
-            top: 74px;
-            right: 52px;
+            top: 60px;
+            right: 42px;
             z-index: 8;
             background: rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.25);
             color: var(--cream);
-            border-radius: 8px;
-            font-size: 15px;
-            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            padding: 3px 8px;
             cursor: pointer;
         }
 
@@ -621,7 +630,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 14px;
+            gap: 12px;
             background: rgba(10, 4, 6, 0.72);
             backdrop-filter: blur(1.5px);
         }
@@ -630,141 +639,39 @@
             display: none;
         }
 
+        /* ===== RESPONSIVE ESPECÍFICO PARA CELULARES ===== */
         @media (max-width: 768px) {
-            #game-root {
-                padding: 6px;
-            }
-
-            .game-frame {
-                border-radius: 12px;
-                border-width: 2px;
-            }
-
-            .btn {
-                font-size: 13px;
-                padding: 10px 22px;
-            }
-
-            .char-grid {
-                gap: 6px;
-            }
-
-            .char-card {
-                padding: 6px 4px 8px;
-            }
-
-            .char-card canvas {
-                width: 48px;
-                height: 48px;
-            }
-
-            .char-name {
-                font-size: 10px;
-            }
-
-            .char-instrument {
-                font-size: 8px;
-            }
-
-            .char-power {
-                font-size: 7px;
-            }
-
-            #hud {
-                padding: 6px 8px;
-                font-size: 11px;
-            }
-
-            #hearts span {
-                font-size: 13px;
-            }
-
-            .dpad {
-                width: 90px;
-                height: 90px;
-                left: 8px;
-                bottom: 8px;
-            }
-
-            .dpad button {
-                width: 30px;
-                height: 30px;
-                font-size: 12px;
-            }
-
-            .dpad .up {
-                top: 0;
-                left: 30px;
-            }
-
-            .dpad .down {
-                bottom: 0;
-                left: 30px;
-            }
-
-            .dpad .left {
-                top: 30px;
-                left: 0;
-            }
-
-            .dpad .right {
-                top: 30px;
-                right: 0;
-            }
-
-            .power-btn-touch {
-                right: 12px;
-                bottom: 14px;
-                width: 54px;
-                height: 54px;
-                font-size: 8px;
-            }
-
-            .bunting {
-                height: 18px;
-            }
-
-            .bunting .flag {
-                width: 20px;
-                height: 15px;
-            }
-
-            #power-bar-wrap {
-                width: 100px;
-                height: 10px;
-                bottom: 6px;
-            }
-
-            #power-label {
-                font-size: 8px;
-                bottom: 18px;
-            }
-
-            #sound-toggle,
-            #pause-toggle {
-                top: 50px;
-                font-size: 12px;
-                padding: 3px 6px;
-            }
-
-            #pause-toggle {
-                right: 40px;
-            }
-        }
-
-        @media (max-width: 480px) {
             #game-root {
                 padding: 4px;
             }
 
             .game-frame {
-                border-radius: 10px;
+                border-radius: 12px;
                 border-width: 2px;
+                max-height: calc(100vh - 40px);
+            }
+
+            .bunting {
+                height: 14px;
+                gap: 1.5px;
+            }
+
+            .bunting .flag {
+                width: 16px;
+                height: 11px;
+            }
+
+            .logo-img {
+                max-width: 120px;
+            }
+
+            .diablito-img {
+                width: 48px;
             }
 
             .btn {
-                font-size: 11px;
-                padding: 8px 16px;
+                font-size: clamp(11px, 2vw, 13px);
+                padding: 10px 20px;
             }
 
             .char-grid {
@@ -773,6 +680,7 @@
 
             .char-card {
                 padding: 4px 3px 6px;
+                border-radius: 8px;
             }
 
             .char-card canvas {
@@ -789,7 +697,12 @@
             }
 
             .char-power {
-                font-size: 6px;
+                font-size: 6.5px;
+            }
+
+            .power-detail {
+                font-size: 9px;
+                min-height: 26px;
             }
 
             #hud {
@@ -798,43 +711,68 @@
             }
 
             #hearts span {
-                font-size: 10px;
+                font-size: 11px;
             }
 
             .hud-box {
                 padding: 3px 6px;
+                border-radius: 6px;
+            }
+
+            #level-label {
+                font-size: 8px;
+            }
+
+            #score-box {
+                font-size: 9px;
+            }
+
+            #items-box {
+                font-size: 8px;
+            }
+
+            #power-bar-wrap {
+                width: 90px;
+                height: 8px;
+                bottom: 4px;
+            }
+
+            #power-label {
+                font-size: 7px;
+                bottom: 14px;
             }
 
             .dpad {
-                width: 72px;
-                height: 72px;
+                width: 76px;
+                height: 76px;
                 left: 5px;
                 bottom: 5px;
             }
 
             .dpad button {
-                width: 24px;
-                height: 24px;
-                font-size: 10px;
+                width: 26px;
+                height: 26px;
+                font-size: 11px;
+                border-radius: 6px;
             }
 
             .dpad .up {
                 top: 0;
-                left: 24px;
+                left: 25px;
             }
 
             .dpad .down {
                 bottom: 0;
-                left: 24px;
+                left: 25px;
             }
 
             .dpad .left {
-                top: 24px;
+                top: 25px;
                 left: 0;
             }
 
             .dpad .right {
-                top: 24px;
+                top: 25px;
                 right: 0;
             }
 
@@ -846,78 +784,159 @@
                 font-size: 7px;
             }
 
-            .bunting {
-                height: 12px;
-            }
-
-            .bunting .flag {
-                width: 14px;
-                height: 10px;
-            }
-
-            #power-bar-wrap {
-                width: 80px;
-                height: 8px;
-                bottom: 4px;
-            }
-
-            #power-label {
-                font-size: 7px;
-                bottom: 14px;
-            }
-
             #sound-toggle,
             #pause-toggle {
-                top: 40px;
+                top: 44px;
                 font-size: 10px;
                 padding: 2px 5px;
             }
 
             #pause-toggle {
-                right: 32px;
-            }
-
-            .logo-img {
-                max-width: 140px;
-            }
-
-            .diablito-img {
-                width: 50px;
-            }
-
-            .title-main {
-                font-size: clamp(16px, 4vw, 22px);
+                right: 34px;
             }
 
             .screen {
                 padding: 12px;
-                gap: 8px;
+                gap: 6px;
+            }
+
+            .title-main {
+                font-size: clamp(16px, 3.5vw, 22px);
+            }
+
+            .subtitle {
+                font-size: clamp(10px, 2vw, 13px);
             }
 
             .howto-box {
                 font-size: 10px;
-                padding: 10px 12px;
+                padding: 8px 12px;
+                max-height: 40vh;
             }
 
             .level-intro-box {
-                padding: 10px 14px;
+                padding: 8px 12px;
             }
 
             .level-intro-box p {
-                font-size: 11px;
+                font-size: 10px;
             }
 
             .level-intro-title {
                 font-size: 14px;
             }
 
-            .power-detail {
+            .msg-big {
+                font-size: clamp(16px, 4vw, 24px);
+            }
+
+            .final-score {
+                font-size: clamp(20px, 5vw, 32px);
+            }
+
+            .footer-note {
+                font-size: 8px;
+            }
+
+            .hint {
                 font-size: 10px;
-                min-height: 30px;
             }
         }
 
-        @media (max-width: 380px) {
+        @media (max-width: 480px) {
+            #game-root {
+                padding: 2px;
+            }
+
+            .game-frame {
+                border-radius: 10px;
+                border-width: 2px;
+                max-height: calc(100vh - 30px);
+            }
+
+            .bunting {
+                height: 10px;
+                gap: 1px;
+            }
+
+            .bunting .flag {
+                width: 12px;
+                height: 8px;
+            }
+
+            .logo-img {
+                max-width: 90px;
+            }
+
+            .diablito-img {
+                width: 40px;
+            }
+
+            .btn {
+                font-size: clamp(10px, 1.8vw, 12px);
+                padding: 8px 16px;
+                border-radius: 30px;
+            }
+
+            .char-card canvas {
+                width: 32px;
+                height: 32px;
+            }
+
+            .char-name {
+                font-size: 7px;
+            }
+
+            .char-instrument {
+                font-size: 6px;
+            }
+
+            .char-power {
+                font-size: 5.5px;
+            }
+
+            .power-detail {
+                font-size: 8px;
+                min-height: 22px;
+            }
+
+            #hud {
+                padding: 3px 4px;
+                font-size: 8px;
+            }
+
+            #hearts span {
+                font-size: 9px;
+            }
+
+            .hud-box {
+                padding: 2px 4px;
+            }
+
+            #level-label {
+                font-size: 7px;
+            }
+
+            #score-box {
+                font-size: 8px;
+            }
+
+            #items-box {
+                font-size: 7px;
+            }
+
+            #power-bar-wrap {
+                width: 70px;
+                height: 6px;
+                bottom: 3px;
+                border-radius: 4px;
+            }
+
+            #power-label {
+                font-size: 6px;
+                bottom: 11px;
+            }
+
             .dpad {
                 width: 60px;
                 height: 60px;
@@ -928,8 +947,8 @@
             .dpad button {
                 width: 20px;
                 height: 20px;
-                font-size: 8px;
-                border-radius: 6px;
+                font-size: 9px;
+                border-radius: 4px;
             }
 
             .dpad .up {
@@ -953,16 +972,169 @@
             }
 
             .power-btn-touch {
-                right: 5px;
-                bottom: 6px;
+                right: 6px;
+                bottom: 8px;
                 width: 36px;
                 height: 36px;
                 font-size: 6px;
+                border-radius: 50%;
+            }
+
+            #sound-toggle,
+            #pause-toggle {
+                top: 36px;
+                font-size: 9px;
+                padding: 2px 4px;
+            }
+
+            #pause-toggle {
+                right: 28px;
+            }
+
+            .screen {
+                padding: 8px;
+                gap: 4px;
+            }
+
+            .title-main {
+                font-size: clamp(14px, 3vw, 18px);
+            }
+
+            .subtitle {
+                font-size: clamp(9px, 1.6vw, 11px);
+            }
+
+            .howto-box {
+                font-size: 9px;
+                padding: 6px 10px;
+                max-height: 35vh;
+            }
+
+            .level-intro-box {
+                padding: 6px 10px;
+            }
+
+            .level-intro-box p {
+                font-size: 9px;
+            }
+
+            .level-intro-title {
+                font-size: 12px;
+            }
+
+            .msg-big {
+                font-size: clamp(14px, 3.5vw, 20px);
+            }
+
+            .final-score {
+                font-size: clamp(18px, 4.5vw, 28px);
+            }
+
+            .footer-note {
+                font-size: 7px;
+            }
+
+            .hint {
+                font-size: 9px;
+            }
+
+            .char-grid {
+                gap: 3px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .game-frame {
+                max-height: calc(100vh - 20px);
+                border-radius: 8px;
+            }
+
+            .logo-img {
+                max-width: 70px;
+            }
+
+            .diablito-img {
+                width: 32px;
+            }
+
+            .btn {
+                font-size: 9px;
+                padding: 6px 12px;
             }
 
             .char-card canvas {
-                width: 32px;
-                height: 32px;
+                width: 26px;
+                height: 26px;
+            }
+
+            .char-name {
+                font-size: 6px;
+            }
+
+            .dpad {
+                width: 48px;
+                height: 48px;
+                left: 2px;
+                bottom: 2px;
+            }
+
+            .dpad button {
+                width: 16px;
+                height: 16px;
+                font-size: 7px;
+            }
+
+            .dpad .up {
+                top: 0;
+                left: 16px;
+            }
+
+            .dpad .down {
+                bottom: 0;
+                left: 16px;
+            }
+
+            .dpad .left {
+                top: 16px;
+                left: 0;
+            }
+
+            .dpad .right {
+                top: 16px;
+                right: 0;
+            }
+
+            .power-btn-touch {
+                right: 4px;
+                bottom: 6px;
+                width: 30px;
+                height: 30px;
+                font-size: 5px;
+            }
+
+            #sound-toggle,
+            #pause-toggle {
+                top: 30px;
+                font-size: 8px;
+                padding: 1px 3px;
+            }
+
+            #pause-toggle {
+                right: 22px;
+            }
+
+            #power-bar-wrap {
+                width: 54px;
+                height: 5px;
+            }
+
+            .title-main {
+                font-size: clamp(12px, 2.5vw, 15px);
+            }
+
+            .screen {
+                padding: 6px;
+                gap: 3px;
             }
         }
     </style>
@@ -999,11 +1171,11 @@
             <div id="hud" class="hidden">
                 <div>
                     <div class="hud-box" id="hearts"></div>
-                    <div class="hud-box" id="level-label" style="margin-top:6px;">Nivel</div>
+                    <div class="hud-box" id="level-label" style="margin-top:4px;">Nivel</div>
                 </div>
                 <div>
                     <div class="hud-box" id="score-box">0 pts</div>
-                    <div class="hud-box" id="items-box" style="margin-top:6px;">Ítems: 0/0</div>
+                    <div class="hud-box" id="items-box" style="margin-top:4px;">Ítems: 0/0</div>
                 </div>
             </div>
             <div id="power-label"></div>
@@ -1164,7 +1336,6 @@
                     if (isLandscape()) {
                         rotateOverlay.classList.remove('active');
                     }
-                    // Desbloquear audio
                     Audio1.unlock();
                 }, 500);
             });
