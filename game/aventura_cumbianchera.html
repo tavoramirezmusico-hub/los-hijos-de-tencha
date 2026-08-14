@@ -455,7 +455,7 @@
             white-space: nowrap;
         }
 
-        /* ---------- ZONAS TÁCTILES (lados de la pantalla) ---------- */
+        /* ===== ZONAS TÁCTILES MEJORADAS ===== */
         #touch-zones {
             position: absolute;
             inset: 0;
@@ -468,54 +468,69 @@
             display: block;
         }
 
+        /* Estructura: izquierda (35%), centro (30%), derecha (35%) */
+        /* El centro se divide en arriba y abajo */
         .touch-zone {
             position: absolute;
-            top: 0;
-            bottom: 0;
             pointer-events: auto;
             touch-action: none;
         }
 
+        /* Zona izquierda - 35% del ancho, 100% del alto */
         .touch-zone-left {
             left: 0;
-            width: 45%;
+            top: 0;
+            width: 35%;
+            height: 100%;
         }
 
+        /* Zona derecha - 35% del ancho, 100% del alto */
         .touch-zone-right {
             right: 0;
-            width: 45%;
-        }
-
-        .touch-zone-up {
             top: 0;
-            left: 45%;
-            width: 10%;
-            height: 40%;
-            pointer-events: auto;
-            touch-action: none;
+            width: 35%;
+            height: 100%;
         }
 
+        /* Zona centro arriba - 30% del ancho, 50% del alto (mitad superior) */
+        .touch-zone-up {
+            left: 35%;
+            top: 0;
+            width: 30%;
+            height: 50%;
+        }
+
+        /* Zona centro abajo - 30% del ancho, 50% del alto (mitad inferior) */
         .touch-zone-down {
+            left: 35%;
             bottom: 0;
-            left: 45%;
-            width: 10%;
-            height: 40%;
-            pointer-events: auto;
-            touch-action: none;
+            width: 30%;
+            height: 50%;
         }
 
-        /* Etiquetas flotantes en las zonas (solo para orientación) */
+        /* Etiquetas flotantes para orientación */
         .touch-label {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 32px;
-            opacity: 0.15;
+            font-size: 38px;
+            opacity: 0.10;
             pointer-events: none;
             font-family: 'Bungee', cursive;
             color: var(--gold);
             user-select: none;
+            text-shadow: 0 0 20px rgba(255, 204, 0, 0.1);
+        }
+
+        .touch-label-up {
+            top: 30%;
+            font-size: 30px;
+        }
+
+        .touch-label-down {
+            top: 70%;
+            font-size: 30px;
         }
 
         .touch-label-left {
@@ -526,16 +541,7 @@
             left: 70%;
         }
 
-        .touch-label-up {
-            top: 20%;
-            font-size: 24px;
-        }
-
-        .touch-label-down {
-            top: 80%;
-            font-size: 24px;
-        }
-
+        /* Botón PODER en móvil */
         #power-btn-touch {
             position: absolute;
             right: 12px;
@@ -551,9 +557,20 @@
             pointer-events: auto;
             touch-action: manipulation;
             z-index: 6;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            line-height: 1.2;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(255, 204, 0, 0.2);
         }
 
-        /* Mantener el D-pad como respaldo (se oculta en móviles) */
+        #power-btn-touch.show {
+            display: flex;
+        }
+
+        /* D-pad (solo desktop) */
         #touch-controls {
             position: absolute;
             inset: 0;
@@ -571,14 +588,11 @@
                 display: none;
             }
 
-            #power-btn-touch {
+            #power-btn-touch.show {
                 display: flex;
-                align-items: center;
-                justify-content: center;
             }
         }
 
-        /* En desktop, mostrar el D-pad si no es táctil */
         @media (hover: hover) {
             #touch-zones {
                 display: none !important;
@@ -588,12 +602,11 @@
                 display: block !important;
             }
 
-            #power-btn-touch {
+            #power-btn-touch.show {
                 display: none !important;
             }
         }
 
-        /* D-pad (solo desktop) */
         .dpad {
             position: absolute;
             left: 14px;
@@ -785,8 +798,13 @@
             }
 
             .touch-label {
-                font-size: 24px;
-                opacity: 0.12;
+                font-size: 28px;
+                opacity: 0.08;
+            }
+
+            .touch-label-up,
+            .touch-label-down {
+                font-size: 22px;
             }
 
             #power-btn-touch {
@@ -892,8 +910,13 @@
             }
 
             .touch-label {
-                font-size: 18px;
-                opacity: 0.1;
+                font-size: 20px;
+                opacity: 0.06;
+            }
+
+            .touch-label-up,
+            .touch-label-down {
+                font-size: 16px;
             }
 
             #power-btn-touch {
@@ -1033,25 +1056,25 @@
             <button id="sound-toggle">🔊</button>
             <button id="pause-toggle">⏸</button>
 
-            <!-- ZONAS TÁCTILES (móviles) -->
+            <!-- ZONAS TÁCTILES (móviles) - MEJORADAS -->
             <div id="touch-zones">
-                <!-- Flecha izquierda -->
+                <!-- Izquierda -->
                 <div class="touch-zone touch-zone-left" id="zone-left">
                     <span class="touch-label touch-label-left">◀</span>
                 </div>
-                <!-- Flecha derecha -->
+                <!-- Derecha -->
                 <div class="touch-zone touch-zone-right" id="zone-right">
                     <span class="touch-label touch-label-right">▶</span>
                 </div>
-                <!-- Flecha arriba (arriba/izquierda o salto) -->
+                <!-- Arriba (centro superior) -->
                 <div class="touch-zone touch-zone-up" id="zone-up">
                     <span class="touch-label touch-label-up">▲</span>
                 </div>
-                <!-- Flecha abajo -->
+                <!-- Abajo (centro inferior) -->
                 <div class="touch-zone touch-zone-down" id="zone-down">
                     <span class="touch-label touch-label-down">▼</span>
                 </div>
-                <button id="power-btn-touch">⚡<br>PODER</button>
+                <button id="power-btn-touch" class="show">⚡<br>PODER</button>
             </div>
 
             <!-- D-pad (desktop) -->
@@ -1108,8 +1131,8 @@
                     <p><strong>🎯 Objetivo:</strong> en cada escenario, recolecta las notas musicales <span
                             class="note-icon">♪</span> hasta juntar la cantidad pedida. Al lograrlo se abre la puerta de
                         salida — llega a ella para pasar al siguiente escenario.</p>
-                    <p><strong>🕹️ Moverte:</strong> toca los lados de la pantalla para moverte, o usa las flechas del
-                        teclado si juegas en computadora.</p>
+                    <p><strong>🕹️ Moverte:</strong> toca los lados de la pantalla para moverte
+                        (izquierda/derecha/arriba/abajo), o usa las flechas del teclado si juegas en computadora.</p>
                     <p><strong>⚠️ Cuidado:</strong> evita tocar a los "viejillos cumbiancheros" (los enemigos de
                         colores) — si te tocan, pierdes una vida y debes elegir personaje de nuevo.</p>
                     <p><strong>⭐ Poder especial:</strong> cada integrante de la banda tiene un poder único. Actívalo con
@@ -1591,7 +1614,7 @@
                 paused: false,
                 lastTime: 0,
                 dashDir: { x: 0, y: 0 },
-                // Para control táctil por zonas
+                // Control táctil
                 touchLeft: false,
                 touchRight: false,
                 touchUp: false,
@@ -2031,7 +2054,7 @@
                 if (state.keys['ArrowLeft'] || state.keys['a']) dx -= 1;
                 if (state.keys['ArrowRight'] || state.keys['d']) dx += 1;
 
-                // Zonas táctiles (móviles) - se suman a las teclas
+                // Zonas táctiles (móviles)
                 if (state.touchUp) dy -= 1;
                 if (state.touchDown) dy += 1;
                 if (state.touchLeft) dx -= 1;
@@ -2584,10 +2607,9 @@
             }
 
             // ============================================================
-            // 12. INPUT - ZONAS TÁCTILES
+            // 12. INPUT - ZONAS TÁCTILES MEJORADAS
             // ============================================================
 
-            // Zonas táctiles
             const zoneLeft = document.getElementById('zone-left');
             const zoneRight = document.getElementById('zone-right');
             const zoneUp = document.getElementById('zone-up');
@@ -2609,7 +2631,7 @@
                     e.preventDefault();
                     onEnd();
                 }, { passive: false });
-                // Mouse también (para pruebas en escritorio con click)
+                // Mouse también para pruebas
                 el.addEventListener('mousedown', function (e) {
                     if (state.screen === 'playing' && !state.paused) {
                         onStart();
@@ -2657,7 +2679,7 @@
             }
 
             // ============================================================
-            // 13. TECLADO (siempre activo)
+            // 13. TECLADO
             // ============================================================
             window.addEventListener('keydown', (e) => {
                 state.keys[e.key] = true;
@@ -2671,7 +2693,7 @@
             });
             window.addEventListener('keyup', (e) => { state.keys[e.key] = false; });
 
-            // D-pad para desktop (respaldo)
+            // D-pad (desktop)
             function bindTouchHold(id, key) {
                 const el = document.getElementById(id);
                 if (!el) return;
@@ -2766,14 +2788,14 @@
             // estado inicial
             showScreen('menu');
 
-            // Desbloquear audio tras cualquier interacción con el overlay de rotación
+            // Desbloquear audio
             document.querySelectorAll('#rotate-overlay *').forEach(el => {
                 el.addEventListener('click', Audio1.unlock);
                 el.addEventListener('touchstart', Audio1.unlock);
             });
 
             console.log('🔥 Aventura Cumbianchera — Los Hijos de Tencha');
-            console.log('🎮 Controles táctiles: toca los lados de la pantalla para moverte');
+            console.log('🎮 Controles táctiles: toca los lados de la pantalla para moverte (◀▶▲▼)');
             console.log('⚡ Botón PODER en la esquina inferior derecha');
 
         })();
