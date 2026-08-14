@@ -455,168 +455,128 @@
             white-space: nowrap;
         }
 
-        /* ===== ZONAS TÁCTILES (respaldo) ===== */
-        #touch-zones {
+        /* ===== CONTROLES TÁCTILES - FLECHAS MEJORADAS ===== */
+        #touch-controls-mobile {
             position: absolute;
             inset: 0;
             pointer-events: none;
-            z-index: 4;
-            display: none;
-        }
-
-        #touch-zones.active {
-            display: block;
-        }
-
-        .touch-zone {
-            position: absolute;
-            pointer-events: auto;
-            touch-action: none;
-        }
-
-        .touch-zone-left {
-            left: 0;
-            top: 0;
-            width: 35%;
-            height: 100%;
-        }
-
-        .touch-zone-right {
-            right: 0;
-            top: 0;
-            width: 35%;
-            height: 100%;
-        }
-
-        .touch-zone-up {
-            left: 35%;
-            top: 0;
-            width: 30%;
-            height: 50%;
-        }
-
-        .touch-zone-down {
-            left: 35%;
-            bottom: 0;
-            width: 30%;
-            height: 50%;
-        }
-
-        .touch-label {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 38px;
-            opacity: 0.08;
-            pointer-events: none;
-            font-family: 'Bungee', cursive;
-            color: var(--gold);
-            user-select: none;
-        }
-
-        .touch-label-up {
-            top: 30%;
-            font-size: 30px;
-        }
-
-        .touch-label-down {
-            top: 70%;
-            font-size: 30px;
-        }
-
-        .touch-label-left {
-            left: 30%;
-        }
-
-        .touch-label-right {
-            left: 70%;
-        }
-
-        /* ===== INDICADOR DE INCLINACIÓN (móvil) ===== */
-        #tilt-indicator {
-            position: absolute;
-            bottom: 50px;
-            left: 50%;
-            transform: translateX(-50%);
             z-index: 6;
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 204, 0, 0.15);
-            border-radius: 12px;
-            padding: 4px 14px;
-            font-size: 9px;
-            color: rgba(255, 255, 255, 0.4);
             display: none;
-            pointer-events: none;
-            backdrop-filter: blur(2px);
-            letter-spacing: 0.5px;
-            text-align: center;
-            font-weight: 600;
         }
 
-        #tilt-indicator.show {
+        #touch-controls-mobile.active {
             display: block;
         }
 
-        #tilt-indicator .tilt-dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(255, 204, 0, 0.2);
-            margin: 0 2px;
-            transition: all 0.15s ease;
-        }
-
-        #tilt-indicator .tilt-dot.active {
-            background: var(--gold);
-            box-shadow: 0 0 12px rgba(255, 204, 0, 0.4);
-        }
-
-        #tilt-indicator .tilt-dir {
-            display: inline-block;
-            margin: 0 2px;
-            opacity: 0.3;
-            transition: all 0.15s ease;
-            font-size: 11px;
-        }
-
-        #tilt-indicator .tilt-dir.active {
-            opacity: 1;
-            color: var(--gold);
-        }
-
-        /* Botón PODER en móvil */
+        /* Botón PODER - esquina inferior izquierda */
         #power-btn-touch {
             position: absolute;
-            right: 12px;
+            left: 16px;
             bottom: 16px;
-            width: 56px;
-            height: 56px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
-            background: radial-gradient(circle, var(--gold), var(--tangerine));
-            border: 2px solid rgba(255, 255, 255, 0.4);
+            background: radial-gradient(circle at 30% 30%, var(--gold), #b3860a);
+            border: 3px solid rgba(255, 255, 255, 0.3);
             color: var(--night);
             font-family: 'Bungee', cursive;
-            font-size: 8px;
+            font-size: 9px;
             pointer-events: auto;
             touch-action: manipulation;
-            z-index: 6;
             display: none;
             align-items: center;
             justify-content: center;
             flex-direction: column;
             line-height: 1.2;
             text-align: center;
-            box-shadow: 0 4px 20px rgba(255, 204, 0, 0.2);
+            box-shadow: 0 4px 25px rgba(255, 204, 0, 0.25), inset 0 -3px 10px rgba(0, 0, 0, 0.2);
+            z-index: 7;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #power-btn-touch:active {
+            transform: scale(0.92);
+            box-shadow: 0 2px 10px rgba(255, 204, 0, 0.15);
+        }
+
+        #power-btn-touch .power-icon {
+            font-size: 16px;
+            display: block;
+            margin-bottom: 1px;
         }
 
         #power-btn-touch.show {
             display: flex;
         }
 
-        /* D-pad (desktop) */
-        #touch-controls {
+        /* D-Pad - esquina inferior derecha */
+        .dpad-mobile {
+            position: absolute;
+            right: 16px;
+            bottom: 16px;
+            width: 130px;
+            height: 130px;
+            pointer-events: auto;
+            display: none;
+            z-index: 7;
+        }
+
+        .dpad-mobile.show {
+            display: block;
+        }
+
+        .dpad-mobile button {
+            position: absolute;
+            width: 42px;
+            height: 42px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: var(--cream);
+            font-size: 18px;
+            touch-action: manipulation;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.08s ease;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .dpad-mobile button:active {
+            background: rgba(255, 204, 0, 0.25);
+            border-color: var(--gold);
+            transform: scale(0.90);
+        }
+
+        .dpad-mobile .up {
+            top: 0;
+            left: 44px;
+        }
+
+        .dpad-mobile .down {
+            bottom: 0;
+            left: 44px;
+        }
+
+        .dpad-mobile .left {
+            top: 44px;
+            left: 0;
+        }
+
+        .dpad-mobile .right {
+            top: 44px;
+            right: 0;
+        }
+
+        /* D-pad (desktop) - se oculta en móviles */
+        #touch-controls-desktop {
             position: absolute;
             inset: 0;
             pointer-events: none;
@@ -624,82 +584,96 @@
             z-index: 6;
         }
 
+        .dpad-desktop {
+            position: absolute;
+            left: 16px;
+            bottom: 16px;
+            width: 130px;
+            height: 130px;
+            pointer-events: auto;
+        }
+
+        .dpad-desktop button {
+            position: absolute;
+            width: 42px;
+            height: 42px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: var(--cream);
+            font-size: 18px;
+            touch-action: manipulation;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.08s ease;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .dpad-desktop button:active {
+            background: rgba(255, 204, 0, 0.25);
+            border-color: var(--gold);
+            transform: scale(0.90);
+        }
+
+        .dpad-desktop .up {
+            top: 0;
+            left: 44px;
+        }
+
+        .dpad-desktop .down {
+            bottom: 0;
+            left: 44px;
+        }
+
+        .dpad-desktop .left {
+            top: 44px;
+            left: 0;
+        }
+
+        .dpad-desktop .right {
+            top: 44px;
+            right: 0;
+        }
+
         @media (hover: none) and (pointer: coarse) {
-            #touch-zones.active {
+            #touch-controls-mobile.active {
                 display: block;
             }
 
-            #touch-controls.active {
+            #touch-controls-desktop.active {
                 display: none;
+            }
+
+            .dpad-mobile.show {
+                display: block;
             }
 
             #power-btn-touch.show {
                 display: flex;
             }
-
-            #tilt-indicator.show {
-                display: block;
-            }
         }
 
         @media (hover: hover) {
-            #touch-zones {
+            #touch-controls-mobile.active {
                 display: none !important;
             }
 
-            #touch-controls.active {
+            #touch-controls-desktop.active {
                 display: block !important;
+            }
+
+            .dpad-mobile.show {
+                display: none !important;
             }
 
             #power-btn-touch.show {
                 display: none !important;
             }
-
-            #tilt-indicator.show {
-                display: none !important;
-            }
-        }
-
-        .dpad {
-            position: absolute;
-            left: 14px;
-            bottom: 14px;
-            width: 120px;
-            height: 120px;
-            pointer-events: auto;
-        }
-
-        .dpad button {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.18);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            color: var(--cream);
-            font-size: 16px;
-            touch-action: manipulation;
-            cursor: pointer;
-        }
-
-        .dpad .up {
-            top: 0;
-            left: 40px;
-        }
-
-        .dpad .down {
-            bottom: 0;
-            left: 40px;
-        }
-
-        .dpad .left {
-            top: 40px;
-            left: 0;
-        }
-
-        .dpad .right {
-            top: 40px;
-            right: 0;
         }
 
         .msg-big {
@@ -850,22 +824,50 @@
                 padding: 10px 20px;
             }
 
-            .touch-label {
-                font-size: 28px;
-                opacity: 0.06;
+            .dpad-mobile {
+                width: 110px;
+                height: 110px;
+                right: 10px;
+                bottom: 10px;
             }
 
-            .touch-label-up,
-            .touch-label-down {
-                font-size: 22px;
+            .dpad-mobile button {
+                width: 36px;
+                height: 36px;
+                font-size: 15px;
+                border-radius: 10px;
+            }
+
+            .dpad-mobile .up {
+                top: 0;
+                left: 37px;
+            }
+
+            .dpad-mobile .down {
+                bottom: 0;
+                left: 37px;
+            }
+
+            .dpad-mobile .left {
+                top: 37px;
+                left: 0;
+            }
+
+            .dpad-mobile .right {
+                top: 37px;
+                right: 0;
             }
 
             #power-btn-touch {
-                right: 10px;
-                bottom: 12px;
-                width: 48px;
-                height: 48px;
-                font-size: 7px;
+                width: 52px;
+                height: 52px;
+                font-size: 8px;
+                left: 10px;
+                bottom: 10px;
+            }
+
+            #power-btn-touch .power-icon {
+                font-size: 14px;
             }
 
             #sound-toggle,
@@ -926,10 +928,35 @@
                 font-size: 10px;
             }
 
-            #tilt-indicator {
-                font-size: 8px;
-                bottom: 42px;
-                padding: 3px 10px;
+            .dpad-desktop {
+                width: 110px;
+                height: 110px;
+            }
+
+            .dpad-desktop button {
+                width: 36px;
+                height: 36px;
+                font-size: 15px;
+            }
+
+            .dpad-desktop .up {
+                top: 0;
+                left: 37px;
+            }
+
+            .dpad-desktop .down {
+                bottom: 0;
+                left: 37px;
+            }
+
+            .dpad-desktop .left {
+                top: 37px;
+                left: 0;
+            }
+
+            .dpad-desktop .right {
+                top: 37px;
+                right: 0;
             }
         }
 
@@ -968,22 +995,51 @@
                 border-radius: 30px;
             }
 
-            .touch-label {
-                font-size: 20px;
-                opacity: 0.05;
+            .dpad-mobile {
+                width: 90px;
+                height: 90px;
+                right: 6px;
+                bottom: 6px;
             }
 
-            .touch-label-up,
-            .touch-label-down {
-                font-size: 16px;
+            .dpad-mobile button {
+                width: 30px;
+                height: 30px;
+                font-size: 12px;
+                border-radius: 8px;
+                border-width: 1.5px;
+            }
+
+            .dpad-mobile .up {
+                top: 0;
+                left: 30px;
+            }
+
+            .dpad-mobile .down {
+                bottom: 0;
+                left: 30px;
+            }
+
+            .dpad-mobile .left {
+                top: 30px;
+                left: 0;
+            }
+
+            .dpad-mobile .right {
+                top: 30px;
+                right: 0;
             }
 
             #power-btn-touch {
-                right: 8px;
-                bottom: 10px;
-                width: 40px;
-                height: 40px;
-                font-size: 6px;
+                width: 44px;
+                height: 44px;
+                font-size: 7px;
+                left: 6px;
+                bottom: 6px;
+            }
+
+            #power-btn-touch .power-icon {
+                font-size: 12px;
             }
 
             #sound-toggle,
@@ -1044,15 +1100,35 @@
                 gap: 3px;
             }
 
-            #tilt-indicator {
-                font-size: 7px;
-                bottom: 34px;
-                padding: 2px 8px;
+            .dpad-desktop {
+                width: 90px;
+                height: 90px;
             }
 
-            #tilt-indicator .tilt-dot {
-                width: 6px;
-                height: 6px;
+            .dpad-desktop button {
+                width: 30px;
+                height: 30px;
+                font-size: 12px;
+            }
+
+            .dpad-desktop .up {
+                top: 0;
+                left: 30px;
+            }
+
+            .dpad-desktop .down {
+                bottom: 0;
+                left: 30px;
+            }
+
+            .dpad-desktop .left {
+                top: 30px;
+                left: 0;
+            }
+
+            .dpad-desktop .right {
+                top: 30px;
+                right: 0;
             }
         }
 
@@ -1075,12 +1151,50 @@
                 padding: 6px 12px;
             }
 
+            .dpad-mobile {
+                width: 74px;
+                height: 74px;
+                right: 4px;
+                bottom: 4px;
+            }
+
+            .dpad-mobile button {
+                width: 24px;
+                height: 24px;
+                font-size: 10px;
+                border-radius: 6px;
+            }
+
+            .dpad-mobile .up {
+                top: 0;
+                left: 25px;
+            }
+
+            .dpad-mobile .down {
+                bottom: 0;
+                left: 25px;
+            }
+
+            .dpad-mobile .left {
+                top: 25px;
+                left: 0;
+            }
+
+            .dpad-mobile .right {
+                top: 25px;
+                right: 0;
+            }
+
             #power-btn-touch {
-                right: 6px;
-                bottom: 8px;
-                width: 34px;
-                height: 34px;
-                font-size: 5px;
+                width: 38px;
+                height: 38px;
+                font-size: 6px;
+                left: 4px;
+                bottom: 4px;
+            }
+
+            #power-btn-touch .power-icon {
+                font-size: 10px;
             }
 
             #sound-toggle,
@@ -1103,15 +1217,35 @@
                 gap: 3px;
             }
 
-            #tilt-indicator {
-                font-size: 6px;
-                bottom: 28px;
-                padding: 2px 6px;
+            .dpad-desktop {
+                width: 74px;
+                height: 74px;
             }
 
-            #tilt-indicator .tilt-dot {
-                width: 5px;
-                height: 5px;
+            .dpad-desktop button {
+                width: 24px;
+                height: 24px;
+                font-size: 10px;
+            }
+
+            .dpad-desktop .up {
+                top: 0;
+                left: 25px;
+            }
+
+            .dpad-desktop .down {
+                bottom: 0;
+                left: 25px;
+            }
+
+            .dpad-desktop .left {
+                top: 25px;
+                left: 0;
+            }
+
+            .dpad-desktop .right {
+                top: 25px;
+                right: 0;
             }
         }
     </style>
@@ -1137,45 +1271,32 @@
             <button id="sound-toggle">🔊</button>
             <button id="pause-toggle">⏸</button>
 
-            <!-- ZONAS TÁCTILES (respaldo para móvil) -->
-            <div id="touch-zones">
-                <div class="touch-zone touch-zone-left" id="zone-left">
-                    <span class="touch-label touch-label-left">◀</span>
+            <!-- CONTROLES TÁCTILES - MÓVIL -->
+            <div id="touch-controls-mobile" class="active">
+                <!-- Botón PODER - izquierda abajo -->
+                <button id="power-btn-touch" class="show">
+                    <span class="power-icon">⚡</span>
+                    PODER
+                </button>
+
+                <!-- D-Pad - derecha abajo -->
+                <div class="dpad-mobile show">
+                    <button class="up" id="btn-up-mobile">▲</button>
+                    <button class="down" id="btn-down-mobile">▼</button>
+                    <button class="left" id="btn-left-mobile">◀</button>
+                    <button class="right" id="btn-right-mobile">▶</button>
                 </div>
-                <div class="touch-zone touch-zone-right" id="zone-right">
-                    <span class="touch-label touch-label-right">▶</span>
-                </div>
-                <div class="touch-zone touch-zone-up" id="zone-up">
-                    <span class="touch-label touch-label-up">▲</span>
-                </div>
-                <div class="touch-zone touch-zone-down" id="zone-down">
-                    <span class="touch-label touch-label-down">▼</span>
-                </div>
-                <button id="power-btn-touch" class="show">⚡<br>PODER</button>
             </div>
 
-            <!-- Indicador de inclinación (móvil) -->
-            <div id="tilt-indicator" class="show">
-                <span>INCLINA</span>
-                <span class="tilt-dir" id="tilt-up">▲</span>
-                <span class="tilt-dot" id="dot-up"></span>
-                <span class="tilt-dot" id="dot-down"></span>
-                <span class="tilt-dir" id="tilt-down">▼</span>
-                <span class="tilt-dot" id="dot-left"></span>
-                <span class="tilt-dir" id="tilt-left">◀</span>
-                <span class="tilt-dot" id="dot-right"></span>
-                <span class="tilt-dir" id="tilt-right">▶</span>
-            </div>
-
-            <!-- D-pad (desktop) -->
-            <div id="touch-controls">
-                <div class="dpad">
+            <!-- CONTROLES - DESKTOP -->
+            <div id="touch-controls-desktop" class="active">
+                <div class="dpad-desktop">
                     <button class="up" id="btn-up">▲</button>
                     <button class="down" id="btn-down">▼</button>
                     <button class="left" id="btn-left">◀</button>
                     <button class="right" id="btn-right">▶</button>
                 </div>
-                <button class="power-btn-touch" id="btn-power">PODER</button>
+                <button class="power-btn-touch" id="btn-power" style="display:none;">PODER</button>
             </div>
 
             <!-- PAUSA -->
@@ -1211,7 +1332,7 @@
                     onerror="this.style.display='none'">
                 <button class="btn" id="btn-play">▶ JUGAR</button>
                 <button class="btn secondary" id="btn-howto">❓ CÓMO SE JUEGA</button>
-                <p class="footer-note">5 vidas · 5 escenarios · inclina el teléfono para moverte 🎮</p>
+                <p class="footer-note">5 vidas · 5 escenarios · usa las flechas para moverte 🎮</p>
             </div>
 
             <!-- INSTRUCCIONES -->
@@ -1221,14 +1342,12 @@
                     <p><strong>🎯 Objetivo:</strong> en cada escenario, recolecta las notas musicales <span
                             class="note-icon">♪</span> hasta juntar la cantidad pedida. Al lograrlo se abre la puerta de
                         salida — llega a ella para pasar al siguiente escenario.</p>
-                    <p><strong>🕹️ Moverte (móvil):</strong> <strong>inclina el teléfono</strong> hacia donde quieras
-                        ir. El personaje se moverá en la dirección que inclines. También puedes tocar los lados de la
-                        pantalla como respaldo.</p>
-                    <p><strong>🕹️ Moverte (PC):</strong> flechas o WASD.</p>
-                    <p><strong>⚠️ Cuidado:</strong> evita tocar a los "viejillos cumbiancheros" (los enemigos de
-                        colores) — si te tocan, pierdes una vida y debes elegir personaje de nuevo.</p>
+                    <p><strong>🕹️ Moverte:</strong> usa las flechas en la pantalla (celular) o las teclas de dirección
+                        / WASD (computadora).</p>
                     <p><strong>⭐ Poder especial:</strong> cada integrante de la banda tiene un poder único. Actívalo con
-                        la barra espaciadora (o el botón PODER en el celular) cuando esté listo.</p>
+                        el botón PODER (celular) o la barra espaciadora (computadora) cuando esté listo.</p>
+                    <p><strong>⚠️ Cuidado:</strong> evita tocar a los "viejillos cumbiancheros" (los enemigos de
+                        colores) — si te tocan, pierdes una vida.</p>
                     <p><strong>❤️ Vidas y puntos:</strong> empiezas con 5 vidas. Ganas puntos por cada nota recolectada
                         y por completar cada escenario. Si pierdes las 5 vidas, se acaba la partida.</p>
                 </div>
@@ -1307,8 +1426,6 @@
             const rotateOverlay = document.getElementById('rotate-overlay');
             const btnFullscreen = document.getElementById('btnFullscreen');
             const gameFrame = document.getElementById('game-frame');
-            const touchZones = document.getElementById('touch-zones');
-            const tiltIndicator = document.getElementById('tilt-indicator');
 
             function isMobile() {
                 return /Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(navigator.userAgent);
@@ -1349,7 +1466,6 @@
                         rotateOverlay.classList.remove('active');
                     }
                     Audio1.unlock();
-                    iniciarGiroscopio();
                 }, 500);
             });
 
@@ -1357,151 +1473,8 @@
                 rotateOverlay.classList.remove('active');
             }
 
-            if (isMobile()) {
-                touchZones.classList.add('active');
-                tiltIndicator.classList.add('show');
-            }
-
             // ============================================================
-            // 1. GIROSCOPIO / ACELERÓMETRO CORREGIDO
-            // ============================================================
-
-            let tiltX = 0;
-            let tiltY = 0;
-            let tiltActive = false;
-            const TILT_DEAD_ZONE = 0.07;
-            const TILT_MAX_SPEED = 1.0;
-
-            function iniciarGiroscopio() {
-                if (!isMobile()) return;
-                if (tiltActive) {
-                    console.log('📱 Giroscopio ya activo');
-                    return;
-                }
-
-                // Intentar con DeviceOrientation
-                if (window.DeviceOrientationEvent) {
-                    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                        DeviceOrientationEvent.requestPermission()
-                            .then(state => {
-                                if (state === 'granted') {
-                                    window.addEventListener('deviceorientation', handleOrientation);
-                                    tiltActive = true;
-                                    console.log('📱 Giroscopio activado (DeviceOrientation)');
-                                } else {
-                                    console.warn('⚠️ Permiso de orientación denegado');
-                                }
-                            })
-                            .catch(err => console.warn('⚠️ Error al pedir permiso:', err));
-                    } else {
-                        window.addEventListener('deviceorientation', handleOrientation);
-                        tiltActive = true;
-                        console.log('📱 Giroscopio activado (DeviceOrientation)');
-                    }
-                } else if (window.DeviceMotionEvent) {
-                    if (typeof DeviceMotionEvent.requestPermission === 'function') {
-                        DeviceMotionEvent.requestPermission()
-                            .then(state => {
-                                if (state === 'granted') {
-                                    window.addEventListener('devicemotion', handleMotion);
-                                    tiltActive = true;
-                                    console.log('📱 Acelerómetro activado (DeviceMotion)');
-                                }
-                            })
-                            .catch(err => console.warn('⚠️ Error al pedir permiso:', err));
-                    } else {
-                        window.addEventListener('devicemotion', handleMotion);
-                        tiltActive = true;
-                        console.log('📱 Acelerómetro activado (DeviceMotion)');
-                    }
-                } else {
-                    console.warn('⚠️ No se detectó giroscopio ni acelerómetro');
-                }
-            }
-
-            function handleOrientation(event) {
-                // gamma: inclinación izquierda/derecha (-90 a 90)
-                // beta: inclinación adelante/atrás (-180 a 180)
-                // En landscape, gamma controla horizontal (X), beta controla vertical (Y)
-
-                let rawX = event.gamma || 0; // -90 a 90
-                let rawY = (event.beta || 0) - 45; // Centramos en 0 (45 es la posición neutral en landscape)
-
-                // Normalizar a -1 a 1
-                rawX = Math.max(-1, Math.min(1, rawX / 90));
-                rawY = Math.max(-1, Math.min(1, rawY / 45));
-
-                // Aplicar deadzone
-                if (Math.abs(rawX) < TILT_DEAD_ZONE) rawX = 0;
-                if (Math.abs(rawY) < TILT_DEAD_ZONE) rawY = 0;
-
-                // Invertir Y para que sea intuitivo: inclinar hacia adelante = subir
-                tiltX = rawX * TILT_MAX_SPEED;
-                tiltY = -rawY * TILT_MAX_SPEED;
-
-                actualizarIndicadorTilt(rawX, rawY);
-            }
-
-            function handleMotion(event) {
-                const acc = event.accelerationIncludingGravity;
-                if (!acc) return;
-
-                // En landscape: acc.x es horizontal, acc.y es vertical
-                // acc.z es profundidad (no la usamos)
-                let rawX = acc.x / 9.8;
-                let rawY = acc.y / 9.8;
-
-                // Normalizar
-                rawX = Math.max(-1, Math.min(1, rawX));
-                rawY = Math.max(-1, Math.min(1, rawY));
-
-                // Aplicar deadzone
-                if (Math.abs(rawX) < TILT_DEAD_ZONE) rawX = 0;
-                if (Math.abs(rawY) < TILT_DEAD_ZONE) rawY = 0;
-
-                // Invertir Y para que sea intuitivo
-                tiltX = rawX * TILT_MAX_SPEED;
-                tiltY = -rawY * TILT_MAX_SPEED;
-
-                actualizarIndicadorTilt(rawX, rawY);
-            }
-
-            function actualizarIndicadorTilt(x, y) {
-                const dotUp = document.getElementById('dot-up');
-                const dotDown = document.getElementById('dot-down');
-                const dotLeft = document.getElementById('dot-left');
-                const dotRight = document.getElementById('dot-right');
-                const tiltUp = document.getElementById('tilt-up');
-                const tiltDown = document.getElementById('tilt-down');
-                const tiltLeft = document.getElementById('tilt-left');
-                const tiltRight = document.getElementById('tilt-right');
-
-                const threshold = 0.12;
-
-                if (dotUp) {
-                    const up = y < -threshold;
-                    const down = y > threshold;
-                    const left = x < -threshold;
-                    const right = x > threshold;
-
-                    dotUp.classList.toggle('active', up);
-                    dotDown.classList.toggle('active', down);
-                    dotLeft.classList.toggle('active', left);
-                    dotRight.classList.toggle('active', right);
-
-                    if (tiltUp) tiltUp.classList.toggle('active', up);
-                    if (tiltDown) tiltDown.classList.toggle('active', down);
-                    if (tiltLeft) tiltLeft.classList.toggle('active', left);
-                    if (tiltRight) tiltRight.classList.toggle('active', right);
-                }
-            }
-
-            // Iniciar giroscopio al interactuar
-            document.addEventListener('click', iniciarGiroscopio);
-            document.addEventListener('touchstart', iniciarGiroscopio);
-
-            // ============================================================
-            // 2. AUDIO (omitido por brevedad, igual que antes)
+            // 1. AUDIO
             // ============================================================
             const Audio1 = (function () {
                 let ctxA = null;
@@ -1686,7 +1659,7 @@
             })();
 
             // ============================================================
-            // 3. DATOS
+            // 2. DATOS
             // ============================================================
             const CHARACTERS = [{
                 id: 'tencho',
@@ -1826,7 +1799,7 @@
             const MARGIN = 40;
 
             // ============================================================
-            // 4. ESTADO DEL JUEGO
+            // 3. ESTADO DEL JUEGO
             // ============================================================
             const state = {
                 screen: 'menu',
@@ -1846,16 +1819,10 @@
                 paused: false,
                 lastTime: 0,
                 dashDir: { x: 0, y: 0 },
-                touchLeft: false,
-                touchRight: false,
-                touchUp: false,
-                touchDown: false,
-                tiltX: 0,
-                tiltY: 0,
             };
 
             // ============================================================
-            // 5. DOM REFERENCES
+            // 4. DOM REFERENCES
             // ============================================================
             const canvas = document.getElementById('game-canvas');
             const ctx = canvas.getContext('2d');
@@ -1878,7 +1845,6 @@
             const powerBarWrap = document.getElementById('power-bar-wrap');
             const powerBarFill = document.getElementById('power-bar-fill');
             const powerLabelEl = document.getElementById('power-label');
-            const touchControls = document.getElementById('touch-controls');
             const pauseOverlay = document.getElementById('pause-overlay');
 
             function showScreen(name) {
@@ -1888,11 +1854,6 @@
                 hud.classList.toggle('hidden', name !== 'playing');
                 powerBarWrap.classList.toggle('hidden', name !== 'playing');
                 powerLabelEl.style.display = name === 'playing' ? 'block' : 'none';
-                if (isMobile()) {
-                    touchZones.classList.toggle('active', name === 'playing');
-                    tiltIndicator.classList.toggle('show', name === 'playing');
-                }
-                touchControls.classList.toggle('active', name === 'playing' && !isMobile());
                 if (name !== 'playing') {
                     state.paused = false;
                     pauseOverlay.classList.add('hidden');
@@ -1900,7 +1861,7 @@
             }
 
             // ============================================================
-            // 6. BUNTING
+            // 5. BUNTING
             // ============================================================
             (function buildBunting() {
                 const wrap = document.getElementById('bunting');
@@ -1912,7 +1873,7 @@
             })();
 
             // ============================================================
-            // 7. DIBUJO DE PERSONAJES
+            // 6. DIBUJO DE PERSONAJES
             // ============================================================
             function drawCharacterSprite(g, cx, cy, scale, ch, opts) {
                 opts = opts || {};
@@ -2043,7 +2004,7 @@
             }
 
             // ============================================================
-            // 8. GENERACIÓN DE NIVEL
+            // 7. GENERACIÓN DE NIVEL
             // ============================================================
             function buildLevel(levelIndex) {
                 const lvl = LEVELS[levelIndex];
@@ -2124,7 +2085,7 @@
             function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 
             // ============================================================
-            // 9. LÓGICA DE JUEGO
+            // 8. LÓGICA DE JUEGO
             // ============================================================
             function startRun() {
                 state.lives = 5;
@@ -2132,7 +2093,6 @@
                 state.levelIndex = 0;
                 buildLevel(0);
                 goToCharacterSelectForLevel();
-                setTimeout(iniciarGiroscopio, 500);
             }
 
             function goToCharacterSelectForLevel() {
@@ -2167,7 +2127,6 @@
                 if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
                 state.lastTime = performance.now();
                 requestAnimationFrame(loop);
-                setTimeout(iniciarGiroscopio, 300);
             }
 
             function loseLife() {
@@ -2242,16 +2201,16 @@
                 } else if (power.type === 'dash') {
                     let dx = 0,
                         dy = 0;
-                    if (Math.abs(tiltX) > 0.05) dx = tiltX;
-                    if (Math.abs(tiltY) > 0.05) dy = tiltY;
-                    if (state.keys['ArrowLeft'] || state.keys['a'] || state.touchLeft) dx -= 1;
-                    if (state.keys['ArrowRight'] || state.keys['d'] || state.touchRight) dx += 1;
-                    if (state.keys['ArrowUp'] || state.keys['w'] || state.touchUp) dy -= 1;
-                    if (state.keys['ArrowDown'] || state.keys['s'] || state.touchDown) dy += 1;
+                    if (state.keys['ArrowUp'] || state.keys['w']) dy -= 1;
+                    if (state.keys['ArrowDown'] || state.keys['s']) dy += 1;
+                    if (state.keys['ArrowLeft'] || state.keys['a']) dx -= 1;
+                    if (state.keys['ArrowRight'] || state.keys['d']) dx += 1;
                     if (dx === 0 && dy === 0) { dy = -1; }
                     const len = Math.hypot(dx, dy) || 1;
                     state.dashDir = { x: dx / len, y: dy / len };
                     state.player.invulnUntil = now + power.duration + 100;
+                } else if (power.type === 'slow') {
+                    // se evalúa en tiempo real via powerActiveUntil
                 } else if (power.type === 'reveal') {
                     state.items.forEach(it => it.hidden = false);
                 }
@@ -2273,7 +2232,7 @@
             }
 
             // ============================================================
-            // 10. UPDATE LOOP
+            // 9. UPDATE LOOP
             // ============================================================
             function update(dt) {
                 const now = performance.now();
@@ -2284,23 +2243,11 @@
                 let dx = 0,
                     dy = 0;
 
-                // PRIORIDAD: Inclinación (móvil)
-                if (isMobile() && tiltActive) {
-                    dx = tiltX;
-                    dy = tiltY;
-                }
-
-                // Teclado (siempre disponible)
+                // Teclado
                 if (state.keys['ArrowUp'] || state.keys['w']) dy -= 1;
                 if (state.keys['ArrowDown'] || state.keys['s']) dy += 1;
                 if (state.keys['ArrowLeft'] || state.keys['a']) dx -= 1;
                 if (state.keys['ArrowRight'] || state.keys['d']) dx += 1;
-
-                // Zonas táctiles (respaldo)
-                if (state.touchUp) dy -= 1;
-                if (state.touchDown) dy += 1;
-                if (state.touchLeft) dx -= 1;
-                if (state.touchRight) dx += 1;
 
                 let speed = 210;
                 if (isDashActive()) {
@@ -2379,7 +2326,7 @@
             }
 
             // ============================================================
-            // 11. AMBIENTACIÓN Y DIBUJO (resumido por brevedad)
+            // 10. AMBIENTACIÓN Y DIBUJO
             // ============================================================
             function hexToRgba(hex, alpha) {
                 const h = hex.replace('#', '');
@@ -2821,7 +2768,7 @@
             }
 
             // ============================================================
-            // 12. LOOP PRINCIPAL
+            // 11. LOOP PRINCIPAL
             // ============================================================
             function loop(ts) {
                 if (state.screen !== 'playing') return;
@@ -2849,61 +2796,31 @@
             }
 
             // ============================================================
-            // 13. INPUT - ZONAS TÁCTILES (RESPALDO)
+            // 12. INPUT - CONTROLES TÁCTILES MÓVIL
             // ============================================================
 
-            const zoneLeft = document.getElementById('zone-left');
-            const zoneRight = document.getElementById('zone-right');
-            const zoneUp = document.getElementById('zone-up');
-            const zoneDown = document.getElementById('zone-down');
-
-            function setupTouchZone(el, onStart, onEnd) {
+            // Botones móviles
+            function setupMobileButton(id, key) {
+                const el = document.getElementById(id);
                 if (!el) return;
-                el.addEventListener('touchstart', function (e) {
+                const set = (v) => (e) => {
                     e.preventDefault();
-                    if (state.screen === 'playing' && !state.paused) {
-                        onStart();
-                    }
-                }, { passive: false });
-                el.addEventListener('touchend', function (e) {
-                    e.preventDefault();
-                    onEnd();
-                }, { passive: false });
-                el.addEventListener('touchcancel', function (e) {
-                    e.preventDefault();
-                    onEnd();
-                }, { passive: false });
-                el.addEventListener('mousedown', function (e) {
-                    if (state.screen === 'playing' && !state.paused) {
-                        onStart();
-                    }
-                });
-                el.addEventListener('mouseup', function (e) {
-                    onEnd();
-                });
-                el.addEventListener('mouseleave', function (e) {
-                    onEnd();
-                });
+                    state.keys[key] = v;
+                };
+                el.addEventListener('touchstart', set(true), { passive: false });
+                el.addEventListener('touchend', set(false), { passive: false });
+                el.addEventListener('touchcancel', set(false), { passive: false });
+                el.addEventListener('mousedown', set(true));
+                el.addEventListener('mouseup', set(false));
+                el.addEventListener('mouseleave', set(false));
             }
 
-            setupTouchZone(zoneLeft,
-                () => { state.touchLeft = true; },
-                () => { state.touchLeft = false; }
-            );
-            setupTouchZone(zoneRight,
-                () => { state.touchRight = true; },
-                () => { state.touchRight = false; }
-            );
-            setupTouchZone(zoneUp,
-                () => { state.touchUp = true; },
-                () => { state.touchUp = false; }
-            );
-            setupTouchZone(zoneDown,
-                () => { state.touchDown = true; },
-                () => { state.touchDown = false; }
-            );
+            setupMobileButton('btn-up-mobile', 'ArrowUp');
+            setupMobileButton('btn-down-mobile', 'ArrowDown');
+            setupMobileButton('btn-left-mobile', 'ArrowLeft');
+            setupMobileButton('btn-right-mobile', 'ArrowRight');
 
-            // Botón poder táctil
+            // Botón POWER móvil
             const powerBtnTouch = document.getElementById('power-btn-touch');
             if (powerBtnTouch) {
                 powerBtnTouch.addEventListener('touchstart', function (e) {
@@ -2920,8 +2837,9 @@
             }
 
             // ============================================================
-            // 14. TECLADO
+            // 13. INPUT - TECLADO Y D-PAD DESKTOP
             // ============================================================
+
             window.addEventListener('keydown', (e) => {
                 state.keys[e.key] = true;
                 if (e.key === ' ') {
@@ -2934,7 +2852,8 @@
             });
             window.addEventListener('keyup', (e) => { state.keys[e.key] = false; });
 
-            function bindTouchHold(id, key) {
+            // D-pad desktop
+            function setupDesktopButton(id, key) {
                 const el = document.getElementById(id);
                 if (!el) return;
                 const set = (v) => (e) => {
@@ -2948,17 +2867,14 @@
                 el.addEventListener('mouseup', set(false));
                 el.addEventListener('mouseleave', set(false));
             }
-            bindTouchHold('btn-up', 'ArrowUp');
-            bindTouchHold('btn-down', 'ArrowDown');
-            bindTouchHold('btn-left', 'ArrowLeft');
-            bindTouchHold('btn-right', 'ArrowRight');
 
-            document.getElementById('btn-power')?.addEventListener('click', (e) => {
-                if (state.screen === 'playing' && !state.paused) activatePower();
-            });
+            setupDesktopButton('btn-up', 'ArrowUp');
+            setupDesktopButton('btn-down', 'ArrowDown');
+            setupDesktopButton('btn-left', 'ArrowLeft');
+            setupDesktopButton('btn-right', 'ArrowRight');
 
             // ============================================================
-            // 15. BOTONES DE PANTALLA
+            // 14. BOTONES DE PANTALLA
             // ============================================================
             document.getElementById('btn-play').addEventListener('click', () => {
                 Audio1.unlock();
@@ -3025,7 +2941,6 @@
                 showScreen('menu');
             });
 
-            // estado inicial
             showScreen('menu');
 
             document.querySelectorAll('#rotate-overlay *').forEach(el => {
@@ -3034,11 +2949,9 @@
             });
 
             console.log('🔥 Aventura Cumbianchera — Los Hijos de Tencha');
-            console.log('🎮 Control por inclinación: ¡inclina el teléfono para moverte!');
-            console.log('⚡ Botón PODER en la esquina inferior derecha');
-            console.log('📱 También puedes tocar los lados como respaldo');
+            console.log('🎮 Controles: flechas en pantalla (móvil) o teclado (PC)');
+            console.log('⚡ Botón PODER en la esquina inferior izquierda');
 
-            setTimeout(iniciarGiroscopio, 1000);
         })();
     </script>
 </body>
