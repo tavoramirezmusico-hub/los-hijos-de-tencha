@@ -455,7 +455,7 @@
             white-space: nowrap;
         }
 
-        /* ===== ZONAS TÁCTILES MEJORADAS ===== */
+        /* ===== ZONAS TÁCTILES (respaldo) ===== */
         #touch-zones {
             position: absolute;
             inset: 0;
@@ -468,15 +468,12 @@
             display: block;
         }
 
-        /* Estructura: izquierda (35%), centro (30%), derecha (35%) */
-        /* El centro se divide en arriba y abajo */
         .touch-zone {
             position: absolute;
             pointer-events: auto;
             touch-action: none;
         }
 
-        /* Zona izquierda - 35% del ancho, 100% del alto */
         .touch-zone-left {
             left: 0;
             top: 0;
@@ -484,7 +481,6 @@
             height: 100%;
         }
 
-        /* Zona derecha - 35% del ancho, 100% del alto */
         .touch-zone-right {
             right: 0;
             top: 0;
@@ -492,7 +488,6 @@
             height: 100%;
         }
 
-        /* Zona centro arriba - 30% del ancho, 50% del alto (mitad superior) */
         .touch-zone-up {
             left: 35%;
             top: 0;
@@ -500,7 +495,6 @@
             height: 50%;
         }
 
-        /* Zona centro abajo - 30% del ancho, 50% del alto (mitad inferior) */
         .touch-zone-down {
             left: 35%;
             bottom: 0;
@@ -508,19 +502,17 @@
             height: 50%;
         }
 
-        /* Etiquetas flotantes para orientación */
         .touch-label {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             font-size: 38px;
-            opacity: 0.10;
+            opacity: 0.08;
             pointer-events: none;
             font-family: 'Bungee', cursive;
             color: var(--gold);
             user-select: none;
-            text-shadow: 0 0 20px rgba(255, 204, 0, 0.1);
         }
 
         .touch-label-up {
@@ -539,6 +531,44 @@
 
         .touch-label-right {
             left: 70%;
+        }
+
+        /* ===== INDICADOR DE INCLINACIÓN (móvil) ===== */
+        #tilt-indicator {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 6;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 204, 0, 0.15);
+            border-radius: 12px;
+            padding: 4px 12px;
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.3);
+            display: none;
+            pointer-events: none;
+            backdrop-filter: blur(2px);
+            letter-spacing: 0.5px;
+        }
+
+        #tilt-indicator.show {
+            display: block;
+        }
+
+        #tilt-indicator .dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--gold);
+            margin: 0 2px;
+            opacity: 0.2;
+            transition: opacity 0.15s ease;
+        }
+
+        #tilt-indicator .dot.active {
+            opacity: 1;
         }
 
         /* Botón PODER en móvil */
@@ -570,7 +600,7 @@
             display: flex;
         }
 
-        /* D-pad (solo desktop) */
+        /* D-pad (desktop) */
         #touch-controls {
             position: absolute;
             inset: 0;
@@ -591,6 +621,10 @@
             #power-btn-touch.show {
                 display: flex;
             }
+
+            #tilt-indicator.show {
+                display: block;
+            }
         }
 
         @media (hover: hover) {
@@ -603,6 +637,10 @@
             }
 
             #power-btn-touch.show {
+                display: none !important;
+            }
+
+            #tilt-indicator.show {
                 display: none !important;
             }
         }
@@ -799,7 +837,7 @@
 
             .touch-label {
                 font-size: 28px;
-                opacity: 0.08;
+                opacity: 0.06;
             }
 
             .touch-label-up,
@@ -872,6 +910,12 @@
             .hint {
                 font-size: 10px;
             }
+
+            #tilt-indicator {
+                font-size: 8px;
+                bottom: 42px;
+                padding: 3px 10px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -911,7 +955,7 @@
 
             .touch-label {
                 font-size: 20px;
-                opacity: 0.06;
+                opacity: 0.05;
             }
 
             .touch-label-up,
@@ -984,6 +1028,12 @@
             .char-grid {
                 gap: 3px;
             }
+
+            #tilt-indicator {
+                font-size: 7px;
+                bottom: 34px;
+                padding: 2px 8px;
+            }
         }
 
         @media (max-width: 380px) {
@@ -1032,6 +1082,12 @@
                 padding: 6px;
                 gap: 3px;
             }
+
+            #tilt-indicator {
+                font-size: 6px;
+                bottom: 28px;
+                padding: 2px 6px;
+            }
         }
     </style>
 </head>
@@ -1056,25 +1112,30 @@
             <button id="sound-toggle">🔊</button>
             <button id="pause-toggle">⏸</button>
 
-            <!-- ZONAS TÁCTILES (móviles) - MEJORADAS -->
+            <!-- ZONAS TÁCTILES (respaldo para móvil) -->
             <div id="touch-zones">
-                <!-- Izquierda -->
                 <div class="touch-zone touch-zone-left" id="zone-left">
                     <span class="touch-label touch-label-left">◀</span>
                 </div>
-                <!-- Derecha -->
                 <div class="touch-zone touch-zone-right" id="zone-right">
                     <span class="touch-label touch-label-right">▶</span>
                 </div>
-                <!-- Arriba (centro superior) -->
                 <div class="touch-zone touch-zone-up" id="zone-up">
                     <span class="touch-label touch-label-up">▲</span>
                 </div>
-                <!-- Abajo (centro inferior) -->
                 <div class="touch-zone touch-zone-down" id="zone-down">
                     <span class="touch-label touch-label-down">▼</span>
                 </div>
                 <button id="power-btn-touch" class="show">⚡<br>PODER</button>
+            </div>
+
+            <!-- Indicador de inclinación (móvil) -->
+            <div id="tilt-indicator" class="show">
+                <span>INCLINA EL TELÉFONO</span>
+                <span class="dot" id="dot-up"></span>
+                <span class="dot" id="dot-down"></span>
+                <span class="dot" id="dot-left"></span>
+                <span class="dot" id="dot-right"></span>
             </div>
 
             <!-- D-pad (desktop) -->
@@ -1121,7 +1182,7 @@
                     onerror="this.style.display='none'">
                 <button class="btn" id="btn-play">▶ JUGAR</button>
                 <button class="btn secondary" id="btn-howto">❓ CÓMO SE JUEGA</button>
-                <p class="footer-note">5 vidas · 5 escenarios · sube el volumen 🎺</p>
+                <p class="footer-note">5 vidas · 5 escenarios · inclina el teléfono para moverte 🎮</p>
             </div>
 
             <!-- INSTRUCCIONES -->
@@ -1131,8 +1192,9 @@
                     <p><strong>🎯 Objetivo:</strong> en cada escenario, recolecta las notas musicales <span
                             class="note-icon">♪</span> hasta juntar la cantidad pedida. Al lograrlo se abre la puerta de
                         salida — llega a ella para pasar al siguiente escenario.</p>
-                    <p><strong>🕹️ Moverte:</strong> toca los lados de la pantalla para moverte
-                        (izquierda/derecha/arriba/abajo), o usa las flechas del teclado si juegas en computadora.</p>
+                    <p><strong>🕹️ Moverte (móvil):</strong> <strong>inclina el teléfono</strong> hacia donde quieras
+                        ir. También puedes tocar los lados de la pantalla como respaldo.</p>
+                    <p><strong>🕹️ Moverte (PC):</strong> flechas o WASD.</p>
                     <p><strong>⚠️ Cuidado:</strong> evita tocar a los "viejillos cumbiancheros" (los enemigos de
                         colores) — si te tocan, pierdes una vida y debes elegir personaje de nuevo.</p>
                     <p><strong>⭐ Poder especial:</strong> cada integrante de la banda tiene un poder único. Actívalo con
@@ -1216,6 +1278,7 @@
             const btnFullscreen = document.getElementById('btnFullscreen');
             const gameFrame = document.getElementById('game-frame');
             const touchZones = document.getElementById('touch-zones');
+            const tiltIndicator = document.getElementById('tilt-indicator');
 
             function isMobile() {
                 return /Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(navigator.userAgent);
@@ -1256,6 +1319,7 @@
                         rotateOverlay.classList.remove('active');
                     }
                     Audio1.unlock();
+                    iniciarGiroscopio();
                 }, 500);
             });
 
@@ -1263,13 +1327,133 @@
                 rotateOverlay.classList.remove('active');
             }
 
-            // Activar zonas táctiles en móviles
+            // Activar zonas táctiles en móviles (respaldo)
             if (isMobile()) {
                 touchZones.classList.add('active');
+                tiltIndicator.classList.add('show');
             }
 
             // ============================================================
-            // 1. AUDIO
+            // 1. GIROSCOPIO / ACELERÓMETRO
+            // ============================================================
+
+            let tiltX = 0;
+            let tiltY = 0;
+            let tiltActive = false;
+            const TILT_DEAD_ZONE = 0.06;
+            const TILT_MAX_SPEED = 1.0;
+
+            function iniciarGiroscopio() {
+                if (!isMobile()) return;
+                if (tiltActive) return;
+
+                // Intentar con DeviceOrientation (más preciso)
+                if (window.DeviceOrientationEvent) {
+                    // Pedir permiso en iOS 13+
+                    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                        DeviceOrientationEvent.requestPermission()
+                            .then(state => {
+                                if (state === 'granted') {
+                                    window.addEventListener('deviceorientation', handleOrientation);
+                                    tiltActive = true;
+                                    console.log('📱 Giroscopio activado (DeviceOrientation)');
+                                }
+                            })
+                            .catch(err => console.warn('⚠️ Permiso de orientación denegado:', err));
+                    } else {
+                        window.addEventListener('deviceorientation', handleOrientation);
+                        tiltActive = true;
+                        console.log('📱 Giroscopio activado (DeviceOrientation)');
+                    }
+                } else if (window.DeviceMotionEvent) {
+                    // Fallback a DeviceMotion (acelerómetro)
+                    if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                        DeviceMotionEvent.requestPermission()
+                            .then(state => {
+                                if (state === 'granted') {
+                                    window.addEventListener('devicemotion', handleMotion);
+                                    tiltActive = true;
+                                    console.log('📱 Acelerómetro activado (DeviceMotion)');
+                                }
+                            })
+                            .catch(err => console.warn('⚠️ Permiso de movimiento denegado:', err));
+                    } else {
+                        window.addEventListener('devicemotion', handleMotion);
+                        tiltActive = true;
+                        console.log('📱 Acelerómetro activado (DeviceMotion)');
+                    }
+                } else {
+                    console.warn('⚠️ No se detectó giroscopio ni acelerómetro');
+                }
+            }
+
+            function handleOrientation(event) {
+                // beta: inclinación adelante/atrás (Y), gamma: inclinación izquierda/derecha (X)
+                // En landscape, gamma controla horizontal, beta controla vertical
+                const gamma = event.gamma || 0; // -90 a 90 (izquierda/derecha)
+                const beta = event.beta || 0; // -180 a 180 (adelante/atrás)
+
+                // Normalizar: gamma va de -90 a 90, lo pasamos a -1 a 1
+                let rawX = gamma / 90;
+                // beta: en landscape, el rango útil es más o menos -45 a 45
+                let rawY = (beta - 45) / 45;
+
+                // Limitar y aplicar deadzone
+                rawX = Math.max(-1, Math.min(1, rawX));
+                rawY = Math.max(-1, Math.min(1, rawY));
+
+                if (Math.abs(rawX) < TILT_DEAD_ZONE) rawX = 0;
+                if (Math.abs(rawY) < TILT_DEAD_ZONE) rawY = 0;
+
+                // Aplicar sensibilidad - invertir Y porque beta es al revés
+                tiltX = rawX * TILT_MAX_SPEED;
+                tiltY = -rawY * TILT_MAX_SPEED;
+
+                actualizarIndicadorTilt(rawX, rawY);
+            }
+
+            function handleMotion(event) {
+                const acc = event.accelerationIncludingGravity;
+                if (!acc) return;
+
+                // En landscape: acc.x es horizontal, acc.y es vertical
+                let rawX = acc.x / 9.8;
+                let rawY = acc.y / 9.8;
+
+                // Limitar
+                rawX = Math.max(-1, Math.min(1, rawX));
+                rawY = Math.max(-1, Math.min(1, rawY));
+
+                if (Math.abs(rawX) < TILT_DEAD_ZONE) rawX = 0;
+                if (Math.abs(rawY) < TILT_DEAD_ZONE) rawY = 0;
+
+                tiltX = rawX * TILT_MAX_SPEED;
+                tiltY = rawY * TILT_MAX_SPEED;
+
+                actualizarIndicadorTilt(rawX, rawY);
+            }
+
+            function actualizarIndicadorTilt(x, y) {
+                const dotUp = document.getElementById('dot-up');
+                const dotDown = document.getElementById('dot-down');
+                const dotLeft = document.getElementById('dot-left');
+                const dotRight = document.getElementById('dot-right');
+
+                if (dotUp) {
+                    const threshold = 0.15;
+                    dotUp.classList.toggle('active', y < -threshold);
+                    dotDown.classList.toggle('active', y > threshold);
+                    dotLeft.classList.toggle('active', x < -threshold);
+                    dotRight.classList.toggle('active', x > threshold);
+                }
+            }
+
+            // Iniciar giroscopio al hacer clic en cualquier lugar
+            document.addEventListener('click', iniciarGiroscopio);
+            document.addEventListener('touchstart', iniciarGiroscopio);
+
+            // ============================================================
+            // 2. AUDIO
             // ============================================================
             const Audio1 = (function () {
                 let ctxA = null;
@@ -1454,7 +1638,7 @@
             })();
 
             // ============================================================
-            // 2. DATOS
+            // 3. DATOS
             // ============================================================
             const CHARACTERS = [{
                 id: 'tencho',
@@ -1594,7 +1778,7 @@
             const MARGIN = 40;
 
             // ============================================================
-            // 3. ESTADO DEL JUEGO
+            // 4. ESTADO DEL JUEGO
             // ============================================================
             const state = {
                 screen: 'menu',
@@ -1614,15 +1798,18 @@
                 paused: false,
                 lastTime: 0,
                 dashDir: { x: 0, y: 0 },
-                // Control táctil
+                // Control táctil (respaldo)
                 touchLeft: false,
                 touchRight: false,
                 touchUp: false,
                 touchDown: false,
+                // Control por inclinación
+                tiltX: 0,
+                tiltY: 0,
             };
 
             // ============================================================
-            // 4. DOM REFERENCES
+            // 5. DOM REFERENCES
             // ============================================================
             const canvas = document.getElementById('game-canvas');
             const ctx = canvas.getContext('2d');
@@ -1657,6 +1844,7 @@
                 powerLabelEl.style.display = name === 'playing' ? 'block' : 'none';
                 if (isMobile()) {
                     touchZones.classList.toggle('active', name === 'playing');
+                    tiltIndicator.classList.toggle('show', name === 'playing');
                 }
                 touchControls.classList.toggle('active', name === 'playing' && !isMobile());
                 if (name !== 'playing') {
@@ -1666,7 +1854,7 @@
             }
 
             // ============================================================
-            // 5. BUNTING
+            // 6. BUNTING
             // ============================================================
             (function buildBunting() {
                 const wrap = document.getElementById('bunting');
@@ -1678,7 +1866,7 @@
             })();
 
             // ============================================================
-            // 6. DIBUJO DE PERSONAJES
+            // 7. DIBUJO DE PERSONAJES
             // ============================================================
             function drawCharacterSprite(g, cx, cy, scale, ch, opts) {
                 opts = opts || {};
@@ -1809,7 +1997,7 @@
             }
 
             // ============================================================
-            // 7. GENERACIÓN DE NIVEL
+            // 8. GENERACIÓN DE NIVEL
             // ============================================================
             function buildLevel(levelIndex) {
                 const lvl = LEVELS[levelIndex];
@@ -1890,7 +2078,7 @@
             function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 
             // ============================================================
-            // 8. LÓGICA DE JUEGO
+            // 9. LÓGICA DE JUEGO
             // ============================================================
             function startRun() {
                 state.lives = 5;
@@ -1898,6 +2086,7 @@
                 state.levelIndex = 0;
                 buildLevel(0);
                 goToCharacterSelectForLevel();
+                iniciarGiroscopio();
             }
 
             function goToCharacterSelectForLevel() {
@@ -1932,6 +2121,7 @@
                 if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
                 state.lastTime = performance.now();
                 requestAnimationFrame(loop);
+                iniciarGiroscopio();
             }
 
             function loseLife() {
@@ -2006,10 +2196,13 @@
                 } else if (power.type === 'dash') {
                     let dx = 0,
                         dy = 0;
+                    // Usar inclinación o teclado o táctil
+                    if (Math.abs(tiltX) > 0.05) dx = tiltX;
+                    else if (state.keys['ArrowLeft'] || state.keys['a'] || state.touchLeft) dx -= 1;
+                    if (Math.abs(tiltY) > 0.05) dy = tiltY;
+                    else if (state.keys['ArrowRight'] || state.keys['d'] || state.touchRight) dx += 1;
                     if (state.keys['ArrowUp'] || state.keys['w'] || state.touchUp) dy -= 1;
                     if (state.keys['ArrowDown'] || state.keys['s'] || state.touchDown) dy += 1;
-                    if (state.keys['ArrowLeft'] || state.keys['a'] || state.touchLeft) dx -= 1;
-                    if (state.keys['ArrowRight'] || state.keys['d'] || state.touchRight) dx += 1;
                     if (dx === 0 && dy === 0) { dy = -1; }
                     const len = Math.hypot(dx, dy) || 1;
                     state.dashDir = { x: dx / len, y: dy / len };
@@ -2037,7 +2230,7 @@
             }
 
             // ============================================================
-            // 9. UPDATE LOOP
+            // 10. UPDATE LOOP
             // ============================================================
             function update(dt) {
                 const now = performance.now();
@@ -2048,13 +2241,19 @@
                 let dx = 0,
                     dy = 0;
 
-                // Teclado (siempre)
+                // PRIORIDAD: Inclinación (móvil) - más intuitivo
+                if (isMobile() && tiltActive) {
+                    dx = tiltX;
+                    dy = tiltY;
+                }
+
+                // Teclado (siempre disponible, para desktop y respaldo)
                 if (state.keys['ArrowUp'] || state.keys['w']) dy -= 1;
                 if (state.keys['ArrowDown'] || state.keys['s']) dy += 1;
                 if (state.keys['ArrowLeft'] || state.keys['a']) dx -= 1;
                 if (state.keys['ArrowRight'] || state.keys['d']) dx += 1;
 
-                // Zonas táctiles (móviles)
+                // Zonas táctiles (respaldo para móvil si el giroscopio no funciona)
                 if (state.touchUp) dy -= 1;
                 if (state.touchDown) dy += 1;
                 if (state.touchLeft) dx -= 1;
@@ -2137,7 +2336,7 @@
             }
 
             // ============================================================
-            // 10. AMBIENTACIÓN Y DIBUJO
+            // 11. AMBIENTACIÓN Y DIBUJO (omitido por brevedad, igual que antes)
             // ============================================================
             function hexToRgba(hex, alpha) {
                 const h = hex.replace('#', '');
@@ -2579,7 +2778,7 @@
             }
 
             // ============================================================
-            // 11. LOOP PRINCIPAL
+            // 12. LOOP PRINCIPAL
             // ============================================================
             function loop(ts) {
                 if (state.screen !== 'playing') return;
@@ -2607,7 +2806,7 @@
             }
 
             // ============================================================
-            // 12. INPUT - ZONAS TÁCTILES MEJORADAS
+            // 13. INPUT - ZONAS TÁCTILES (RESPALDO)
             // ============================================================
 
             const zoneLeft = document.getElementById('zone-left');
@@ -2631,7 +2830,6 @@
                     e.preventDefault();
                     onEnd();
                 }, { passive: false });
-                // Mouse también para pruebas
                 el.addEventListener('mousedown', function (e) {
                     if (state.screen === 'playing' && !state.paused) {
                         onStart();
@@ -2679,7 +2877,7 @@
             }
 
             // ============================================================
-            // 13. TECLADO
+            // 14. TECLADO
             // ============================================================
             window.addEventListener('keydown', (e) => {
                 state.keys[e.key] = true;
@@ -2718,7 +2916,7 @@
             });
 
             // ============================================================
-            // 14. BOTONES DE PANTALLA
+            // 15. BOTONES DE PANTALLA
             // ============================================================
             document.getElementById('btn-play').addEventListener('click', () => {
                 Audio1.unlock();
@@ -2795,8 +2993,12 @@
             });
 
             console.log('🔥 Aventura Cumbianchera — Los Hijos de Tencha');
-            console.log('🎮 Controles táctiles: toca los lados de la pantalla para moverte (◀▶▲▼)');
+            console.log('🎮 Control por inclinación: ¡inclina el teléfono para moverte!');
             console.log('⚡ Botón PODER en la esquina inferior derecha');
+            console.log('📱 También puedes tocar los lados como respaldo');
+
+            // Iniciar giroscopio automáticamente
+            setTimeout(iniciarGiroscopio, 1000);
 
         })();
     </script>
