@@ -217,6 +217,7 @@
             background: radial-gradient(circle at 50% 20%, rgba(242, 96, 12, 0.25), rgba(27, 15, 46, 0.96) 70%);
             gap: 10px;
             overflow-y: auto;
+            z-index: 10;
         }
 
         .screen.hidden {
@@ -454,63 +455,88 @@
             white-space: nowrap;
         }
 
-        /* ---------- touch controls ---------- */
-        #touch-controls {
+        /* ---------- ZONAS TÁCTILES (lados de la pantalla) ---------- */
+        #touch-zones {
             position: absolute;
             inset: 0;
             pointer-events: none;
+            z-index: 4;
             display: none;
-            z-index: 6;
         }
 
-        @media (hover: none) and (pointer: coarse) {
-            #touch-controls.active {
-                display: block;
-            }
+        #touch-zones.active {
+            display: block;
         }
 
-        .dpad {
+        .touch-zone {
             position: absolute;
-            left: 8px;
-            bottom: 8px;
-            width: 100px;
-            height: 100px;
-            pointer-events: auto;
-        }
-
-        .dpad button {
-            position: absolute;
-            width: 34px;
-            height: 34px;
-            background: rgba(255, 255, 255, 0.18);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
-            color: var(--cream);
-            font-size: 14px;
-            touch-action: manipulation;
-        }
-
-        .dpad .up {
             top: 0;
-            left: 33px;
-        }
-
-        .dpad .down {
             bottom: 0;
-            left: 33px;
+            pointer-events: auto;
+            touch-action: none;
         }
 
-        .dpad .left {
-            top: 33px;
+        .touch-zone-left {
             left: 0;
+            width: 45%;
         }
 
-        .dpad .right {
-            top: 33px;
+        .touch-zone-right {
             right: 0;
+            width: 45%;
         }
 
-        .power-btn-touch {
+        .touch-zone-up {
+            top: 0;
+            left: 45%;
+            width: 10%;
+            height: 40%;
+            pointer-events: auto;
+            touch-action: none;
+        }
+
+        .touch-zone-down {
+            bottom: 0;
+            left: 45%;
+            width: 10%;
+            height: 40%;
+            pointer-events: auto;
+            touch-action: none;
+        }
+
+        /* Etiquetas flotantes en las zonas (solo para orientación) */
+        .touch-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            opacity: 0.15;
+            pointer-events: none;
+            font-family: 'Bungee', cursive;
+            color: var(--gold);
+            user-select: none;
+        }
+
+        .touch-label-left {
+            left: 30%;
+        }
+
+        .touch-label-right {
+            left: 70%;
+        }
+
+        .touch-label-up {
+            top: 20%;
+            font-size: 24px;
+        }
+
+        .touch-label-down {
+            top: 80%;
+            font-size: 24px;
+        }
+
+        #power-btn-touch {
             position: absolute;
             right: 12px;
             bottom: 16px;
@@ -524,6 +550,90 @@
             font-size: 8px;
             pointer-events: auto;
             touch-action: manipulation;
+            z-index: 6;
+        }
+
+        /* Mantener el D-pad como respaldo (se oculta en móviles) */
+        #touch-controls {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            display: none;
+            z-index: 6;
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            #touch-zones.active {
+                display: block;
+            }
+
+            #touch-controls.active {
+                display: none;
+            }
+
+            #power-btn-touch {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        /* En desktop, mostrar el D-pad si no es táctil */
+        @media (hover: hover) {
+            #touch-zones {
+                display: none !important;
+            }
+
+            #touch-controls.active {
+                display: block !important;
+            }
+
+            #power-btn-touch {
+                display: none !important;
+            }
+        }
+
+        /* D-pad (solo desktop) */
+        .dpad {
+            position: absolute;
+            left: 14px;
+            bottom: 14px;
+            width: 120px;
+            height: 120px;
+            pointer-events: auto;
+        }
+
+        .dpad button {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            color: var(--cream);
+            font-size: 16px;
+            touch-action: manipulation;
+            cursor: pointer;
+        }
+
+        .dpad .up {
+            top: 0;
+            left: 40px;
+        }
+
+        .dpad .down {
+            bottom: 0;
+            left: 40px;
+        }
+
+        .dpad .left {
+            top: 40px;
+            left: 0;
+        }
+
+        .dpad .right {
+            top: 40px;
+            right: 0;
         }
 
         .msg-big {
@@ -639,7 +749,7 @@
             display: none;
         }
 
-        /* ===== RESPONSIVE ESPECÍFICO PARA CELULARES ===== */
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             #game-root {
                 padding: 4px;
@@ -674,113 +784,16 @@
                 padding: 10px 20px;
             }
 
-            .char-grid {
-                gap: 4px;
+            .touch-label {
+                font-size: 24px;
+                opacity: 0.12;
             }
 
-            .char-card {
-                padding: 4px 3px 6px;
-                border-radius: 8px;
-            }
-
-            .char-card canvas {
-                width: 38px;
-                height: 38px;
-            }
-
-            .char-name {
-                font-size: 8px;
-            }
-
-            .char-instrument {
-                font-size: 7px;
-            }
-
-            .char-power {
-                font-size: 6.5px;
-            }
-
-            .power-detail {
-                font-size: 9px;
-                min-height: 26px;
-            }
-
-            #hud {
-                padding: 4px 6px;
-                font-size: 9px;
-            }
-
-            #hearts span {
-                font-size: 11px;
-            }
-
-            .hud-box {
-                padding: 3px 6px;
-                border-radius: 6px;
-            }
-
-            #level-label {
-                font-size: 8px;
-            }
-
-            #score-box {
-                font-size: 9px;
-            }
-
-            #items-box {
-                font-size: 8px;
-            }
-
-            #power-bar-wrap {
-                width: 90px;
-                height: 8px;
-                bottom: 4px;
-            }
-
-            #power-label {
-                font-size: 7px;
-                bottom: 14px;
-            }
-
-            .dpad {
-                width: 76px;
-                height: 76px;
-                left: 5px;
-                bottom: 5px;
-            }
-
-            .dpad button {
-                width: 26px;
-                height: 26px;
-                font-size: 11px;
-                border-radius: 6px;
-            }
-
-            .dpad .up {
-                top: 0;
-                left: 25px;
-            }
-
-            .dpad .down {
-                bottom: 0;
-                left: 25px;
-            }
-
-            .dpad .left {
-                top: 25px;
-                left: 0;
-            }
-
-            .dpad .right {
-                top: 25px;
-                right: 0;
-            }
-
-            .power-btn-touch {
-                right: 8px;
-                bottom: 10px;
-                width: 44px;
-                height: 44px;
+            #power-btn-touch {
+                right: 10px;
+                bottom: 12px;
+                width: 48px;
+                height: 48px;
                 font-size: 7px;
             }
 
@@ -878,106 +891,17 @@
                 border-radius: 30px;
             }
 
-            .char-card canvas {
-                width: 32px;
-                height: 32px;
+            .touch-label {
+                font-size: 18px;
+                opacity: 0.1;
             }
 
-            .char-name {
-                font-size: 7px;
-            }
-
-            .char-instrument {
+            #power-btn-touch {
+                right: 8px;
+                bottom: 10px;
+                width: 40px;
+                height: 40px;
                 font-size: 6px;
-            }
-
-            .char-power {
-                font-size: 5.5px;
-            }
-
-            .power-detail {
-                font-size: 8px;
-                min-height: 22px;
-            }
-
-            #hud {
-                padding: 3px 4px;
-                font-size: 8px;
-            }
-
-            #hearts span {
-                font-size: 9px;
-            }
-
-            .hud-box {
-                padding: 2px 4px;
-            }
-
-            #level-label {
-                font-size: 7px;
-            }
-
-            #score-box {
-                font-size: 8px;
-            }
-
-            #items-box {
-                font-size: 7px;
-            }
-
-            #power-bar-wrap {
-                width: 70px;
-                height: 6px;
-                bottom: 3px;
-                border-radius: 4px;
-            }
-
-            #power-label {
-                font-size: 6px;
-                bottom: 11px;
-            }
-
-            .dpad {
-                width: 60px;
-                height: 60px;
-                left: 3px;
-                bottom: 3px;
-            }
-
-            .dpad button {
-                width: 20px;
-                height: 20px;
-                font-size: 9px;
-                border-radius: 4px;
-            }
-
-            .dpad .up {
-                top: 0;
-                left: 20px;
-            }
-
-            .dpad .down {
-                bottom: 0;
-                left: 20px;
-            }
-
-            .dpad .left {
-                top: 20px;
-                left: 0;
-            }
-
-            .dpad .right {
-                top: 20px;
-                right: 0;
-            }
-
-            .power-btn-touch {
-                right: 6px;
-                bottom: 8px;
-                width: 36px;
-                height: 36px;
-                font-size: 6px;
-                border-radius: 50%;
             }
 
             #sound-toggle,
@@ -1008,10 +932,6 @@
                 font-size: 9px;
                 padding: 6px 10px;
                 max-height: 35vh;
-            }
-
-            .level-intro-box {
-                padding: 6px 10px;
             }
 
             .level-intro-box p {
@@ -1062,53 +982,11 @@
                 padding: 6px 12px;
             }
 
-            .char-card canvas {
-                width: 26px;
-                height: 26px;
-            }
-
-            .char-name {
-                font-size: 6px;
-            }
-
-            .dpad {
-                width: 48px;
-                height: 48px;
-                left: 2px;
-                bottom: 2px;
-            }
-
-            .dpad button {
-                width: 16px;
-                height: 16px;
-                font-size: 7px;
-            }
-
-            .dpad .up {
-                top: 0;
-                left: 16px;
-            }
-
-            .dpad .down {
-                bottom: 0;
-                left: 16px;
-            }
-
-            .dpad .left {
-                top: 16px;
-                left: 0;
-            }
-
-            .dpad .right {
-                top: 16px;
-                right: 0;
-            }
-
-            .power-btn-touch {
-                right: 4px;
-                bottom: 6px;
-                width: 30px;
-                height: 30px;
+            #power-btn-touch {
+                right: 6px;
+                bottom: 8px;
+                width: 34px;
+                height: 34px;
                 font-size: 5px;
             }
 
@@ -1121,11 +999,6 @@
 
             #pause-toggle {
                 right: 22px;
-            }
-
-            #power-bar-wrap {
-                width: 54px;
-                height: 5px;
             }
 
             .title-main {
@@ -1160,6 +1033,38 @@
             <button id="sound-toggle">🔊</button>
             <button id="pause-toggle">⏸</button>
 
+            <!-- ZONAS TÁCTILES (móviles) -->
+            <div id="touch-zones">
+                <!-- Flecha izquierda -->
+                <div class="touch-zone touch-zone-left" id="zone-left">
+                    <span class="touch-label touch-label-left">◀</span>
+                </div>
+                <!-- Flecha derecha -->
+                <div class="touch-zone touch-zone-right" id="zone-right">
+                    <span class="touch-label touch-label-right">▶</span>
+                </div>
+                <!-- Flecha arriba (arriba/izquierda o salto) -->
+                <div class="touch-zone touch-zone-up" id="zone-up">
+                    <span class="touch-label touch-label-up">▲</span>
+                </div>
+                <!-- Flecha abajo -->
+                <div class="touch-zone touch-zone-down" id="zone-down">
+                    <span class="touch-label touch-label-down">▼</span>
+                </div>
+                <button id="power-btn-touch">⚡<br>PODER</button>
+            </div>
+
+            <!-- D-pad (desktop) -->
+            <div id="touch-controls">
+                <div class="dpad">
+                    <button class="up" id="btn-up">▲</button>
+                    <button class="down" id="btn-down">▼</button>
+                    <button class="left" id="btn-left">◀</button>
+                    <button class="right" id="btn-right">▶</button>
+                </div>
+                <button class="power-btn-touch" id="btn-power">PODER</button>
+            </div>
+
             <!-- PAUSA -->
             <div class="pause-overlay hidden" id="pause-overlay">
                 <p class="level-intro-title" style="color:var(--gold);">⏸ PAUSA</p>
@@ -1183,17 +1088,6 @@
                 <div id="power-bar-fill"></div>
             </div>
 
-            <!-- Touch controls -->
-            <div id="touch-controls">
-                <div class="dpad">
-                    <button class="up" id="btn-up">▲</button>
-                    <button class="down" id="btn-down">▼</button>
-                    <button class="left" id="btn-left">◀</button>
-                    <button class="right" id="btn-right">▶</button>
-                </div>
-                <button class="power-btn-touch" id="btn-power">PODER</button>
-            </div>
-
             <!-- MENU -->
             <div class="screen" id="screen-menu">
                 <img class="logo-img" src="Personajes/logo.webp" alt="Los Hijos de Tencha"
@@ -1214,7 +1108,8 @@
                     <p><strong>🎯 Objetivo:</strong> en cada escenario, recolecta las notas musicales <span
                             class="note-icon">♪</span> hasta juntar la cantidad pedida. Al lograrlo se abre la puerta de
                         salida — llega a ella para pasar al siguiente escenario.</p>
-                    <p><strong>🕹️ Moverte:</strong> flechas o WASD (o el D-pad en pantalla si estás en el celular).</p>
+                    <p><strong>🕹️ Moverte:</strong> toca los lados de la pantalla para moverte, o usa las flechas del
+                        teclado si juegas en computadora.</p>
                     <p><strong>⚠️ Cuidado:</strong> evita tocar a los "viejillos cumbiancheros" (los enemigos de
                         colores) — si te tocan, pierdes una vida y debes elegir personaje de nuevo.</p>
                     <p><strong>⭐ Poder especial:</strong> cada integrante de la banda tiene un poder único. Actívalo con
@@ -1297,6 +1192,7 @@
             const rotateOverlay = document.getElementById('rotate-overlay');
             const btnFullscreen = document.getElementById('btnFullscreen');
             const gameFrame = document.getElementById('game-frame');
+            const touchZones = document.getElementById('touch-zones');
 
             function isMobile() {
                 return /Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(navigator.userAgent);
@@ -1344,8 +1240,13 @@
                 rotateOverlay.classList.remove('active');
             }
 
+            // Activar zonas táctiles en móviles
+            if (isMobile()) {
+                touchZones.classList.add('active');
+            }
+
             // ============================================================
-            // 1. AUDIO — todo sintetizado con Web Audio API
+            // 1. AUDIO
             // ============================================================
             const Audio1 = (function () {
                 let ctxA = null;
@@ -1530,7 +1431,7 @@
             })();
 
             // ============================================================
-            // 2. DATOS: PERSONAJES Y NIVELES
+            // 2. DATOS
             // ============================================================
             const CHARACTERS = [{
                 id: 'tencho',
@@ -1690,6 +1591,11 @@
                 paused: false,
                 lastTime: 0,
                 dashDir: { x: 0, y: 0 },
+                // Para control táctil por zonas
+                touchLeft: false,
+                touchRight: false,
+                touchUp: false,
+                touchDown: false,
             };
 
             // ============================================================
@@ -1726,7 +1632,10 @@
                 hud.classList.toggle('hidden', name !== 'playing');
                 powerBarWrap.classList.toggle('hidden', name !== 'playing');
                 powerLabelEl.style.display = name === 'playing' ? 'block' : 'none';
-                touchControls.classList.toggle('active', name === 'playing');
+                if (isMobile()) {
+                    touchZones.classList.toggle('active', name === 'playing');
+                }
+                touchControls.classList.toggle('active', name === 'playing' && !isMobile());
                 if (name !== 'playing') {
                     state.paused = false;
                     pauseOverlay.classList.add('hidden');
@@ -1990,7 +1899,7 @@
                         '⚠️ Evita a los viejillos cumbiancheros que patrullan y rebotan por la pista.';
                 document.getElementById('levelintro-power').textContent =
                     '⭐ Tu poder: ' + state.selectedChar.power.name + ' — ' + state.selectedChar.power.desc +
-                    ' (tecla Espacio).';
+                    ' (tecla Espacio o botón PODER).';
                 showScreen('levelintro');
             }
 
@@ -2074,10 +1983,10 @@
                 } else if (power.type === 'dash') {
                     let dx = 0,
                         dy = 0;
-                    if (state.keys['ArrowUp'] || state.keys['w']) dy -= 1;
-                    if (state.keys['ArrowDown'] || state.keys['s']) dy += 1;
-                    if (state.keys['ArrowLeft'] || state.keys['a']) dx -= 1;
-                    if (state.keys['ArrowRight'] || state.keys['d']) dx += 1;
+                    if (state.keys['ArrowUp'] || state.keys['w'] || state.touchUp) dy -= 1;
+                    if (state.keys['ArrowDown'] || state.keys['s'] || state.touchDown) dy += 1;
+                    if (state.keys['ArrowLeft'] || state.keys['a'] || state.touchLeft) dx -= 1;
+                    if (state.keys['ArrowRight'] || state.keys['d'] || state.touchRight) dx += 1;
                     if (dx === 0 && dy === 0) { dy = -1; }
                     const len = Math.hypot(dx, dy) || 1;
                     state.dashDir = { x: dx / len, y: dy / len };
@@ -2115,10 +2024,18 @@
 
                 let dx = 0,
                     dy = 0;
+
+                // Teclado (siempre)
                 if (state.keys['ArrowUp'] || state.keys['w']) dy -= 1;
                 if (state.keys['ArrowDown'] || state.keys['s']) dy += 1;
                 if (state.keys['ArrowLeft'] || state.keys['a']) dx -= 1;
                 if (state.keys['ArrowRight'] || state.keys['d']) dx += 1;
+
+                // Zonas táctiles (móviles) - se suman a las teclas
+                if (state.touchUp) dy -= 1;
+                if (state.touchDown) dy += 1;
+                if (state.touchLeft) dx -= 1;
+                if (state.touchRight) dx += 1;
 
                 let speed = 210;
                 if (isDashActive()) {
@@ -2287,7 +2204,6 @@
             function drawAmbience() {
                 const pa = state.playArea;
                 const idx = state.levelIndex;
-                // Decoración ligera para cada escenario
                 if (idx === 0) {
                     drawPottedPlant(pa.x0 + 26, pa.y1 - 4, 1);
                     drawPottedPlant(pa.x1 - 26, pa.y1 - 4, 1);
@@ -2635,7 +2551,7 @@
                 const pct = ready ? 100 : 100 - (cdRemain / cdTotal * 100);
                 powerBarFill.style.width = pct + '%';
                 powerLabelEl.textContent = ready ?
-                    (state.selectedChar.power.name + ' — LISTO (Espacio)') :
+                    (state.selectedChar.power.name + ' — LISTO (Espacio o botón PODER)') :
                     (state.selectedChar.power.name + ' — ' + Math.ceil(cdRemain / 1000) + 's');
             }
 
@@ -2668,7 +2584,80 @@
             }
 
             // ============================================================
-            // 12. INPUT
+            // 12. INPUT - ZONAS TÁCTILES
+            // ============================================================
+
+            // Zonas táctiles
+            const zoneLeft = document.getElementById('zone-left');
+            const zoneRight = document.getElementById('zone-right');
+            const zoneUp = document.getElementById('zone-up');
+            const zoneDown = document.getElementById('zone-down');
+
+            function setupTouchZone(el, onStart, onEnd) {
+                if (!el) return;
+                el.addEventListener('touchstart', function (e) {
+                    e.preventDefault();
+                    if (state.screen === 'playing' && !state.paused) {
+                        onStart();
+                    }
+                }, { passive: false });
+                el.addEventListener('touchend', function (e) {
+                    e.preventDefault();
+                    onEnd();
+                }, { passive: false });
+                el.addEventListener('touchcancel', function (e) {
+                    e.preventDefault();
+                    onEnd();
+                }, { passive: false });
+                // Mouse también (para pruebas en escritorio con click)
+                el.addEventListener('mousedown', function (e) {
+                    if (state.screen === 'playing' && !state.paused) {
+                        onStart();
+                    }
+                });
+                el.addEventListener('mouseup', function (e) {
+                    onEnd();
+                });
+                el.addEventListener('mouseleave', function (e) {
+                    onEnd();
+                });
+            }
+
+            setupTouchZone(zoneLeft,
+                () => { state.touchLeft = true; },
+                () => { state.touchLeft = false; }
+            );
+            setupTouchZone(zoneRight,
+                () => { state.touchRight = true; },
+                () => { state.touchRight = false; }
+            );
+            setupTouchZone(zoneUp,
+                () => { state.touchUp = true; },
+                () => { state.touchUp = false; }
+            );
+            setupTouchZone(zoneDown,
+                () => { state.touchDown = true; },
+                () => { state.touchDown = false; }
+            );
+
+            // Botón poder táctil
+            const powerBtnTouch = document.getElementById('power-btn-touch');
+            if (powerBtnTouch) {
+                powerBtnTouch.addEventListener('touchstart', function (e) {
+                    e.preventDefault();
+                    if (state.screen === 'playing' && !state.paused) {
+                        activatePower();
+                    }
+                }, { passive: false });
+                powerBtnTouch.addEventListener('click', function (e) {
+                    if (state.screen === 'playing' && !state.paused) {
+                        activatePower();
+                    }
+                });
+            }
+
+            // ============================================================
+            // 13. TECLADO (siempre activo)
             // ============================================================
             window.addEventListener('keydown', (e) => {
                 state.keys[e.key] = true;
@@ -2682,8 +2671,10 @@
             });
             window.addEventListener('keyup', (e) => { state.keys[e.key] = false; });
 
+            // D-pad para desktop (respaldo)
             function bindTouchHold(id, key) {
                 const el = document.getElementById(id);
+                if (!el) return;
                 const set = (v) => (e) => {
                     e.preventDefault();
                     state.keys[key] = v;
@@ -2691,18 +2682,21 @@
                 el.addEventListener('touchstart', set(true), { passive: false });
                 el.addEventListener('touchend', set(false), { passive: false });
                 el.addEventListener('touchcancel', set(false), { passive: false });
+                el.addEventListener('mousedown', set(true));
+                el.addEventListener('mouseup', set(false));
+                el.addEventListener('mouseleave', set(false));
             }
             bindTouchHold('btn-up', 'ArrowUp');
             bindTouchHold('btn-down', 'ArrowDown');
             bindTouchHold('btn-left', 'ArrowLeft');
             bindTouchHold('btn-right', 'ArrowRight');
-            document.getElementById('btn-power').addEventListener('touchstart', (e) => {
-                e.preventDefault();
+
+            document.getElementById('btn-power')?.addEventListener('click', (e) => {
                 if (state.screen === 'playing' && !state.paused) activatePower();
-            }, { passive: false });
+            });
 
             // ============================================================
-            // 13. BOTONES DE PANTALLA
+            // 14. BOTONES DE PANTALLA
             // ============================================================
             document.getElementById('btn-play').addEventListener('click', () => {
                 Audio1.unlock();
@@ -2779,7 +2773,8 @@
             });
 
             console.log('🔥 Aventura Cumbianchera — Los Hijos de Tencha');
-            console.log('🎮 Modo pantalla completa y rotación obligatoria para móviles');
+            console.log('🎮 Controles táctiles: toca los lados de la pantalla para moverte');
+            console.log('⚡ Botón PODER en la esquina inferior derecha');
 
         })();
     </script>
