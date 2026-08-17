@@ -594,18 +594,23 @@
         /* Botones de texto para PC (A y S) */
         #pc-controls-label {
             position: absolute;
-            bottom: 16px;
+            bottom: 76px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 7;
             display: none;
             gap: 20px;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 6px 16px;
+            background: rgba(0, 0, 0, 0.22);
+            padding: 5px 14px;
             border-radius: 12px;
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(3px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             pointer-events: none;
+            transition: opacity 1.2s ease;
+        }
+
+        #pc-controls-label.faded {
+            opacity: 0.2;
         }
 
         #pc-controls-label .key {
@@ -1818,6 +1823,8 @@
                 hitFlashUntil: 0,
                 jumpBufferedUntil: 0,
                 coyoteUntil: 0,
+                ambientLeaves: [],
+                controlsFadeTimer: null,
             };
 
             // ============================================================
@@ -2166,6 +2173,7 @@
                 state.wasOnGround = false;
                 state.jumpBufferedUntil = 0;
                 state.coyoteUntil = 0;
+                ensureAmbientLeaves();
             }
 
             // ============================================================
@@ -2217,6 +2225,17 @@
                 showScreen('playing');
                 state.lastTime = performance.now();
                 requestAnimationFrame(loop);
+
+                // La leyenda de controles (PC) se atenúa sola a los pocos
+                // segundos para no tapar el suelo mientras se juega.
+                const label = document.getElementById('pc-controls-label');
+                if (label) {
+                    label.classList.remove('faded');
+                    clearTimeout(state.controlsFadeTimer);
+                    state.controlsFadeTimer = setTimeout(() => {
+                        label.classList.add('faded');
+                    }, 3500);
+                }
             }
 
             function requestJump() {
@@ -2230,6 +2249,58 @@
             // ============================================================
             // 7B. EFECTOS VISUALES (partículas, shake, textos flotantes)
             // ============================================================
+            function ensureAmbientLeaves() {
+                if (state.ambientLeaves.length) return;
+                for (let i = 0; i < 11; i++) {
+                    state.ambientLeaves.push({
+                        x: Math.random() * CANVAS_W,
+                        y: 20 + Math.random() * (CANVAS_H * 0.65),
+                        speed: 16 + Math.random() * 26,
+                        size: 5 + Math.random() * 6,
+                        sway: Math.random() * Math.PI * 2,
+                        rot: Math.random() * Math.PI * 2,
+                        rotSpeed: (Math.random() - 0.5) * 1.4,
+                        color: Math.random() < 0.5 ? '#FFC400' : '#FF8A2E',
+                        depth: 0.4 + Math.random() * 0.6,
+                    });
+                }
+            }
+
+            function updateAmbient(dt) {
+                const now = performance.now();
+                for (const leaf of state.ambientLeaves) {
+                    leaf.x += leaf.speed * leaf.depth * dt;
+                    leaf.y += Math.sin(now / 700 + leaf.sway) * 0.35;
+                    leaf.rot += leaf.rotSpeed * dt;
+                    if (leaf.x > CANVAS_W + 20) {
+                        leaf.x = -20;
+                        leaf.y = 20 + Math.random() * (CANVAS_H * 0.65);
+                    }
+                }
+            }
+
+            function drawAmbientLeaves() {
+                for (const leaf of state.ambientLeaves) {
+                    ctx.save();
+                    ctx.globalAlpha = 0.35 * leaf.depth + 0.15;
+                    ctx.translate(leaf.x, leaf.y);
+                    ctx.rotate(leaf.rot);
+                    ctx.fillStyle = leaf.color;
+                    ctx.beginPath();
+                    ctx.moveTo(0, -leaf.size);
+                    ctx.quadraticCurveTo(leaf.size * 0.8, 0, 0, leaf.size);
+                    ctx.quadraticCurveTo(-leaf.size * 0.8, 0, 0, -leaf.size);
+                    ctx.fill();
+                    ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+                    ctx.lineWidth = 0.5;
+                    ctx.beginPath();
+                    ctx.moveTo(0, -leaf.size);
+                    ctx.lineTo(0, leaf.size);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+
             function spawnParticle(p) {
                 state.particles.push(Object.assign({
                     life: 1,
@@ -2457,6 +2528,8 @@
             function update(dt) {
                 const now = performance.now();
                 const p = state.player;
+
+                updateAmbient(dt);
 
                 // --- Movimiento horizontal SOLO con flechas ---
                 let moveX = 0;
@@ -2731,6 +2804,24 @@
                     ctx.quadraticCurveTo(m.x + m.w / 2, m.y - m.h, m.x + m.w, m.y);
                     ctx.fill();
                 }
+
+                // Segunda capa de dunas, más cercana y más rápida que las
+                // montañas de fondo — le da profundidad a la escena.
+                ctx.fillStyle = 'rgba(90,35,0,0.5)';
+                const dunas = [
+                    { x: -80 - state.cameraX * 0.18, y: SUELO_Y, w: 260, h: 70 },
+                    { x: 300 - state.cameraX * 0.18, y: SUELO_Y, w: 220, h: 55 },
+                    { x: 620 - state.cameraX * 0.18, y: SUELO_Y, w: 300, h: 80 },
+                    { x: 1000 - state.cameraX * 0.18, y: SUELO_Y, w: 240, h: 60 },
+                    { x: 1350 - state.cameraX * 0.18, y: SUELO_Y, w: 280, h: 72 },
+                ];
+                for (const d of dunas) {
+                    if (d.x + d.w < -20 || d.x > CANVAS_W + 20) continue;
+                    ctx.beginPath();
+                    ctx.moveTo(d.x, d.y);
+                    ctx.quadraticCurveTo(d.x + d.w / 2, d.y - d.h, d.x + d.w, d.y);
+                    ctx.fill();
+                }
             }
 
             function drawPlatforms() {
@@ -2763,6 +2854,29 @@
                         ctx.beginPath();
                         ctx.moveTo(x, p.y + i);
                         ctx.lineTo(x + p.w, p.y + i);
+                        ctx.stroke();
+                    }
+
+                    // Matas de pasto/hojitas sobre el borde superior, mecidas
+                    // por el viento — le quitan planitud a la plataforma.
+                    const now = performance.now();
+                    for (let gx = 10; gx < p.w - 6; gx += 26) {
+                        const sway = Math.sin(now / 900 + (x + gx) * 0.05) * 3;
+                        const bx = x + gx;
+                        const by = p.y;
+                        ctx.strokeStyle = 'rgba(255,158,0,0.7)';
+                        ctx.lineWidth = 1.4;
+                        ctx.beginPath();
+                        ctx.moveTo(bx - 3, by);
+                        ctx.quadraticCurveTo(bx - 3 + sway, by - 6, bx - 1 + sway * 1.4, by - 10);
+                        ctx.stroke();
+                        ctx.beginPath();
+                        ctx.moveTo(bx, by);
+                        ctx.quadraticCurveTo(bx + sway, by - 8, bx + sway * 1.5, by - 13);
+                        ctx.stroke();
+                        ctx.beginPath();
+                        ctx.moveTo(bx + 3, by);
+                        ctx.quadraticCurveTo(bx + 3 + sway, by - 6, bx + 1 + sway * 1.4, by - 10);
                         ctx.stroke();
                     }
                 }
@@ -3108,6 +3222,7 @@
                     ctx.translate(sx, sy);
                 }
                 drawBackground();
+                drawAmbientLeaves();
                 drawPlatforms();
                 drawCoins();
                 drawCannabis();
@@ -3159,11 +3274,17 @@
                 if (state.screen !== 'playing') return;
                 state.paused = !state.paused;
                 pauseOverlay.classList.toggle('hidden', !state.paused);
+                const label = document.getElementById('pc-controls-label');
                 if (state.paused) {
                     Audio1.stopMusic();
+                    if (label) label.classList.remove('faded');
                 } else {
                     state.lastTime = performance.now();
                     if (Audio1.isEnabled()) Audio1.startMusic();
+                    if (label) {
+                        clearTimeout(state.controlsFadeTimer);
+                        state.controlsFadeTimer = setTimeout(() => label.classList.add('faded'), 3500);
+                    }
                 }
             }
 
