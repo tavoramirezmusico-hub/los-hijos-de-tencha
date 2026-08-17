@@ -4,178 +4,108 @@
 <head>
 
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-
+    <!-- VERIFICACIÓN DE GOOGLE -->
     <meta name="google-site-verification" content="LW_2PctYNDbNP-0ppeMFzxLuQnbuRoVhwxbvc_y3bjY">
 
+    <!-- TÍTULO -->
+    <title>Los Hijos de Tencha | Banda de Cumbia y Música en Vivo en Costa Rica</title>
 
-    <title>
-        Los Hijos de Tencha | Banda de Cumbia y Música en Vivo en Costa Rica
-    </title>
-
-
+    <!-- METADATOS PRINCIPALES -->
     <meta name="description"
         content="Los Hijos de Tencha es una banda costarricense de cumbia, rock, reggae y ritmos latinoamericanos. Música en vivo, eventos, contrataciones, canciones, videos y contacto oficial en Costa Rica.">
-
-
     <meta name="keywords"
         content="Los Hijos de Tencha, banda Costa Rica, cumbia Costa Rica, música en vivo Costa Rica, agrupación musical costarricense, contrataciones musicales">
-
-
     <meta name="author" content="Los Hijos de Tencha">
-
-
-    <meta name="robots" content="index, follow">
-
-
     <meta name="theme-color" content="#000000">
 
+    <!-- ⭐ ROBOTS - EXPLÍCITO PARA GOOGLE ⭐ -->
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta name="googlebot" content="index, follow">
 
+    <!-- ⭐ ETIQUETA CANÓNICA - APUNTANDO A LA RAÍZ ⭐ -->
     <link rel="canonical" href="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/">
 
-
+    <!-- ⭐ REDIRECCIÓN 301 CON JAVASCRIPT (PARA EVITAR DUPLICADOS) ⭐ -->
+    <script>
+        // Si la URL contiene "index.html", redirige a la raíz
+        if (window.location.pathname.endsWith('/index.html') || window.location.pathname === '/los-hijos-de-tencha/index.html') {
+            window.location.replace('https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/');
+        }
+    </script>
 
     <!-- OPEN GRAPH FACEBOOK / WHATSAPP -->
-
     <meta property="og:title" content="Los Hijos de Tencha | Banda Costarricense">
-
-
     <meta property="og:description"
         content="Cumbia, rock, reggae y ritmos latinoamericanos con sabor costarricense. Música en vivo, eventos y contrataciones oficiales.">
-
-
     <meta property="og:image" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/img/hero.webp">
-
-
     <meta property="og:image:width" content="1200">
-
-
     <meta property="og:image:height" content="630">
-
-
     <meta property="og:url" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/">
-
-
     <meta property="og:type" content="website">
-
-
     <meta property="og:locale" content="es_CR">
-
-
     <meta property="og:site_name" content="Los Hijos de Tencha">
 
-
-
     <!-- TWITTER / X CARD -->
-
     <meta name="twitter:card" content="summary_large_image">
-
-
     <meta name="twitter:title" content="Los Hijos de Tencha | Banda Costarricense">
-
-
     <meta name="twitter:description"
         content="Agrupación musical costarricense de cumbia, rock, reggae y ritmos latinoamericanos.">
-
-
     <meta name="twitter:image" content="https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/img/hero.webp">
 
-
-
     <!-- FAVICON -->
-
     <link rel="icon" type="image/webp" href="img/logo.webp">
 
-
-
     <!-- CSS -->
-
     <link rel="stylesheet" href="css/styles.css">
 
-
-
     <!-- GOOGLE FONTS -->
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
-
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
-
-
     <!-- FONT AWESOME -->
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-
     <!-- DATOS ESTRUCTURADOS GOOGLE -->
-
     <script type="application/ld+json">
-
-{
- "@context":"https://schema.org",
- "@type":"MusicGroup",
-
- "name":"Los Hijos de Tencha",
-
- "description":"Agrupación musical costarricense de cumbia, rock, reggae y ritmos latinoamericanos.",
-
- "url":"https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/",
-
- "image":"https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/img/hero.webp",
-
- "genre":[
- "Cumbia",
- "Rock",
- "Reggae",
- "Música latinoamericana"
- ],
-
- "location":{
- "@type":"Place",
- "name":"Costa Rica"
- },
-
-
- "sameAs":[
-
- "https://www.instagram.com/loshijosdetencha/",
-
- "https://www.facebook.com/profile.php?id=100090956211932"
-
- ]
-
-}
-
-</script>
-
+        {
+            "@context": "https://schema.org",
+            "@type": "MusicGroup",
+            "name": "Los Hijos de Tencha",
+            "description": "Agrupación musical costarricense de cumbia, rock, reggae y ritmos latinoamericanos.",
+            "url": "https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/",
+            "image": "https://tavoramirezmusico-hub.github.io/los-hijos-de-tencha/img/hero.webp",
+            "genre": [
+                "Cumbia",
+                "Rock",
+                "Reggae",
+                "Música latinoamericana"
+            ],
+            "location": {
+                "@type": "Place",
+                "name": "Costa Rica"
+            },
+            "sameAs": [
+                "https://www.instagram.com/loshijosdetencha/",
+                "https://www.facebook.com/profile.php?id=100090956211932"
+            ]
+        }
+    </script>
 
     <!-- GOOGLE ANALYTICS -->
-
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YNRK4G09LN"></script>
-
     <script>
-
         window.dataLayer = window.dataLayer || [];
 
         function gtag() {
-
             dataLayer.push(arguments);
-
         }
-
         gtag('js', new Date());
-
         gtag('config', 'G-YNRK4G09LN');
-
     </script>
-
-
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -183,7 +113,6 @@
 
     <!-- EmailJS -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-
 
     <!-- Estilos adicionales -->
     <style>
@@ -1852,167 +1781,106 @@
 
 <body>
 
-
     <header class="hero" id="inicio">
-
 
         <nav>
 
-
             <a href="#inicio" class="logo">
-
                 <img src="img/logo.webp" alt="Los Hijos de Tencha">
-
             </a>
-
 
             <button id="menu-btn" class="menu-btn">
                 <img src="img/menu-icono.webp" alt="Menú">
                 <span>Menú</span>
             </button>
 
-
             <ul class="menu">
-
                 <li><span class="menu-activo">Inicio</span></li>
-
                 <li><a href="#banda">La Banda</a></li>
-
                 <li><a href="#eventos">Eventos</a></li>
-
                 <li><a href="galeria.html">Galería</a></li>
-
                 <li><a href="#musica">Lanzamientos</a></li>
-
                 <li><a href="canciones.html">Cancionero</a></li>
-
                 <li><a href="videoteca.html">Videos</a></li>
-
                 <li><a href="noticias.html">Tencha Noticias</a></li>
-
                 <li><a href="#integrantes">Integrantes</a></li>
-
                 <li><a href="#tienda">Tienda</a></li>
-
                 <li><a href="#contacto">Contacto</a></li>
-
                 <li><a href="admin/dashboard.html" style="color: #ffcc00; font-weight: 700;">⚙️ Admin</a></li>
-
             </ul>
-
 
         </nav>
 
-
-
         <div class="hero-contenido">
 
-
             <span class="hero-etiqueta">
-
                 Sitio Oficial
-
             </span>
-
 
             <h1>
                 ¡La Música se Vive!
             </h1>
 
-
             <p>
                 Cumbia, rock, reggae y ritmos latinoamericanos con la energía y el sabor de Costa Rica.
             </p>
 
-
-
             <div class="hero-botones">
 
-
                 <a href="#contacto" class="boton principal">
-
                     Contrataciones
-
                 </a>
-
 
                 <a href="#eventos" class="boton secundario">
-
                     Agenda
-
                 </a>
 
-
             </div>
-
 
         </div>
 
-
     </header>
-
-
-
-
 
     <section id="banda" class="animar">
 
-
         <div class="contenedor">
 
-
             <div class="titulo-seccion">
-
                 <span>Conócenos</span>
-
                 <h2>Los Hijos de Tencha</h2>
-
             </div>
-
-
 
             <div class="banda-grid">
 
-
                 <div class="texto-banda">
-
                     <p>
                         Los Hijos de Tencha somos una banda orgullosamente de Costa Rica que nació para armar la fiesta.
                     </p>
-
                     <p>
                         Tomamos la cumbia latinoamericana, la revolvemos con reggae, rock, folclore y otros ritmos
                         psicodélicos, y le metemos nuestro propio sazón para que el resultado sea pura gozadera.
                     </p>
-
                     <p>
                         Nuestras canciones hablan de la vida del barrio, de los compas, de los personajes que todos
                         conocemos y de esas historias que solo pasan en Costa Rica. Nos gusta ponerle humor, picardía y
                         buena vibra a cada tema, porque la música también es para vacilar y olvidarse de las broncas por
                         un rato.
                     </p>
-
                     <p>
                         En tarima creemos en hacer un fiestón donde todo el mundo cante, baile y termine sudando la
                         camiseta. Al final, esa es la esencia de Los Hijos de Tencha: hacer música con el corazón, con
                         sabor a barrio y con una buena cumbia que ponga a brincar hasta al más serio.
                     </p>
 
-
                 </div>
-
 
             </div>
 
-
         </div>
 
-
         </div>
-
 
     </section>
-
 
     <!-- =====================================
          EVENTOS / AGENDA - DESDE FIREBASE
@@ -2174,7 +2042,6 @@
         </div>
 
     </section>
-
 
     <!-- =====================================
          SECCIÓN LANZAMIENTOS - DESDE FIREBASE
@@ -2369,7 +2236,6 @@
 
     </section>
 
-
     <footer>
         <img src="img/logo.webp" alt="Logo Los Hijos de Tencha">
         <p>Música, energía y sabor costarricense para compartir con todos.</p>
@@ -2411,8 +2277,6 @@
         </p>
 
     </footer>
-
-
 
     <button id="subir">
 

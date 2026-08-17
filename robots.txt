@@ -6,9 +6,19 @@ User-agent: *
 Allow: /
 
 # ============================================================
+# PERMITIR TODOS LOS RECURSOS NECESARIOS PARA RENDERIZADO
+# ============================================================
+
+Allow: /css/
+Allow: /js/
+Allow: /img/
+Allow: /game/
+
+# ============================================================
 # PERMITIR TODAS LAS PÁGINAS PRINCIPALES
 # ============================================================
 
+Allow: /$
 Allow: /index.html
 Allow: /canciones.html
 Allow: /videoteca.html
@@ -17,30 +27,10 @@ Allow: /noticias.html
 Allow: /tencha_game.html
 
 # ============================================================
-# ACCESO RESTRINGIDO A ADMIN (NO INDEXAR)
+# BLOQUEAR SOLO ADMIN (SI EXISTE)
 # ============================================================
 
 Disallow: /admin/
-Disallow: /admin/dashboard.html
-Disallow: /admin/login.html
-Disallow: /admin/validador.html
-Disallow: /admin/eventos.html
-Disallow: /admin/noticias.html
-Disallow: /admin/galeria.html
-Disallow: /admin/canciones.html
-Disallow: /admin/videos.html
-Disallow: /admin/lanzamientos.html
-Disallow: /admin/tienda.html
-Disallow: /admin/generador.html
-Disallow: /admin/asistentes.html
-
-# ============================================================
-# BLOQUEAR ARCHIVOS INNECESARIOS
-# ============================================================
-
-Disallow: /css/
-Disallow: /js/
-Disallow: /img/
 
 # ============================================================
 # RUTA AL SITEMAP
